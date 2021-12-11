@@ -27,7 +27,7 @@ webpack 5.64.4 compiled successfully in 3010 ms
 
 localhost:8000 is Ready.
 ```
-當跳出`localhost:8000 is Ready.`，就表示伺服器開好了，可以在瀏覽器上打上`localhost:8000`看到你的網頁啦。
+當跳出`localhost:8000 is Ready.`，就表示伺服器開好了，可以在瀏覽器打上`localhost:8000`看到你的網頁啦。
 ### 3.修改程式碼
 修，都修。
 
