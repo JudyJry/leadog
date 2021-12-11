@@ -1,0 +1,34 @@
+{
+  "name": "leadog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "webpack serve",
+    "dev": "webpack-dev-server -w --config webpack.dev.js --mode development",
+    "watch": "webpack -w --mode development",
+    "build": "webpack --mode production",
+    "start": "node server.mjs"
+  },
+  "author": "Jell",
+  "license": "ISC",
+  "dependencies": {
+    "@pixi/events": "^6.2.0",
+    "gsap": "npm:@gsap/member@^3.8.0",
+    "jquery": "^3.6.0",
+    "pixi-filters": "^4.1.5",
+    "pixi.js": "^6.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-transform-runtime": "^7.16.4",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/runtime": "^7.16.3",
+    "babel-loader": "^8.2.3",
+    "webpack": "^5.64.4",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.6.0",
+    "webpack-merge": "^5.8.0"
+  }
+}
