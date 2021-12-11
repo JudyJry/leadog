@@ -54,12 +54,15 @@ kb.pressed = (k) => {
                 return;
             }
         });
+        /*
+        //以中心比例定位(x,y)座標
         let mousePos = manager.app.renderer.plugins.interaction.mouse.global;
         let pos = {
             x: (mousePos.x / w) - 0.5,
             y: (mousePos.y / h) - 0.5
         }
-        console.log(pos);
+        console.log(mouse position (scale/center):`${pos.x},${pos.y}`);
+        */
     }
 }
 
