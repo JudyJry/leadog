@@ -29,6 +29,8 @@ export class Player {
         this.sprite.scale.set(this.scale);
         this.w = this.manager.w;
         this.h = this.manager.h;
+        this.speed = -5;
+        this.vx = 0, this.vy = 0;
     }
     setPosition(x, y) {
         let _x = x / this.w;
@@ -38,7 +40,7 @@ export class Player {
     draw() {
         this.sprite.texture = PIXI.Texture.from("image/player.svg");
         this.sprite.position.set(this.w / -2, this.h / -2);
-        this.setPosition(this.manager.playerDefaultPos.x,this.manager.playerDefaultPos.y);
+        this.setPosition(this.manager.playerPos.x, this.manager.playerPos.y);
     }
     setup() {
         this.draw();
@@ -441,21 +443,34 @@ export class UI {
     }
     crolEvent(k) {
         //0:up, 1:down, 2:left, 3:right
-        this.crol.children.forEach(e => {
+        let p = this.manager.player;
+        let crolArrow = this.crol.children;
+        crolArrow.forEach(e => {
             e.alpha = 1;
         });
         if (k['ArrowUp']) {
-            this.crol.children[0].alpha = 2;
+            p.vy = p.speed;
+            crolArrow[0].alpha = 2;
         }
-        if (k['ArrowDown']) {
-            this.crol.children[1].alpha = 2;
+        else if (k['ArrowDown']) {
+            p.vy = -p.speed;
+            crolArrow[1].alpha = 2;
         }
+        else { p.vy = 0; }
         if (k['ArrowLeft']) {
-            this.crol.children[2].alpha = 2;
+            p.vx = p.speed;
+            p.sprite.scale.set(p.scale * -1, p.scale);
+            crolArrow[2].alpha = 2;
         }
-        if (k['ArrowRight']) {
-            this.crol.children[3].alpha = 2;
+        else if (k['ArrowRight']) {
+            p.vx = -p.speed;
+            p.sprite.scale.set(p.scale * 1, p.scale);
+            crolArrow[3].alpha = 2;
         }
+        else { p.vx = 0; }
+    }
+    crolMouseEvent() {
+        //this.crol.children[0].on("pointerdown",)
     }
     mouseEvent() {
         for (let i = 1; i < this.container.children.length - 1; i++) {

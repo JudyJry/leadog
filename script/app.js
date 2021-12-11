@@ -39,33 +39,13 @@ const wave = new GameObject.Wave(manager);
 
 const background = new GameObject.Background(manager);
 
-//keyboard event
-manager.playerPos = { x: manager.playerDefaultPos.x, y: manager.playerDefaultPos.y };
-let speed = -5;
-let vx = 0, vy = 0;
-
 manager.homeObj = [background, wave, building, tree];
 manager.player = player;
 manager.ui = ui;
 
+//keyboard event
 kb.pressed = (k) => {
     ui.crolEvent(k);
-    if (k['ArrowLeft']) {
-        vx = speed;
-        player.sprite.scale.set(player.scale * -1, player.scale);
-    }
-    else if (k['ArrowRight']) {
-        vx = -speed;
-        player.sprite.scale.set(player.scale * 1, player.scale);
-    }
-    else { vx = 0; }
-    if (k['ArrowUp']) {
-        vy = speed;
-    }
-    else if (k['ArrowDown']) {
-        vy = -speed;
-    }
-    else { vy = 0; }
 
     if (k['Enter']) {
         building.forEach((e) => {
@@ -94,8 +74,8 @@ window.onload = function () {
     //update
     manager.app.ticker.add((d) => {
         manager.mousePos = manager.app.renderer.plugins.interaction.mouse.global;
-        manager.playerPos.x += vx;
-        manager.playerPos.y += vy;
+        manager.playerPos.x += player.vx;
+        manager.playerPos.y += player.vy;
         building.update();
         tree.update();
         player.update();

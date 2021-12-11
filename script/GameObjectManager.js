@@ -35,8 +35,8 @@ export class Manager {
         });
 
         this.isArriveBuilding = {};
-        this.playerDefaultPos = { x: w * 0.35, y: h * 0.35 };
-        this.playerPos;
+        this.homeDefaultPos = { x: w * 0.35, y: h * 0.35 };
+        this.playerPos = JSON.parse(JSON.stringify(this.homeDefaultPos));
         this.mousePos;
         this.ui = undefined;
         this.player = undefined;
@@ -62,7 +62,7 @@ export class Manager {
             "image/wave.svg",
         ]);
         this.app.stage.removeChildren();
-        this.playerPos = { x: this.playerDefaultPos.x, y: this.playerDefaultPos.y };
+        this.playerPos = this.homeDefaultPos;
         for (let i = 0; i < this.homeObj.length; i++) {
             this.app.stage.addChild(this.homeObj[i].container);
         }
