@@ -48,9 +48,9 @@ kb.pressed = (k) => {
     ui.crolEvent(k);
 
     if (k['Enter']) {
-        building.forEach((e) => {
-            if (manager.isArrive(e.name)) {
-                alert(`You enter the ${e.name}!`)
+        building.container.children.forEach((e) => {
+            if (manager.isArrive(e.children.at(-1).text)) {
+                alert(`You enter the ${e.children.at(-1).text}!`)
                 return;
             }
         });

@@ -468,9 +468,23 @@ export class UI {
             crolArrow[3].alpha = 2;
         }
         else { p.vx = 0; }
+
+
     }
     crolMouseEvent() {
-        //this.crol.children[0].on("pointerdown",)
+        let p = this.manager.player;
+        let crolArrow = this.crol.children;
+        crolArrow[0].on("pointerdown", () => { p.vy = p.speed; crolArrow[0].alpha = 2; });
+        crolArrow[0].on("pointerup", () => { p.vy = 0; crolArrow[0].alpha = 1; });
+
+        crolArrow[1].on("pointerdown", () => { p.vy = -p.speed; crolArrow[1].alpha = 2; });
+        crolArrow[1].on("pointerup", () => { p.vy = 0; crolArrow[1].alpha = 1; });
+
+        crolArrow[2].on("pointerdown", () => { p.vx = p.speed; crolArrow[2].alpha = 2; p.sprite.scale.set(p.scale * -1, p.scale); });
+        crolArrow[2].on("pointerup", () => { p.vx = 0; crolArrow[2].alpha = 1; });
+
+        crolArrow[3].on("pointerdown", () => { p.vx = -p.speed; crolArrow[3].alpha = 2; p.sprite.scale.set(p.scale * 1, p.scale); });
+        crolArrow[3].on("pointerup", () => { p.vx = 0; crolArrow[3].alpha = 1; });
     }
     mouseEvent() {
         for (let i = 1; i < this.container.children.length - 1; i++) {
@@ -497,6 +511,7 @@ export class UI {
     setup() {
         this.draw();
         this.mouseEvent();
+        this.crolMouseEvent();
         this.container.position.set(0, 0);
         this.manager.app.stage.addChild(this.container);
     }
