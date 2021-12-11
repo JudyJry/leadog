@@ -35,6 +35,8 @@ export class Manager {
         });
 
         this.isArriveBuilding = {};
+        this.playerDefaultPos = { x: w * 0.35, y: h * 0.35 };
+        this.playerPos;
         this.mousePos;
         this.ui = undefined;
         this.player = undefined;
@@ -60,12 +62,10 @@ export class Manager {
             "image/wave.svg",
         ]);
         this.app.stage.removeChildren();
-        this.app.stage.addChild(this.homeObj[0].container);
-        this.app.stage.addChild(this.homeObj[1].container);
-        for (let i = 0; i < this.homeObj[2].length; i++) {
-            this.app.stage.addChild(this.homeObj[2][i].container);
+        this.playerPos = { x: this.playerDefaultPos.x, y: this.playerDefaultPos.y };
+        for (let i = 0; i < this.homeObj.length; i++) {
+            this.app.stage.addChild(this.homeObj[i].container);
         }
-        this.app.stage.addChild(this.homeObj[3].container);
         this.app.stage.addChild(this.player.container, this.ui.container);
     }
 }

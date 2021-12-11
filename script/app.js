@@ -40,7 +40,7 @@ const wave = new GameObject.Wave(manager);
 const background = new GameObject.Background(manager);
 
 //keyboard event
-const pos = { x: w * 0.35, y: h * 0.35 };
+manager.playerPos = { x: manager.playerDefaultPos.x, y: manager.playerDefaultPos.y };
 let speed = -5;
 let vx = 0, vy = 0;
 
@@ -94,11 +94,11 @@ window.onload = function () {
     //update
     manager.app.ticker.add((d) => {
         manager.mousePos = manager.app.renderer.plugins.interaction.mouse.global;
-        pos.x += vx;
-        pos.y += vy;
+        manager.playerPos.x += vx;
+        manager.playerPos.y += vy;
         building.update();
         tree.update();
-        player.update(pos);
+        player.update();
         ui.update();
     });
 }

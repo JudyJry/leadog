@@ -30,11 +30,17 @@ export class Player {
         this.w = this.manager.w;
         this.h = this.manager.h;
     }
+    setPosition(x, y) {
+        let _x = x / this.w;
+        let _y = y / this.h;
+        this.container.position.set(_x, _y);
+    }
     draw() {
+        this.sprite.texture = PIXI.Texture.from("image/player.svg");
         this.sprite.position.set(this.w / -2, this.h / -2);
+        this.setPosition(this.manager.playerDefaultPos.x,this.manager.playerDefaultPos.y);
     }
     setup() {
-        this.sprite.texture = PIXI.Texture.from("image/player.svg");
         this.draw();
         this.container.addChild(this.sprite)
         this.manager.app.stage.addChild(this.container);
@@ -43,8 +49,8 @@ export class Player {
         this.h = this.manager.h;
         this.draw();
     }
-    update(pos) {
-        gsap.to(this.container, { duration: 0.2, x: pos.x, y: pos.y });
+    update() {
+        gsap.to(this.container, { duration: 0.2, x: this.manager.playerPos.x, y: this.manager.playerPos.y });
     }
 }
 
@@ -113,14 +119,14 @@ export class Building {
         this.container.addChild(c);
     }
     draw() {
-        drawBuilding("捐款", -0.008, -0.319);
-        drawBuilding("配對", 0.028, -0.08);
-        drawBuilding("活動", -0.14, 0.02);
-        drawBuilding("外部連結", -0.004, 0.25);
-        drawBuilding("出生", 0.129, -0.228);
-        drawBuilding("幼年", 0.195, -0.091);
-        drawBuilding("壯年", 0.209, 0.111);
-        drawBuilding("老年", 0.142, 0.205);
+        this.drawBuilding("捐款", -0.008, -0.319);
+        this.drawBuilding("配對", 0.028, -0.08);
+        this.drawBuilding("活動", -0.14, 0.02);
+        this.drawBuilding("外部連結", -0.004, 0.25);
+        this.drawBuilding("出生", 0.129, -0.228);
+        this.drawBuilding("幼年", 0.195, -0.091);
+        this.drawBuilding("壯年", 0.209, 0.111);
+        this.drawBuilding("老年", 0.142, 0.205);
     }
     setup() {
         this.draw();
@@ -134,10 +140,10 @@ export class Building {
     update() {
         for (let i = 0; i < this.container.children.length; i++) {
             let building = this.container.children[i];
-            let t = building.children.at(-1).text;
+            let t = building.children.at(-1);
             let s = building.children[0];
-            this.manager.arrived(t, gamef.rectCollision(this.manager.player.container, building));
-            if (this.manager.isArrive(t)) {
+            this.manager.arrived(t.text, gamef.rectCollision(this.manager.player.container, building));
+            if (this.manager.isArrive(t.text)) {
                 s.filters = [this.filter];
                 gsap.to(t, {
                     duration: 1,
