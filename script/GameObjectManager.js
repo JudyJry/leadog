@@ -1,28 +1,24 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import $ from "jquery";
+import Keyboard from "./KeyBoard.js";
+import Mouse from './Mouse.js';
+import * as GameObject from "./GameObject.js";
 
 export class Manager {
-    constructor(w, h) {
-        this.w = w;
-        this.h = h;
+    constructor() {
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
         this.canvasScale = 1;
         this.app = new PIXI.Application({
-            width: w,
-            height: h,
+            width: this.w,
+            height: this.h,
             backgroundColor: 0xc1f9f8,
             antialias: true,
             view: document.getElementById("mainPIXI")
         });
         this.app.stage.x = this.app.renderer.width * 0.5;
         this.app.stage.y = this.app.renderer.height * 0.5;
-        this.app.resize = (w, h) => {
-            this.w = w;
-            this.h = h;
-            this.app.renderer.resize(w, h);
-            this.app.stage.x = this.app.renderer.width * 0.5;
-            this.app.stage.y = this.app.renderer.height * 0.5;
-        }
         this.UItextStyle = new PIXI.TextStyle({
             fontFamily: "GenSenRounded-B",
             fontSize: 30,
@@ -34,13 +30,48 @@ export class Manager {
             fill: 0x666803,
         });
 
+        this.keyboard = new Keyboard();
+        this.mouse = new Mouse(this);
+        this.ui = new GameObject.UI(this);
+
         this.isArriveBuilding = {};
-        this.homeDefaultPos = { x: w * 0.35, y: h * 0.35 };
+        this.homeDefaultPos = { x: this.w * 0.35, y: this.h * 0.35 };
         this.playerPos = JSON.parse(JSON.stringify(this.homeDefaultPos));
-        this.mousePos;
-        this.ui = undefined;
         this.player = undefined;
         this.homeObj = [];
+    }
+    setup(){
+        this.keyboard.pressed = (k) => {
+            if (k['Enter']) {
+                building.container.children.forEach((e) => {
+                    if (this.isArrive(e.children.at(-1).text)) {
+                        alert(`You enter the ${e.children.at(-1).text}!`)
+                        return;
+                    }
+                });
+                /*
+                //以中心比例定位(x,y)座標
+                let mousePos = manager.app.renderer.plugins.interaction.mouse.global;
+                let pos = {
+                    x: (mousePos.x / w) - 0.5,
+                    y: (mousePos.y / h) - 0.5
+                }
+                console.log(mouse position (scale/center):`${pos.x},${pos.y}`);
+                */
+            }
+        }
+    }
+    update(){
+        this.mouse.update();
+        this.playerPos.x += this.player.vx;
+        this.playerPos.y += this.player.vy;
+    }
+    resize() {
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+        this.app.renderer.resize(this.w, this.h);
+        this.app.stage.x = this.app.renderer.width * 0.5;
+        this.app.stage.y = this.app.renderer.height * 0.5;
     }
     arrived(building, bool = true) { this.isArriveBuilding[building] = bool }
     isArrive(building) { return this.isArriveBuilding[building] }
@@ -67,6 +98,7 @@ export class Manager {
             this.app.stage.addChild(this.homeObj[i].container);
         }
         this.app.stage.addChild(this.player.container, this.ui.container);
+        console.log(this.w);
     }
 }
 

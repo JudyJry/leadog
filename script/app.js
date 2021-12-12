@@ -20,83 +20,47 @@ loader.load([
 ]);
 
 //build app
-let w = window.innerWidth;
-let h = window.innerHeight;
-
+const manager = new Manager();
+manager.setup();
 //build gameObject
-
-const manager = new Manager(w, h);
-
-const kb = new Keyboard();
-const ui = new GameObject.UI(manager);
-
 const player = new GameObject.Player(manager);
-
 const building = new GameObject.Building(manager);
-
 const tree = new GameObject.Tree(manager);
 const wave = new GameObject.Wave(manager);
-
 const background = new GameObject.Background(manager);
 
 manager.homeObj = [background, wave, building, tree];
 manager.player = player;
-manager.ui = ui;
 
 //keyboard event
-kb.pressed = (k) => {
-    ui.crolEvent(k);
-
-    if (k['Enter']) {
-        building.container.children.forEach((e) => {
-            if (manager.isArrive(e.children.at(-1).text)) {
-                alert(`You enter the ${e.children.at(-1).text}!`)
-                return;
-            }
-        });
-        /*
-        //以中心比例定位(x,y)座標
-        let mousePos = manager.app.renderer.plugins.interaction.mouse.global;
-        let pos = {
-            x: (mousePos.x / w) - 0.5,
-            y: (mousePos.y / h) - 0.5
-        }
-        console.log(mouse position (scale/center):`${pos.x},${pos.y}`);
-        */
-    }
-}
 
 //setup
-window.onload = function () {
+onload = function () {
     background.setup();
     wave.setup();
     building.setup();
     tree.setup();
     player.setup();
-    ui.setup();
+    manager.ui.setup();
     //update
     manager.app.ticker.add((d) => {
-        manager.mousePos = manager.app.renderer.plugins.interaction.mouse.global;
-        manager.playerPos.x += player.vx;
-        manager.playerPos.y += player.vy;
+        manager.update();
         building.update();
         tree.update();
         player.update();
-        ui.update();
+        manager.ui.update();
     });
 }
 
 //resize
 onresize = function () {
-    w = window.innerWidth;
-    h = window.innerHeight;
-    manager.app.resize(w, h);
+    manager.resize();
     background.resize();
     wave.resize();
     building.resize();
     tree.resize();
     player.resize();
-    ui.resize();
+    manager.ui.resize();
 };
 
 

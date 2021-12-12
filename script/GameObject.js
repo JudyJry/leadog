@@ -41,14 +41,15 @@ export class Player {
         this.sprite.texture = PIXI.Texture.from("image/player.svg");
         this.sprite.position.set(this.w / -2, this.h / -2);
         this.setPosition(this.manager.playerPos.x, this.manager.playerPos.y);
+        this.container.addChild(this.sprite);
     }
     setup() {
         this.draw();
-        this.container.addChild(this.sprite)
         this.manager.app.stage.addChild(this.container);
     }
     resize() {
         this.h = this.manager.h;
+        this.container.removeChildren();
         this.draw();
     }
     update() {
@@ -65,19 +66,22 @@ export class Background {
         this.w = this.manager.w;
         this.h = this.manager.h;
     }
-    setup() {
+    draw() {
         this.sprite.texture = PIXI.Texture.from("image/map.svg");
         this.spriteHeight = this.sprite.texture.height + 900;
         this.sprite.anchor.set(0.5);
         this.manager.canvasScale = this.h / this.spriteHeight;
         this.sprite.scale.set(this.manager.canvasScale);
         this.container.addChild(this.sprite);
+    }
+    setup() {
+        this.draw();
         this.manager.app.stage.addChild(this.container);
     }
     resize() {
         this.h = this.manager.h;
-        this.manager.canvasScale = this.h / this.spriteHeight;
-        this.sprite.scale.set(this.manager.canvasScale);
+        this.container.removeChildren();
+        this.draw();
     }
     update() {
 
@@ -440,62 +444,33 @@ export class UI {
         this.drawOther(0.43, -0.16, "首頁", this.home, 'image/home.svg');
         this.drawNotify(0, 0.43);
         this.drawCrol(0.5, 0.5);
+        this.mouseEvent();
+        this.crolEvent();
     }
-    crolEvent(k) {
-        //0:up, 1:down, 2:left, 3:right
+    crolEvent() {
         let p = this.manager.player;
-        let crolArrow = this.crol.children;
-        crolArrow.forEach(e => {
-            e.alpha = 1;
+        let ca = this.crol.children;
+        ca.forEach((e)=>{
+            e.on("pointerover", onOver.bind(e));
+            e.on("pointerout", onOver.bind(e));
         });
-        if (k['ArrowUp']) {
-            p.vy = p.speed;
-            crolArrow[0].alpha = 2;
-        }
-        else if (k['ArrowDown']) {
-            p.vy = -p.speed;
-            crolArrow[1].alpha = 2;
-        }
-        else { p.vy = 0; }
-        if (k['ArrowLeft']) {
-            p.vx = p.speed;
-            p.sprite.scale.set(p.scale * -1, p.scale);
-            crolArrow[2].alpha = 2;
-        }
-        else if (k['ArrowRight']) {
-            p.vx = -p.speed;
-            p.sprite.scale.set(p.scale * 1, p.scale);
-            crolArrow[3].alpha = 2;
-        }
-        else { p.vx = 0; }
+        function onOver(e) { this.isPointerOver = e.type == "pointerover"; }
 
-
-    }
-    crolMouseEvent() {
-        let p = this.manager.player;
-        let crolArrow = this.crol.children;
-        crolArrow[0].on("pointerdown", () => { p.vy = p.speed; crolArrow[0].alpha = 2; });
-        crolArrow[0].on("pointerup", () => { p.vy = 0; crolArrow[0].alpha = 1; });
-
-        crolArrow[1].on("pointerdown", () => { p.vy = -p.speed; crolArrow[1].alpha = 2; });
-        crolArrow[1].on("pointerup", () => { p.vy = 0; crolArrow[1].alpha = 1; });
-
-        crolArrow[2].on("pointerdown", () => { p.vx = p.speed; crolArrow[2].alpha = 2; p.sprite.scale.set(p.scale * -1, p.scale); });
-        crolArrow[2].on("pointerup", () => { p.vx = 0; crolArrow[2].alpha = 1; });
-
-        crolArrow[3].on("pointerdown", () => { p.vx = -p.speed; crolArrow[3].alpha = 2; p.sprite.scale.set(p.scale * 1, p.scale); });
-        crolArrow[3].on("pointerup", () => { p.vx = 0; crolArrow[3].alpha = 1; });
+        ca[0].downEvent = () => { p.vy = p.speed; ca[0].alpha = 2; };
+        ca[1].downEvent = () => { p.vy = -p.speed; ca[1].alpha = 2; };
+        ca[2].downEvent = () => { p.vx = p.speed; ca[2].alpha = 2; p.sprite.scale.set(p.scale * -1, p.scale); };
+        ca[3].downEvent = () => { p.vx = -p.speed; ca[3].alpha = 2; p.sprite.scale.set(p.scale * 1, p.scale); };
     }
     mouseEvent() {
         for (let i = 1; i < this.container.children.length - 1; i++) {
             let e = this.container.children[i].children.at(-1);
             e.on("pointerdown", onDown.bind(e));
-            e.on("pointerup", onUp.bind(e));
+            //e.on("pointerup", onUp.bind(e));
             e.on("pointerover", onOver.bind(e));
             e.on("pointerout", onOut.bind(e));
         }
         function onDown(event) { this.clickEvent(); }
-        function onUp(event) { }
+        //function onUp(event) { }
         function onOver(event) { this.isPointerOver = true; }
         function onOut(event) { this.isPointerOver = false; }
 
@@ -510,8 +485,6 @@ export class UI {
     }
     setup() {
         this.draw();
-        this.mouseEvent();
-        this.crolMouseEvent();
         this.container.position.set(0, 0);
         this.manager.app.stage.addChild(this.container);
     }
@@ -531,5 +504,19 @@ export class UI {
                 gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
             }
         }
+
+        let p = this.manager.player;
+        let k = this.manager.keyboard.key;
+        let m = this.manager.mouse.isPressed;
+        let ca = this.crol.children;
+        ca.forEach(e => {
+            e.alpha = 1;
+        });
+        if ((ca[0].isPointerOver && m) || k['ArrowUp']) { ca[0].downEvent(); }
+        else if ((ca[1].isPointerOver && m) || k['ArrowDown']) { ca[1].downEvent(); }
+        else { p.vy = 0; }
+        if ((ca[2].isPointerOver && m) || k['ArrowLeft']) { ca[2].downEvent(); }
+        else if ((ca[3].isPointerOver && m) || k['ArrowRight']) { ca[3].downEvent(); }
+        else { p.vx = 0; }
     }
 }
