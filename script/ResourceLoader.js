@@ -1,39 +1,57 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import $ from "jquery";
+import * as gf from "./GameFunction.js"
 
 export default class ResourceLoader {
-    constructor() {
-        this.loader = new PIXI.Loader();
-        this.page = $(`<div id="loadingPage"><p>Loading...<br>0%</p></div>`);
+    constructor(app) {
+        this.loader = app.loader;
+        this.page = $(`<div id="loadingPage"><p>Loading...<br><span id="progress">0%<span></p></div>`);
         this.pageText = $(this.page).children("p");
-        $("body").prepend(this.page);
+        this.progress = $(this.pageText).children("#progress");
+
     }
-    load(list) {
+    setProgress(progress) {
+        this.progress.html(`${Math.floor(progress)}%`);
+        //gf.animateValue("progress", 0, Math.floor(progress), 1000);
+    }
+    setupLoadingPage() {
+        this.page.css('opacity', '1');
+        $("body").prepend(this.page);
+        this.setProgress(0);
+    }
+    loadProgressHandler(loader, _resource) {
+        this.setProgress(loader.progress);
+    }
+    loadTexture(list) {
+        this.setupLoadingPage();
         this.loader.add(list);
         this.loader.onProgress.add(this.loadProgressHandler.bind(this));
         this.loader.load(this.init.bind(this));
     }
-    loadProgressHandler(loader, resource) {
-
-        // 顯示已載入的檔案路徑
-        //console.log("loading: " + resource.url);
-
-        // 顯示已載入資源百分比
-        this.pageText.html(
-            `Loading...<br>
-            ${Math.floor(loader.progress)}%`
-        );
-        //console.log("progress: " + loader.progress + "%");
+    loadAsset(func) {
+        this.setupLoadingPage();
+        function process() {
+            return new Promise((resolve, _reject) => {
+                setTimeout(() => {
+                    func.apply(this, arguments);
+                    resolve();
+                }, 1000);
+            });
+        };
+        process()
+            .then(() => {
+                this.setProgress(100);
+                this.init();
+            })
+            .catch(() => { console.log('fall reload') });
     }
-
     init() {
         gsap.to(this.page, {
             duration: 2,
             alpha: 0,
             onComplete: function () { $("#loadingPage").remove(); }
         });
-
         console.log("All files loaded");
     }
 }
