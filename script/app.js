@@ -1,4 +1,3 @@
-import Keyboard from "./KeyBoard.js";
 import * as GameObject from "./GameObject.js";
 import { Manager, ResourceLoader } from "./GameObjectManager.js";
 
