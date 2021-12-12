@@ -1,12 +1,29 @@
 import * as PIXI from 'pixi.js';
-import gsap from "gsap";
-import $ from "jquery";
+import ResourceLoader from "./ResourceLoader.js";
 import Keyboard from "./KeyBoard.js";
 import Mouse from './Mouse.js';
-import * as GameObject from "./GameObject.js";
+import UIsystem from './UI.js';
+import * as HomeObject from "./HomeObject.js";
 
 export class Manager {
     constructor() {
+        const loader = new ResourceLoader();
+        loader.load([
+            "image/home.svg",
+            "image/location.svg",
+            "image/logo.svg",
+            "image/map.svg",
+            "image/menu.svg",
+            "image/notify.svg",
+            "image/player.svg",
+            "image/point.svg",
+            "image/question.svg",
+            "image/search.svg",
+            "image/setting.svg",
+            "image/user.svg",
+            "image/wave.svg",
+        ]);
+
         this.w = window.innerWidth;
         this.h = window.innerHeight;
         this.canvasScale = 1;
@@ -19,31 +36,23 @@ export class Manager {
         });
         this.app.stage.x = this.app.renderer.width * 0.5;
         this.app.stage.y = this.app.renderer.height * 0.5;
-        this.UItextStyle = new PIXI.TextStyle({
-            fontFamily: "GenSenRounded-B",
-            fontSize: 30,
-            fill: 0x666803,
-        });
-        this.UItextStyleSmall = new PIXI.TextStyle({
-            fontFamily: "GenSenRounded-B",
-            fontSize: 18,
-            fill: 0x666803,
-        });
+        
 
         this.keyboard = new Keyboard();
         this.mouse = new Mouse(this);
-        this.ui = new GameObject.UI(this);
+        this.uiSystem = new UIsystem(this);
 
         this.isArriveBuilding = {};
         this.homeDefaultPos = { x: this.w * 0.35, y: this.h * 0.35 };
         this.playerPos = JSON.parse(JSON.stringify(this.homeDefaultPos));
         this.player = undefined;
-        this.homeObj = [];
+        this.homeObj = {};
     }
-    setup(){
+    setup() {
+        this.uiSystem.setup();
         this.keyboard.pressed = (k) => {
             if (k['Enter']) {
-                building.container.children.forEach((e) => {
+                this.homeObj.building.container.children.forEach((e) => {
                     if (this.isArrive(e.children.at(-1).text)) {
                         alert(`You enter the ${e.children.at(-1).text}!`)
                         return;
@@ -61,7 +70,8 @@ export class Manager {
             }
         }
     }
-    update(){
+    update() {
+        this.uiSystem.update();
         this.mouse.update();
         this.playerPos.x += this.player.vx;
         this.playerPos.y += this.player.vy;
@@ -72,6 +82,7 @@ export class Manager {
         this.app.renderer.resize(this.w, this.h);
         this.app.stage.x = this.app.renderer.width * 0.5;
         this.app.stage.y = this.app.renderer.height * 0.5;
+        this.uiSystem.resize();
     }
     arrived(building, bool = true) { this.isArriveBuilding[building] = bool }
     isArrive(building) { return this.isArriveBuilding[building] }
@@ -94,46 +105,8 @@ export class Manager {
         ]);
         this.app.stage.removeChildren();
         this.playerPos = this.homeDefaultPos;
-        for (let i = 0; i < this.homeObj.length; i++) {
-            this.app.stage.addChild(this.homeObj[i].container);
-        }
-        this.app.stage.addChild(this.player.container, this.ui.container);
-        console.log(this.w);
-    }
-}
-
-export class ResourceLoader {
-    constructor() {
-        this.loader = new PIXI.Loader();
-        this.page = $(`<div id="loadingPage"><p>Loading...<br>0%</p></div>`);
-        this.pageText = $(this.page).children("p");
-        $("body").prepend(this.page);
-    }
-    load(list) {
-        this.loader.add(list);
-        this.loader.onProgress.add(this.loadProgressHandler.bind(this));
-        this.loader.load(this.init.bind(this));
-    }
-    loadProgressHandler(loader, resource) {
-
-        // 顯示已載入的檔案路徑
-        //console.log("loading: " + resource.url);
-
-        // 顯示已載入資源百分比
-        this.pageText.html(
-            `Loading...<br>
-            ${Math.floor(loader.progress)}%`
-        );
-        //console.log("progress: " + loader.progress + "%");
-    }
-
-    init() {
-        gsap.to(this.page, {
-            duration: 2,
-            alpha: 0,
-            onComplete: function () { $("#loadingPage").remove(); }
-        });
-
-        console.log("All files loaded");
+        for (let [_, value] of Object.entries(this.homeObj)) { this.app.stage.addChild(value.container); }
+        this.app.stage.addChild(this.player.container, this.uiSystem.container);
+        this.app.stage.sortChildren();
     }
 }
