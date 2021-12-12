@@ -45,7 +45,12 @@ export default class Manager {
         this.homeDefaultPos = { x: this.w * 0.35, y: this.h * 0.35 };
         this.playerPos = JSON.parse(JSON.stringify(this.homeDefaultPos));
         this.player = new Player(this);
-        this.homeObj = {};
+        this.homeObj = {
+            "background":new HomeObject.Background(this),
+            "wave":new HomeObject.Wave(this),
+            "building":new HomeObject.Building(this),
+            "tree":new HomeObject.Tree(this)
+        };
     }
     setup() {
         this.uiSystem.setup();

@@ -4,14 +4,6 @@ import Manager from "./GameObjectManager.js";
 
 //build app
 const manager = new Manager();
-
-//build gameObject
-manager.homeObj = {
-    "background":new HomeObject.Background(manager),
-    "wave":new HomeObject.Wave(manager),
-    "building":new HomeObject.Building(manager),
-    "tree":new HomeObject.Tree(manager)
-};
 //setup
 onload = function () {
     manager.setup();

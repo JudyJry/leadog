@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import $ from "jquery";
-import * as gf from "./GameFunction.js"
 
 export default class ResourceLoader {
     constructor(app) {
@@ -13,7 +12,6 @@ export default class ResourceLoader {
     }
     setProgress(progress) {
         this.progress.html(`${Math.floor(progress)}%`);
-        //gf.animateValue("progress", 0, Math.floor(progress), 1000);
     }
     setupLoadingPage() {
         this.page.css('opacity', '1');

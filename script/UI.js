@@ -37,8 +37,7 @@ export default class UIsystem {
     resize() {
         this.w = this.manager.w;
         this.h = this.manager.h;
-        this.container.removeChildren();
-        for (let [_, value] of Object.entries(this.ui)) { value.resize(this.container); }
+        for (let [_, value] of Object.entries(this.ui)) { value.resize(); }
     }
     update() {
         for (let [_, value] of Object.entries(this.ui)) { value.update(); }

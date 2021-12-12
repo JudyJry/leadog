@@ -7,6 +7,13 @@ import * as gf from "./GameFunction.js";
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
+export class HomeObject {
+    constructor(manager){
+        this.manager = manager;
+        this.container = new PIXI.Container();
+    }
+}
+
 export class Background {
     constructor(manager) {
         this.manager = manager;
