@@ -1,9 +1,12 @@
 # leadog
 要測試和修改這個東東，請先下載Node.js LTS 版本 (16.13.1)，會附帶npm (8.1.2)。
 ## 步驟
-### 1.打包一下程式
+### 1.下載需要的模組
 打開一個cmd.exe，使用cd指令來到leadog資料夾。
 不想每次都這麼麻煩可以直接複製一個cmd.exe進leadog資料夾裡，這樣點開的時候路徑就會直接是leadog資料夾了。
+使用`npm install`指令，npm就會輕鬆幫你下載需要的模組進入`node_modules`資料夾了喔。
+
+### 2.打包一下程式
 接著使用`npm run watch`指令，你大概會看到以下幾行。
 ```
 > leadog@1.0.0 watch
@@ -19,7 +22,7 @@ webpack 5.64.4 compiled successfully in 3010 ms
 ```
 之後每更新一次程式碼，它都會自己幫你打包喔！
 
-### 2.架個本地伺服器
+### 3.架個本地伺服器
 再打開一個cmd.exe，來到leadog資料夾。
 使用`npm start`指令，你大概會看到以下幾行。
 ```
