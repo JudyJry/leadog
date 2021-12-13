@@ -12,6 +12,3 @@ onload = function () {
 }
 //resize
 onresize = function () { manager.resize(); };
-
-
-
