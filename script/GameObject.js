@@ -5,9 +5,14 @@ export class PageObject {
         this.manager = manager;
         this.name = "PageObject";
         this.children = {};
+        this.isfristLoad = true;
     }
     setup() {
-        for (let [_, e] of Object.entries(this.children)) { e.setup(); }
+        if (this.isfristLoad) {
+            for (let [_, e] of Object.entries(this.children)) { e.setup(); }
+            this.isfristLoad = false;
+        }
+        else this.reload();
     }
     resize() {
         for (let [_, e] of Object.entries(this.children)) { e.resize(); }
@@ -28,7 +33,7 @@ export class GameObject {
         this.sprite = new PIXI.Sprite();
         this.w = this.manager.w;
         this.h = this.manager.h;
-        this.draw = ()=>{};
+        this.draw = () => { };
     }
     setup() {
         this.draw();

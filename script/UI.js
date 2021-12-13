@@ -257,7 +257,7 @@ class Home extends UI {
         }
     }
     clickEvent() {
-        this.manager.toHomePage();
+        this.manager.loadPage(this.manager.homeObj);
     }
 }
 class Notify extends UI {

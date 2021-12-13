@@ -60,57 +60,58 @@ class Building extends GameObject {
             fill: 0x666803,
         });
         this.draw = function () {
-            this.drawBuilding("捐款", -0.008, -0.319);
-            this.drawBuilding("配對", 0.028, -0.08);
-            this.drawBuilding("活動", -0.14, 0.02);
-            this.drawBuilding("外部連結", -0.004, 0.25);
             this.drawBuilding("出生", 0.129, -0.228);
             this.drawBuilding("幼年", 0.195, -0.091);
             this.drawBuilding("壯年", 0.209, 0.111);
             this.drawBuilding("老年", 0.142, 0.205);
+            this.drawBuilding("捐款", -0.008, -0.319);
+            this.drawBuilding("配對", 0.028, -0.08);
+            this.drawBuilding("活動", -0.14, 0.02);
+            this.drawBuilding("外部連結", -0.004, 0.25);
         }
     }
     drawBuilding(n, x, y) {
-        let c = new PIXI.Container();
-        let s = new PIXI.Sprite();
-        let t = new PIXI.Text(n, this.UItextStyle);
         let _x = (x * this.w);
         let _y = (y * this.h);
+        let c = new PIXI.Container();
+        c.name = n;
+        c.sprite = new PIXI.Sprite();
+        c.text = new PIXI.Text(c.name, this.UItextStyle);
+        c.isEntering = false;
 
-        s.anchor.set(0.5);
-        s.scale.set(this.scale);
-        s.filters = [this.filter];
-        s.texture = PIXI.Texture.from("image/location.svg");
-        t.anchor.set(0.5);
-        t.position.set(0, this.spriteHeight * -1);
-        t.alpha = 0;
+        c.sprite.anchor.set(0.5);
+        c.sprite.scale.set(this.scale);
+        c.sprite.filters = [this.filter];
+        c.sprite.texture = PIXI.Texture.from("image/location.svg");
+        c.text.anchor.set(0.5);
+        c.text.position.set(0, this.spriteHeight * -1);
+        c.text.alpha = 0;
 
         c.position.set(_x, _y);
-        c.addChild(s, t);
+        c.addChild(c.sprite, c.text);
         this.container.addChild(c);
     }
     addEnterEvent() {
         if (this.manager.keyboard.key['Enter']) {
             this.container.children.forEach((e) => {
-                if (this.manager.isArrive(e.children.at(-1).text)) {
-                    console.log(`You enter the ${e.children.at(-1).text}!`);
-                    this.manager.toOtherPage(e.children.at(-1).text);
+                if (this.manager.isArrive(e.name) && !e.isEntering) {
+                    console.log(`You enter the ${e.name}!`);
+                    e.isEntering = true;
+                    this.manager.toOtherPage(e);
                 }
             });
         }
     }
     update() {
         this.container.children.forEach((e) => {
-            let t = e.children.at(-1);
-            let s = e.children[0];
-            this.manager.arrived(t.text, gf.rectCollision(this.manager.player.container, e));
-            if (this.manager.isArrive(t.text)) {
-                s.filters = [this.filter];
-                gsap.to(t, { duration: 1, y: this.textHeight * -1, alpha: 1 });
+            this.manager.arrived(e.name, gf.rectCollision(this.manager.player.container, e));
+            if (this.manager.isArrive(e.name)) {
+                e.sprite.filters = [this.filter];
+                gsap.to(e.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
             }
             else {
-                s.filters = [];
-                gsap.to(t, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
+                e.sprite.filters = [];
+                gsap.to(e.text, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
             }
         });
     }

@@ -26,7 +26,7 @@ export default class ResourceLoader {
         this.loader.onProgress.add(this.loadProgressHandler.bind(this));
         this.loader.load(this.init.bind(this));
     }
-    loadAsset(func) {
+    loadAsset(func, onComplete = () => { }) {
         this.setupLoadingPage();
         function process() {
             return new Promise((resolve, _reject) => {
@@ -40,6 +40,7 @@ export default class ResourceLoader {
             .then(() => {
                 this.setProgress(100);
                 this.init();
+                onComplete();
             })
             .catch(() => { console.log('fall reload') });
     }

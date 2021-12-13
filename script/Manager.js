@@ -5,6 +5,7 @@ import Mouse from './Mouse.js';
 import UIsystem from './UI.js';
 import Player from './Player.js';
 import HomeObject from "./HomeObject.js";
+import BronObject from './BronObject.js';
 
 export default class Manager {
     constructor() {
@@ -46,6 +47,7 @@ export default class Manager {
         this.playerPos = JSON.parse(JSON.stringify(this.homeDefaultPos));
         this.player = new Player(this);
         this.homeObj = new HomeObject(this);
+        this.bronObj = new BronObject(this);
     }
     setup() {
         this.uiSystem.setup();
@@ -87,33 +89,66 @@ export default class Manager {
         this.homeObj.resize();
         this.app.stage.sortChildren();
     }
-    
+
     arrived(building, bool = true) { this.isArriveBuilding[building] = bool }
     isArrive(building) { return this.isArriveBuilding[building] }
 
-    toHomePage() {
-        this.loader.loadAsset(function(){
+    loadPage(obj) {
+        this.loader.loadAsset(function () {
             this.app.stage.removeChildren();
             this.playerPos = this.homeDefaultPos;
-            this.homeObj.reload();
+            obj.setup();
             this.app.stage.addChild(this.player.container, this.uiSystem.container);
             this.app.stage.sortChildren();
         }.bind(this));
     }
-    toOtherPage(text){
-        this.loader.loadAsset(function(){
+    toOtherPage(e) {
+        switch (e.name) {
+            case "出生":
+                this.loadPage(this.bronObj);
+                break;
+            case "幼年":
+                this.toUndonePage(e);
+                break;
+            case "壯年":
+                this.toUndonePage(e);
+                break;
+            case "老年":
+                this.toUndonePage(e);
+                break;
+            case "捐款":
+                this.toUndonePage(e);
+                break;
+            case "配對":
+                this.toUndonePage(e);
+                break;
+            case "活動":
+                this.toUndonePage(e);
+                break;
+            case "外部連結":
+                this.toUndonePage(e);
+                break;
+            default:
+                this.toUndonePage(e);
+                break;
+        }
+    }
+    toUndonePage(e) {
+        this.loader.loadAsset(function () {
             this.app.stage.removeChildren();
             this.playerPos = this.homeDefaultPos;
             //this.homeObj.reload();
-            let t = new PIXI.Text(`這是一個${text}頁面`,new PIXI.TextStyle({
+            let t = new PIXI.Text(`這是一個未完成的${e.name}頁面`, new PIXI.TextStyle({
                 fontFamily: "GenSenRounded-B",
                 fontSize: 30,
                 fill: 0x666803,
             }));
             t.anchor.set(0.5);
-            t.position.set(0,0);
-            this.app.stage.addChild(t,this.player.container, this.uiSystem.container);
+            t.position.set(0, 0);
+            this.app.stage.addChild(t, this.player.container, this.uiSystem.container);
             this.app.stage.sortChildren();
-        }.bind(this));
+        }.bind(this),()=>{
+            e.isEntering = false;
+        });
     }
 }
