@@ -100,4 +100,20 @@ export default class Manager {
             this.app.stage.sortChildren();
         }.bind(this));
     }
+    toOtherPage(text){
+        this.loader.loadAsset(function(){
+            this.app.stage.removeChildren();
+            this.playerPos = this.homeDefaultPos;
+            //this.homeObj.reload();
+            let t = new PIXI.Text(`這是一個${text}頁面`,new PIXI.TextStyle({
+                fontFamily: "GenSenRounded-B",
+                fontSize: 30,
+                fill: 0x666803,
+            }));
+            t.anchor.set(0.5);
+            t.position.set(0,0);
+            this.app.stage.addChild(t,this.player.container, this.uiSystem.container);
+            this.app.stage.sortChildren();
+        }.bind(this));
+    }
 }
