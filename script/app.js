@@ -1,4 +1,4 @@
-import Manager from "./GameObjectManager.js";
+import Manager from "./Manager.js";
 
 //build app
 const manager = new Manager();
