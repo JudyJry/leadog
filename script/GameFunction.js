@@ -58,7 +58,31 @@ export function pointCollision(a, b) {
     let bb = b.getBounds();
     return a.x > bb.x && a.x < bb.x + bb.width && a.y > bb.y && a.y < bb.y + bb.height;
 }
-export function calcCircleHitArea(a,s = 1){
+export function calcCircleHitArea(a, s = 1) {
     let aa = a.getBounds();
-    return new PIXI.Circle(0,0,(aa.x + aa.width)/s);
+    return new PIXI.Circle(0, 0, (aa.x + aa.width) / s);
+}
+
+export function animateValue(id, start, end, duration, easing = linear) {
+    let range = end - start;
+    let current = start;
+    let increment = end > start ? 1 : -1;
+    let obj = document.getElementById(id);
+    let startTime = new Date();
+    let offset = 1;
+    let remainderTime = 0;
+
+    let step = function () {
+        current += increment;
+        obj.innerHTML = current;
+
+        if (current != end) {
+            setTimeout(step, easing(duration, range, current));
+        }
+    };
+
+    setTimeout(step, easing(duration, range, start));
+}
+function linear(duration, range, current) {
+    return ((duration * 2) / Math.pow(range, 2)) * current;
 }
