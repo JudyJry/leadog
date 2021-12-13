@@ -18,6 +18,7 @@ modules by path...
 webpack 5.64.4 compiled successfully in 3010 ms
 ```
 之後每更新一次程式碼，它都會自己幫你打包喔！
+
 ### 2.架個本地伺服器
 再打開一個cmd.exe，來到leadog資料夾。
 使用`npm start`指令，你大概會看到以下幾行。
@@ -28,6 +29,10 @@ webpack 5.64.4 compiled successfully in 3010 ms
 localhost:8000 is Ready.
 ```
 當跳出`localhost:8000 is Ready.`，就表示伺服器開好了，可以在瀏覽器打上`localhost:8000`看到你的網頁啦。
+
 ### 3.修改程式碼
 修，都修。
+
+## 不想用cmd.exe
+使用VSCode或是其他能夠使用終端機(Shell)測試的程式碼編輯軟體，也可以輕鬆完成上面兩個步驟喔！
 
