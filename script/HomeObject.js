@@ -93,7 +93,8 @@ class Building extends GameObject {
         if (this.manager.keyboard.key['Enter']) {
             this.container.children.forEach((e) => {
                 if (this.manager.isArrive(e.children.at(-1).text)) {
-                    alert(`You enter the ${e.children.at(-1).text}!`);
+                    console.log(`You enter the ${e.children.at(-1).text}!`);
+                    this.manager.toOtherPage(e.children.at(-1).text);
                 }
             });
         }
