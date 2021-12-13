@@ -4,7 +4,7 @@ import Keyboard from "./KeyBoard.js";
 import Mouse from './Mouse.js';
 import UIsystem from './UI.js';
 import Player from './Player.js';
-import * as HomeObject from "./HomeObject.js";
+import HomeObject from "./HomeObject.js";
 
 export default class Manager {
     constructor() {
@@ -45,24 +45,16 @@ export default class Manager {
         this.homeDefaultPos = { x: this.w * 0.35, y: this.h * 0.35 };
         this.playerPos = JSON.parse(JSON.stringify(this.homeDefaultPos));
         this.player = new Player(this);
-        this.homeObj = {
-            "background":new HomeObject.Background(this),
-            "wave":new HomeObject.Wave(this),
-            "building":new HomeObject.Building(this),
-            "tree":new HomeObject.Tree(this)
-        };
+        this.homeObj = new HomeObject(this);
     }
     setup() {
         this.uiSystem.setup();
         this.player.setup();
+        this.homeObj.setup();
+        this.app.stage.sortChildren();
         this.keyboard.pressed = (k) => {
+            this.homeObj.children.building.addEnterEvent();
             if (k['Enter']) {
-                this.homeObj.building.container.children.forEach((e) => {
-                    if (this.isArrive(e.children.at(-1).text)) {
-                        alert(`You enter the ${e.children.at(-1).text}!`)
-                        return;
-                    }
-                });
                 /*
                 //以中心比例定位(x,y)座標
                 let mousePos = manager.app.renderer.plugins.interaction.mouse.global;
@@ -81,6 +73,7 @@ export default class Manager {
         this.playerPos.x += this.player.vx;
         this.playerPos.y += this.player.vy;
         this.player.update();
+        this.homeObj.update();
     }
     resize() {
         this.w = window.innerWidth;
@@ -88,8 +81,11 @@ export default class Manager {
         this.app.renderer.resize(this.w, this.h);
         this.app.stage.x = this.app.renderer.width * 0.5;
         this.app.stage.y = this.app.renderer.height * 0.5;
+
         this.uiSystem.resize();
         this.player.resize();
+        this.homeObj.resize();
+        this.app.stage.sortChildren();
     }
     
     arrived(building, bool = true) { this.isArriveBuilding[building] = bool }
@@ -99,7 +95,7 @@ export default class Manager {
         this.loader.loadAsset(function(){
             this.app.stage.removeChildren();
             this.playerPos = this.homeDefaultPos;
-            for (let [_, value] of Object.entries(this.homeObj)) { this.app.stage.addChild(value.container); }
+            this.homeObj.reload();
             this.app.stage.addChild(this.player.container, this.uiSystem.container);
             this.app.stage.sortChildren();
         }.bind(this));

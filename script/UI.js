@@ -27,20 +27,22 @@ export default class UIsystem {
         this.crol = new CrolArrow(this.manager);
     }
     setup() {
-        for (let [_, value] of Object.entries(this.ui)) { value.setup(this.container); }
+        for (let [_, e] of Object.entries(this.ui)) { e.setup(this.container); }
         this.logo.setup(this.container);
         this.crol.setup(this.container);
-        this.crol.crolEvent();
+        this.crol.addCrolEvent();
         this.container.position.set(0, 0);
         this.manager.app.stage.addChild(this.container);
     }
     resize() {
         this.w = this.manager.w;
         this.h = this.manager.h;
-        for (let [_, value] of Object.entries(this.ui)) { value.resize(); }
+        for (let [_, e] of Object.entries(this.ui)) { e.resize(); }
+        this.logo.resize();
+        this.crol.resize();
     }
     update() {
-        for (let [_, value] of Object.entries(this.ui)) { value.update(); }
+        for (let [_, e] of Object.entries(this.ui)) { e.update(); }
         this.crol.update();
     }
 }
@@ -97,6 +99,7 @@ class UI {
         this.h = window.innerHeight;
         this.container.removeChildren();
         this.draw();
+        if (this.icon) this.addPointerEvent();
     }
     update() {
         if (this.isPointerOver) {
@@ -314,7 +317,7 @@ class CrolArrow extends UI {
             }
         }
     }
-    crolEvent(p = this.manager.player) {
+    addCrolEvent(p = this.manager.player) {
         this.container.children.forEach((e) => {
             e.on("pointerover", onOver.bind(e));
             e.on("pointerout", onOver.bind(e));
@@ -334,5 +337,12 @@ class CrolArrow extends UI {
         if ((this.left.isPointerOver && m) || k['ArrowLeft']) { this.left.downEvent(); }
         else if ((this.right.isPointerOver && m) || k['ArrowRight']) { this.right.downEvent(); }
         else { p.vx = 0; }
+    }
+    resize() {
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+        this.container.removeChildren();
+        this.draw();
+        this.addCrolEvent();
     }
 }
