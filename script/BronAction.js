@@ -14,7 +14,7 @@ class BronActionObject extends ActionObject {
         super(manager);
         this.name = "BronActionObject";
         this.draw = function(){
-            
+            //undo
         }
     }
 }
