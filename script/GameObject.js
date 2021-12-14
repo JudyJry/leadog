@@ -31,6 +31,11 @@ export class GameObject {
         this.name = "GameObject"
         this.container = new PIXI.Container();
         this.sprite = new PIXI.Sprite();
+        this.textStyle = new PIXI.TextStyle({
+            fontFamily: "GenSenRounded-B",
+            fontSize: 30,
+            fill: 0x666803,
+        });
         this.w = this.manager.w;
         this.h = this.manager.h;
         this.draw = () => { };

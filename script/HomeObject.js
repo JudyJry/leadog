@@ -54,11 +54,6 @@ class Building extends GameObject {
         this.spriteHeight = 50;
         this.textHeight = this.spriteHeight + 10;
         this.w = 1920;
-        this.UItextStyle = new PIXI.TextStyle({
-            fontFamily: "GenSenRounded-B",
-            fontSize: 30,
-            fill: 0x666803,
-        });
         this.draw = function () {
             this.drawBuilding("出生", 0.129, -0.228);
             this.drawBuilding("幼年", 0.195, -0.091);
@@ -76,7 +71,7 @@ class Building extends GameObject {
         let c = new PIXI.Container();
         c.name = n;
         c.sprite = new PIXI.Sprite();
-        c.text = new PIXI.Text(c.name, this.UItextStyle);
+        c.text = new PIXI.Text(c.name, this.textStyle);
         c.isEntering = false;
 
         c.sprite.anchor.set(0.5);

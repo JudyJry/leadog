@@ -56,6 +56,7 @@ export default class Manager {
         this.app.stage.sortChildren();
         this.keyboard.pressed = (k) => {
             this.homeObj.children.building.addEnterEvent();
+            this.bronObj.children.actionTest.addEnterEvent();
             if (k['Enter']) {
                 /*
                 //以中心比例定位(x,y)座標
@@ -76,6 +77,7 @@ export default class Manager {
         this.playerPos.y += this.player.vy;
         this.player.update();
         this.homeObj.update();
+        this.bronObj.update();
     }
     resize() {
         this.w = window.innerWidth;
@@ -100,6 +102,12 @@ export default class Manager {
             obj.setup();
             this.app.stage.addChild(this.player.container, this.uiSystem.container);
             this.app.stage.sortChildren();
+        }.bind(this));
+    }
+    loadAction(act) {
+        this.loader.loadAsset(function () {
+            this.app.stage.removeChildren();
+            act.setup();
         }.bind(this));
     }
     toOtherPage(e) {
