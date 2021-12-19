@@ -14,6 +14,7 @@
   "author": "Jell",
   "license": "ISC",
   "dependencies": {
+    "@pixi/canvas-graphics": "^6.2.0",
     "@pixi/events": "^6.2.0",
     "gsap": "npm:@gsap/member@^3.8.0",
     "jquery": "^3.6.0",

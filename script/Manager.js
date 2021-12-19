@@ -19,8 +19,9 @@ export default class Manager {
             antialias: true,
             view: document.getElementById("mainPIXI")
         });
-        this.app.stage.x = this.app.renderer.width * 0.5;
-        this.app.stage.y = this.app.renderer.height * 0.5;
+        this.anchor = 0.5;
+        this.app.stage.x = this.app.renderer.width * this.anchor;
+        this.app.stage.y = this.app.renderer.height * this.anchor;
         this.loader = new ResourceLoader(this.app);
         this.loader.loadTexture([
             "image/home.svg",
@@ -42,12 +43,14 @@ export default class Manager {
         this.mouse = new Mouse(this);
         this.uiSystem = new UIsystem(this);
 
+
         this.isArriveBuilding = {};
         this.homeDefaultPos = { x: this.w * 0.35, y: this.h * 0.35 };
         this.playerPos = JSON.parse(JSON.stringify(this.homeDefaultPos));
         this.player = new Player(this);
         this.homeObj = new HomeObject(this);
         this.bronObj = new BronObject(this);
+        this.activeObj = this.homeObj;
     }
     setup() {
         this.uiSystem.setup();
@@ -76,15 +79,14 @@ export default class Manager {
         this.playerPos.x += this.player.vx;
         this.playerPos.y += this.player.vy;
         this.player.update();
-        this.homeObj.update();
-        this.bronObj.update();
+        this.activeObj.update();
     }
     resize() {
         this.w = window.innerWidth;
         this.h = window.innerHeight;
         this.app.renderer.resize(this.w, this.h);
-        this.app.stage.x = this.app.renderer.width * 0.5;
-        this.app.stage.y = this.app.renderer.height * 0.5;
+        this.app.stage.x = this.app.renderer.width * this.anchor;
+        this.app.stage.y = this.app.renderer.height * this.anchor;
 
         this.uiSystem.resize();
         this.player.resize();
@@ -97,17 +99,26 @@ export default class Manager {
 
     loadPage(obj) {
         this.loader.loadAsset(function () {
+            this.anchor = 0.5;
+            this.app.stage.x = this.app.renderer.width * this.anchor;
+            this.app.stage.y = this.app.renderer.height * this.anchor;
             this.app.stage.removeChildren();
             this.playerPos = this.homeDefaultPos;
-            obj.setup();
+            this.activeObj = obj;
+            this.activeObj.setup();
             this.app.stage.addChild(this.player.container, this.uiSystem.container);
             this.app.stage.sortChildren();
         }.bind(this));
     }
     loadAction(act) {
         this.loader.loadAsset(function () {
+            this.anchor = 0;
+            this.app.stage.x = this.app.renderer.width * this.anchor;
+            this.app.stage.y = this.app.renderer.height * this.anchor;
             this.app.stage.removeChildren();
-            act.setup();
+            this.activeObj = act;
+            this.activeObj.setup();
+            console.log(act.children);
         }.bind(this));
     }
     toOtherPage(e) {
@@ -155,7 +166,7 @@ export default class Manager {
             t.position.set(0, 0);
             this.app.stage.addChild(t, this.player.container, this.uiSystem.container);
             this.app.stage.sortChildren();
-        }.bind(this),()=>{
+        }.bind(this), () => {
             e.isEntering = false;
         });
     }
