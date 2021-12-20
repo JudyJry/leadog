@@ -55,7 +55,7 @@ export default class Manager {
     setup() {
         this.uiSystem.setup();
         this.player.setup();
-        this.homeObj.setup();
+        this.activeObj.setup();
         this.app.stage.sortChildren();
         this.keyboard.pressed = (k) => {
             this.homeObj.children.building.addEnterEvent();
@@ -72,6 +72,9 @@ export default class Manager {
                 */
             }
         }
+        this.app.ticker.add((_)=>{
+            this.update();
+        })
     }
     update() {
         this.uiSystem.update();
@@ -118,7 +121,6 @@ export default class Manager {
             this.app.stage.removeChildren();
             this.activeObj = act;
             this.activeObj.setup();
-            console.log(act.children);
         }.bind(this));
     }
     toOtherPage(e) {

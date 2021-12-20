@@ -7,7 +7,8 @@ export class Action extends PageObject{
 }
 
 export class ActionObject extends GameObject{
-    constructor(manager) {
+    constructor(manager,action) {
         super(manager);
+        this.action = action;
     }
 }
