@@ -24,6 +24,9 @@ export default class BronAction extends Action {
         });
         let bool = b.reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= 8 ? true : false;
         console.log(bool);
+        if (bool) {
+            this.children.video.videoCrol.pause();
+        }
     }
 }
 
@@ -126,7 +129,11 @@ class Video extends ActionObject {
         };
     }
     loadVideo(){
-        this.sprite.from("video/V_20211021_114529_D0.mp4");
+        this.sprite = new PIXI.Sprite.from("video/V_20211021_114529_D0.mp4");
+        this.videoCrol = this.sprite.texture.baseTexture.resource.source;
+        this.videoCrol.loop = true;
+        this.videoCrol.muted = true;
         this.container.addChild(this.sprite);
+        console.log(this.videoCrol);
     }
 }
