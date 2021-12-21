@@ -6,7 +6,7 @@ export default class BronAction extends Action {
         this.name = "BronAction";
         this.offset = 50;
         this.children = {
-            "video" : new Video(manager,this),
+            "video": new Video(manager, this),
             "line": new Line(manager, this),
             "rope": new Rope(manager, this)
         }
@@ -22,7 +22,7 @@ export default class BronAction extends Action {
                 if (j < (i + 1) * mul && j >= i * mul) { return Math.abs(h[j].x - v[i].x) < this.offset && Math.abs(h[j].y - v[i].y) < this.offset; }
             }).some(e => e);
         });
-        let bool = b.reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= 8 ? true : false;
+        let bool = b.reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= v.length / 2 ? true : false;
         console.log(bool);
         if (bool) {
             this.children.video.videoCrol.pause();
@@ -100,8 +100,8 @@ class Line extends ActionObject {
     drawLine(options) {
         let Options = {
             lineStyle: this.lineStyle,
-            draw: (line)=>{
-                line.moveTo(200,200);
+            draw: (line) => {
+                line.moveTo(200, 200);
                 line.bezierCurveTo(200, 200, 300, 100, 100, 100);
             },
             ...options
@@ -128,7 +128,7 @@ class Video extends ActionObject {
             this.loadVideo();
         };
     }
-    loadVideo(){
+    loadVideo() {
         this.sprite = new PIXI.Sprite.from("video/V_20211021_114529_D0.mp4");
         this.videoCrol = this.sprite.texture.baseTexture.resource.source;
         this.videoCrol.loop = true;
