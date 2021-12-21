@@ -47,7 +47,7 @@ export default class UIsystem {
     }
 }
 
-class UI {
+export class UI {
     constructor(manager) {
         this.manager = manager;
         this.name = "UI";
