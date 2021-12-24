@@ -26,7 +26,6 @@ class Background extends GameObject {
         super(manager);
         this.name = "Background"
         this.container.zIndex = 10;
-        this.spriteHeight = this.sprite.texture.height;
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from("image/map.svg");
             this.spriteHeight = this.sprite.texture.height + 900;

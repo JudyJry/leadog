@@ -5,12 +5,12 @@ export default class BronAction extends Action {
         super(manager);
         this.name = "BronAction";
         this.offset = 50;
-        this.isPlay = false;
+        this.isPlay = true;
         this.children = {
             "video": new Video(manager, this),
             "line": new Line(manager, this),
             "rope": new Rope(manager, this),
-            "ui": new UI(manager, this)
+            //"ui": new UI(manager, this)
         }
     }
     onRopeComplete() {
@@ -25,7 +25,7 @@ export default class BronAction extends Action {
         }).reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= v.length / 2 ? true : false;
         console.log(isPass);
         if (isPass) {
-            this.children.video.videoCrol.pause();
+            this.children.video.pause();
         }
     }
 }
@@ -139,6 +139,12 @@ class Video extends ActionObject {
         this.videoCrol.muted = true;
         this.container.addChild(this.sprite);
         console.log(this.videoCrol);
+    }
+    play(){
+        this.videoCrol.play();
+    }
+    pause(){
+        this.videoCrol.pause();
     }
 }
 
