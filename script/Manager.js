@@ -15,7 +15,7 @@ export default class Manager {
         this.app = new PIXI.Application({
             width: this.w,
             height: this.h,
-            backgroundColor: 0xc1f9f8,
+            backgroundColor: 0xe0f9fd,
             antialias: true,
             view: document.getElementById("mainPIXI")
         });
@@ -23,21 +23,7 @@ export default class Manager {
         this.app.stage.x = this.app.renderer.width * this.anchor;
         this.app.stage.y = this.app.renderer.height * this.anchor;
         this.loader = new ResourceLoader(this.app);
-        this.loader.loadTexture([
-            "image/home.svg",
-            "image/location.svg",
-            "image/logo.svg",
-            "image/map.svg",
-            "image/menu.svg",
-            "image/notify.svg",
-            "image/player.svg",
-            "image/point.svg",
-            "image/question.svg",
-            "image/search.svg",
-            "image/setting.svg",
-            "image/user.svg",
-            "image/wave.svg",
-        ]);
+        this.loader.loadTexture(loadList);
 
         this.keyboard = new Keyboard();
         this.mouse = new Mouse(this);
@@ -173,3 +159,21 @@ export default class Manager {
         });
     }
 }
+
+const loadList =[
+    "image/home.svg",
+    "image/location.svg",
+    "image/logo.svg",
+    "image/map.jpeg",
+    "image/menu.svg",
+    "image/notify.svg",
+    "image/player.svg",
+    "image/point.svg",
+    "image/question.svg",
+    "image/search.svg",
+    "image/setting.svg",
+    "image/user.svg",
+    "image/wave.svg",
+    "video/childhood_kelly.mp4",
+    "image/video/know.png"
+];

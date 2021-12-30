@@ -115,6 +115,7 @@ class Logo extends UI {
         super();
         this.name = "Logo";
         this.sprite = new PIXI.Sprite();
+        this.scale = 0.75;
         this.draw = function (x = -0.45, y = 0.45) {
             let _x = (x * this.w);
             let _y = (y * this.h);

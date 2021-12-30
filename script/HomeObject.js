@@ -15,8 +15,8 @@ export default class HomeObject extends PageObject {
         this.children = {
             "background": new Background(manager),
             "wave": new Wave(manager),
-            "building": new Building(manager),
-            "tree": new Tree(manager)
+            "building": new Building(manager)
+            //"tree": new Tree(manager)
         };
     }
 }
@@ -27,8 +27,8 @@ class Background extends GameObject {
         this.name = "Background"
         this.container.zIndex = 10;
         this.draw = function () {
-            this.sprite.texture = PIXI.Texture.from("image/map.svg");
-            this.spriteHeight = this.sprite.texture.height + 900;
+            this.sprite.texture = PIXI.Texture.from("image/map.jpeg");
+            this.spriteHeight = this.sprite.texture.height+300;
             this.sprite.anchor.set(0.5);
             this.manager.canvasScale = this.h / this.spriteHeight;
             this.sprite.scale.set(this.manager.canvasScale);
