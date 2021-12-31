@@ -41,8 +41,7 @@ export default class ResourceLoader {
                 this.setProgress(100);
                 this.init();
                 onComplete();
-            })
-            .catch(() => { console.log('fall reload') });
+            });
     }
     init() {
         gsap.to(this.page, {

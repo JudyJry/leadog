@@ -1,6 +1,11 @@
 import * as PIXI from 'pixi.js';
 import { PageObject, GameObject } from "./GameObject";
 import { UI } from "./UI";
+import gsap from "gsap";
+import { PixiPlugin } from "gsap/PixiPlugin";
+
+gsap.registerPlugin(PixiPlugin);
+PixiPlugin.registerPIXI(PIXI);
 
 export class ActionPage extends PageObject {
     constructor(manager) {
@@ -29,11 +34,15 @@ export class ActionVideo extends GameObject {
         super(manager);
         this.action = action;
         this.name = "Video";
+        this.isStart = false;
         this.draw = function () {
-            this.loadVideo(url);
+            this.loadVideo(url, 0, 0);
         }
     }
-    loadVideo(url) {
+    loadVideo(url, x, y) {
+        let _x = (x * this.w) - (this.w * 0.5);
+        let _y = (y * this.h) - (this.h * 0.5);
+
         this.sprite = new PIXI.Sprite.from(url);
         this.videoTexture = this.sprite.texture.baseTexture;
         this.videoCrol = this.videoTexture.resource.source;
@@ -43,15 +52,33 @@ export class ActionVideo extends GameObject {
         this.duration = this.videoCrol.duration;
         this.currentTime = this.videoCrol.currentTime;
         this.container.addChild(this.sprite);
-        console.log(this.videoTexture);
-        console.log(this.videoCrol);
+
+        this.container.position.set(_x, _y);
+        this.videoCrol.ontimeupdate = () => {
+            this.currentTime = this.videoCrol.currentTime;
+        };
+    }
+    onPlayGame() {
+        this.pause();
+        let bg = new PIXI.Graphics()
+            .beginFill(0x000000)
+            .drawRect(-this.w / 2, -this.h / 2, this.w, this.h);
+        bg.alpha = 0;
+        this.manager.app.stage.addChild(bg);
+        gsap.to(bg, { duration: 1, alpha: 0.2 });
+    }
+    test() {
+        if (this.manager.mouse.isPressed && this.isStart) {
+            if (!this.videoCrol.paused) { this.pause(); console.log(this.currentTime); }
+            else { this.play(); }
+        }
     }
     update() {
         //if (this.videoCrol.ended) this.onEnd();
+
     }
     play() {
         this.videoCrol.play();
-        console.log("video play.");
     }
     pause() {
         this.videoCrol.pause();
@@ -65,7 +92,7 @@ export class ActionLine {
         this.name = "Line";
         this.lineStyle = {
             width: 5,
-            color: 0x000000,
+            color: 0xFFFFFF,
             cap: PIXI.LINE_CAP.ROUND,
             join: PIXI.LINE_JOIN.ROUND
         };
@@ -93,7 +120,7 @@ export class ActionLine {
     resize() { }
     update() { }
 }
-export class ActionRope extends GameObject{
+export class ActionRope extends GameObject {
     constructor(manager, action) {
         super(manager);
         this.name = "Rope";
@@ -110,7 +137,7 @@ export class ActionRope extends GameObject{
             this.points.push(new PIXI.Point(0, 0));
         }
         this.texture = new PIXI.Graphics()
-            .beginFill(0xffffff)
+            .beginFill(0xFFA411)
             .drawCircle(0, 0, 5)
             .endFill()
         this.line = new PIXI.SimpleRope(this.manager.app.renderer.generateTexture(this.texture), this.points);
@@ -154,15 +181,25 @@ export class ActionUI {
         this.name = "ActionUI";
         this.container = new PIXI.Container();
         this.sprite = new PIXI.Sprite();
+        this.UItextStyle = new PIXI.TextStyle({
+            fontFamily: "GenSenRounded-B",
+            fontSize: 48,
+            fill: 0x666803,
+        });
+        this.UItextStyleSmall = new PIXI.TextStyle({
+            fontFamily: "GenSenRounded-B",
+            fontSize: 30,
+            fill: 0x666803,
+        });
         this.draw = undefined;
         this.w = window.innerWidth;
         this.h = window.innerHeight;
-        this.scale = 0.3;
+        this.scale = 0.5;
     }
-    setPosition(x, y, anchor = this.manager.anchor) {
-        let _x = (x * this.w) + (this.w * anchor);
-        let _y = (y * this.h) + (this.h * anchor);
-        this.container.position.set(_x, _y);
+    setPosition(e, x, y) {
+        let _x = (x * this.w);
+        let _y = (y * this.h);
+        e.position.set(_x, _y);
     }
     setInteract(e = this.sprite) {
         e.interactive = true;
@@ -188,6 +225,11 @@ export class ActionUI {
         this.draw();
     }
     update() {
-
+        if (this.isPointerOver) {
+            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
+        }
+        else {
+            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
+        }
     }
 }

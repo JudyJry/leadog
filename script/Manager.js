@@ -88,7 +88,6 @@ export default class Manager {
 
     loadPage(obj) {
         this.loader.loadAsset(function () {
-            this.anchor = 0.5;
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
             this.app.stage.removeChildren();
@@ -101,7 +100,6 @@ export default class Manager {
     }
     loadAction(act) {
         this.loader.loadAsset(function () {
-            this.anchor = 0;
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
             this.app.stage.removeChildren();
