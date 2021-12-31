@@ -12,22 +12,7 @@ export class ActionPage extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "ActionPage";
-        this.offset = 50;
         this.isPlayGame = false;
-    }
-    onRopeComplete(c = this.children) {
-        if (!c) return;
-        let v = c.line.getPoints().slice().reverse();
-        //let h = [...new Set(c.rope.history.map(e => JSON.stringify(e)))].map(e => JSON.parse(e));
-        let h = c.history;
-        let mul = Math.floor(h.length / v.length) === 0 ? 1 : Math.floor(h.length / v.length);
-        let isPass = v.map((_, i, v) => {
-            return h.map((_, j, h) => {
-                if (j < (i + 1) * mul && j >= i * mul) { return Math.abs(h[j].x - v[i].x) < this.offset && Math.abs(h[j].y - v[i].y) < this.offset; }
-            }).some(e => e);
-        }).reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= v.length / 2 ? true : false;
-        //console.log(isPass);
-        if (isPass) { c.video.pause() }
     }
 }
 export class ActionVideo extends GameObject {
@@ -38,13 +23,15 @@ export class ActionVideo extends GameObject {
         this.isStart = false;
         this.draw = function () {
             this.loadVideo(url, 0, 0);
+            this.drawBg();
         }
     }
     loadVideo(url, x, y) {
-        let _x = (x * this.w) - (this.w * 0.5);
-        let _y = (y * this.h) - (this.h * 0.5);
+        let _x = (x * this.w);
+        let _y = (y * this.h);
 
         this.sprite = new PIXI.Sprite.from(url);
+        this.sprite.anchor.set(0.5);
         this.videoTexture = this.sprite.texture.baseTexture;
         this.videoCrol = this.videoTexture.resource.source;
         this.videoTexture.autoPlay = false;
@@ -59,14 +46,21 @@ export class ActionVideo extends GameObject {
             this.currentTime = this.videoCrol.currentTime;
         };
     }
-    onPlayGame() {
-        this.pause();
-        let bg = new PIXI.Graphics()
+    drawBg() {
+        this.bg = new PIXI.Graphics()
             .beginFill(ColorSlip.black)
             .drawRect(-this.w / 2, -this.h / 2, this.w, this.h);
-        bg.alpha = 0;
-        this.manager.app.stage.addChild(bg);
-        gsap.to(bg, { duration: 1, alpha: 0.5 });
+        this.bg.alpha = 0;
+        this.container.addChild(this.bg);
+
+    }
+    onPlayGame() {
+        this.pause();
+        gsap.to(this.bg, { duration: 1, alpha: 0.5 });
+    }
+    onClearGame() {
+        this.action.isPlayGame = false;
+        gsap.to(this.bg, { duration: 1, alpha: 0, onComplete: function () { this.play(); }.bind(this) });
     }
     test() {
         if (this.manager.mouse.isPressed && this.isStart) {
@@ -86,9 +80,9 @@ export class ActionVideo extends GameObject {
     }
     onEnd() { console.log("video end."); }
 }
-export class ActionLine {
+export class ActionLine extends GameObject {
     constructor(manager, action) {
-        this.manager = manager;
+        super(manager);
         this.action = action;
         this.name = "Line";
         this.lineStyle = {
@@ -97,15 +91,8 @@ export class ActionLine {
             cap: PIXI.LINE_CAP.ROUND,
             join: PIXI.LINE_JOIN.ROUND
         };
-        this.container = new PIXI.Container();
-        this.sprite = new PIXI.Graphics();
-        this.drawLine = undefined;
-        this.draw = function () {
-            this.sprite.clear();
-            this.sprite.lineStyle(this.lineStyle);
-            this.drawLine(this.sprite);
-            this.container.addChild(this.sprite);
-        }
+        this.sprite = new PIXI.Graphics().lineStyle(this.lineStyle);
+        this.container.alpha = 1;
     }
     getPoints() {
         let points = this.sprite.geometry.graphicsData[0].shape.points;
@@ -115,16 +102,21 @@ export class ActionLine {
         }
         return values;
     }
-    setup() {
-        this.manager.app.stage.addChild(this.container);
+    update() {
+        if (this.action.isPlayGame) {
+            gsap.to(this.container, { duration: 0.5, alpha: 1 });
+        }
+        else {
+            this.container.alpha = 0;
+        }
     }
-    resize() { }
-    update() { }
 }
 export class ActionRope extends GameObject {
     constructor(manager, action) {
         super(manager);
+        this.action = action;
         this.name = "Rope";
+        this.offset = 50;
         this.isFrist = true;
         this.draw = function () {
             this.drawRope();
@@ -141,16 +133,17 @@ export class ActionRope extends GameObject {
             .beginFill(ColorSlip.lightOrange)
             .drawCircle(0, 0, 5)
             .endFill()
-        this.line = new PIXI.SimpleRope(this.manager.app.renderer.generateTexture(this.texture), this.points);
-        //this.line.blendmode = PIXI.BLEND_MODES.ADD;
-        this.container.addChild(this.line);
+        this.rope = new PIXI.SimpleRope(this.manager.app.renderer.generateTexture(this.texture), this.points);
+        //this.rope.blendmode = PIXI.BLEND_MODES.ADD;
+        this.container.addChild(this.rope);
+        this.container.position.set(-this.w / 2, -this.h / 2);
     }
     onPlay() {
         if (this.manager.mouse.isPressed) {
             if (this.isFrist) {
                 this.isFrist = false;
             }
-            //console.log(`lineTo:${this.manager.mouse.x},${this.manager.mouse.y}`);
+            console.log(`lineTo:${this.manager.mouse.x},${this.manager.mouse.y}`);
             this.history.unshift({ x: this.manager.mouse.x, y: this.manager.mouse.y });
             for (let i = 0; i < this.ropeSize; i++) {
                 try {
@@ -165,14 +158,28 @@ export class ActionRope extends GameObject {
         }
         else {
             if (this.isFrist == false) {
-                this.action.onRopeComplete();
+                this.onRopeComplete();
                 this.isFrist = true;
             }
             this.history = [];
         }
     }
+    onRopeComplete(c = this.action.children) {
+        if (!c) return;
+        let v = c.line.getPoints().slice().reverse();
+        //let h = [...new Set(c.rope.history.map(e => JSON.stringify(e)))].map(e => JSON.parse(e));
+        let h = c.rope.history;
+        let mul = Math.floor(h.length / v.length) === 0 ? 1 : Math.floor(h.length / v.length);
+        let isPass = v.map((_, i, v) => {
+            return h.map((_, j, h) => {
+                if (j < (i + 1) * mul && j >= i * mul) { return Math.abs(h[j].x - v[i].x) < this.offset && Math.abs(h[j].y - v[i].y) < this.offset; }
+            }).some(e => e);
+        }).reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= v.length / 2 ? true : false;
+        console.log(isPass);
+        if (isPass) { c.video.onClearGame(); }
+    }
     update() {
-        if (this.action.isPlay) this.onPlay();
+        if (this.action.isPlayGame) this.onPlay();
     }
 }
 export class ActionUI {
@@ -232,5 +239,34 @@ export class ActionUI {
         else {
             gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
         }
+    }
+}
+export class ActionCountDown extends GameObject {
+    constructor(manager, action) {
+        super(manager);
+        this.action = action;
+        this.name = "ActionCountDown";
+        this.scale = 0.25;
+        this.times = 0;
+        this.textureList = [
+            PIXI.Texture.from("image/video/count5.png"),
+            PIXI.Texture.from("image/video/count4.png"),
+            PIXI.Texture.from("image/video/count3.png"),
+            PIXI.Texture.from("image/video/count2.png"),
+            PIXI.Texture.from("image/video/count1.png"),
+        ]
+        this.draw = function (x = 0.45, y = -0.42) {
+            let _x = (x * this.w);
+            let _y = (y * this.h);
+            this.sprite.texture = this.textureList[0];
+            this.sprite.anchor.set(0.5);
+            this.sprite.scale.set(this.scale);
+            this.sprite.position.set(_x, _y);
+            this.container.addChild(this.sprite);
+        }
+    }
+    update() {
+        this.times += this.manager.deltaTime;
+        this.sprite.texture = this.textureList[Math.floor(this.times)];
     }
 }

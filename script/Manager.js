@@ -29,7 +29,7 @@ export default class Manager {
         this.keyboard = new Keyboard();
         this.mouse = new Mouse(this);
         this.uiSystem = new UIsystem(this);
-
+        this.deltaTime = 0;
 
         this.isArriveBuilding = {};
         this.homeDefaultPos = { x: this.w * 0.35, y: this.h * 0.35 };
@@ -59,7 +59,8 @@ export default class Manager {
                 */
             }
         }
-        this.app.ticker.add((_)=>{
+        this.app.ticker.add((delta) => {
+            this.deltaTime = (1 / 60) * delta;
             this.update();
         })
     }
@@ -159,7 +160,7 @@ export default class Manager {
     }
 }
 
-const loadList =[
+const loadList = [
     "image/home.svg",
     "image/location.svg",
     "image/logo.svg",
@@ -173,6 +174,15 @@ const loadList =[
     "image/setting.svg",
     "image/user.svg",
     "image/wave.svg",
+    "image/video/count5.png",
+    "image/video/count4.png",
+    "image/video/count3.png",
+    "image/video/count2.png",
+    "image/video/count1.png",
+    "image/video/know.png",
+    "image/video/cursor.png",
+    "image/video/cursorHint.png",
     "video/childhood_kelly.mp4",
-    "image/video/know.png"
+    "image/video/childhood/Kelly/stage_1_title.png",
+    "image/video/childhood/Kelly/stage_1_hint.png",
 ];

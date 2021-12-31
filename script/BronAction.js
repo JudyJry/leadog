@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
-import { ActionPage, ActionUI, ActionVideo, ActionLine, ActionRope } from "./Action";
+import { ActionPage, ActionUI, ActionVideo, ActionLine, ActionRope, ActionCountDown } from "./Action";
 export default class BronAction extends ActionPage {
     constructor(manager) {
         super(manager);
@@ -9,25 +9,26 @@ export default class BronAction extends ActionPage {
         this.isPlayGame = false;
         this.children = {
             "video": new childhoodVideo(manager, this, "video/childhood_kelly.mp4"),
-            "ui_start": new UI_Start(manager, this)
+            "rope": new ActionRope(manager, this),
+            "ui": new UI_Start(manager, this)
         }
-        //this.children.line.drawLine = (e) => { e.moveTo(50, 50).bezierCurveTo(50, 50, 200, 100, 100, 100); }
     }
-
 }
 
 class childhoodVideo extends ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "childhoodVideo";
-        this.pauseTime = [10.5,20,30,40];
+        this.pauseTime = [10.5, 20, 30, 40];
         this.count = 0;
     }
     update() {
-        this.test();
+        //this.test();
         if (this.currentTime > this.pauseTime[this.count]) {
             this.action.isPlayGame = true;
             this.onPlayGame();
+            this.action.children.ui = new UI_Stage1(this.manager, this.action);
+            this.action.children.ui.setup();
             this.count++;
         }
     }
@@ -76,7 +77,7 @@ class UI_Start extends ActionUI {
         tl.to(this.container, {
             duration: 1, alpha: 0, onComplete: function () {
                 this.manager.app.stage.removeChild(this.container);
-                this.container.destroy();
+                this.container.destroy({ children: true });
                 this.manager.app.stage.addChild(text);
             }.bind(this)
         });
@@ -91,3 +92,60 @@ class UI_Start extends ActionUI {
         }, "+=2");
     }
 }
+
+class UI_Stage1 extends ActionUI {
+    constructor(manager, action) {
+        super(manager, action);
+        this.name = "UI_Start";
+        this.countdown = new ActionCountDown(manager, action);
+        this.action.children.line = new Stage1_Line(manager, action);
+        this.scale = 1;
+        this.draw = function () {
+            this.countdown.setup();
+            this.action.children.line.setup();
+
+            let title = PIXI.Sprite.from("image/video/childhood/Kelly/stage_1_title.png");
+            let hint = PIXI.Sprite.from("image/video/childhood/Kelly/stage_1_hint.png");
+            title.anchor.set(0.5);
+            title.scale.set(this.scale);
+            this.setPosition(title, 0.38, -0.42);
+            hint.anchor.set(0.5);
+            hint.scale.set(this.scale);
+            this.setPosition(hint, -0.25, 0.05);
+
+            this.container.addChild(title, hint);
+            this.container.alpha = 0;
+            let tl = gsap.timeline();
+            tl.to(this.container, { duration: 1, alpha: 1 });
+        }
+    }
+    update() {
+        try {
+            if (Math.floor(this.countdown.times) > 5) {
+                this.manager.app.stage.removeChild(this.countdown.container);
+                this.countdown.sprite.destroy();
+                this.countdown.container.destroy();
+                this.countdown = undefined;
+            }
+            else {
+                this.countdown.update();
+            }
+        }
+        catch {
+            this.countdown = new ActionCountDown(this.manager, this.action);
+            this.countdown.setup();
+        }
+    }
+}
+class Stage1_Line extends ActionLine {
+    constructor(manager, action) {
+        super(manager, action);
+        this.draw = function () {
+            this.sprite.moveTo(1109, 365).bezierCurveTo(1109, 365, 1196, 446, 1217, 552);
+            //this.sprite.moveTo(0, 0).bezierCurveTo(0, 0, 87, 81, 108, 187);
+            this.container.addChild(this.sprite);
+            this.container.position.set(-this.w / 2, -this.h / 2);
+        }
+    }
+}
+
