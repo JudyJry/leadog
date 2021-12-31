@@ -4,6 +4,7 @@ import { PixiPlugin } from "gsap/PixiPlugin";
 import { GlowFilter } from 'pixi-filters';
 import { GameObject, PageObject } from './GameObject.js';
 import * as gf from "./GameFunction.js";
+import { ColorSlip } from "./ColorSlip.js";
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -45,7 +46,7 @@ class Building extends GameObject {
             distance: 6,
             outerStrength: 6,
             innerStrength: 0,
-            color: 0xedda6e,
+            color: ColorSlip.yellow,
             quality: 0.5
         });
         this.container.zIndex = 30;
@@ -120,7 +121,7 @@ class Tree extends GameObject {
             distance: 5,
             outerStrength: 5,
             innerStrength: 0,
-            color: 0xedda6e,
+            color: ColorSlip.yellow,
             quality: 0.5
         });
         this.angle = 15 * (Math.PI / 180);

@@ -6,6 +6,7 @@ import UIsystem from './UI.js';
 import Player from './Player.js';
 import HomeObject from "./HomeObject.js";
 import BronObject from './BronObject.js';
+import { ColorSlip } from "./ColorSlip.js";
 
 export default class Manager {
     constructor() {
@@ -146,7 +147,7 @@ export default class Manager {
             let t = new PIXI.Text(`這是一個未完成的${e.name}頁面`, new PIXI.TextStyle({
                 fontFamily: "GenSenRounded-B",
                 fontSize: 30,
-                fill: 0x666803,
+                fill: ColorSlip.darkOrange,
             }));
             t.anchor.set(0.5);
             t.position.set(0, 0);

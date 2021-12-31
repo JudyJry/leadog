@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import { ColorSlip } from "./ColorSlip.js";
 
 export class PageObject {
     constructor(manager) {
@@ -34,7 +35,7 @@ export class GameObject {
         this.textStyle = new PIXI.TextStyle({
             fontFamily: "GenSenRounded-B",
             fontSize: 30,
-            fill: 0x666803,
+            fill: ColorSlip.darkOrange,
         });
         this.w = this.manager.w;
         this.h = this.manager.h;

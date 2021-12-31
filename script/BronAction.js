@@ -20,14 +20,15 @@ class childhoodVideo extends ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "childhoodVideo";
-        this.pauseTime = 10;
+        this.pauseTime = [10.5,20,30,40];
+        this.count = 0;
     }
     update() {
         this.test();
-        if (Math.floor(this.currentTime) === this.pauseTime) {
+        if (this.currentTime > this.pauseTime[this.count]) {
             this.action.isPlayGame = true;
             this.onPlayGame();
-            this.pauseTime = 20;
+            this.count++;
         }
     }
 }

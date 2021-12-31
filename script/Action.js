@@ -3,6 +3,7 @@ import { PageObject, GameObject } from "./GameObject";
 import { UI } from "./UI";
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
+import { ColorSlip } from './ColorSlip';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -61,11 +62,11 @@ export class ActionVideo extends GameObject {
     onPlayGame() {
         this.pause();
         let bg = new PIXI.Graphics()
-            .beginFill(0x000000)
+            .beginFill(ColorSlip.black)
             .drawRect(-this.w / 2, -this.h / 2, this.w, this.h);
         bg.alpha = 0;
         this.manager.app.stage.addChild(bg);
-        gsap.to(bg, { duration: 1, alpha: 0.2 });
+        gsap.to(bg, { duration: 1, alpha: 0.5 });
     }
     test() {
         if (this.manager.mouse.isPressed && this.isStart) {
@@ -92,7 +93,7 @@ export class ActionLine {
         this.name = "Line";
         this.lineStyle = {
             width: 5,
-            color: 0xFFFFFF,
+            color: ColorSlip.white,
             cap: PIXI.LINE_CAP.ROUND,
             join: PIXI.LINE_JOIN.ROUND
         };
@@ -137,7 +138,7 @@ export class ActionRope extends GameObject {
             this.points.push(new PIXI.Point(0, 0));
         }
         this.texture = new PIXI.Graphics()
-            .beginFill(0xFFA411)
+            .beginFill(ColorSlip.lightOrange)
             .drawCircle(0, 0, 5)
             .endFill()
         this.line = new PIXI.SimpleRope(this.manager.app.renderer.generateTexture(this.texture), this.points);

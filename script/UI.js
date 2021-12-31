@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import * as gf from "./GameFunction.js";
-import { ColorSlip } from "ColorSlip.js";
+import { ColorSlip } from "./ColorSlip.js";
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -66,7 +66,7 @@ export class UI {
         this.UItextStyleSmall = new PIXI.TextStyle({
             fontFamily: "GenSenRounded-B",
             fontSize: 18,
-            fill: 0x666803,
+            fill: ColorSlip.darkOrange,
         });
     }
     drawIcon(path, anchor = 0.5) {
