@@ -6,6 +6,7 @@ import UIsystem from './UI.js';
 import Player from './Player.js';
 import HomeObject from "./HomeObject.js";
 import BronObject from './BronObject.js';
+import ChildhoodObject from './ChildhoodObject.js';
 import { ColorSlip } from "./ColorSlip.js";
 
 export default class Manager {
@@ -37,6 +38,7 @@ export default class Manager {
         this.player = new Player(this);
         this.homeObj = new HomeObject(this);
         this.bronObj = new BronObject(this);
+        this.childhoodObj = new ChildhoodObject(this);
         this.activeObj = this.homeObj;
     }
     setup() {
@@ -115,7 +117,7 @@ export default class Manager {
                 this.loadPage(this.bronObj);
                 break;
             case "幼年":
-                this.toUndonePage(e);
+                this.loadPage(this.childhoodObj);
                 break;
             case "壯年":
                 this.toUndonePage(e);

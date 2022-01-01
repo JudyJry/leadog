@@ -10,10 +10,10 @@ import { ColorSlip } from './ColorSlip.js';
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
-export default class BronObject extends PageObject {
+export default class ChildhoodObject extends PageObject {
     constructor(manager) {
         super(manager);
-        this.name = "BronObject";
+        this.name = "ChildhoodObject";
         this.children = {
             "background": new Background(manager),
             "distributionMap": new DistributionMap(manager),

@@ -2,23 +2,23 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { ActionPage, ActionUI, ActionVideo, ActionLine, ActionRope, ActionCountDown, ActionGoodjob } from "./Action";
 
-export default class BronAction extends ActionPage {
+export default class ChildhoodAction extends ActionPage {
     constructor(manager) {
         super(manager);
-        this.name = "BronAction";
+        this.name = "ChildhoodAction";
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "video": new childhoodVideo(manager, this, "video/childhood_kelly.mp4"),
+            "video": new ChildhoodVideo(manager, this, "video/childhood_kelly.mp4"),
             "rope": new ActionRope(manager, this),
             "ui": new UI_Start(manager, this)
         }
     }
 }
-class childhoodVideo extends ActionVideo {
+class ChildhoodVideo extends ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
-        this.name = "childhoodVideo";
+        this.name = "ChildhoodVideo";
         this.pauseTime = [10.5, 20, 30, 40];
         this.uiTime = [
             new UI_Stage1(this.manager, this.action),
@@ -132,6 +132,7 @@ class UI_Stage1 extends ActionUI {
                 this.manager.app.stage.removeChild(this.action.children.line.container);
                 this.container.destroy({ children: true });
                 this.action.children.line.container.destroy({ children: true });
+                this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
                 delete this.action.children.ui;
             }.bind(this)
@@ -161,6 +162,7 @@ class Stage1_Line extends ActionLine {
         this.draw = function () {
             this.sprite.moveTo(1109, 365).bezierCurveTo(1109, 365, 1196, 446, 1217, 552);
             //this.sprite.moveTo(0, 0).bezierCurveTo(0, 0, 87, 81, 108, 187);
+            this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
             this.manager.app.stage.sortChildren();

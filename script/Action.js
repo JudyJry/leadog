@@ -3,9 +3,11 @@ import { PageObject, GameObject } from "./GameObject";
 import { UI } from "./UI";
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ColorSlip } from './ColorSlip';
 
 gsap.registerPlugin(PixiPlugin);
+gsap.registerPlugin(MotionPathPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
 export class ActionPage extends PageObject {
@@ -95,17 +97,37 @@ export class ActionLine extends GameObject {
         this.container.zIndex = 10;
         this.container.alpha = 1;
     }
+    drawHint() {
+        this.hint = PIXI.Sprite.from("image/video/cursorHint.png");
+        this.hint.anchor.set(0.5);
+        this.hint.scale.set(0.3);
+        this.container.addChild(this.hint);
+    }
+    hintAnim() {
+        if (this.hint)
+            this.hintGsap = gsap.to(this.hint, {
+                duration: 1, repeat: -1, motionPath: {
+                    path: this.getPoints(),
+                    fromCurrent: false,
+                    offsetX: -50,
+                    offsetY: 50
+                }
+            });
+    }
     getPoints() {
+        if (this.values) return this.values;
         let points = this.sprite.geometry.graphicsData[0].shape.points;
         let values = [];
         for (let i = 0; i < points.length; i += 2) {
             values.push({ x: points[i], y: points[i + 1] });
         }
-        return values;
+        this.values = values;
+        return this.values;
     }
     update() {
         if (this.action.isPlayGame && this.isFrist) {
             gsap.to(this.container, { duration: 0.5, alpha: 1 });
+            this.hintAnim();
             this.isFrist = false;
         }
         else if (!this.action.isPlayGame) {
@@ -118,7 +140,7 @@ export class ActionRope extends GameObject {
         super(manager);
         this.action = action;
         this.name = "Rope";
-        this.offset = 50;
+        this.offset = 100;
         this.container.zIndex = 100;
         this.isFrist = true;
         this.draw = function () {
@@ -295,7 +317,7 @@ export class ActionGoodjob extends GameObject {
         this.action = action;
         this.name = "ActionGoodjob";
         this.scale = 0.2;
-        this.draw = function (x = -0.25, y = 0.35) {
+        this.draw = function (x = -0.3, y = 0.35) {
             let _x = (x * this.w);
             let _y = (y * this.h);
             this.sprite.texture = PIXI.Texture.from("image/video/Goodjob.png");
