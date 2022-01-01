@@ -182,6 +182,7 @@ const loadList = [
     "image/video/know.png",
     "image/video/cursor.png",
     "image/video/cursorHint.png",
+    "image/video/Goodjob.png",
     "video/childhood_kelly.mp4",
     "image/video/childhood/Kelly/stage_1_title.png",
     "image/video/childhood/Kelly/stage_1_hint.png",

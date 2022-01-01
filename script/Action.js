@@ -59,7 +59,6 @@ export class ActionVideo extends GameObject {
         gsap.to(this.bg, { duration: 1, alpha: 0.5 });
     }
     onClearGame() {
-        this.action.isPlayGame = false;
         gsap.to(this.bg, { duration: 1, alpha: 0, onComplete: function () { this.play(); }.bind(this) });
     }
     test() {
@@ -85,6 +84,7 @@ export class ActionLine extends GameObject {
         super(manager);
         this.action = action;
         this.name = "Line";
+        this.isFrist = true;
         this.lineStyle = {
             width: 5,
             color: ColorSlip.white,
@@ -92,6 +92,7 @@ export class ActionLine extends GameObject {
             join: PIXI.LINE_JOIN.ROUND
         };
         this.sprite = new PIXI.Graphics().lineStyle(this.lineStyle);
+        this.container.zIndex = 10;
         this.container.alpha = 1;
     }
     getPoints() {
@@ -103,10 +104,11 @@ export class ActionLine extends GameObject {
         return values;
     }
     update() {
-        if (this.action.isPlayGame) {
+        if (this.action.isPlayGame && this.isFrist) {
             gsap.to(this.container, { duration: 0.5, alpha: 1 });
+            this.isFrist = false;
         }
-        else {
+        else if (!this.action.isPlayGame) {
             this.container.alpha = 0;
         }
     }
@@ -117,6 +119,7 @@ export class ActionRope extends GameObject {
         this.action = action;
         this.name = "Rope";
         this.offset = 50;
+        this.container.zIndex = 100;
         this.isFrist = true;
         this.draw = function () {
             this.drawRope();
@@ -164,6 +167,13 @@ export class ActionRope extends GameObject {
             this.history = [];
         }
     }
+    onClearGame() {
+        this.history = [];
+        for (let i = 0; i < this.ropeSize; i++) {
+            this.points[i].x = 0;
+            this.points[i].y = 0;
+        }
+    }
     onRopeComplete(c = this.action.children) {
         if (!c) return;
         let v = c.line.getPoints().slice().reverse();
@@ -176,7 +186,12 @@ export class ActionRope extends GameObject {
             }).some(e => e);
         }).reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= v.length / 2 ? true : false;
         console.log(isPass);
-        if (isPass) { c.video.onClearGame(); }
+        if (isPass) {
+            this.action.isPlayGame = false;
+            c.video.onClearGame();
+            c.ui.onClearGame();
+            this.onClearGame();
+        }
     }
     update() {
         if (this.action.isPlayGame) this.onPlay();
@@ -242,9 +257,10 @@ export class ActionUI {
     }
 }
 export class ActionCountDown extends GameObject {
-    constructor(manager, action) {
+    constructor(manager, action, stage) {
         super(manager);
         this.action = action;
+        this.stage = stage;
         this.name = "ActionCountDown";
         this.scale = 0.25;
         this.times = 0;
@@ -262,11 +278,44 @@ export class ActionCountDown extends GameObject {
             this.sprite.anchor.set(0.5);
             this.sprite.scale.set(this.scale);
             this.sprite.position.set(_x, _y);
-            this.container.addChild(this.sprite);
         }
+    }
+    setup() {
+        this.draw();
+        this.stage.container.addChild(this.sprite);
     }
     update() {
         this.times += this.manager.deltaTime;
         this.sprite.texture = this.textureList[Math.floor(this.times)];
     }
 }
+export class ActionGoodjob extends GameObject {
+    constructor(manager, action) {
+        super(manager);
+        this.action = action;
+        this.name = "ActionGoodjob";
+        this.scale = 0.2;
+        this.draw = function (x = -0.25, y = 0.35) {
+            let _x = (x * this.w);
+            let _y = (y * this.h);
+            this.sprite.texture = PIXI.Texture.from("image/video/Goodjob.png");
+            this.sprite.anchor.set(0.5);
+            this.sprite.scale.set(this.scale);
+            this.container.addChild(this.sprite);
+            this.container.position.set(_x, _y);
+        }
+    }
+    setup() {
+        this.draw();
+        this.manager.app.stage.addChild(this.container);
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.manager.app.stage.removeChild(this.container);
+                this.container.destroy({ children: true });
+                delete this;
+            }.bind(this)
+        });
+        tl.to(this.sprite.scale, { duration: 0.5, x: 0.6, y: 0.6, ease: "back.out(1.7)" });
+        tl.to(this.sprite.scale, { duration: 0.5, x: 0, y: 0, ease: "back.in(1.7)" }, "+=1");
+    }
+} 

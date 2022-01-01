@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
-import { ActionPage, ActionUI, ActionVideo, ActionLine, ActionRope, ActionCountDown } from "./Action";
+import { ActionPage, ActionUI, ActionVideo, ActionLine, ActionRope, ActionCountDown, ActionGoodjob } from "./Action";
+
 export default class BronAction extends ActionPage {
     constructor(manager) {
         super(manager);
@@ -14,12 +15,17 @@ export default class BronAction extends ActionPage {
         }
     }
 }
-
 class childhoodVideo extends ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "childhoodVideo";
         this.pauseTime = [10.5, 20, 30, 40];
+        this.uiTime = [
+            new UI_Stage1(this.manager, this.action),
+            new UI_Stage1(this.manager, this.action),
+            new UI_Stage1(this.manager, this.action),
+            new UI_Stage1(this.manager, this.action)
+        ]
         this.count = 0;
     }
     update() {
@@ -27,13 +33,12 @@ class childhoodVideo extends ActionVideo {
         if (this.currentTime > this.pauseTime[this.count]) {
             this.action.isPlayGame = true;
             this.onPlayGame();
-            this.action.children.ui = new UI_Stage1(this.manager, this.action);
+            this.action.children.ui = this.uiTime[this.count];
             this.action.children.ui.setup();
             this.count++;
         }
     }
 }
-
 class UI_Start extends ActionUI {
     constructor(manager, action) {
         super(manager, action);
@@ -92,15 +97,14 @@ class UI_Start extends ActionUI {
         }, "+=2");
     }
 }
-
 class UI_Stage1 extends ActionUI {
     constructor(manager, action) {
         super(manager, action);
         this.name = "UI_Start";
-        this.countdown = new ActionCountDown(manager, action);
-        this.action.children.line = new Stage1_Line(manager, action);
         this.scale = 1;
         this.draw = function () {
+            this.countdown = new ActionCountDown(manager, action, this);
+            this.action.children.line = new Stage1_Line(manager, action);
             this.countdown.setup();
             this.action.children.line.setup();
 
@@ -115,9 +119,23 @@ class UI_Stage1 extends ActionUI {
 
             this.container.addChild(title, hint);
             this.container.alpha = 0;
-            let tl = gsap.timeline();
-            tl.to(this.container, { duration: 1, alpha: 1 });
+            gsap.to(this.container, { duration: 1, alpha: 1 });
         }
+    }
+    onClearGame() {
+        let gj = new ActionGoodjob(this.manager, this.action);
+        gj.setup();
+        gsap.to(this.container, {
+            duration: 1, alpha: 0,
+            onComplete: function () {
+                this.manager.app.stage.removeChild(this.container);
+                this.manager.app.stage.removeChild(this.action.children.line.container);
+                this.container.destroy({ children: true });
+                this.action.children.line.container.destroy({ children: true });
+                delete this.action.children.line;
+                delete this.action.children.ui;
+            }.bind(this)
+        });
     }
     update() {
         try {
@@ -132,7 +150,7 @@ class UI_Stage1 extends ActionUI {
             }
         }
         catch {
-            this.countdown = new ActionCountDown(this.manager, this.action);
+            this.countdown = new ActionCountDown(this.manager, this.action, this);
             this.countdown.setup();
         }
     }
@@ -145,6 +163,7 @@ class Stage1_Line extends ActionLine {
             //this.sprite.moveTo(0, 0).bezierCurveTo(0, 0, 87, 81, 108, 187);
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
+            this.manager.app.stage.sortChildren();
         }
     }
 }
