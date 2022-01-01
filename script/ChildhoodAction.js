@@ -22,6 +22,9 @@ class LogoVideo extends Action.LogoVideo {
     }
     onEnd() {
         this.action.children.ui.start();
+        this.manager.app.stage.removeChild(this.container);
+        this.container.destroy({children:true});
+        delete this.action.children.logo;
     }
 }
 class ChildhoodVideo extends Action.ActionVideo {
@@ -54,7 +57,7 @@ class UI_Start extends Action.ActionUI {
     constructor(manager, action) {
         super(manager, action);
         this.name = "UI_Start";
-        this.isStart = false;
+        this.isNotStart = true;
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from("image/video/know.png");
             this.sprite.anchor.set(0.5);
@@ -73,10 +76,10 @@ class UI_Start extends Action.ActionUI {
             this.container.alpha = 0;
         }
     }
-    start(){
+    start() {
         let tl = gsap.timeline();
         tl.to(this.container, { duration: 1, alpha: 1 });
-        tl.to(this.sprite, { duration: 1, alpha: 1, onComplete: this.setInteract.bind(this) }, "+=1");
+        tl.to(this.sprite, { duration: 1, alpha: 1, onComplete: this.setInteract.bind(this) }, "+=0.5");
     }
     resize() {
         this.w = window.innerWidth;
@@ -86,9 +89,10 @@ class UI_Start extends Action.ActionUI {
             this.draw();
         }
     }
-    clickEvent() {//debug
-        if (!this.isStart){
-            this.isStart = true;
+    clickEvent() {
+        if (this.isNotStart){
+            this.isNotStart = false;
+
             let text = new PIXI.Text("新的一天開始了", this.UItextStyle);
             text.anchor.set(0.5);
             text.alpha = 0;
@@ -120,7 +124,7 @@ class UI_Stage1 extends Action.ActionUI {
         this.name = "UI_Stage1";
         this.scale = 1;
         this.draw = function () {
-            this.countdown = new ActionCountDown(manager, action, this);
+            this.countdown = new Action.ActionCountDown(manager, action, this);
             this.action.children.line = new Stage1_Line(manager, action);
             this.countdown.setup();
             this.action.children.line.setup();
@@ -140,7 +144,7 @@ class UI_Stage1 extends Action.ActionUI {
         }
     }
     onClearGame() {
-        let gj = new ActionGoodjob(this.manager, this.action);
+        let gj = new Action.ActionGoodjob(this.manager, this.action);
         gj.setup();
         gsap.to(this.container, {
             duration: 1, alpha: 0,
@@ -171,7 +175,7 @@ class UI_Stage1 extends Action.ActionUI {
             }
         }
         catch {
-            this.countdown = new ActionCountDown(this.manager, this.action, this);
+            this.countdown = new Action.ActionCountDown(this.manager, this.action, this);
             this.countdown.setup();
         }
     }
@@ -195,7 +199,7 @@ class UI_Stage2 extends Action.ActionUI {
         this.name = "UI_Stage2";
         this.scale = 1;
         this.draw = function () {
-            this.countdown = new ActionCountDown(manager, action, this);
+            this.countdown = new Action.ActionCountDown(manager, action, this);
             this.button = new Stage2_Button(manager, action, this);
             this.countdown.setup();
             this.button.setup();
@@ -215,7 +219,7 @@ class UI_Stage2 extends Action.ActionUI {
         }
     }
     onClearGame() {
-        let gj = new ActionGoodjob(this.manager, this.action);
+        let gj = new Action.ActionGoodjob(this.manager, this.action);
         gj.setup();
         gsap.to(this.container, {
             duration: 1, alpha: 0,
@@ -240,7 +244,7 @@ class UI_Stage2 extends Action.ActionUI {
             }
         }
         catch {
-            this.countdown = new ActionCountDown(this.manager, this.action, this);
+            this.countdown = new Action.ActionCountDown(this.manager, this.action, this);
             this.countdown.setup();
         }
     }
@@ -314,7 +318,7 @@ class UI_Stage3 extends Action.ActionUI {
         this.name = "UI_Stage3";
         this.scale = 1;
         this.draw = function () {
-            this.countdown = new ActionCountDown(manager, action, this);
+            this.countdown = new Action.ActionCountDown(manager, action, this);
             this.button = new Stage3_Button(manager, action, this);
             this.countdown.setup();
             this.button.setup();
@@ -334,7 +338,7 @@ class UI_Stage3 extends Action.ActionUI {
         }
     }
     onClearGame() {
-        let gj = new ActionGoodjob(this.manager, this.action);
+        let gj = new Action.ActionGoodjob(this.manager, this.action);
         gj.setup();
         gsap.to(this.container, {
             duration: 1, alpha: 0,
@@ -359,7 +363,7 @@ class UI_Stage3 extends Action.ActionUI {
             }
         }
         catch {
-            this.countdown = new ActionCountDown(this.manager, this.action, this);
+            this.countdown = new Action.ActionCountDown(this.manager, this.action, this);
             this.countdown.setup();
         }
     }
