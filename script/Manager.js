@@ -17,7 +17,7 @@ export default class Manager {
         this.app = new PIXI.Application({
             width: this.w,
             height: this.h,
-            backgroundColor: 0xe0f9fd,
+            backgroundColor: ColorSlip.lightBlue,
             antialias: true,
             view: document.getElementById("mainPIXI")
         });
@@ -92,6 +92,7 @@ export default class Manager {
 
     loadPage(obj) {
         this.loader.loadAsset(function () {
+            this.app.renderer.backgroundColor = ColorSlip.lightBlue;
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
             this.app.stage.removeChildren();
@@ -104,6 +105,7 @@ export default class Manager {
     }
     loadAction(act) {
         this.loader.loadAsset(function () {
+            this.app.renderer.backgroundColor = ColorSlip.white;
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
             this.app.stage.removeChildren();
@@ -163,6 +165,7 @@ export default class Manager {
 }
 
 const loadList = [
+    //homepage
     "image/home.svg",
     "image/location.svg",
     "image/logo.svg",
@@ -176,16 +179,29 @@ const loadList = [
     "image/setting.svg",
     "image/user.svg",
     "image/wave.svg",
+    //actionpage
+    "video/LOGO.mp4",
+    "video/childhood_kelly.mp4",
     "image/video/count5.png",
     "image/video/count4.png",
     "image/video/count3.png",
     "image/video/count2.png",
     "image/video/count1.png",
+    "image/video/yes.png",
+    "image/video/no.png",
     "image/video/know.png",
+    "image/video/bar.png",
+    "image/video/bar_full.png",
+    "image/video/space.png",
+    "image/video/wait.png",
+    "image/video/ok.png",
     "image/video/cursor.png",
     "image/video/cursorHint.png",
     "image/video/Goodjob.png",
-    "video/childhood_kelly.mp4",
     "image/video/childhood/Kelly/stage_1_title.png",
     "image/video/childhood/Kelly/stage_1_hint.png",
+    "image/video/childhood/Kelly/stage_2_title.png",
+    "image/video/childhood/Kelly/stage_2_hint.png",
+    "image/video/childhood/Kelly/stage_3_title.png",
+    "image/video/childhood/Kelly/stage_3_hint.png",
 ];

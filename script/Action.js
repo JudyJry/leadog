@@ -17,6 +17,38 @@ export class ActionPage extends PageObject {
         this.isPlayGame = false;
     }
 }
+export class LogoVideo extends GameObject {
+    constructor(manager, action) {
+        super(manager);
+        this.action = action;
+        this.name = "LogoVideo";
+        this.draw = function () {
+            this.loadVideo();
+        }
+    }
+    loadVideo(x = 0, y = 0) {
+        let _x = (x * this.w);
+        let _y = (y * this.h);
+
+        this.sprite = new PIXI.Sprite.from("video/LOGO.mp4");
+        this.sprite.anchor.set(0.5);
+        this.videoTexture = this.sprite.texture.baseTexture;
+        this.videoCrol = this.videoTexture.resource.source;
+        this.videoCrol.muted = false;
+        this.container.addChild(this.sprite);
+        this.container.position.set(_x, _y);
+    }
+    update() {
+        if (this.videoCrol.ended) {
+            gsap.to(this.container, {
+                duration: 1, alpha: 0, onComplete: function () {
+                    this.onEnd();
+                }.bind(this)
+            });
+        }
+    }
+    onEnd() { }
+}
 export class ActionVideo extends GameObject {
     constructor(manager, action, url) {
         super(manager);
@@ -38,7 +70,7 @@ export class ActionVideo extends GameObject {
         this.videoCrol = this.videoTexture.resource.source;
         this.videoTexture.autoPlay = false;
         this.videoTexture.resource.autoPlay = false;
-        this.videoCrol.muted = true;
+        this.videoCrol.muted = false;
         this.duration = this.videoCrol.duration;
         this.currentTime = this.videoCrol.currentTime;
         this.container.addChild(this.sprite);
@@ -71,7 +103,6 @@ export class ActionVideo extends GameObject {
     }
     update() {
         //if (this.videoCrol.ended) this.onEnd();
-
     }
     play() {
         this.videoCrol.play();

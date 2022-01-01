@@ -1,35 +1,42 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
-import { ActionPage, ActionUI, ActionVideo, ActionLine, ActionRope, ActionCountDown, ActionGoodjob } from "./Action";
+import * as Action from "./Action";
 
-export default class ChildhoodAction extends ActionPage {
+export default class ChildhoodAction extends Action.ActionPage {
     constructor(manager) {
         super(manager);
         this.name = "ChildhoodAction";
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "video": new ChildhoodVideo(manager, this, "video/childhood_kelly.mp4"),
-            "rope": new ActionRope(manager, this),
-            "ui": new UI_Start(manager, this)
+            "video": new ChildhoodVideo(this.manager, this, "video/childhood_kelly.mp4"),
+            "rope": new Action.ActionRope(this.manager, this),
+            "ui": new UI_Start(this.manager, this),
+            "logo": new LogoVideo(this.manager, this)
         }
     }
 }
-class ChildhoodVideo extends ActionVideo {
+class LogoVideo extends Action.LogoVideo {
+    constructor(manager, action) {
+        super(manager, action);
+    }
+    onEnd() {
+        this.action.children.ui.start();
+    }
+}
+class ChildhoodVideo extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "ChildhoodVideo";
-        this.pauseTime = [10.5, 20, 30, 40];
+        this.pauseTime = [10.5, 30, 50.29];
         this.uiTime = [
             new UI_Stage1(this.manager, this.action),
-            new UI_Stage1(this.manager, this.action),
-            new UI_Stage1(this.manager, this.action),
-            new UI_Stage1(this.manager, this.action)
+            new UI_Stage2(this.manager, this.action),
+            new UI_Stage3(this.manager, this.action),
         ]
         this.count = 0;
     }
     update() {
-        //this.test();
         if (this.currentTime > this.pauseTime[this.count]) {
             this.action.isPlayGame = true;
             this.onPlayGame();
@@ -37,12 +44,17 @@ class ChildhoodVideo extends ActionVideo {
             this.action.children.ui.setup();
             this.count++;
         }
+        else if (this.videoCrol.ended) { this.onEnd(); }
+    }
+    onEnd() {
+        this.manager.loadPage(this.manager.childhoodObj);
     }
 }
-class UI_Start extends ActionUI {
+class UI_Start extends Action.ActionUI {
     constructor(manager, action) {
         super(manager, action);
         this.name = "UI_Start";
+        this.isStart = false;
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from("image/video/know.png");
             this.sprite.anchor.set(0.5);
@@ -59,10 +71,12 @@ class UI_Start extends ActionUI {
 
             this.container.addChild(textTitle, textDescribe, this.sprite);
             this.container.alpha = 0;
-            let tl = gsap.timeline();
-            tl.to(this.container, { duration: 1, alpha: 1 });
-            tl.to(this.sprite, { duration: 1, alpha: 1, onComplete: this.setInteract.bind(this) }, "+=1");
         }
+    }
+    start(){
+        let tl = gsap.timeline();
+        tl.to(this.container, { duration: 1, alpha: 1 });
+        tl.to(this.sprite, { duration: 1, alpha: 1, onComplete: this.setInteract.bind(this) }, "+=1");
     }
     resize() {
         this.w = window.innerWidth;
@@ -72,35 +86,38 @@ class UI_Start extends ActionUI {
             this.draw();
         }
     }
-    clickEvent() {
-        let text = new PIXI.Text("新的一天開始了", this.UItextStyle);
-        text.anchor.set(0.5);
-        text.alpha = 0;
-        this.setPosition(text, 0, 0);
-
-        let tl = gsap.timeline();
-        tl.to(this.container, {
-            duration: 1, alpha: 0, onComplete: function () {
-                this.manager.app.stage.removeChild(this.container);
-                this.container.destroy({ children: true });
-                this.manager.app.stage.addChild(text);
-            }.bind(this)
-        });
-        tl.to(text, { duration: 0.5, alpha: 1 }, "+=1");
-        tl.to(text, {
-            duration: 0.5, alpha: 0, onComplete: function () {
-                this.manager.app.stage.removeChild(text);
-                text.destroy();
-                this.action.children.video.isStart = true;
-                this.action.children.video.play();
-            }.bind(this)
-        }, "+=2");
+    clickEvent() {//debug
+        if (!this.isStart){
+            this.isStart = true;
+            let text = new PIXI.Text("新的一天開始了", this.UItextStyle);
+            text.anchor.set(0.5);
+            text.alpha = 0;
+            this.setPosition(text, 0, 0);
+    
+            let tl = gsap.timeline();
+            tl.to(this.container, {
+                duration: 1, alpha: 0, onComplete: function () {
+                    this.manager.app.stage.removeChild(this.container);
+                    this.container.destroy({ children: true });
+                    this.manager.app.stage.addChild(text);
+                }.bind(this)
+            });
+            tl.to(text, { duration: 0.5, alpha: 1 }, "+=1");
+            tl.to(text, {
+                duration: 0.5, alpha: 0, onComplete: function () {
+                    this.manager.app.stage.removeChild(text);
+                    text.destroy();
+                    this.action.children.video.isStart = true;
+                    this.action.children.video.play();
+                }.bind(this)
+            }, "+=2");
+        }
     }
 }
-class UI_Stage1 extends ActionUI {
+class UI_Stage1 extends Action.ActionUI {
     constructor(manager, action) {
         super(manager, action);
-        this.name = "UI_Start";
+        this.name = "UI_Stage1";
         this.scale = 1;
         this.draw = function () {
             this.countdown = new ActionCountDown(manager, action, this);
@@ -130,10 +147,13 @@ class UI_Stage1 extends ActionUI {
             onComplete: function () {
                 this.manager.app.stage.removeChild(this.container);
                 this.manager.app.stage.removeChild(this.action.children.line.container);
+                this.manager.app.stage.removeChild(this.action.children.rope.container);
                 this.container.destroy({ children: true });
                 this.action.children.line.container.destroy({ children: true });
+                this.action.children.rope.container.destroy({ children: true });
                 this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
+                delete this.action.children.rope;
                 delete this.action.children.ui;
             }.bind(this)
         });
@@ -156,7 +176,7 @@ class UI_Stage1 extends ActionUI {
         }
     }
 }
-class Stage1_Line extends ActionLine {
+class Stage1_Line extends Action.ActionLine {
     constructor(manager, action) {
         super(manager, action);
         this.draw = function () {
@@ -169,4 +189,221 @@ class Stage1_Line extends ActionLine {
         }
     }
 }
+class UI_Stage2 extends Action.ActionUI {
+    constructor(manager, action) {
+        super(manager, action);
+        this.name = "UI_Stage2";
+        this.scale = 1;
+        this.draw = function () {
+            this.countdown = new ActionCountDown(manager, action, this);
+            this.button = new Stage2_Button(manager, action, this);
+            this.countdown.setup();
+            this.button.setup();
 
+            let title = PIXI.Sprite.from("image/video/childhood/Kelly/stage_2_title.png");
+            let hint = PIXI.Sprite.from("image/video/childhood/Kelly/stage_2_hint.png");
+            title.anchor.set(0.5);
+            title.scale.set(0.4);
+            this.setPosition(title, 0.36, -0.42);
+            hint.anchor.set(0.5);
+            hint.scale.set(this.scale);
+            this.setPosition(hint, -0.25, -0.1);
+
+            this.container.addChild(title, hint);
+            this.container.alpha = 0;
+            gsap.to(this.container, { duration: 1, alpha: 1 });
+        }
+    }
+    onClearGame() {
+        let gj = new ActionGoodjob(this.manager, this.action);
+        gj.setup();
+        gsap.to(this.container, {
+            duration: 1, alpha: 0,
+            onComplete: function () {
+                this.manager.app.stage.removeChild(this.container);
+                this.container.destroy({ children: true });
+                delete this.action.children.ui;
+            }.bind(this)
+        });
+    }
+    update() {
+        this.button.update();
+        try {
+            if (Math.floor(this.countdown.times) > 5) {
+                this.manager.app.stage.removeChild(this.countdown.container);
+                this.countdown.sprite.destroy();
+                this.countdown.container.destroy();
+                this.countdown = undefined;
+            }
+            else {
+                this.countdown.update();
+            }
+        }
+        catch {
+            this.countdown = new ActionCountDown(this.manager, this.action, this);
+            this.countdown.setup();
+        }
+    }
+}
+class Stage2_Button extends Action.ActionUI {
+    constructor(manager, action, stage) {
+        super(manager, action);
+        this.stage = stage;
+        this.name = "Stage2_Button";
+        this.count = 0;
+        this.draw = function () {
+            this.sprite.texture = PIXI.Texture.from("image/video/space.png");
+            this.sprite.anchor.set(0.5);
+            this.sprite.scale.set(this.scale);
+
+            this.bar = PIXI.Sprite.from("image/video/bar.png");
+            this.bar.anchor.set(0.5);
+            this.bar.scale.set(0.7);
+
+            this.fullbar = PIXI.Sprite.from("image/video/bar_full.png");
+            this.fullbar.anchor.set(0.5);
+            this.fullbar.scale.set(0.7);
+            this.mask = new PIXI.Graphics();
+            this.fullbar.mask = this.mask;
+
+            this.container.addChild(this.bar, this.fullbar, this.sprite);
+            this.setPosition(this.sprite, 0, 0.32);
+            this.setPosition(this.bar, 0, 0.18);
+            this.setPosition(this.fullbar, 0, 0.18);
+            this.setInteract();
+        }
+    }
+    clickEvent() {
+        this.count += 30;
+        let tl = gsap.timeline();
+        tl.to([this.bar, this.fullbar], { duration: 0.1, x: 5 });
+        tl.to([this.bar, this.fullbar], { duration: 0.1, x: -5 });
+        tl.to([this.bar, this.fullbar], { duration: 0.1, x: 0 });
+    }
+    maskUpdate() {
+        let b = this.fullbar.getBounds();
+        let progress = (b.width / 100) * this.count;
+        this.mask.clear();
+        this.mask.drawRect(b.x, b.y, progress, b.height);
+    }
+    onClearGame() {
+        this.manager.app.stage.removeChild(this.container);
+        this.container.destroy({ children: true });
+    }
+    update() {
+        if (this.action.isPlayGame) {
+            if (this.count > 100) {
+                this.action.isPlayGame = false;
+                this.action.children.video.onClearGame();
+                gsap.killTweensOf(this.bar);
+                this.onClearGame();
+                this.stage.onClearGame();
+            } else if (this.count > 0) { this.count--; this.maskUpdate(); }
+        }
+        if (this.isPointerOver) {
+            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
+        }
+        else {
+            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
+        }
+    }
+}
+class UI_Stage3 extends Action.ActionUI {
+    constructor(manager, action) {
+        super(manager, action);
+        this.name = "UI_Stage3";
+        this.scale = 1;
+        this.draw = function () {
+            this.countdown = new ActionCountDown(manager, action, this);
+            this.button = new Stage3_Button(manager, action, this);
+            this.countdown.setup();
+            this.button.setup();
+
+            let title = PIXI.Sprite.from("image/video/childhood/Kelly/stage_3_title.png");
+            let hint = PIXI.Sprite.from("image/video/childhood/Kelly/stage_3_hint.png");
+            title.anchor.set(0.5);
+            title.scale.set(this.scale);
+            this.setPosition(title, 0.38, -0.42);
+            hint.anchor.set(0.5);
+            hint.scale.set(this.scale);
+            this.setPosition(hint, 0.27, -0.2);
+
+            this.container.addChild(title, hint);
+            this.container.alpha = 0;
+            gsap.to(this.container, { duration: 1, alpha: 1 });
+        }
+    }
+    onClearGame() {
+        let gj = new ActionGoodjob(this.manager, this.action);
+        gj.setup();
+        gsap.to(this.container, {
+            duration: 1, alpha: 0,
+            onComplete: function () {
+                this.manager.app.stage.removeChild(this.container);
+                this.container.destroy({ children: true });
+                delete this.action.children.ui;
+            }.bind(this)
+        });
+    }
+    update() {
+        this.button.update();
+        try {
+            if (Math.floor(this.countdown.times) > 5) {
+                this.manager.app.stage.removeChild(this.countdown.container);
+                this.countdown.sprite.destroy();
+                this.countdown.container.destroy();
+                this.countdown = undefined;
+            }
+            else {
+                this.countdown.update();
+            }
+        }
+        catch {
+            this.countdown = new ActionCountDown(this.manager, this.action, this);
+            this.countdown.setup();
+        }
+    }
+}
+class Stage3_Button extends Action.ActionUI {
+    constructor(manager, action, stage) {
+        super(manager, action);
+        this.stage = stage;
+        this.name = "Stage3_Button";
+        this.times = 0;
+        this.draw = function () {
+            this.spriteSheet = [
+                PIXI.Texture.from("image/video/wait.png"),
+                PIXI.Texture.from("image/video/ok.png")
+            ];
+            this.sprite.texture = this.spriteSheet[0];
+            this.sprite.anchor.set(0.5);
+            this.sprite.scale.set(this.scale);
+            this.container.addChild(this.sprite);
+            this.setPosition(this.sprite, -0.3, 0.1);
+        }
+    }
+
+    onClearGame() {
+        this.manager.app.stage.removeChild(this.container);
+        this.container.destroy({ children: true });
+    }
+    clickEvent() {
+        this.action.isPlayGame = false;
+        this.onClearGame();
+        this.action.children.video.onClearGame();
+        this.stage.onClearGame();
+    }
+    update() {
+        this.times += this.manager.deltaTime;
+        if (Math.floor(this.times) >= 1) {
+            this.sprite.texture = this.spriteSheet[1];
+            this.setInteract();
+            if (this.isPointerOver) {
+                gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
+            }
+            else {
+                gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
+            }
+        }
+    }
+}
