@@ -86,11 +86,11 @@ class Building extends GameObject {
         c.addChild(c.sprite, c.text);
         this.container.addChild(c);
     }
-    addEnterEvent() {
+    addKeyEvent() {
         if (this.manager.keyboard.key['Enter']) {
             this.container.children.forEach((e) => {
                 if (this.manager.isArrive(e.name) && !e.isEntering) {
-                    console.log(`You enter the ${e.name}!`);
+                    //console.log(`You enter the ${e.name}!`);
                     e.isEntering = true;
                     this.manager.toOtherPage(e);
                 }

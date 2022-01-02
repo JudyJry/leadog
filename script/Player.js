@@ -32,7 +32,7 @@ export default class Player {
     }
     setup() {
         this.draw();
-        this.manager.app.stage.addChild(this.container);
+        this.manager.addChild(this.container);
     }
     resize() {
         this.h = this.manager.h;

@@ -55,6 +55,7 @@ export class ActionVideo extends GameObject {
         this.action = action;
         this.name = "Video";
         this.isStart = false;
+        this.bg = new PIXI.Graphics();
         this.draw = function () {
             this.loadVideo(url, 0, 0);
             this.drawBg();
@@ -70,8 +71,7 @@ export class ActionVideo extends GameObject {
         this.videoCrol = this.videoTexture.resource.source;
         this.videoTexture.autoPlay = false;
         this.videoTexture.resource.autoPlay = false;
-        this.videoCrol.muted = false;
-        this.duration = this.videoCrol.duration;
+        this.videoCrol.muted = true;
         this.currentTime = this.videoCrol.currentTime;
         this.container.addChild(this.sprite);
 
@@ -80,13 +80,13 @@ export class ActionVideo extends GameObject {
             this.currentTime = this.videoCrol.currentTime;
         };
     }
-    drawBg() {
-        this.bg = new PIXI.Graphics()
-            .beginFill(ColorSlip.black)
+    drawBg(color = "black") {
+        this.bg.clear();
+        this.bg
+            .beginFill(ColorSlip[color])
             .drawRect(-this.w / 2, -this.h / 2, this.w, this.h);
         this.bg.alpha = 0;
         this.container.addChild(this.bg);
-
     }
     onPlayGame() {
         this.pause();
@@ -97,9 +97,15 @@ export class ActionVideo extends GameObject {
     }
     test() {
         if (this.manager.mouse.isPressed && this.isStart) {
-            if (!this.videoCrol.paused) { this.pause(); console.log(this.currentTime); }
+            if (!this.videoCrol.paused) { this.pause(); }
             else { this.play(); }
         }
+    }
+    resize() {
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.removeChildren();
+        this.draw();
     }
     update() {
         //if (this.videoCrol.ended) this.onEnd();
@@ -199,7 +205,7 @@ export class ActionRope extends GameObject {
             if (this.isFrist) {
                 this.isFrist = false;
             }
-            console.log(`lineTo:${this.manager.mouse.x},${this.manager.mouse.y}`);
+            //console.log(`lineTo:${this.manager.mouse.x},${this.manager.mouse.y}`);
             this.history.unshift({ x: this.manager.mouse.x, y: this.manager.mouse.y });
             for (let i = 0; i < this.ropeSize; i++) {
                 try {
@@ -238,7 +244,7 @@ export class ActionRope extends GameObject {
                 if (j < (i + 1) * mul && j >= i * mul) { return Math.abs(h[j].x - v[i].x) < this.offset && Math.abs(h[j].y - v[i].y) < this.offset; }
             }).some(e => e);
         }).reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= v.length / 2 ? true : false;
-        console.log(isPass);
+        console.log(`RopeComplete:${isPass}`);
         if (isPass) {
             this.action.isPlayGame = false;
             c.video.onClearGame();
@@ -292,7 +298,7 @@ export class ActionUI {
     clickEvent() { alert("click " + this.name); }
     setup() {
         this.draw();
-        this.manager.app.stage.addChild(this.container);
+        this.manager.addChild(this.container);
     }
     resize() {
         this.w = window.innerWidth;
@@ -360,10 +366,10 @@ export class ActionGoodjob extends GameObject {
     }
     setup() {
         this.draw();
-        this.manager.app.stage.addChild(this.container);
+        this.manager.addChild(this.container);
         let tl = gsap.timeline({
             onComplete: function () {
-                this.manager.app.stage.removeChild(this.container);
+                this.manager.removeChild(this.container);
                 this.container.destroy({ children: true });
                 delete this;
             }.bind(this)

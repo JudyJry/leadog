@@ -45,21 +45,10 @@ export default class Manager {
         this.uiSystem.setup();
         this.player.setup();
         this.activeObj.setup();
+        this.mouse.setup();
         this.app.stage.sortChildren();
         this.keyboard.pressed = (k) => {
-            this.homeObj.children.building.addEnterEvent();
-            this.bronObj.children.actionTest.addEnterEvent();
-            if (k['Enter']) {
-                /*
-                //以中心比例定位(x,y)座標
-                let mousePos = manager.app.renderer.plugins.interaction.mouse.global;
-                let pos = {
-                    x: (mousePos.x / w) - 0.5,
-                    y: (mousePos.y / h) - 0.5
-                }
-                console.log(mouse position (scale/center):`${pos.x},${pos.y}`);
-                */
-            }
+            this.activeObj.addKeyEvent();
         }
         this.app.ticker.add((delta) => {
             this.deltaTime = (1 / 60) * delta;
@@ -84,22 +73,47 @@ export default class Manager {
         this.uiSystem.resize();
         this.player.resize();
         this.homeObj.resize();
+        this.mouse.resize();
         this.app.stage.sortChildren();
+    }
+
+    test() {
+        if (k['Enter']) {
+            //以中心比例定位(x,y)座標
+            let mousePos = manager.app.renderer.plugins.interaction.mouse.global;
+            let pos = {
+                x: (mousePos.x / w) - 0.5,
+                y: (mousePos.y / h) - 0.5
+            }
+            console.log(`mouse position (scale/center):${pos.x},${pos.y}`);
+        }
     }
 
     arrived(building, bool = true) { this.isArriveBuilding[building] = bool }
     isArrive(building) { return this.isArriveBuilding[building] }
+
+    addChild(...e) {
+        this.app.stage.addChild(...e);
+        this.app.stage.sortChildren();
+    }
+    removeChild(...e) {
+        if (e.length === 0) { this.app.stage.removeChildren(); }
+        else { this.app.stage.removeChild(...e); }
+    }
 
     loadPage(obj) {
         this.loader.loadAsset(function () {
             this.app.renderer.backgroundColor = ColorSlip.lightBlue;
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
-            this.app.stage.removeChildren();
+            this.removeChild();
             this.playerPos = this.homeDefaultPos;
             this.activeObj = obj;
             this.activeObj.setup();
-            this.app.stage.addChild(this.player.container, this.uiSystem.container);
+            this.keyboard.pressed = (k) => {
+                this.activeObj.addKeyEvent();
+            }
+            this.addChild(this.player.container, this.uiSystem.container, this.mouse.cursor);
             this.app.stage.sortChildren();
         }.bind(this));
     }
@@ -108,9 +122,11 @@ export default class Manager {
             this.app.renderer.backgroundColor = ColorSlip.white;
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
-            this.app.stage.removeChildren();
+            this.removeChild();
             this.activeObj = act;
             this.activeObj.setup();
+            this.keyboard.pressed = (k) => {}
+            this.addChild(this.mouse.cursor);
         }.bind(this));
     }
     toOtherPage(e) {
@@ -146,7 +162,7 @@ export default class Manager {
     }
     toUndonePage(e) {
         this.loader.loadAsset(function () {
-            this.app.stage.removeChildren();
+            this.removeChild();
             this.playerPos = this.homeDefaultPos;
             //this.homeObj.reload();
             let t = new PIXI.Text(`這是一個未完成的${e.name}頁面`, new PIXI.TextStyle({
@@ -156,7 +172,7 @@ export default class Manager {
             }));
             t.anchor.set(0.5);
             t.position.set(0, 0);
-            this.app.stage.addChild(t, this.player.container, this.uiSystem.container);
+            this.addChild(t, this.player.container, this.uiSystem.container);
             this.app.stage.sortChildren();
         }.bind(this), () => {
             e.isEntering = false;

@@ -105,10 +105,10 @@ class ActionTest extends GameObject {
             this.container.addChild(this.sprite, this.text);
         }
     }
-    addEnterEvent() {
+    addKeyEvent() {
         if (this.manager.keyboard.key['Enter']) {
             if (this.manager.isArrive(this.name) && !this.isEntering) {
-                console.log(`You enter the ${this.name}!`);
+                //console.log(`You enter the ${this.name}!`);
                 this.isEntering = true;
                 this.manager.loadAction(new ChildhoodAction(this.manager));
             }

@@ -33,7 +33,7 @@ export default class UIsystem {
         this.crol.setup(this.container);
         this.crol.addCrolEvent();
         this.container.position.set(0, 0);
-        this.manager.app.stage.addChild(this.container);
+        this.manager.addChild(this.container);
     }
     resize() {
         this.w = this.manager.w;

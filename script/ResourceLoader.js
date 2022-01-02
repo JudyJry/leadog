@@ -49,6 +49,6 @@ export default class ResourceLoader {
             alpha: 0,
             onComplete: function () { $("#loadingPage").remove(); }
         });
-        console.log("All files loaded");
+        //console.log("All files loaded");
     }
 }

@@ -22,7 +22,10 @@ export class PageObject {
         for (let [_, e] of Object.entries(this.children)) { e.update(); }
     }
     reload() {
-        for (let [_, e] of Object.entries(this.children)) { this.manager.app.stage.addChild(e.container); }
+        for (let [_, e] of Object.entries(this.children)) { this.manager.addChild(e.container); }
+    }
+    addKeyEvent() {
+        for (let [_, e] of Object.entries(this.children)) { e.addKeyEvent(); }
     }
 }
 
@@ -43,14 +46,13 @@ export class GameObject {
     }
     setup() {
         this.draw();
-        this.manager.app.stage.addChild(this.container);
+        this.manager.addChild(this.container);
     }
     resize() {
         this.h = this.manager.h;
         this.container.removeChildren();
         this.draw();
     }
-    update() {
-
-    }
+    update() { }
+    addKeyEvent() { }
 }

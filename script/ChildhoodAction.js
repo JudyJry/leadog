@@ -22,8 +22,8 @@ class LogoVideo extends Action.LogoVideo {
     }
     onEnd() {
         this.action.children.ui.start();
-        this.manager.app.stage.removeChild(this.container);
-        this.container.destroy({children:true});
+        this.manager.removeChild(this.container);
+        this.container.destroy({ children: true });
         delete this.action.children.logo;
     }
 }
@@ -32,6 +32,7 @@ class ChildhoodVideo extends Action.ActionVideo {
         super(manager, action, url);
         this.name = "ChildhoodVideo";
         this.pauseTime = [10.5, 30, 50.29];
+        this.isEnd = false;
         this.uiTime = [
             new UI_Stage1(this.manager, this.action),
             new UI_Stage2(this.manager, this.action),
@@ -46,11 +47,20 @@ class ChildhoodVideo extends Action.ActionVideo {
             this.action.children.ui = this.uiTime[this.count];
             this.action.children.ui.setup();
             this.count++;
+            //console.log(this.videoCrol.duration);
         }
-        else if (this.videoCrol.ended) { this.onEnd(); }
+        else if (this.currentTime > this.videoCrol.duration - 5 && !this.isEnd) {
+            this.isEnd = true;
+            this.onEnd();
+        }
     }
     onEnd() {
-        this.manager.loadPage(this.manager.childhoodObj);
+        this.drawBg("white");
+        gsap.to(this.bg, {
+            duration: 5, alpha: 1, onComplete: function () {
+                this.manager.loadPage(this.manager.childhoodObj);
+            }.bind(this)
+        });
     }
 }
 class UI_Start extends Action.ActionUI {
@@ -90,26 +100,26 @@ class UI_Start extends Action.ActionUI {
         }
     }
     clickEvent() {
-        if (this.isNotStart){
+        if (this.isNotStart) {
             this.isNotStart = false;
 
             let text = new PIXI.Text("新的一天開始了", this.UItextStyle);
             text.anchor.set(0.5);
             text.alpha = 0;
             this.setPosition(text, 0, 0);
-    
+
             let tl = gsap.timeline();
             tl.to(this.container, {
                 duration: 1, alpha: 0, onComplete: function () {
-                    this.manager.app.stage.removeChild(this.container);
+                    this.manager.removeChild(this.container);
                     this.container.destroy({ children: true });
-                    this.manager.app.stage.addChild(text);
+                    this.manager.addChild(text);
                 }.bind(this)
             });
             tl.to(text, { duration: 0.5, alpha: 1 }, "+=1");
             tl.to(text, {
                 duration: 0.5, alpha: 0, onComplete: function () {
-                    this.manager.app.stage.removeChild(text);
+                    this.manager.removeChild(text);
                     text.destroy();
                     this.action.children.video.isStart = true;
                     this.action.children.video.play();
@@ -149,9 +159,9 @@ class UI_Stage1 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.app.stage.removeChild(this.container);
-                this.manager.app.stage.removeChild(this.action.children.line.container);
-                this.manager.app.stage.removeChild(this.action.children.rope.container);
+                this.manager.removeChild(this.container);
+                this.manager.removeChild(this.action.children.line.container);
+                this.manager.removeChild(this.action.children.rope.container);
                 this.container.destroy({ children: true });
                 this.action.children.line.container.destroy({ children: true });
                 this.action.children.rope.container.destroy({ children: true });
@@ -165,7 +175,7 @@ class UI_Stage1 extends Action.ActionUI {
     update() {
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.app.stage.removeChild(this.countdown.container);
+                this.manager.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -224,7 +234,7 @@ class UI_Stage2 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.app.stage.removeChild(this.container);
+                this.manager.removeChild(this.container);
                 this.container.destroy({ children: true });
                 delete this.action.children.ui;
             }.bind(this)
@@ -234,7 +244,7 @@ class UI_Stage2 extends Action.ActionUI {
         this.button.update();
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.app.stage.removeChild(this.countdown.container);
+                this.manager.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -275,14 +285,17 @@ class Stage2_Button extends Action.ActionUI {
             this.setPosition(this.bar, 0, 0.18);
             this.setPosition(this.fullbar, 0, 0.18);
             this.setInteract();
+
+            this.barGsap = gsap.timeline()
+                .to([this.bar, this.fullbar], { duration: 0.1, x: -5 })
+                .to([this.bar, this.fullbar], { duration: 0.1, x: 5 })
+                .to([this.bar, this.fullbar], { duration: 0.1, x: 0 });
+            this.barGsap.pause();
         }
     }
     clickEvent() {
-        this.count += 30;
-        let tl = gsap.timeline();
-        tl.to([this.bar, this.fullbar], { duration: 0.1, x: 5 });
-        tl.to([this.bar, this.fullbar], { duration: 0.1, x: -5 });
-        tl.to([this.bar, this.fullbar], { duration: 0.1, x: 0 });
+        this.count += 20;
+        this.barGsap.play(0.001);
     }
     maskUpdate() {
         let b = this.fullbar.getBounds();
@@ -291,7 +304,7 @@ class Stage2_Button extends Action.ActionUI {
         this.mask.drawRect(b.x, b.y, progress, b.height);
     }
     onClearGame() {
-        this.manager.app.stage.removeChild(this.container);
+        this.manager.removeChild(this.container);
         this.container.destroy({ children: true });
     }
     update() {
@@ -299,7 +312,7 @@ class Stage2_Button extends Action.ActionUI {
             if (this.count > 100) {
                 this.action.isPlayGame = false;
                 this.action.children.video.onClearGame();
-                gsap.killTweensOf(this.bar);
+                this.barGsap.kill();
                 this.onClearGame();
                 this.stage.onClearGame();
             } else if (this.count > 0) { this.count--; this.maskUpdate(); }
@@ -343,7 +356,7 @@ class UI_Stage3 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.app.stage.removeChild(this.container);
+                this.manager.removeChild(this.container);
                 this.container.destroy({ children: true });
                 delete this.action.children.ui;
             }.bind(this)
@@ -353,7 +366,7 @@ class UI_Stage3 extends Action.ActionUI {
         this.button.update();
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.app.stage.removeChild(this.countdown.container);
+                this.manager.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -388,7 +401,7 @@ class Stage3_Button extends Action.ActionUI {
     }
 
     onClearGame() {
-        this.manager.app.stage.removeChild(this.container);
+        this.manager.removeChild(this.container);
         this.container.destroy({ children: true });
     }
     clickEvent() {
