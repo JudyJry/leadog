@@ -57,8 +57,10 @@ class ChildhoodVideo extends Action.ActionVideo {
     onEnd() {
         this.drawBg("white");
         gsap.to(this.bg, {
-            duration: 5, alpha: 1, onComplete: function () {
-                this.manager.loadPage(this.manager.childhoodObj);
+            duration: 3, alpha: 1, onComplete: function () {
+                this.action.children.ui = new UI_End(this.manager, this.action);
+                this.action.children.ui.setup();
+                this.action.children.ui.start();
             }.bind(this)
         });
     }
@@ -412,7 +414,7 @@ class Stage3_Button extends Action.ActionUI {
     }
     update() {
         this.times += this.manager.deltaTime;
-        if (Math.floor(this.times) >= 1) {
+        if (Math.floor(this.times) >= 1.5) {
             this.sprite.texture = this.spriteSheet[1];
             this.setInteract();
             if (this.isPointerOver) {
@@ -421,6 +423,65 @@ class Stage3_Button extends Action.ActionUI {
             else {
                 gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
             }
+        }
+    }
+}
+class UI_End extends Action.ActionUI {
+    constructor(manager, action) {
+        super(manager, action);
+        this.name = "UI_Start";
+        this.isNotStart = true;
+        this.draw = function () {
+            let textTitle = new PIXI.Text("任務完成", this.UItextStyle);
+            textTitle.anchor.set(0.5);
+            this.setPosition(textTitle, 0, -0.3);
+            let textDescribe = new PIXI.Text(
+                `謝謝你幫助狗狗完成在寄養家庭階段的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
+                this.UItextStyleSmall);
+            textDescribe.anchor.set(0.5);
+            this.setPosition(textDescribe, 0, 0);
+
+            this.container.addChild(textTitle, textDescribe);
+            this.container.alpha = 0;
+        }
+    }
+    draw2() {
+        this.sprite.texture = PIXI.Texture.from("image/TGDAlogo.png");
+        this.sprite.anchor.set(0.5);
+        this.sprite.scale.set(1.75);
+        this.setPosition(this.sprite, 0, 0);
+
+        this.container.removeChildren();
+        let text1 = new PIXI.Text("感謝", this.UItextStyle);
+        text1.anchor.set(0.5);
+        this.setPosition(text1, -0.25, 0);
+        let text2 = new PIXI.Text("協助拍攝", this.UItextStyle);
+        text2.anchor.set(0.5);
+        this.setPosition(text2, 0.25, 0);
+        this.container.addChild(text1, text2, this.sprite);
+        this.container.alpha = 0;
+    }
+    start() {
+        let tl = gsap.timeline();
+        tl.to(this.container, { duration: 1, alpha: 1 });
+        tl.to(this.container, {
+            duration: 1, alpha: 0, onComplete: function () {
+                this.draw2();
+            }.bind(this)
+        }, "+=2");
+        tl.to(this.container, { duration: 1, alpha: 1 });
+        tl.to(this.container, {
+            duration: 1, alpha: 0, onComplete: function () {
+                this.manager.loadPage(this.manager.childhoodObj);
+            }.bind(this)
+        }, "+=2");
+    }
+    resize() {
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+        if (!this.action.children.video.isStart) {
+            this.container.removeChildren();
+            this.draw();
         }
     }
 }

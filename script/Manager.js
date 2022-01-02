@@ -181,6 +181,9 @@ export default class Manager {
 }
 
 const loadList = [
+    //video
+    "video/LOGO.mp4",
+    "video/childhood_kelly.mp4",
     //homepage
     "image/home.svg",
     "image/location.svg",
@@ -196,8 +199,7 @@ const loadList = [
     "image/user.svg",
     "image/wave.svg",
     //actionpage
-    "video/LOGO.mp4",
-    "video/childhood_kelly.mp4",
+    "image/TGDAlogo.png",
     "image/video/count5.png",
     "image/video/count4.png",
     "image/video/count3.png",

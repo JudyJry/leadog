@@ -265,13 +265,16 @@ export class ActionUI {
         this.sprite = new PIXI.Sprite();
         this.UItextStyle = new PIXI.TextStyle({
             fontFamily: "GenSenRounded-B",
-            fontSize: 48,
+            fontSize: 54,
             fill: 0x666803,
+            align:"center"
         });
         this.UItextStyleSmall = new PIXI.TextStyle({
             fontFamily: "GenSenRounded-B",
-            fontSize: 30,
+            fontSize: 36,
             fill: 0x666803,
+            align:"center",
+            lineHeight: 60
         });
         this.draw = undefined;
         this.w = window.innerWidth;

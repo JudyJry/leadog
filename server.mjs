@@ -10,6 +10,7 @@ const mineTypes = {
     "jpeg": "image/jpeg",
     "jpg": "image/jpg",
     "png": "image/png",
+    "ico": "image/x-icon",
     "svg": "image/svg+xml",
     'ttc': "font/collection",
     "js": "text/javascript",
@@ -22,7 +23,7 @@ const mineTypes = {
 //create http server
 createServer(function (req, res) {
     let uri = new URL(req.url, `http://${req.headers.host}`).pathname;
-    let fileName = join(process.cwd(), unescape(uri));
+    let fileName = join(process.cwd(), decodeURI(uri));
     //console.log('Loading ' + uri);
     let stats;
 
