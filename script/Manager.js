@@ -125,7 +125,7 @@ export default class Manager {
             this.removeChild();
             this.activeObj = act;
             this.activeObj.setup();
-            this.keyboard.pressed = (k) => {}
+            this.keyboard.pressed = (k) => { }
             this.addChild(this.mouse.cursor);
         }.bind(this));
     }
@@ -208,6 +208,16 @@ const loadList = [
     "image/homepage/company.png",
     "image/homepage/education.png",
     "image/homepage/action.png",
+    //bron
+    //childhood
+    "image/building/childhood/childhood.png",
+    "image/building/childhood/childhood_bg.png",
+    "image/building/childhood/book.png",
+    "image/building/childhood/doll.png",
+    "image/building/childhood/toys.png",
+    "image/building/childhood/wallCalendar.png",
+    //youth
+    //elderly
     //actionpage
     "image/TGDAlogo.png",
     "image/video/count5.png",

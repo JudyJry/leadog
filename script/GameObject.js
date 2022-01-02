@@ -1,4 +1,7 @@
 import * as PIXI from "pixi.js";
+import gsap from "gsap";
+import * as gf from "./GameFunction.js";
+import { GlowFilter } from 'pixi-filters';
 import { ColorSlip } from "./ColorSlip.js";
 
 export class PageObject {
@@ -55,4 +58,50 @@ export class GameObject {
     }
     update() { }
     addKeyEvent() { }
+}
+
+export class linkObject extends GameObject {
+    constructor(manager) {
+        super(manager);
+        this.name = "linkObject";
+        this.container.zIndex = 20;
+        this.scale = 1;
+        this.filter = new GlowFilter({
+            distance: 10,
+            outerStrength: 7,
+            innerStrength: 0,
+            color: ColorSlip.yellow,
+            quality: 0.5
+        });
+        this.spriteHeight = 100;
+        this.textHeight = this.spriteHeight + 10;
+        this.x = 0;
+        this.y = 0;
+        this.url = "image/location.svg";
+        this.draw = function () {
+            let _x = (this.x * this.w);
+            let _y = (this.y * this.h);
+            this.sprite.texture = PIXI.Texture.from(this.url);
+            this.sprite.anchor.set(0.5);
+            this.sprite.scale.set(this.scale);
+            this.text = new PIXI.Text(this.name, this.textStyle);
+            this.text.anchor.set(0.5);
+            this.text.position.set(0, 50 * -1);
+            this.container.position.set(_x, _y);
+            this.container.addChild(this.sprite, this.text);
+        }
+    }
+    update() {
+        this.manager.arrived(this.name, gf.rectCollision(this.manager.player.container, this.sprite));
+        if (this.manager.isArrive(this.name)) {
+            this.sprite.filters = [this.filter];
+            gsap.to(this.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
+            gsap.to(this.sprite.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
+        }
+        else {
+            this.sprite.filters = [];
+            gsap.to(this.text, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
+            gsap.to(this.sprite.scale, { duration: 1, x: this.scale, y: this.scale });
+        }
+    }
 }

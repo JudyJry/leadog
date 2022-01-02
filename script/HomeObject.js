@@ -42,8 +42,8 @@ class Building extends GameObject {
         super(manager);
         this.name = "Building"
         this.filter = new GlowFilter({
-            distance: 6,
-            outerStrength: 6,
+            distance: 10,
+            outerStrength: 7,
             innerStrength: 0,
             color: ColorSlip.yellow,
             quality: 0.5
@@ -53,6 +53,13 @@ class Building extends GameObject {
         this.spriteHeight = 100;
         this.textHeight = this.spriteHeight + 10;
         this.w = 1920;
+        this.textStyle = new PIXI.TextStyle({
+            fontFamily: "GenSenRounded-B",
+            fontSize: 30,
+            fill: ColorSlip.darkOrange,
+            stroke: ColorSlip.white,
+            strokeThickness: 5
+        });
         this.draw = function () {
             this.drawBuilding("出生", "image/homepage/bron.png", 0.154, 0.141);
             this.drawBuilding("幼年", "image/homepage/childhood.png", 0.109, -0.042);
@@ -100,10 +107,12 @@ class Building extends GameObject {
             if (this.manager.isArrive(e.name)) {
                 e.sprite.filters = [this.filter];
                 gsap.to(e.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
+                gsap.to(e.sprite.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
             }
             else {
                 e.sprite.filters = [];
                 gsap.to(e.text, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
+                gsap.to(e.sprite.scale, { duration: 1, x: this.scale, y: this.scale });
             }
         });
     }
