@@ -184,11 +184,10 @@ const loadList = [
     //video
     "video/LOGO.mp4",
     "video/childhood_kelly.mp4",
-    //homepage
+    //uiSystem
     "image/home.svg",
     "image/location.svg",
     "image/logo.svg",
-    "image/map.jpeg",
     "image/menu.svg",
     "image/notify.svg",
     "image/player.svg",
@@ -198,6 +197,17 @@ const loadList = [
     "image/setting.svg",
     "image/user.svg",
     "image/wave.svg",
+    //homepage
+    "image/homepage/map.png",
+    "image/homepage/island.png",
+    "image/homepage/tree_front.png",
+    "image/homepage/bron.png",
+    "image/homepage/childhood.png",
+    "image/homepage/youth.png",
+    "image/homepage/elderly.png",
+    "image/homepage/company.png",
+    "image/homepage/education.png",
+    "image/homepage/action.png",
     //actionpage
     "image/TGDAlogo.png",
     "image/video/count5.png",

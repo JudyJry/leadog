@@ -16,8 +16,8 @@ export default class HomeObject extends PageObject {
         this.children = {
             "background": new Background(manager),
             "wave": new Wave(manager),
-            "building": new Building(manager)
-            //"tree": new Tree(manager)
+            "building": new Building(manager),
+            "tree": new Tree(manager)
         };
     }
 }
@@ -28,8 +28,8 @@ class Background extends GameObject {
         this.name = "Background"
         this.container.zIndex = 10;
         this.draw = function () {
-            this.sprite.texture = PIXI.Texture.from("image/map.jpeg");
-            this.spriteHeight = this.sprite.texture.height+300;
+            this.sprite.texture = PIXI.Texture.from("image/homepage/island.png");
+            this.spriteHeight = this.sprite.texture.height + 300;
             this.sprite.anchor.set(0.5);
             this.manager.canvasScale = this.h / this.spriteHeight;
             this.sprite.scale.set(this.manager.canvasScale);
@@ -37,7 +37,6 @@ class Background extends GameObject {
         }
     }
 }
-
 class Building extends GameObject {
     constructor(manager) {
         super(manager);
@@ -49,35 +48,33 @@ class Building extends GameObject {
             color: ColorSlip.yellow,
             quality: 0.5
         });
-        this.container.zIndex = 30;
-        this.scale = 0.2;
-        this.spriteHeight = 50;
+        this.container.zIndex = 20;
+        this.scale = 0.7;
+        this.spriteHeight = 100;
         this.textHeight = this.spriteHeight + 10;
         this.w = 1920;
         this.draw = function () {
-            this.drawBuilding("出生", 0.129, -0.228);
-            this.drawBuilding("幼年", 0.195, -0.091);
-            this.drawBuilding("壯年", 0.209, 0.111);
-            this.drawBuilding("老年", 0.142, 0.205);
-            this.drawBuilding("捐款", -0.008, -0.319);
-            this.drawBuilding("配對", 0.028, -0.08);
-            this.drawBuilding("活動", -0.14, 0.02);
-            this.drawBuilding("外部連結", -0.004, 0.25);
+            this.drawBuilding("出生", "image/homepage/bron.png", 0.154, 0.141);
+            this.drawBuilding("幼年", "image/homepage/childhood.png", 0.109, -0.042);
+            this.drawBuilding("壯年", "image/homepage/youth.png", 0.029, 0.098);
+            this.drawBuilding("老年", "image/homepage/elderly.png", -0.068, 0.098);
+            this.drawBuilding("知識教育館", "image/homepage/education.png", 0.007, -0.165);
+            this.drawBuilding("LEADOG公司", "image/homepage/company.png", -0.126, -0.183);
+            this.drawBuilding("相關活動", "image/homepage/action.png", 0.137, -0.296);
         }
     }
-    drawBuilding(n, x, y) {
+    drawBuilding(n, url, x, y) {
         let _x = (x * this.w);
         let _y = (y * this.h);
         let c = new PIXI.Container();
         c.name = n;
-        c.sprite = new PIXI.Sprite();
+        c.sprite = PIXI.Sprite.from(url);
         c.text = new PIXI.Text(c.name, this.textStyle);
         c.isEntering = false;
 
         c.sprite.anchor.set(0.5);
         c.sprite.scale.set(this.scale);
         c.sprite.filters = [this.filter];
-        c.sprite.texture = PIXI.Texture.from("image/location.svg");
         c.text.anchor.set(0.5);
         c.text.position.set(0, this.spriteHeight * -1);
         c.text.alpha = 0;
@@ -111,35 +108,27 @@ class Building extends GameObject {
         });
     }
 }
-
 class Tree extends GameObject {
     constructor(manager) {
         super(manager);
         this.name = 'Tree';
-        this.container.zIndex = 20;
-        this.filter = new GlowFilter({
-            distance: 5,
-            outerStrength: 5,
-            innerStrength: 0,
-            color: ColorSlip.yellow,
-            quality: 0.5
-        });
+        this.container.zIndex = 30;
         this.angle = 15 * (Math.PI / 180);
+        this.scale = 0.8;
         this.draw = function () {
-            this.drawTree(0.25, 0.1);
-            this.drawTree(0.1, -0.1);
+            this.drawTree("image/homepage/tree_front.png", 0.05, 0.121);
         }
     }
-    drawTree(x, y) {
+    drawTree(url, x, y) {
         let _x = (x * this.w);
         let _y = (y * this.h);
-        let tree = PIXI.Sprite.from("image/tree.png");
-        tree.anchor.set(0.5, 1);
-        tree.scale.set(0.25);
-        tree.filters = [this.filter];
+        let tree = PIXI.Sprite.from(url);
+        tree.anchor.set(0.5);
+        tree.scale.set(this.scale);
         tree.position.set(_x, _y);
         this.container.addChild(tree);
     }
+    /*
     update() {
         for (let i = 0; i < this.container.children.length; i++) {
             let e = this.container.children[i];
@@ -167,8 +156,8 @@ class Tree extends GameObject {
             }
         }
     }
+    */
 }
-
 class Wave extends GameObject {
     constructor(manager) {
         super(manager);
