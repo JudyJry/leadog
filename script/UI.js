@@ -57,7 +57,7 @@ export class UI {
         this.icon = undefined;
         this.w = window.innerWidth;
         this.h = window.innerHeight;
-        this.scale = 0.25;
+        this.scale = 0.3;
         this.UItextStyle = new PIXI.TextStyle({
             fontFamily: "GenSenRounded-B",
             fontSize: 30,
@@ -137,7 +137,9 @@ class User extends UI {
         this.draw = function (x = -0.42, y = -0.4) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.icon = this.drawIcon("image/user.svg");
+            this.icon = this.drawIcon("image/user.png");
+            this.icon.scale.set(0.5);
+            this.icon.anchor.set(0, 0.5);
             let g = new PIXI.Graphics()
                 .beginFill(0x000000, 0.1)
                 .drawRoundedRect(0, -35, 250, 70, 100)
@@ -149,7 +151,8 @@ class User extends UI {
             this.userLevelText.anchor.set(0, 0.5);
             this.userLevelText.position.set(100, 55);
             this.container.position.set(_x, _y);
-            this.container.addChild(g, this.userNameText, this.userLevelText, this.icon);
+            //this.container.addChild(g, this.userNameText, this.userLevelText, this.icon);
+            this.container.addChild(this.userNameText, this.userLevelText, this.icon);
         }
     }
 }
@@ -161,16 +164,19 @@ class Point extends UI {
         this.draw = function (x = -0.25, y = -0.4) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.icon = this.drawIcon("image/point.svg");
+            this.icon = this.drawIcon("image/point.png");
+            this.icon.scale.set(0.5);
+            this.icon.anchor.set(0, 0.5);
             let g = new PIXI.Graphics()
                 .beginFill(0x000000, 0.1)
                 .drawRoundedRect(-25, -35, 200, 70, 100)
                 .endFill();
             this.pointText = new PIXI.Text(`${this.number}`, this.UItextStyle);
             this.pointText.anchor.set(0, 0.5);
-            this.pointText.position.set(50, 0);
+            this.pointText.position.set(70, 0);
             this.container.position.set(_x, _y);
-            this.container.addChild(g, this.pointText, this.icon);
+            //this.container.addChild(g, this.pointText, this.icon);
+            this.container.addChild(this.pointText, this.icon);
         }
     }
 }
@@ -182,16 +188,19 @@ class Search extends UI {
         this.draw = function (x = 0.33, y = -0.4) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.icon = this.drawIcon("image/search.svg");
+            this.icon = this.drawIcon("image/search.png");
+            this.icon.scale.set(0.5);
+            this.icon.anchor.set(1, 0.5);
             let g = new PIXI.Graphics()
                 .beginFill(0x000000, 0.1)
                 .drawRoundedRect(-325, -35, 350, 70, 100)
                 .endFill();
             this.searchText = new PIXI.Text(`${this.searchString}`, this.UItextStyle);
             this.searchText.anchor.set(0, 0.5);
-            this.searchText.position.set(-290, 0);
+            this.searchText.position.set(-200, 0);
             this.container.position.set(_x, _y);
-            this.container.addChild(g, this.searchText, this.icon);
+            //this.container.addChild(g, this.searchText, this.icon);
+            this.container.addChild(this.searchText, this.icon);
         }
     }
 }
@@ -202,7 +211,7 @@ class Setting extends UI {
         this.draw = function (x = 0.38, y = -0.4) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.icon = this.drawIcon('image/setting.svg');
+            this.icon = this.drawIcon('image/setting.png');
             this.text = new PIXI.Text("設定", this.UItextStyleSmall);
             this.text.anchor.set(0.5);
             this.text.position.set(0, 50);
@@ -218,7 +227,7 @@ class Menu extends UI {
         this.draw = function (x = 0.43, y = -0.4) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.icon = this.drawIcon('image/menu.svg');
+            this.icon = this.drawIcon('image/menu.png');
             this.text = new PIXI.Text("選單", this.UItextStyleSmall);
             this.text.anchor.set(0.5);
             this.text.position.set(0, 50);
@@ -234,7 +243,7 @@ class Question extends UI {
         this.draw = function (x = 0.43, y = -0.28) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.icon = this.drawIcon('image/question.svg');
+            this.icon = this.drawIcon('image/question.png');
             this.text = new PIXI.Text("問題", this.UItextStyleSmall);
             this.text.anchor.set(0.5);
             this.text.position.set(0, 50);
@@ -250,7 +259,7 @@ class Home extends UI {
         this.draw = function (x = 0.43, y = -0.16) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.icon = this.drawIcon('image/home.svg');
+            this.icon = this.drawIcon('image/home.png');
             this.text = new PIXI.Text("首頁", this.UItextStyleSmall);
             this.text.anchor.set(0.5);
             this.text.position.set(0, 50);

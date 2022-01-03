@@ -180,7 +180,7 @@ export default class Manager {
             }));
             t.anchor.set(0.5);
             t.position.set(0, 0);
-            this.addChild(t, this.player.container, this.uiSystem.container);
+            this.addChild(t, this.player.container, this.uiSystem.container, this.mouse.cursor);
             this.app.stage.sortChildren();
         }.bind(this), () => {
             e.isEntering = false;
@@ -205,6 +205,15 @@ const loadList = [
     "image/setting.svg",
     "image/user.svg",
     "image/wave.svg",
+    //uiSystem-png
+    "image/home.png",
+    "image/menu.png",
+    "image/setting.png",
+    "image/question.png",
+    "image/user.png",
+    "image/notify.png",
+    "image/point.png",
+    "image/search.png",
     //homepage
     "image/homepage/map.png",
     "image/homepage/island.png",

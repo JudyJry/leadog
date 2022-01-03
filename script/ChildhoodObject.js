@@ -32,7 +32,8 @@ class Background extends GameObject {
         }
     }
     resize() {
-        this.w = this.manager.w;
+        this.w = window.innerWidth;
+        this.h = window.innerWidth;
         this.container.removeChildren();
         this.draw();
     }

@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js';
 import { PageObject, GameObject } from "./GameObject";
-import { UI } from "./UI";
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
@@ -71,7 +70,7 @@ export class ActionVideo extends GameObject {
         this.videoCrol = this.videoTexture.resource.source;
         this.videoTexture.autoPlay = false;
         this.videoTexture.resource.autoPlay = false;
-        this.videoCrol.muted = true;
+        this.videoCrol.muted = false;
         this.currentTime = this.videoCrol.currentTime;
         this.container.addChild(this.sprite);
 
@@ -102,8 +101,8 @@ export class ActionVideo extends GameObject {
         }
     }
     resize() {
-        this.w = this.manager.w;
-        this.h = this.manager.h;
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
         this.container.removeChildren();
         this.draw();
     }
@@ -256,29 +255,24 @@ export class ActionRope extends GameObject {
         if (this.action.isPlayGame) this.onPlay();
     }
 }
-export class ActionUI {
+export class ActionUI extends GameObject {
     constructor(manager, action) {
-        this.manager = manager;
+        super(manager);
         this.action = action;
         this.name = "ActionUI";
-        this.container = new PIXI.Container();
-        this.sprite = new PIXI.Sprite();
         this.UItextStyle = new PIXI.TextStyle({
             fontFamily: "GenSenRounded-B",
             fontSize: 54,
             fill: 0x666803,
-            align:"center"
+            align: "center"
         });
         this.UItextStyleSmall = new PIXI.TextStyle({
             fontFamily: "GenSenRounded-B",
             fontSize: 36,
             fill: 0x666803,
-            align:"center",
+            align: "center",
             lineHeight: 60
-        });
-        this.draw = undefined;
-        this.w = window.innerWidth;
-        this.h = window.innerHeight;
+        })
         this.scale = 0.5;
     }
     setPosition(e, x, y) {
@@ -299,10 +293,6 @@ export class ActionUI {
         function onOut(event) { this.isPointerOver = false; }
     }
     clickEvent() { alert("click " + this.name); }
-    setup() {
-        this.draw();
-        this.manager.addChild(this.container);
-    }
     resize() {
         this.w = window.innerWidth;
         this.h = window.innerHeight;
