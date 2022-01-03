@@ -31,15 +31,21 @@ export default class Player {
         this.container.addChild(this.sprite);
     }
     setup() {
-        this.draw();
-        this.manager.addChild(this.container);
+        if (this.manager.isUsePlayer) {
+            this.draw();
+            this.manager.addChild(this.container);
+        }
     }
     resize() {
-        this.h = this.manager.h;
-        this.container.removeChildren();
-        this.draw();
+        if (this.manager.isUsePlayer) {
+            this.h = this.manager.h;
+            this.container.removeChildren();
+            this.draw();
+        }
     }
     update() {
-        gsap.to(this.container, { duration: 0.2, x: this.manager.playerPos.x, y: this.manager.playerPos.y });
+        if (this.manager.isUsePlayer) {
+            gsap.to(this.container, { duration: 0.2, x: this.manager.playerPos.x, y: this.manager.playerPos.y });
+        }
     }
 }

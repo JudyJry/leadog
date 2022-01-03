@@ -27,8 +27,11 @@ export class PageObject {
     reload() {
         for (let [_, e] of Object.entries(this.children)) { this.manager.addChild(e.container); }
     }
-    addKeyEvent() {
-        for (let [_, e] of Object.entries(this.children)) { e.addKeyEvent(); }
+    addKeyEvent(k) {
+        for (let [_, e] of Object.entries(this.children)) { e.addKeyEvent(k); }
+    }
+    addMouseEvent(m) {
+        for (let [_, e] of Object.entries(this.children)) { e.addMouseEvent(m); }
     }
 }
 
@@ -57,7 +60,8 @@ export class GameObject {
         this.draw();
     }
     update() { }
-    addKeyEvent() { }
+    addKeyEvent(k) { }
+    addMouseEvent(m) { }
 }
 
 export class linkObject extends GameObject {
@@ -92,7 +96,12 @@ export class linkObject extends GameObject {
         }
     }
     update() {
-        this.manager.arrived(this.name, gf.rectCollision(this.manager.player.container, this.sprite));
+        if (this.manager.isUsePlayer) {
+            this.manager.arrived(this.name, gf.rectCollision(this.manager.player.container, this.sprite));
+        }
+        else {
+            this.manager.arrived(this.name, gf.pointCollision(this.manager.mouse.position, this.sprite));
+        }
         if (this.manager.isArrive(this.name)) {
             this.sprite.filters = [this.filter];
             gsap.to(this.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
@@ -103,5 +112,8 @@ export class linkObject extends GameObject {
             gsap.to(this.text, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
             gsap.to(this.sprite.scale, { duration: 1, x: this.scale, y: this.scale });
         }
+
+
+
     }
 }

@@ -1,11 +1,8 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { GlowFilter } from 'pixi-filters';
 import { GameObject, PageObject, linkObject } from './GameObject.js';
-import * as gf from "./GameFunction.js";
 import ChildhoodAction from './ChildhoodAction.js';
-import { ColorSlip } from './ColorSlip.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -49,8 +46,19 @@ class Toys extends linkObject {
         this.y = 0.143;
         this.url = "image/building/childhood/toys.png";
     }
-    addKeyEvent() {
-        if (this.manager.keyboard.key['Enter']) {
+    
+    addKeyEvent(k) {
+        if (k['Enter'] && this.manager.isUsePlayer) {
+            if (this.manager.isArrive(this.name) && !this.isEntering) {
+                //console.log(`You enter the ${this.name}!`);
+                this.isEntering = true;
+                this.manager.loadAction(new ChildhoodAction(this.manager));
+            }
+        }
+    }
+    
+    addMouseEvent(m) {
+        if (m && !this.manager.isUsePlayer) {
             if (this.manager.isArrive(this.name) && !this.isEntering) {
                 //console.log(`You enter the ${this.name}!`);
                 this.isEntering = true;

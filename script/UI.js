@@ -291,25 +291,27 @@ class CrolArrow extends UI {
     constructor(manager) {
         super(manager);
         this.draw = function (x = 0.5, y = 0.5) {
-            let _x = (x * this.w);
-            let _y = (y * this.h);
-            this.right = new PIXI.Graphics()
-                .beginFill(0x0, 0.1)
-                .drawRoundedRect(0, 0, 90, 90, 10)
-                .endFill()
-                .beginFill(0xffffff)
-                .moveTo(30, 25)
-                .lineTo(30, 65)
-                .lineTo(64, 45);
-            this.right.pivot.set(this.right.width / 2, this.right.height / 2);
-            this.down = clone(this.right, [-100, 0], 90);
-            this.left = clone(this.right, [-200, 0], 180);
-            this.up = clone(this.right, [-100, -100], 270);
+            if (this.manager.isUsePlayer) {
+                let _x = (x * this.w);
+                let _y = (y * this.h);
+                this.right = new PIXI.Graphics()
+                    .beginFill(0x0, 0.1)
+                    .drawRoundedRect(0, 0, 90, 90, 10)
+                    .endFill()
+                    .beginFill(0xffffff)
+                    .moveTo(30, 25)
+                    .lineTo(30, 65)
+                    .lineTo(64, 45);
+                this.right.pivot.set(this.right.width / 2, this.right.height / 2);
+                this.down = clone(this.right, [-100, 0], 90);
+                this.left = clone(this.right, [-200, 0], 180);
+                this.up = clone(this.right, [-100, -100], 270);
 
-            this.container.addChild(this.up, this.down, this.left, this.right);
-            this.container.children.forEach((e) => { e.interactive = true; e.buttonMode = true; });
-            this.container.pivot.set(this.container.width / 2, this.container.height / 2);
-            this.container.position.set(_x, _y);
+                this.container.addChild(this.up, this.down, this.left, this.right);
+                this.container.children.forEach((e) => { e.interactive = true; e.buttonMode = true; });
+                this.container.pivot.set(this.container.width / 2, this.container.height / 2);
+                this.container.position.set(_x, _y);
+            }
             function clone(s, p, r) {
                 let c = s.clone();
                 c.pivot.set(c.width / 2, c.height / 2);
@@ -320,31 +322,37 @@ class CrolArrow extends UI {
         }
     }
     addCrolEvent(p = this.manager.player) {
-        this.container.children.forEach((e) => {
-            e.on("pointerover", onOver.bind(e));
-            e.on("pointerout", onOver.bind(e));
-        });
-        function onOver(e) { this.isPointerOver = e.type == "pointerover"; }
+        if (this.manager.isUsePlayer) {
+            this.container.children.forEach((e) => {
+                e.on("pointerover", onOver.bind(e));
+                e.on("pointerout", onOver.bind(e));
+            });
+            function onOver(e) { this.isPointerOver = e.type == "pointerover"; }
 
-        this.up.downEvent = () => { p.vy = p.speed; this.up.alpha = 2; };
-        this.down.downEvent = () => { p.vy = -p.speed; this.down.alpha = 2; };
-        this.left.downEvent = () => { p.vx = p.speed; this.left.alpha = 2; p.sprite.scale.set(p.scale * -1, p.scale); };
-        this.right.downEvent = () => { p.vx = -p.speed; this.right.alpha = 2; p.sprite.scale.set(p.scale * 1, p.scale); };
+            this.up.downEvent = () => { p.vy = p.speed; this.up.alpha = 2; };
+            this.down.downEvent = () => { p.vy = -p.speed; this.down.alpha = 2; };
+            this.left.downEvent = () => { p.vx = p.speed; this.left.alpha = 2; p.sprite.scale.set(p.scale * -1, p.scale); };
+            this.right.downEvent = () => { p.vx = -p.speed; this.right.alpha = 2; p.sprite.scale.set(p.scale * 1, p.scale); };
+        }
     }
     update(p = this.manager.player, k = this.manager.keyboard.key, m = this.manager.mouse.isPressed) {
-        this.container.children.forEach(e => { e.alpha = 1; });
-        if ((this.up.isPointerOver && m) || k['ArrowUp']) { this.up.downEvent(); }
-        else if ((this.down.isPointerOver && m) || k['ArrowDown']) { this.down.downEvent(); }
-        else { p.vy = 0; }
-        if ((this.left.isPointerOver && m) || k['ArrowLeft']) { this.left.downEvent(); }
-        else if ((this.right.isPointerOver && m) || k['ArrowRight']) { this.right.downEvent(); }
-        else { p.vx = 0; }
+        if (this.manager.isUsePlayer) {
+            this.container.children.forEach(e => { e.alpha = 1; });
+            if ((this.up.isPointerOver && m) || k['ArrowUp']) { this.up.downEvent(); }
+            else if ((this.down.isPointerOver && m) || k['ArrowDown']) { this.down.downEvent(); }
+            else { p.vy = 0; }
+            if ((this.left.isPointerOver && m) || k['ArrowLeft']) { this.left.downEvent(); }
+            else if ((this.right.isPointerOver && m) || k['ArrowRight']) { this.right.downEvent(); }
+            else { p.vx = 0; }
+        }
     }
     resize() {
-        this.w = window.innerWidth;
-        this.h = window.innerHeight;
-        this.container.removeChildren();
-        this.draw();
-        this.addCrolEvent();
+        if (this.manager.isUsePlayer) {
+            this.w = window.innerWidth;
+            this.h = window.innerHeight;
+            this.container.removeChildren();
+            this.draw();
+            this.addCrolEvent();
+        }
     }
 }

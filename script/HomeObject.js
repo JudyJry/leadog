@@ -90,8 +90,19 @@ class Building extends GameObject {
         c.addChild(c.sprite, c.text);
         this.container.addChild(c);
     }
-    addKeyEvent() {
-        if (this.manager.keyboard.key['Enter']) {
+    addKeyEvent(k) {
+        if (k['Enter'] && this.manager.isUsePlayer) {
+            this.container.children.forEach((e) => {
+                if (this.manager.isArrive(e.name) && !e.isEntering) {
+                    //console.log(`You enter the ${e.name}!`);
+                    e.isEntering = true;
+                    this.manager.toOtherPage(e);
+                }
+            });
+        }
+    }
+    addMouseEvent(m) {
+        if (m && !this.manager.isUsePlayer) {
             this.container.children.forEach((e) => {
                 if (this.manager.isArrive(e.name) && !e.isEntering) {
                     //console.log(`You enter the ${e.name}!`);
@@ -103,7 +114,13 @@ class Building extends GameObject {
     }
     update() {
         this.container.children.forEach((e) => {
-            this.manager.arrived(e.name, gf.rectCollision(this.manager.player.container, e));
+            if (this.manager.isUsePlayer) {
+                this.manager.arrived(e.name, gf.rectCollision(this.manager.player.container, e));
+            }
+            else {
+                this.manager.arrived(e.name, gf.pointCollision(this.manager.mouse.position, e));
+            }
+            
             if (this.manager.isArrive(e.name)) {
                 e.sprite.filters = [this.filter];
                 gsap.to(e.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });

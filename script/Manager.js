@@ -40,6 +40,8 @@ export default class Manager {
         this.bronObj = new BronObject(this);
         this.childhoodObj = new ChildhoodObject(this);
         this.activeObj = this.homeObj;
+
+        this.isUsePlayer = false;
     }
     setup() {
         this.uiSystem.setup();
@@ -48,7 +50,10 @@ export default class Manager {
         this.mouse.setup();
         this.app.stage.sortChildren();
         this.keyboard.pressed = (k) => {
-            this.activeObj.addKeyEvent();
+            this.activeObj.addKeyEvent(k);
+        }
+        this.mouse.pressed = (m) => {
+            this.activeObj.addMouseEvent(m);
         }
         this.app.ticker.add((delta) => {
             this.deltaTime = (1 / 60) * delta;
@@ -111,7 +116,10 @@ export default class Manager {
             this.activeObj = obj;
             this.activeObj.setup();
             this.keyboard.pressed = (k) => {
-                this.activeObj.addKeyEvent();
+                this.activeObj.addKeyEvent(k);
+            }
+            this.mouse.pressed = (m) => {
+                this.activeObj.addMouseEvent(m);
             }
             this.addChild(this.player.container, this.uiSystem.container, this.mouse.cursor);
             this.app.stage.sortChildren();

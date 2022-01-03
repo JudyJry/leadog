@@ -14,6 +14,7 @@ export default class Mouse {
         this.x = this.position.x;
         this.y = this.position.y;
         this.isPressed = false;
+        this.pressed = undefined;
         this.mousePos = function () {
             this.position = this.manager.app.renderer.plugins.interaction.mouse.global;
             this.x = this.position.x;
@@ -21,6 +22,7 @@ export default class Mouse {
         };
         onpointerdown = onpointerup = (e) => {
             this.isPressed = e.type == 'pointerdown';
+            this.pressed(this.isPressed);
         }
         this.w = this.manager.w;
         this.h = this.manager.h;
