@@ -1,4 +1,6 @@
 import { GlowFilter } from 'pixi-filters';
+import { ColorSlip } from './ColorSlip';
+
 const FilterSet = {
     link: new GlowFilter({
         distance: 10,

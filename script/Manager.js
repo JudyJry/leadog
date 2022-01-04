@@ -8,6 +8,10 @@ import HomeObject from "./HomeObject.js";
 import BronObject from './BronObject.js';
 import ChildhoodObject from './ChildhoodObject.js';
 import { ColorSlip } from "./ColorSlip.js";
+import YouthObject from './YouthObject.js';
+import ElderlyObject from './ElderlyObject.js';
+import CompanyObject from './CompanyObject.js';
+import EventObject from './EventObject.js';
 
 export default class Manager {
     constructor() {
@@ -144,21 +148,18 @@ export default class Manager {
                 this.loadPage(new ChildhoodObject(this));
                 break;
             case "壯年":
-                this.toUndonePage(e);
+                this.loadPage(new YouthObject(this));
                 break;
             case "老年":
-                this.toUndonePage(e);
+                this.loadPage(new ElderlyObject(this));
                 break;
-            case "捐款":
-                this.toUndonePage(e);
+            case "LEADOG公司":
+                this.loadPage(new CompanyObject(this));
                 break;
-            case "配對":
-                this.toUndonePage(e);
+            case "相關活動":
+                this.loadPage(new EventObject(this));
                 break;
-            case "活動":
-                this.toUndonePage(e);
-                break;
-            case "外部連結":
+            case "知識教育館":
                 this.toUndonePage(e);
                 break;
             default:
@@ -221,7 +222,7 @@ const loadList = [
     "image/homepage/elderly.png",
     "image/homepage/company.png",
     "image/homepage/education.png",
-    "image/homepage/action.png",
+    "image/homepage/event.png",
     //bron
     "image/building/bron/bron.png",
     "image/building/bron/bron_bg.png",
@@ -244,12 +245,36 @@ const loadList = [
     "image/building/childhood/wallCalendar_shadow.png",
     //youth
     "image/building/youth/youth.png",
+    "image/building/youth/youth_bg.png",
+    "image/building/youth/graduate.png",
+    "image/building/youth/info.png",
+    "image/building/youth/bus.png",
+    "image/building/youth/instruction.png",
+    "image/building/youth/traffic.png",
+    "image/building/youth/bus_shadow.png",
+    "image/building/youth/instruction_shadow.png",
+    "image/building/youth/traffic_shadow.png",
     //elderly
     "image/building/elderly/elderly.png",
-    //action
-    "image/building/action/action.png",
+    "image/building/elderly/elderly_bg.png",
+    "image/building/elderly/distributed.png",
+    "image/building/elderly/story.png",
+    "image/building/elderly/distributed_shadow.png",
+    "image/building/elderly/story_shadow.png",
+    //event
+    "image/building/event/event.png",
+    "image/building/event/event_bg.png",
+    "image/building/event/signup.png",
+    "image/building/event/signup_shadow.png",
     //company
     "image/building/company/company.png",
+    "image/building/company/company_bg.png",
+    "image/building/company/commodity.png",
+    "image/building/company/donate.png",
+    "image/building/company/exit.png",
+    "image/building/company/commodity_shadow.png",
+    "image/building/company/donate_shadow.png",
+    "image/building/company/exit_shadow.png",
     //education
 
     //actionpage

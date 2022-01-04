@@ -55,7 +55,7 @@ class Building extends GameObject {
             this.drawBuilding("老年", "image/homepage/elderly.png", -0.068, 0.098);
             this.drawBuilding("知識教育館", "image/homepage/education.png", 0.007, -0.165);
             this.drawBuilding("LEADOG公司", "image/homepage/company.png", -0.126, -0.183);
-            this.drawBuilding("相關活動", "image/homepage/action.png", 0.137, -0.296);
+            this.drawBuilding("相關活動", "image/homepage/event.png", 0.137, -0.296);
         }
     }
     drawBuilding(n, url, x, y) {
