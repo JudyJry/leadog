@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { ColorSlip } from "./ColorSlip.js";
 import ResourceLoader from "./ResourceLoader.js";
 import Keyboard from "./KeyBoard.js";
 import Mouse from './Mouse.js';
@@ -7,7 +8,6 @@ import Player from './Player.js';
 import HomeObject from "./HomeObject.js";
 import BronObject from './BronObject.js';
 import ChildhoodObject from './ChildhoodObject.js';
-import { ColorSlip } from "./ColorSlip.js";
 import YouthObject from './YouthObject.js';
 import ElderlyObject from './ElderlyObject.js';
 import CompanyObject from './CompanyObject.js';
@@ -114,7 +114,6 @@ export default class Manager {
             this.app.stage.y = this.app.renderer.height * this.anchor;
             this.removeChild();
             this.playerPos = this.homeDefaultPos;
-            delete this.activeObj;
             this.activeObj = obj;
             this.activeObj.setup();
             this.keyboard.pressed = (k) => {
@@ -193,7 +192,7 @@ const loadList = [
     //uiSystem
     "image/home.svg",
     "image/location.svg",
-    "image/logo.svg",
+    "image/logo.png",
     "image/menu.svg",
     "image/notify.svg",
     "image/player.svg",

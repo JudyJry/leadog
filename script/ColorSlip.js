@@ -4,6 +4,6 @@ const ColorSlip = {
     lightOrange: 0xffa411,
     darkOrange: 0x666803,
     yellow: 0xedda6e,
-    lightBlue: 0xe0f9fd,
+    lightBlue: 0xc3edf6,
 }
 export { ColorSlip };

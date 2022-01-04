@@ -8,9 +8,11 @@ export default class ChildhoodAction extends Action.ActionPage {
         super(manager);
         this.name = "ChildhoodAction";
         this.offset = 50;
+        console.log(this);
+    }
+    reset() {
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "kelly", "sound/childhood_kelly.wav"),
             "sound": new Action.ActionSound(this.manager, this, "kelly", "sound/childhood_kelly.wav"),
             "video": new ChildhoodVideo(this.manager, this, "video/childhood_kelly.mp4"),
             "rope": new Action.ActionRope(this.manager, this),
@@ -22,35 +24,41 @@ export default class ChildhoodAction extends Action.ActionPage {
 class LogoVideo extends Action.LogoVideo {
     constructor(manager, action) {
         super(manager, action);
+        this.onEnd = function () {
+            this.action.children.ui.start();
+            this.manager.removeChild(this.container);
+            this.container.destroy({ children: true });
+            delete this.action.children.logo;
+            this.destroy();
+        }.bind(this);
     }
-    onEnd() {
-        this.action.children.ui.start();
-        this.manager.removeChild(this.container);
-        this.container.destroy({ children: true });
-        delete this.action.children.logo;
-    }
+
 }
 class ChildhoodVideo extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "ChildhoodVideo";
-        this.pauseTime = [10.5, 30, 50.29];
+        this.pauseTime = [10.5, 30, 50.31];
         this.isEnd = false;
-        this.uiTime = [
-            new UI_Stage1(this.manager, this.action),
-            new UI_Stage2(this.manager, this.action),
-            new UI_Stage3(this.manager, this.action),
-        ]
         this.count = 0;
     }
     update() {
         if (this.currentTime > this.pauseTime[this.count]) {
             this.action.isPlayGame = true;
             this.onPlayGame();
-            this.action.children.ui = this.uiTime[this.count];
+            switch (this.count) {
+                case 0:
+                    this.action.children.ui = new UI_Stage1(this.manager, this.action);
+                    break;
+                case 1:
+                    this.action.children.ui = new UI_Stage2(this.manager, this.action);
+                    break;
+                case 2:
+                    this.action.children.ui = new UI_Stage3(this.manager, this.action);
+                    break;
+            }
             this.action.children.ui.setup();
             this.count++;
-            //console.log(this.videoCrol.duration);
         }
         else if (this.currentTime > this.videoCrol.duration - 5 && !this.isEnd) {
             this.isEnd = true;
@@ -63,7 +71,10 @@ class ChildhoodVideo extends Action.ActionVideo {
             duration: 3, alpha: 1, onComplete: function () {
                 this.action.children.ui = new UI_End(this.manager, this.action);
                 this.action.children.ui.setup();
-                this.action.children.ui.start();
+                this.action.children.ui.end();
+                delete this.action.children.video;
+                this.videoCrol.ontimeupdate = undefined;
+                this.destroy();
             }.bind(this)
         });
     }
@@ -92,17 +103,10 @@ class UI_Start extends Action.ActionUI {
         }
     }
     start() {
+        console.log("start");
         let tl = gsap.timeline();
         tl.to(this.container, { duration: 1, alpha: 1 });
         tl.to(this.sprite, { duration: 1, alpha: 1, onComplete: this.setInteract.bind(this) }, "+=0.5");
-    }
-    resize() {
-        this.w = window.innerWidth;
-        this.h = window.innerHeight;
-        if (!this.action.children.video.isStart) {
-            this.container.removeChildren();
-            this.draw();
-        }
     }
     clickEvent() {
         if (this.isNotStart) {
@@ -128,6 +132,7 @@ class UI_Start extends Action.ActionUI {
                     text.destroy();
                     this.action.children.video.isStart = true;
                     this.action.children.video.play();
+                    this.action.children.sound.play();
                 }.bind(this)
             }, "+=2");
         }
@@ -171,9 +176,12 @@ class UI_Stage1 extends Action.ActionUI {
                 this.action.children.line.container.destroy({ children: true });
                 this.action.children.rope.container.destroy({ children: true });
                 this.action.children.line.hintGsap.kill();
+                this.action.children.line.destroy();
+                this.action.children.rope.destroy();
                 delete this.action.children.line;
                 delete this.action.children.rope;
                 delete this.action.children.ui;
+                this.destroy();
             }.bind(this)
         });
     }
@@ -242,6 +250,7 @@ class UI_Stage2 extends Action.ActionUI {
                 this.manager.removeChild(this.container);
                 this.container.destroy({ children: true });
                 delete this.action.children.ui;
+                this.destroy();
             }.bind(this)
         });
     }
@@ -364,6 +373,7 @@ class UI_Stage3 extends Action.ActionUI {
                 this.manager.removeChild(this.container);
                 this.container.destroy({ children: true });
                 delete this.action.children.ui;
+                this.destroy();
             }.bind(this)
         });
     }
@@ -410,10 +420,12 @@ class Stage3_Button extends Action.ActionUI {
         this.container.destroy({ children: true });
     }
     clickEvent() {
-        this.action.isPlayGame = false;
-        this.onClearGame();
-        this.action.children.video.onClearGame();
-        this.stage.onClearGame();
+        if (this.action.isPlayGame) {
+            this.action.isPlayGame = false;
+            this.onClearGame();
+            this.action.children.video.onClearGame();
+            this.stage.onClearGame();
+        }
     }
     update() {
         this.times += this.manager.deltaTime;
@@ -451,20 +463,21 @@ class UI_End extends Action.ActionUI {
     draw2() {
         this.sprite.texture = PIXI.Texture.from("image/TGDAlogo.png");
         this.sprite.anchor.set(0.5);
-        this.sprite.scale.set(1.75);
-        this.setPosition(this.sprite, 0, 0);
+        this.sprite.scale.set(1.5);
+        this.setPosition(this.sprite, -0.018, -0.012);
 
         this.container.removeChildren();
-        let text1 = new PIXI.Text("感謝", this.ts);
+        let text1 = new PIXI.Text("感謝", this.tsm);
         text1.anchor.set(0.5);
-        this.setPosition(text1, -0.25, 0);
-        let text2 = new PIXI.Text("協助拍攝", this.ts);
+        this.setPosition(text1, -0.156, 0);
+        let text2 = new PIXI.Text("協助拍攝", this.tsm);
         text2.anchor.set(0.5);
-        this.setPosition(text2, 0.25, 0);
+        this.setPosition(text2, 0.146, 0);
         this.container.addChild(text1, text2, this.sprite);
         this.container.alpha = 0;
     }
-    start() {
+    end() {
+        this.action.children.sound.isEnd = true;
         let tl = gsap.timeline();
         tl.to(this.container, { duration: 1, alpha: 1 });
         tl.to(this.container, {
@@ -475,7 +488,12 @@ class UI_End extends Action.ActionUI {
         tl.to(this.container, { duration: 1, alpha: 1 });
         tl.to(this.container, {
             duration: 1, alpha: 0, onComplete: function () {
+                this.manager.removeChild(this.container);
+                this.container.destroy({ children: true });
+                delete this.action.children.ui;
                 this.manager.loadPage(new ChildhoodObject(this.manager));
+                //console.log(this.action.children);
+                this.destroy();
             }.bind(this)
         }, "+=2");
     }

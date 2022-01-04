@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { sound } from '@pixi/sound';
 import { PageObject, GameObject } from "./GameObject";
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
@@ -16,12 +17,19 @@ export class ActionPage extends PageObject {
         this.name = "ActionPage";
         this.isPlayGame = false;
     }
+    reset() { }
+    setup() {
+        this.reset();
+        for (let [_, e] of Object.entries(this.children)) { e.setup(); }
+    }
 }
 export class LogoVideo extends GameObject {
     constructor(manager, action) {
         super(manager);
         this.action = action;
         this.name = "LogoVideo";
+        this.isVideoEnded = false;
+        this.onEnd = () => { };
         this.draw = function () {
             this.loadVideo();
         }
@@ -41,21 +49,15 @@ export class LogoVideo extends GameObject {
     }
     update() {
         if (this.videoCrol.ended) {
-            gsap.to(this.container, {
-                duration: 1, alpha: 0, onComplete: function () {
-                    this.onEnd();
-                }.bind(this)
-            });
+            this.onEnd();
         }
     }
-    onEnd() { }
 }
 export class ActionVideo extends GameObject {
     constructor(manager, action, url) {
         super(manager);
         this.action = action;
         this.name = "Video";
-        this.isStart = false;
         this.bg = new PIXI.Graphics();
         this.draw = function () {
             this.loadVideo(url, 0, 0);
@@ -63,6 +65,8 @@ export class ActionVideo extends GameObject {
         }
     }
     loadVideo(url, x, y) {
+        this.isEnd = false;
+        this.count = 0;
         let _x = (x * this.w);
         let _y = (y * this.h);
 
@@ -97,10 +101,8 @@ export class ActionVideo extends GameObject {
         gsap.to(this.bg, { duration: 1, alpha: 0, onComplete: function () { this.play(); }.bind(this) });
     }
     test() {
-        if (this.manager.mouse.isPressed && this.isStart) {
-            if (!this.videoCrol.paused) { this.pause(); }
-            else { this.play(); }
-        }
+        if (this.manager.keyboard.key["Space"] && !this.videoCrol.paused) { this.pause(); }
+        else if (this.manager.keyboard.key["Space"] && this.videoCrol.paused) { this.play(); }
     }
     resize() {
         this.w = window.innerWidth;
@@ -118,6 +120,34 @@ export class ActionVideo extends GameObject {
         this.videoCrol.pause();
     }
     onEnd() { console.log("video end."); }
+}
+export class ActionSound {
+    constructor(manager, action, name, url) {
+        this.manager = manager;
+        this.action = action;
+        this.name = name;
+        this.sound = sound.add(name, url);
+        this.sound.loop = true;
+        this.sound.volume = 0.5;
+        this.isEnd = false;
+    }
+    play() { this.sound.play(); }
+    pause() { this.sound.pause(); }
+    onEnd() {
+        if (this.sound.volume <= 0) {
+            this.sound.pause();
+        } else {
+            this.sound.volume -= 0.2 * this.manager.deltaTime;
+            //console.log(this.sound.volume);
+        }
+    }
+    setup() { }
+    resize() { }
+    update() {
+        if (this.isEnd) { this.onEnd(); }
+    }
+    addKeyEvent(k) { }
+    addMouseEvent(m) { }
 }
 export class ActionLine extends GameObject {
     constructor(manager, action) {
@@ -283,7 +313,6 @@ export class ActionUI extends GameObject {
         function onOver(event) { this.isPointerOver = true; }
         function onOut(event) { this.isPointerOver = false; }
     }
-    clickEvent() { alert("click " + this.name); }
     resize() {
         this.w = window.innerWidth;
         this.h = window.innerHeight;
@@ -291,12 +320,6 @@ export class ActionUI extends GameObject {
         this.draw();
     }
     update() {
-        if (this.isPointerOver) {
-            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
-        }
-        else {
-            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
-        }
     }
 }
 export class ActionCountDown extends GameObject {
@@ -355,7 +378,7 @@ export class ActionGoodjob extends GameObject {
             onComplete: function () {
                 this.manager.removeChild(this.container);
                 this.container.destroy({ children: true });
-                delete this;
+                this.destroy();
             }.bind(this)
         });
         tl.to(this.sprite.scale, { duration: 0.5, x: 0.6, y: 0.6, ease: "back.out(1.7)" });

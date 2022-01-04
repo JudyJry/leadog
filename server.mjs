@@ -17,7 +17,7 @@ const mineTypes = {
     "json": "application/json",
     "css": "text/css",
     "mp4": "video/mp4",
-    "other": "application/octet-stream"
+    "wav":"audio/wav",
 };
 
 //create http server

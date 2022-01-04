@@ -33,8 +33,11 @@ export class PageObject {
     addMouseEvent(m) {
         for (let [_, e] of Object.entries(this.children)) { e.addMouseEvent(m); }
     }
+    destroy(){
+        for (let [_, e] of Object.entries(this.children)) { e.destroy(); }
+        for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
+    }
 }
-
 export class GameObject {
     constructor(manager) {
         this.manager = manager;
@@ -58,6 +61,9 @@ export class GameObject {
     update() { }
     addKeyEvent(k) { }
     addMouseEvent(m) { }
+    destroy(){
+        for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
+    }
 }
 export class Background extends GameObject {
     constructor(manager, url) {
