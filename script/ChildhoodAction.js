@@ -10,6 +10,8 @@ export default class ChildhoodAction extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
+            "sound": new Action.ActionSound(this.manager, this, "kelly", "sound/childhood_kelly.wav"),
+            "sound": new Action.ActionSound(this.manager, this, "kelly", "sound/childhood_kelly.wav"),
             "video": new ChildhoodVideo(this.manager, this, "video/childhood_kelly.mp4"),
             "rope": new Action.ActionRope(this.manager, this),
             "ui": new UI_Start(this.manager, this),
