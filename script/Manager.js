@@ -36,10 +36,7 @@ export default class Manager {
         this.homeDefaultPos = { x: this.w * 0.35, y: this.h * 0.35 };
         this.playerPos = JSON.parse(JSON.stringify(this.homeDefaultPos));
         this.player = new Player(this);
-        this.homeObj = new HomeObject(this);
-        this.bronObj = new BronObject(this);
-        this.childhoodObj = new ChildhoodObject(this);
-        this.activeObj = this.homeObj;
+        this.activeObj = new HomeObject(this);
 
         this.isUsePlayer = false;
     }
@@ -77,7 +74,7 @@ export default class Manager {
 
         this.uiSystem.resize();
         this.player.resize();
-        this.homeObj.resize();
+        this.activeObj.resize();
         this.mouse.resize();
         this.app.stage.sortChildren();
     }
@@ -113,6 +110,7 @@ export default class Manager {
             this.app.stage.y = this.app.renderer.height * this.anchor;
             this.removeChild();
             this.playerPos = this.homeDefaultPos;
+            delete this.activeObj;
             this.activeObj = obj;
             this.activeObj.setup();
             this.keyboard.pressed = (k) => {
@@ -140,10 +138,10 @@ export default class Manager {
     toOtherPage(e) {
         switch (e.name) {
             case "出生":
-                this.loadPage(this.bronObj);
+                this.loadPage(new BronObject(this));
                 break;
             case "幼年":
-                this.loadPage(this.childhoodObj);
+                this.loadPage(new ChildhoodObject(this));
                 break;
             case "壯年":
                 this.toUndonePage(e);
@@ -172,7 +170,6 @@ export default class Manager {
         this.loader.loadAsset(function () {
             this.removeChild();
             this.playerPos = this.homeDefaultPos;
-            //this.homeObj.reload();
             let t = new PIXI.Text(`這是一個未完成的${e.name}頁面`, new PIXI.TextStyle({
                 fontFamily: "GenSenRounded-B",
                 fontSize: 30,
@@ -226,6 +223,14 @@ const loadList = [
     "image/homepage/education.png",
     "image/homepage/action.png",
     //bron
+    "image/building/bron/bron.png",
+    "image/building/bron/bron_bg.png",
+    "image/building/bron/calendar.png",
+    "image/building/bron/distributed.png",
+    "image/building/bron/photo.png",
+    "image/building/bron/calendar_shadow.png",
+    "image/building/bron/distributed_shadow.png",
+    "image/building/bron/photo_shadow.png",
     //childhood
     "image/building/childhood/childhood.png",
     "image/building/childhood/childhood_bg.png",
@@ -233,8 +238,20 @@ const loadList = [
     "image/building/childhood/doll.png",
     "image/building/childhood/toys.png",
     "image/building/childhood/wallCalendar.png",
+    "image/building/childhood/book_shadow.png",
+    "image/building/childhood/doll_shadow.png",
+    "image/building/childhood/toys_shadow.png",
+    "image/building/childhood/wallCalendar_shadow.png",
     //youth
+    "image/building/youth/youth.png",
     //elderly
+    "image/building/elderly/elderly.png",
+    //action
+    "image/building/action/action.png",
+    //company
+    "image/building/company/company.png",
+    //education
+
     //actionpage
     "image/TGDAlogo.png",
     "image/video/count5.png",

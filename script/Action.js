@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ColorSlip } from './ColorSlip';
+import { TextStyle } from './TextStyle';
 
 gsap.registerPlugin(PixiPlugin);
 gsap.registerPlugin(MotionPathPlugin);
@@ -36,6 +37,7 @@ export class LogoVideo extends GameObject {
         this.videoCrol.muted = false;
         this.container.addChild(this.sprite);
         this.container.position.set(_x, _y);
+        //console.log(this.videoCrol);
     }
     update() {
         if (this.videoCrol.ended) {
@@ -260,19 +262,8 @@ export class ActionUI extends GameObject {
         super(manager);
         this.action = action;
         this.name = "ActionUI";
-        this.UItextStyle = new PIXI.TextStyle({
-            fontFamily: "GenSenRounded-B",
-            fontSize: 54,
-            fill: 0x666803,
-            align: "center"
-        });
-        this.UItextStyleSmall = new PIXI.TextStyle({
-            fontFamily: "GenSenRounded-B",
-            fontSize: 36,
-            fill: 0x666803,
-            align: "center",
-            lineHeight: 60
-        })
+        this.ts = TextStyle.Act;
+        this.tsm = TextStyle.Act_small;
         this.scale = 0.5;
     }
     setPosition(e, x, y) {

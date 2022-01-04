@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
+import ChildhoodObject from './ChildhoodObject';
 
 export default class ChildhoodAction extends Action.ActionPage {
     constructor(manager) {
@@ -77,10 +78,10 @@ class UI_Start extends Action.ActionUI {
             this.setPosition(this.sprite, 0, 0.3);
             this.sprite.alpha = 0;
 
-            let textTitle = new PIXI.Text("任務目標", this.UItextStyle);
+            let textTitle = new PIXI.Text("任務目標", this.ts);
             textTitle.anchor.set(0.5);
             this.setPosition(textTitle, 0, -0.3);
-            let textDescribe = new PIXI.Text("一起幫助狗狗在寄養家庭中習慣人類社會生活吧！", this.UItextStyleSmall);
+            let textDescribe = new PIXI.Text("一起幫助狗狗在寄養家庭中習慣人類社會生活吧！", this.tsm);
             textDescribe.anchor.set(0.5);
             this.setPosition(textDescribe, 0, 0);
 
@@ -105,7 +106,7 @@ class UI_Start extends Action.ActionUI {
         if (this.isNotStart) {
             this.isNotStart = false;
 
-            let text = new PIXI.Text("新的一天開始了", this.UItextStyle);
+            let text = new PIXI.Text("新的一天開始了", this.ts);
             text.anchor.set(0.5);
             text.alpha = 0;
             this.setPosition(text, 0, 0);
@@ -432,12 +433,12 @@ class UI_End extends Action.ActionUI {
         this.name = "UI_Start";
         this.isNotStart = true;
         this.draw = function () {
-            let textTitle = new PIXI.Text("任務完成", this.UItextStyle);
+            let textTitle = new PIXI.Text("任務完成", this.ts);
             textTitle.anchor.set(0.5);
             this.setPosition(textTitle, 0, -0.3);
             let textDescribe = new PIXI.Text(
                 `謝謝你幫助狗狗完成在寄養家庭階段的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-                this.UItextStyleSmall);
+                this.tsm);
             textDescribe.anchor.set(0.5);
             this.setPosition(textDescribe, 0, 0);
 
@@ -452,10 +453,10 @@ class UI_End extends Action.ActionUI {
         this.setPosition(this.sprite, 0, 0);
 
         this.container.removeChildren();
-        let text1 = new PIXI.Text("感謝", this.UItextStyle);
+        let text1 = new PIXI.Text("感謝", this.ts);
         text1.anchor.set(0.5);
         this.setPosition(text1, -0.25, 0);
-        let text2 = new PIXI.Text("協助拍攝", this.UItextStyle);
+        let text2 = new PIXI.Text("協助拍攝", this.ts);
         text2.anchor.set(0.5);
         this.setPosition(text2, 0.25, 0);
         this.container.addChild(text1, text2, this.sprite);
@@ -472,7 +473,7 @@ class UI_End extends Action.ActionUI {
         tl.to(this.container, { duration: 1, alpha: 1 });
         tl.to(this.container, {
             duration: 1, alpha: 0, onComplete: function () {
-                this.manager.loadPage(this.manager.childhoodObj);
+                this.manager.loadPage(new ChildhoodObject(this.manager));
             }.bind(this)
         }, "+=2");
     }

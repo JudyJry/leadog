@@ -2,7 +2,9 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import * as gf from "./GameFunction.js";
+import HomeObject from './HomeObject.js';
 import { ColorSlip } from "./ColorSlip.js";
+import { TextStyle } from './TextStyle.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -58,16 +60,8 @@ export class UI {
         this.w = window.innerWidth;
         this.h = window.innerHeight;
         this.scale = 0.3;
-        this.UItextStyle = new PIXI.TextStyle({
-            fontFamily: "GenSenRounded-B",
-            fontSize: 30,
-            fill: ColorSlip.darkOrange,
-        });
-        this.UItextStyleSmall = new PIXI.TextStyle({
-            fontFamily: "GenSenRounded-B",
-            fontSize: 18,
-            fill: ColorSlip.darkOrange,
-        });
+        this.ts = TextStyle.UI;
+        this.tsm = TextStyle.UI_small;
     }
     drawIcon(path, anchor = 0.5) {
         let icon = PIXI.Sprite.from(path);
@@ -144,8 +138,8 @@ class User extends UI {
                 .beginFill(0x000000, 0.1)
                 .drawRoundedRect(0, -35, 250, 70, 100)
                 .endFill();
-            this.userNameText = new PIXI.Text(this.userName, this.UItextStyle);
-            this.userLevelText = new PIXI.Text(`Level.${this.userLevel}`, this.UItextStyleSmall);
+            this.userNameText = new PIXI.Text(this.userName, this.ts);
+            this.userLevelText = new PIXI.Text(`Level.${this.userLevel}`, this.tsm);
             this.userNameText.anchor.set(0, 0.5);
             this.userNameText.position.set(100, 0);
             this.userLevelText.anchor.set(0, 0.5);
@@ -171,7 +165,7 @@ class Point extends UI {
                 .beginFill(0x000000, 0.1)
                 .drawRoundedRect(-25, -35, 200, 70, 100)
                 .endFill();
-            this.pointText = new PIXI.Text(`${this.number}`, this.UItextStyle);
+            this.pointText = new PIXI.Text(`${this.number}`, this.ts);
             this.pointText.anchor.set(0, 0.5);
             this.pointText.position.set(70, 0);
             this.container.position.set(_x, _y);
@@ -195,7 +189,7 @@ class Search extends UI {
                 .beginFill(0x000000, 0.1)
                 .drawRoundedRect(-325, -35, 350, 70, 100)
                 .endFill();
-            this.searchText = new PIXI.Text(`${this.searchString}`, this.UItextStyle);
+            this.searchText = new PIXI.Text(`${this.searchString}`, this.ts);
             this.searchText.anchor.set(0, 0.5);
             this.searchText.position.set(-200, 0);
             this.container.position.set(_x, _y);
@@ -212,7 +206,7 @@ class Setting extends UI {
             let _x = (x * this.w);
             let _y = (y * this.h);
             this.icon = this.drawIcon('image/setting.png');
-            this.text = new PIXI.Text("設定", this.UItextStyleSmall);
+            this.text = new PIXI.Text("設定", this.tsm);
             this.text.anchor.set(0.5);
             this.text.position.set(0, 50);
             this.container.position.set(_x, _y);
@@ -228,7 +222,7 @@ class Menu extends UI {
             let _x = (x * this.w);
             let _y = (y * this.h);
             this.icon = this.drawIcon('image/menu.png');
-            this.text = new PIXI.Text("選單", this.UItextStyleSmall);
+            this.text = new PIXI.Text("選單", this.tsm);
             this.text.anchor.set(0.5);
             this.text.position.set(0, 50);
             this.container.position.set(_x, _y);
@@ -244,7 +238,7 @@ class Question extends UI {
             let _x = (x * this.w);
             let _y = (y * this.h);
             this.icon = this.drawIcon('image/question.png');
-            this.text = new PIXI.Text("問題", this.UItextStyleSmall);
+            this.text = new PIXI.Text("問題", this.tsm);
             this.text.anchor.set(0.5);
             this.text.position.set(0, 50);
             this.container.position.set(_x, _y);
@@ -260,7 +254,7 @@ class Home extends UI {
             let _x = (x * this.w);
             let _y = (y * this.h);
             this.icon = this.drawIcon('image/home.png');
-            this.text = new PIXI.Text("首頁", this.UItextStyleSmall);
+            this.text = new PIXI.Text("首頁", this.tsm);
             this.text.anchor.set(0.5);
             this.text.position.set(0, 50);
             this.container.position.set(_x, _y);
@@ -268,7 +262,7 @@ class Home extends UI {
         }
     }
     clickEvent() {
-        this.manager.loadPage(this.manager.homeObj);
+        this.manager.loadPage(new HomeObject(this.manager));
     }
 }
 class Notify extends UI {
@@ -287,7 +281,7 @@ class Notify extends UI {
                 .beginFill(0x000000, 0.1)
                 .drawRoundedRect(-25, -30, 500, 60, 100)
                 .endFill();
-            this.notifyText = new PIXI.Text(this.notifyString, this.UItextStyle);
+            this.notifyText = new PIXI.Text(this.notifyString, this.ts);
             this.notifyText.anchor.set(0, 0.5);
             this.notifyText.position.set(50, 0);
             this.container.addChild(g, this.notifyText, this.icon);

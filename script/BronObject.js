@@ -1,11 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { GlowFilter } from 'pixi-filters';
-import { GameObject, linkObject, PageObject } from './GameObject.js';
-import * as gf from "./GameFunction.js";
-import ChildhoodAction from './ChildhoodAction.js';
-import { ColorSlip } from './ColorSlip.js';
+import { linkObject, PageObject, Background } from './GameObject.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -15,57 +11,44 @@ export default class BronObject extends PageObject {
         super(manager);
         this.name = "BronObject";
         this.children = {
-            "background": new Background(manager),
-            "actionTest": new ActionTest(manager),
+            "background": new Background(manager, "image/building/bron/bron_bg.png"),
+            "calendar": new Calendar(manager),
+            "distributed": new Distributed(manager),
+            "photo": new Photo(manager)
         };
     }
 }
 
-class Background extends GameObject {
+class Calendar extends linkObject {
     constructor(manager) {
         super(manager);
-        this.name = "Background";
-        this.container.zIndex = 10;
-        this.draw = function () {
-            this.sprite.texture = PIXI.Texture.from("image/building/childhood/childhood.png");
-            this.spriteWidth = this.sprite.texture.width;
-            this.sprite.anchor.set(0.5);
-            this.manager.canvasScale = this.w / this.spriteWidth;
-            this.sprite.scale.set(this.manager.canvasScale);
-            this.container.addChild(this.sprite);
-        }
+        this.name = "狗狗出生日歷";
+        this.x = -0.015;
+        this.y = -0.293;
+        this.url = "image/building/bron/calendar.png";
+        this.surl = "image/building/bron/calendar_shadow.png";
     }
-    resize() {
-        this.w = this.manager.w;
-        this.container.removeChildren();
-        this.draw();
-    }
+    //todo() { }
 }
-
-class ActionTest extends linkObject {
+class Distributed extends linkObject {
     constructor(manager) {
         super(manager);
-        this.name = "ActionTest";
-        this.x = 0.33;
-        this.y = 0.143;
-        this.url = "image/building/childhood/toys.png";
+        this.name = "狗狗出生分布地圖";
+        this.x = -0.366;
+        this.y = -0.252;
+        this.url = "image/building/bron/distributed.png";
+        this.surl = "image/building/bron/distributed_shadow.png";
     }
-    addKeyEvent(k) {
-        if (k['Enter'] && this.manager.isUsePlayer) {
-            if (this.manager.isArrive(this.name) && !this.isEntering) {
-                console.log(`You enter the ${this.name}!`);
-                this.isEntering = true;
-                this.manager.loadAction(new ChildhoodAction(this.manager));
-            }
-        }
+    //todo() { }
+}
+class Photo extends linkObject {
+    constructor(manager) {
+        super(manager);
+        this.name = "狗狗出生照片";
+        this.x = 0.245;
+        this.y = -0.249;
+        this.url = "image/building/bron/photo.png";
+        this.surl = "image/building/bron/photo_shadow.png";
     }
-    addMouseEvent(m) {
-        if (m && !this.manager.isUsePlayer) {
-            if (this.manager.isArrive(this.name) && !this.isEntering) {
-                //console.log(`You enter the ${this.name}!`);
-                this.isEntering = true;
-                this.manager.loadAction(new ChildhoodAction(this.manager));
-            }
-        }
-    }
+    //todo() { }
 }

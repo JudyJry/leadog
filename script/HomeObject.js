@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { GlowFilter } from 'pixi-filters';
 import { GameObject, PageObject } from './GameObject.js';
 import * as gf from "./GameFunction.js";
-import { ColorSlip } from "./ColorSlip.js";
+import { TextStyle } from './TextStyle.js';
+import { FilterSet } from './FilterSet.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -41,25 +41,13 @@ class Building extends GameObject {
     constructor(manager) {
         super(manager);
         this.name = "Building"
-        this.filter = new GlowFilter({
-            distance: 10,
-            outerStrength: 7,
-            innerStrength: 0,
-            color: ColorSlip.yellow,
-            quality: 0.5
-        });
+        this.filter = FilterSet.link;
         this.container.zIndex = 20;
         this.scale = 0.7;
         this.spriteHeight = 100;
         this.textHeight = this.spriteHeight + 10;
         this.w = 1920;
-        this.textStyle = new PIXI.TextStyle({
-            fontFamily: "GenSenRounded-B",
-            fontSize: 30,
-            fill: ColorSlip.darkOrange,
-            stroke: ColorSlip.white,
-            strokeThickness: 5
-        });
+        this.ts = TextStyle.link;
         this.draw = function () {
             this.drawBuilding("出生", "image/homepage/bron.png", 0.154, 0.141);
             this.drawBuilding("幼年", "image/homepage/childhood.png", 0.109, -0.042);
@@ -76,7 +64,7 @@ class Building extends GameObject {
         let c = new PIXI.Container();
         c.name = n;
         c.sprite = PIXI.Sprite.from(url);
-        c.text = new PIXI.Text(c.name, this.textStyle);
+        c.text = new PIXI.Text(c.name, this.ts);
         c.isEntering = false;
 
         c.sprite.anchor.set(0.5);
@@ -105,7 +93,7 @@ class Building extends GameObject {
         if (m && !this.manager.isUsePlayer) {
             this.container.children.forEach((e) => {
                 if (this.manager.isArrive(e.name) && !e.isEntering) {
-                    //console.log(`You enter the ${e.name}!`);
+                    console.log(`You enter the ${e.name}!`);
                     e.isEntering = true;
                     this.manager.toOtherPage(e);
                 }
