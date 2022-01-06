@@ -29,9 +29,8 @@ class Toys extends linkObject {
         this.url = "image/building/childhood/toys.png";
         this.surl = "image/building/childhood/toys_shadow.png"
     }
-    todo() { //debug
-        const act = new ChildhoodAction(this.manager);
-        this.manager.loadAction(act);
+    todo() {
+        this.manager.loadAction(new ChildhoodAction(this.manager));
     }
 }
 class Doll extends linkObject {

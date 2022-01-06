@@ -191,6 +191,8 @@ const loadList = [
     //video
     "video/LOGO.mp4",
     "video/childhood_kelly.mp4",
+    "video/youth_bus.mp4",
+    "video/youth_instruction.mp4",
     //uiSystem
     "image/home.svg",
     "image/location.svg",
@@ -304,4 +306,7 @@ const loadList = [
     "image/video/childhood/Kelly/stage_2_img.jpg",
     "image/video/childhood/Kelly/stage_3_title.png",
     "image/video/childhood/Kelly/stage_3_hint.png",
+    //action_youth_bus
+    "image/video/youth/bus/stage_1_title.png",
+    "image/video/youth/bus/stage_1_hint.png",
 ];

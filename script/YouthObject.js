@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background } from './GameObject.js';
+import YouthAction_Bus from './YouthAction_bus.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -50,7 +51,7 @@ class Bus extends linkObject {
         this.url = "image/building/youth/bus.png";
         this.surl = "image/building/youth/bus_shadow.png";
     }
-    //todo() { }
+    todo() { this.manager.loadAction(new YouthAction_Bus(this.manager)); }
 }
 class Instruction extends linkObject {
     constructor(manager) {
@@ -61,7 +62,7 @@ class Instruction extends linkObject {
         this.url = "image/building/youth/instruction.png";
         this.surl = "image/building/youth/instruction_shadow.png";
     }
-    //todo() { }
+    //todo() { this.manager.loadAction(new ChildhoodAction(this.manager)); }
 }
 class Traffic extends linkObject {
     constructor(manager) {
@@ -72,6 +73,6 @@ class Traffic extends linkObject {
         this.url = "image/building/youth/traffic.png";
         this.surl = "image/building/youth/traffic_shadow.png";
     }
-    //todo() { }
+    //todo() { this.manager.loadAction(new ChildhoodAction(this.manager)); }
 }
 
