@@ -17,7 +17,7 @@ export class ActionPage extends PageObject {
         this.name = "ActionPage";
         this.isPlayGame = false;
     }
-    resize(){}
+    resize() { }
 }
 export class LogoVideo extends GameObject {
     constructor(manager, action) {
@@ -331,6 +331,7 @@ export class ActionUI extends GameObject {
         function onOver(event) { this.isPointerOver = true; }
         function onOut(event) { this.isPointerOver = false; }
     }
+    clickEvent() { alert("click "+this.name); }
     resize() {
         this.w = window.innerWidth;
         this.h = window.innerHeight;

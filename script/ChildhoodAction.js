@@ -10,27 +10,28 @@ export default class ChildhoodAction extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "kelly", "sound/childhood_kelly.wav"),
-            "video": new ChildhoodVideo(this.manager, this, "video/childhood_kelly.mp4"),
+            "sound": new Action.ActionSound(this.manager, this, "childhood_kelly", "sound/childhood_kelly.wav"),
+            "video": new Childhood_Kelly_Video(this.manager, this, "video/childhood_kelly.mp4"),
             "rope": new Action.ActionRope(this.manager, this),
-            "ui": new UI_Start(this.manager, this),
-            "logo": new LogoVideo(this.manager, this)
+            "ui": new Childhood_Kelly_UI_Start(this.manager, this),
+            "logo": new Childhood_Kelly_LogoVideo(this.manager, this)
         }
     }
 }
-class LogoVideo extends Action.LogoVideo {
+class Childhood_Kelly_LogoVideo extends Action.LogoVideo {
     constructor(manager, action) {
         super(manager, action);
+        this.name = "Childhood_Kelly_LogoVideo";
         this.onEnd = function () {
             this.action.children.ui.start();
             this.manager.removeChild(this.container);
         }.bind(this);
     }
 }
-class ChildhoodVideo extends Action.ActionVideo {
+class Childhood_Kelly_Video extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
-        this.name = "ChildhoodVideo";
+        this.name = "Childhood_Kelly_Video";
         //this.pauseTime = [0, 2, 4, 6, 8];
         this.pauseTime = [0, 10.5, 30, 50.31, 57];
         this.isEnd = true;
@@ -45,19 +46,19 @@ class ChildhoodVideo extends Action.ActionVideo {
                 case 1:
                     this.action.isPlayGame = true;
                     this.onPlayGame();
-                    this.action.children.ui = new UI_Stage1(this.manager, this.action);
+                    this.action.children.ui = new Childhood_Kelly_UI_Stage1(this.manager, this.action);
                     this.action.children.ui.setup();
                     break;
                 case 2:
                     this.action.isPlayGame = true;
                     this.onPlayGame();
-                    this.action.children.ui = new UI_Stage2(this.manager, this.action);
+                    this.action.children.ui = new Childhood_Kelly_UI_Stage2(this.manager, this.action);
                     this.action.children.ui.setup();
                     break;
                 case 3:
                     this.action.isPlayGame = true;
                     this.onPlayGame();
-                    this.action.children.ui = new UI_Stage3(this.manager, this.action);
+                    this.action.children.ui = new Childhood_Kelly_UI_Stage3(this.manager, this.action);
                     this.action.children.ui.setup();
                     break;
                 case 4:
@@ -75,7 +76,7 @@ class ChildhoodVideo extends Action.ActionVideo {
         this.drawBg("white");
         gsap.to(this.bg, {
             duration: 3, alpha: 1, onComplete: function () {
-                this.action.children.ui = new UI_End(this.manager, this.action);
+                this.action.children.ui = new Childhood_Kelly_UI_End(this.manager, this.action);
                 this.action.children.ui.setup();
                 this.action.children.ui.end();
                 this.videoCrol.ontimeupdate = undefined;
@@ -85,10 +86,10 @@ class ChildhoodVideo extends Action.ActionVideo {
         });
     }
 }
-class UI_Start extends Action.ActionUI {
+class Childhood_Kelly_UI_Start extends Action.ActionUI {
     constructor(manager, action) {
         super(manager, action);
-        this.name = "UI_Start";
+        this.name = "Childhood_Kelly_UI_Start";
         this.isNotStart = true;
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from("image/video/know.png");
@@ -109,15 +110,16 @@ class UI_Start extends Action.ActionUI {
         }
     }
     start() {
-        console.log("start");
         let tl = gsap.timeline();
         tl.to(this.container, { duration: 1, alpha: 1 }, 1);
-        tl.to(this.sprite, { duration: 1, alpha: 1, onComplete: this.setInteract.bind(this) }, "+=0.5");
+        tl.to(this.sprite, {
+            duration: 1, alpha: 1,
+            onComplete: function () { this.setInteract(this.sprite); }.bind(this)
+        }, "+=0.5");
     }
     clickEvent() {
         if (this.isNotStart) {
             this.isNotStart = false;
-
             let text = new PIXI.Text("新的一天開始了", this.ts);
             text.anchor.set(0.5);
             text.alpha = 0;
@@ -151,14 +153,14 @@ class UI_Start extends Action.ActionUI {
         }
     }
 }
-class UI_Stage1 extends Action.ActionUI {
+class Childhood_Kelly_UI_Stage1 extends Action.ActionUI {
     constructor(manager, action) {
         super(manager, action);
-        this.name = "UI_Stage1";
+        this.name = "Childhood_Kelly_UI_Stage1";
         this.scale = 1;
         this.draw = function () {
             this.countdown = new Action.ActionCountDown(manager, action, this);
-            this.action.children.line = new Stage1_Line(manager, action);
+            this.action.children.line = new Childhood_Kelly_Stage1_Line(manager, action);
             this.countdown.setup();
             this.action.children.line.setup();
 
@@ -210,9 +212,10 @@ class UI_Stage1 extends Action.ActionUI {
         }
     }
 }
-class Stage1_Line extends Action.ActionLine {
+class Childhood_Kelly_Stage1_Line extends Action.ActionLine {
     constructor(manager, action) {
         super(manager, action);
+        this.name = "Childhood_Kelly_Stage1_Line";
         this.draw = function () {
             this.sprite.moveTo(1109, 365).bezierCurveTo(1109, 365, 1196, 446, 1217, 552);
             //this.sprite.moveTo(0, 0).bezierCurveTo(0, 0, 87, 81, 108, 187);
@@ -223,14 +226,14 @@ class Stage1_Line extends Action.ActionLine {
         }
     }
 }
-class UI_Stage2 extends Action.ActionUI {
+class Childhood_Kelly_UI_Stage2 extends Action.ActionUI {
     constructor(manager, action) {
         super(manager, action);
-        this.name = "UI_Stage2";
+        this.name = "Childhood_Kelly_UI_Stage2";
         this.scale = 1;
         this.draw = function () {
             this.countdown = new Action.ActionCountDown(manager, action, this);
-            this.button = new Stage2_Button(manager, action, this);
+            this.button = new Childhood_Kelly_Stage2_Button(manager, action, this);
             this.countdown.setup();
             this.button.setup();
 
@@ -279,11 +282,11 @@ class UI_Stage2 extends Action.ActionUI {
         }
     }
 }
-class Stage2_Button extends Action.ActionUI {
+class Childhood_Kelly_Stage2_Button extends Action.ActionUI {
     constructor(manager, action, stage) {
         super(manager, action);
         this.stage = stage;
-        this.name = "Stage2_Button";
+        this.name = "Childhood_Kelly_Stage2_Button";
         this.count = 0;
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from("image/video/space.png");
@@ -305,7 +308,7 @@ class Stage2_Button extends Action.ActionUI {
             this.bg.alpha = 0;
             this.action.children.video.container.addChildAt(this.bg, 1);
 
-            
+
             this.container.addChild(this.bar, this.fullbar, this.sprite);
             this.setPosition(this.sprite, 0, 0.32);
             this.setPosition(this.bar, 0, 0.18);
@@ -353,14 +356,14 @@ class Stage2_Button extends Action.ActionUI {
         }
     }
 }
-class UI_Stage3 extends Action.ActionUI {
+class Childhood_Kelly_UI_Stage3 extends Action.ActionUI {
     constructor(manager, action) {
         super(manager, action);
-        this.name = "UI_Stage3";
+        this.name = "Childhood_Kelly_UI_Stage3";
         this.scale = 1;
         this.draw = function () {
             this.countdown = new Action.ActionCountDown(manager, action, this);
-            this.button = new Stage3_Button(manager, action, this);
+            this.button = new Childhood_Kelly_Stage3_Button(manager, action, this);
             this.countdown.setup();
             this.button.setup();
 
@@ -409,11 +412,11 @@ class UI_Stage3 extends Action.ActionUI {
         }
     }
 }
-class Stage3_Button extends Action.ActionUI {
+class Childhood_Kelly_Stage3_Button extends Action.ActionUI {
     constructor(manager, action, stage) {
         super(manager, action);
         this.stage = stage;
-        this.name = "Stage3_Button";
+        this.name = "Childhood_Kelly_Stage3_Button";
         this.times = 0;
         this.draw = function () {
             this.spriteSheet = [
@@ -453,10 +456,10 @@ class Stage3_Button extends Action.ActionUI {
         }
     }
 }
-class UI_End extends Action.ActionUI {
+class Childhood_Kelly_UI_End extends Action.ActionUI {
     constructor(manager, action) {
         super(manager, action);
-        this.name = "UI_Start";
+        this.name = "Childhood_Kelly_UI_End";
         this.isNotStart = true;
         this.draw = function () {
             let textTitle = new PIXI.Text("任務完成", this.ts);
