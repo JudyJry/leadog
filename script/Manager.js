@@ -114,16 +114,17 @@ export default class Manager {
             this.app.stage.y = this.app.renderer.height * this.anchor;
             this.removeChild();
             this.playerPos = this.homeDefaultPos;
-            this.activeObj = obj;
-            this.activeObj.setup();
-            this.keyboard.pressed = (k) => {
-                this.activeObj.addKeyEvent(k);
-            }
-            this.mouse.pressed = (m) => {
-                this.activeObj.addMouseEvent(m);
-            }
-            this.addChild(this.player.container, this.uiSystem.container, this.mouse.cursor);
-            this.app.stage.sortChildren();
+            obj.setup().then(function () {
+                this.activeObj = obj;
+                this.keyboard.pressed = (k) => {
+                    this.activeObj.addKeyEvent(k);
+                }
+                this.mouse.pressed = (m) => {
+                    this.activeObj.addMouseEvent(m);
+                }
+                this.addChild(this.player.container, this.uiSystem.container, this.mouse.cursor);
+                this.app.stage.sortChildren();
+            }.bind(this));
         }.bind(this));
     }
     loadAction(act) {
@@ -132,10 +133,11 @@ export default class Manager {
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
             this.removeChild();
-            this.activeObj = act;
-            this.activeObj.setup();
-            this.keyboard.pressed = (k) => { }
-            this.addChild(this.mouse.cursor);
+            act.setup().then(function () {
+                this.activeObj = act;
+                this.keyboard.pressed = (k) => { }
+                this.addChild(this.mouse.cursor);
+            }.bind(this));
         }.bind(this));
     }
     toOtherPage(e) {

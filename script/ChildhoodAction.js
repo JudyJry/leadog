@@ -8,9 +8,6 @@ export default class ChildhoodAction extends Action.ActionPage {
         super(manager);
         this.name = "ChildhoodAction";
         this.offset = 50;
-        console.log(this);
-    }
-    reset() {
         this.isPlayGame = false;
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "kelly", "sound/childhood_kelly.wav"),
@@ -27,43 +24,51 @@ class LogoVideo extends Action.LogoVideo {
         this.onEnd = function () {
             this.action.children.ui.start();
             this.manager.removeChild(this.container);
-            this.container.destroy({ children: true });
-            delete this.action.children.logo;
-            this.destroy();
         }.bind(this);
     }
-
 }
 class ChildhoodVideo extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "ChildhoodVideo";
-        this.pauseTime = [10.5, 30, 50.31];
-        this.isEnd = false;
+        this.pauseTime = [0, 10.5, 30, 50.31,57];
+        this.isEnd = true;
         this.count = 0;
     }
     update() {
         if (this.currentTime > this.pauseTime[this.count]) {
-            this.action.isPlayGame = true;
-            this.onPlayGame();
             switch (this.count) {
                 case 0:
-                    this.action.children.ui = new UI_Stage1(this.manager, this.action);
+                    this.container.alpha = 1;
                     break;
                 case 1:
-                    this.action.children.ui = new UI_Stage2(this.manager, this.action);
+                    this.action.isPlayGame = true;
+                    this.onPlayGame();
+                    this.action.children.ui = new UI_Stage1(this.manager, this.action);
+                    this.action.children.ui.setup();
                     break;
                 case 2:
+                    this.action.isPlayGame = true;
+                    this.onPlayGame();
+                    this.action.children.ui = new UI_Stage2(this.manager, this.action);
+                    this.action.children.ui.setup();
+                    break;
+                case 3:
+                    this.action.isPlayGame = true;
+                    this.onPlayGame();
                     this.action.children.ui = new UI_Stage3(this.manager, this.action);
+                    this.action.children.ui.setup();
+                    break;
+                case 4:
+                    if (!this.isEnd) {
+                        this.isEnd = true;
+                        this.onEnd();
+                    }
                     break;
             }
-            this.action.children.ui.setup();
             this.count++;
         }
-        else if (this.currentTime > this.videoCrol.duration - 5 && !this.isEnd) {
-            this.isEnd = true;
-            this.onEnd();
-        }
+
     }
     onEnd() {
         this.drawBg("white");
@@ -72,9 +77,9 @@ class ChildhoodVideo extends Action.ActionVideo {
                 this.action.children.ui = new UI_End(this.manager, this.action);
                 this.action.children.ui.setup();
                 this.action.children.ui.end();
-                delete this.action.children.video;
                 this.videoCrol.ontimeupdate = undefined;
-                this.destroy();
+                this.pause();
+                this.videoCrol.currentTime = 0;
             }.bind(this)
         });
     }
@@ -105,7 +110,7 @@ class UI_Start extends Action.ActionUI {
     start() {
         console.log("start");
         let tl = gsap.timeline();
-        tl.to(this.container, { duration: 1, alpha: 1 });
+        tl.to(this.container, { duration: 1, alpha: 1 }, 1);
         tl.to(this.sprite, { duration: 1, alpha: 1, onComplete: this.setInteract.bind(this) }, "+=0.5");
     }
     clickEvent() {
@@ -121,7 +126,6 @@ class UI_Start extends Action.ActionUI {
             tl.to(this.container, {
                 duration: 1, alpha: 0, onComplete: function () {
                     this.manager.removeChild(this.container);
-                    this.container.destroy({ children: true });
                     this.manager.addChild(text);
                 }.bind(this)
             });
@@ -135,6 +139,14 @@ class UI_Start extends Action.ActionUI {
                     this.action.children.sound.play();
                 }.bind(this)
             }, "+=2");
+        }
+    }
+    update() {
+        if (this.isPointerOver) {
+            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
+        }
+        else {
+            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
         }
     }
 }
@@ -172,16 +184,10 @@ class UI_Stage1 extends Action.ActionUI {
                 this.manager.removeChild(this.container);
                 this.manager.removeChild(this.action.children.line.container);
                 this.manager.removeChild(this.action.children.rope.container);
-                this.container.destroy({ children: true });
-                this.action.children.line.container.destroy({ children: true });
-                this.action.children.rope.container.destroy({ children: true });
                 this.action.children.line.hintGsap.kill();
-                this.action.children.line.destroy();
-                this.action.children.rope.destroy();
                 delete this.action.children.line;
                 delete this.action.children.rope;
                 delete this.action.children.ui;
-                this.destroy();
             }.bind(this)
         });
     }
@@ -248,9 +254,8 @@ class UI_Stage2 extends Action.ActionUI {
             duration: 1, alpha: 0,
             onComplete: function () {
                 this.manager.removeChild(this.container);
-                this.container.destroy({ children: true });
                 delete this.action.children.ui;
-                this.destroy();
+
             }.bind(this)
         });
     }
@@ -319,7 +324,6 @@ class Stage2_Button extends Action.ActionUI {
     }
     onClearGame() {
         this.manager.removeChild(this.container);
-        this.container.destroy({ children: true });
     }
     update() {
         if (this.action.isPlayGame) {
@@ -371,9 +375,8 @@ class UI_Stage3 extends Action.ActionUI {
             duration: 1, alpha: 0,
             onComplete: function () {
                 this.manager.removeChild(this.container);
-                this.container.destroy({ children: true });
                 delete this.action.children.ui;
-                this.destroy();
+
             }.bind(this)
         });
     }
@@ -417,7 +420,6 @@ class Stage3_Button extends Action.ActionUI {
 
     onClearGame() {
         this.manager.removeChild(this.container);
-        this.container.destroy({ children: true });
     }
     clickEvent() {
         if (this.action.isPlayGame) {
@@ -489,20 +491,9 @@ class UI_End extends Action.ActionUI {
         tl.to(this.container, {
             duration: 1, alpha: 0, onComplete: function () {
                 this.manager.removeChild(this.container);
-                this.container.destroy({ children: true });
                 delete this.action.children.ui;
                 this.manager.loadPage(new ChildhoodObject(this.manager));
-                //console.log(this.action.children);
-                this.destroy();
             }.bind(this)
         }, "+=2");
-    }
-    resize() {
-        this.w = window.innerWidth;
-        this.h = window.innerHeight;
-        if (!this.action.children.video.isStart) {
-            this.container.removeChildren();
-            this.draw();
-        }
     }
 }

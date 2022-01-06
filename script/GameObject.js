@@ -12,11 +12,10 @@ export class PageObject {
         this.isfristLoad = true;
     }
     setup() {
-        if (this.isfristLoad) {
+        return new Promise(function(resolve,reject){
             for (let [_, e] of Object.entries(this.children)) { e.setup(); }
-            this.isfristLoad = false;
-        }
-        else this.reload();
+            resolve();
+        }.bind(this))
     }
     resize() {
         for (let [_, e] of Object.entries(this.children)) { e.resize(); }
@@ -33,8 +32,10 @@ export class PageObject {
     addMouseEvent(m) {
         for (let [_, e] of Object.entries(this.children)) { e.addMouseEvent(m); }
     }
-    destroy(){
-        for (let [_, e] of Object.entries(this.children)) { e.destroy(); }
+    destroy() {
+        if (this.children) {
+            for (let [_, e] of Object.entries(this.children)) { e.destroy(); }
+        }
         for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
 }
@@ -61,7 +62,7 @@ export class GameObject {
     update() { }
     addKeyEvent(k) { }
     addMouseEvent(m) { }
-    destroy(){
+    destroy() {
         for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
 }

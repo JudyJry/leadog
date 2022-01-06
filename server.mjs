@@ -17,7 +17,7 @@ const mineTypes = {
     "json": "application/json",
     "css": "text/css",
     "mp4": "video/mp4",
-    "wav":"audio/wav",
+    "wav": "audio/wav",
 };
 
 //create http server
@@ -41,7 +41,7 @@ createServer(function (req, res) {
     if (stats.isFile()) { //xxxx.xxxx.html (using reverse to make "html" in the index 0)
         //console.log(extname(fileName));
         let mineType = mineTypes[extname(fileName).split(".").reverse()[0]];
-        res.writeHead(200, { 'Content-type': mineType });
+        res.writeHead(200, { 'Content-type': mineType, "Access-Control-Allow-Origin": "*" });
 
         let fileStream = createReadStream(fileName);
         fileStream.pipe(res);

@@ -17,27 +17,34 @@ export class ActionPage extends PageObject {
         this.name = "ActionPage";
         this.isPlayGame = false;
     }
-    reset() { }
-    setup() {
-        this.reset();
-        for (let [_, e] of Object.entries(this.children)) { e.setup(); }
-    }
+    resize(){}
 }
 export class LogoVideo extends GameObject {
     constructor(manager, action) {
         super(manager);
         this.action = action;
         this.name = "LogoVideo";
-        this.isVideoEnded = false;
         this.onEnd = () => { };
+        this.isEnd = true;
         this.draw = function () {
-            this.loadVideo();
+            let promise = new Promise(function (resolve, _) {
+                this.loadVideo();
+                resolve();
+            }.bind(this));
+            promise.then(function () {
+                this.videoCrol.pause();
+                this.videoCrol.currentTime = 0;
+                this.videoCrol.play();
+                this.isEnd = false;
+                console.log("load " + this.name);
+            }.bind(this)).catch(function () {
+                console.error("fall load " + this.name);
+            }.bind(this));
         }
     }
     loadVideo(x = 0, y = 0) {
         let _x = (x * this.w);
         let _y = (y * this.h);
-
         this.sprite = new PIXI.Sprite.from("video/LOGO.mp4");
         this.sprite.anchor.set(0.5);
         this.videoTexture = this.sprite.texture.baseTexture;
@@ -48,7 +55,8 @@ export class LogoVideo extends GameObject {
         //console.log(this.videoCrol);
     }
     update() {
-        if (this.videoCrol.ended) {
+        if (this.videoCrol.ended && !this.isEnd) {
+            this.isEnd = true;
             this.onEnd();
         }
     }
@@ -60,12 +68,26 @@ export class ActionVideo extends GameObject {
         this.name = "Video";
         this.bg = new PIXI.Graphics();
         this.draw = function () {
-            this.loadVideo(url, 0, 0);
-            this.drawBg();
+            let promise = new Promise(function (resolve, _) {
+                this.loadVideo(url, 0, 0);
+                resolve();
+            }.bind(this));
+            promise.then(function () {
+                this.videoCrol.pause();
+                this.videoCrol.currentTime = 0;
+                this.videoCrol.ontimeupdate = () => {
+                    this.currentTime = this.videoCrol.currentTime;
+                };
+                this.drawBg();
+                this.count = 0;
+                this.isEnd = false;
+                console.log("load " + this.name);
+            }.bind(this)).catch(function () {
+                console.error("fall load " + this.name);
+            }.bind(this));
         }
     }
     loadVideo(url, x, y) {
-        this.isEnd = false;
         this.count = 0;
         let _x = (x * this.w);
         let _y = (y * this.h);
@@ -79,11 +101,8 @@ export class ActionVideo extends GameObject {
         this.videoCrol.muted = false;
         this.currentTime = this.videoCrol.currentTime;
         this.container.addChild(this.sprite);
-
         this.container.position.set(_x, _y);
-        this.videoCrol.ontimeupdate = () => {
-            this.currentTime = this.videoCrol.currentTime;
-        };
+        this.container.alpha = 0;
     }
     drawBg(color = "black") {
         this.bg.clear();
@@ -119,7 +138,6 @@ export class ActionVideo extends GameObject {
     pause() {
         this.videoCrol.pause();
     }
-    onEnd() { console.log("video end."); }
 }
 export class ActionSound {
     constructor(manager, action, name, url) {
