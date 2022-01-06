@@ -31,7 +31,8 @@ class ChildhoodVideo extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "ChildhoodVideo";
-        this.pauseTime = [0, 10.5, 30, 50.31,57];
+        //this.pauseTime = [0, 2, 4, 6, 8];
+        this.pauseTime = [0, 10.5, 30, 50.31, 57];
         this.isEnd = true;
         this.count = 0;
     }
@@ -299,6 +300,12 @@ class Stage2_Button extends Action.ActionUI {
             this.mask = new PIXI.Graphics();
             this.fullbar.mask = this.mask;
 
+            this.bg = PIXI.Sprite.from("image/video/childhood/Kelly/stage_2_img.jpg");
+            this.bg.anchor.set(0.5);
+            this.bg.alpha = 0;
+            this.action.children.video.container.addChildAt(this.bg, 1);
+
+            
             this.container.addChild(this.bar, this.fullbar, this.sprite);
             this.setPosition(this.sprite, 0, 0.32);
             this.setPosition(this.bar, 0, 0.18);
@@ -306,9 +313,11 @@ class Stage2_Button extends Action.ActionUI {
             this.setInteract();
 
             this.barGsap = gsap.timeline()
-                .to([this.bar, this.fullbar], { duration: 0.1, x: -5 })
+                .to(this.bg, { duration: 0.1, alpha: 1, ease: "steps(1)" })
+                .to([this.bar, this.fullbar], { duration: 0.1, x: -5 }, "<")
                 .to([this.bar, this.fullbar], { duration: 0.1, x: 5 })
-                .to([this.bar, this.fullbar], { duration: 0.1, x: 0 });
+                .to([this.bar, this.fullbar], { duration: 0.1, x: 0 })
+                .to(this.bg, { duration: 0.1, alpha: 0, ease: "steps(1)" }, "<");
             this.barGsap.pause();
         }
     }
@@ -324,6 +333,7 @@ class Stage2_Button extends Action.ActionUI {
     }
     onClearGame() {
         this.manager.removeChild(this.container);
+        this.action.children.video.container.removeChild(this.bg);
     }
     update() {
         if (this.action.isPlayGame) {

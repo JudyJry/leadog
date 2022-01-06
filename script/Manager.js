@@ -296,10 +296,12 @@ const loadList = [
     "image/video/cursor.png",
     "image/video/cursorHint.png",
     "image/video/Goodjob.png",
+    //action_childhood_kelly
     "image/video/childhood/Kelly/stage_1_title.png",
     "image/video/childhood/Kelly/stage_1_hint.png",
     "image/video/childhood/Kelly/stage_2_title.png",
     "image/video/childhood/Kelly/stage_2_hint.png",
+    "image/video/childhood/Kelly/stage_2_img.jpg",
     "image/video/childhood/Kelly/stage_3_title.png",
     "image/video/childhood/Kelly/stage_3_hint.png",
 ];
