@@ -30,10 +30,10 @@ export default class ResourceLoader {
         this.setupLoadingPage();
         function process() {
             return new Promise((resolve, _reject) => {
+                func.apply(this, arguments);
                 setTimeout(() => {
-                    func.apply(this, arguments);
                     resolve();
-                }, 1000);
+                }, 500);
             });
         };
         process()
@@ -41,15 +41,14 @@ export default class ResourceLoader {
                 this.setProgress(100);
                 this.init();
                 onComplete();
-            })
-            .catch(() => { console.log('fall reload') });
+            });
     }
     init() {
         gsap.to(this.page, {
-            duration: 2,
+            duration: 1,
             alpha: 0,
             onComplete: function () { $("#loadingPage").remove(); }
         });
-        console.log("All files loaded");
+        //console.log("All files loaded");
     }
 }
