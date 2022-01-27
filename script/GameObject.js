@@ -12,7 +12,7 @@ export class PageObject {
         this.isfristLoad = true;
     }
     setup() {
-        return new Promise(function(resolve,reject){
+        return new Promise(function (resolve, reject) {
             for (let [_, e] of Object.entries(this.children)) { e.setup(); }
             resolve();
         }.bind(this))
@@ -67,7 +67,7 @@ export class GameObject {
     }
 }
 export class Background extends GameObject {
-    constructor(manager, url) {
+    constructor(manager, url, height = 1080) {
         super(manager);
         this.url = url;
         this.name = "Background";
@@ -76,7 +76,7 @@ export class Background extends GameObject {
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from(this.url);
             this.sprite.anchor.set(0.5);
-            this.manager.canvasScale = this.h / this.sprite.texture.height;
+            this.manager.canvasScale = this.h / height;
             this.sprite.scale.set(this.manager.canvasScale);
             this.container.addChild(this.sprite);
         }

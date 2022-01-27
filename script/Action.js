@@ -24,7 +24,11 @@ export class LogoVideo extends GameObject {
         super(manager);
         this.action = action;
         this.name = "LogoVideo";
-        this.onEnd = () => { };
+        this.onEnd = function () {
+            this.action.children.ui.start();
+            this.action.children.sound.play();
+            this.manager.removeChild(this.container);
+        }.bind(this);
         this.isEnd = true;
         this.draw = function () {
             let promise = new Promise(function (resolve, _) {
@@ -254,7 +258,7 @@ export class ActionRope extends GameObject {
             if (this.isFrist) {
                 this.isFrist = false;
             }
-            //console.log(`lineTo:${this.manager.mouse.x},${this.manager.mouse.y}`);
+            console.log(`lineTo:${this.manager.mouse.x},${this.manager.mouse.y}`);
             this.history.unshift({ x: this.manager.mouse.x, y: this.manager.mouse.y });
             for (let i = 0; i < this.ropeSize; i++) {
                 try {
@@ -331,7 +335,7 @@ export class ActionUI extends GameObject {
         function onOver(event) { this.isPointerOver = true; }
         function onOut(event) { this.isPointerOver = false; }
     }
-    clickEvent() { alert("click "+this.name); }
+    clickEvent() { alert("click " + this.name); }
     resize() {
         this.w = window.innerWidth;
         this.h = window.innerHeight;

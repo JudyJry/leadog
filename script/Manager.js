@@ -29,7 +29,7 @@ export default class Manager {
         this.app.stage.x = this.app.renderer.width * this.anchor;
         this.app.stage.y = this.app.renderer.height * this.anchor;
         this.loader = new ResourceLoader(this.app);
-        this.loader.loadTexture(loadList);
+        this.loader.loadTexture(loadlist_null);
 
         this.keyboard = new Keyboard();
         this.mouse = new Mouse(this);
@@ -186,6 +186,14 @@ export default class Manager {
         });
     }
 }
+
+const loadlist_null = [
+    "video/LOGO.mp4",
+    "image/TGDAlogo.png",
+    "video/childhood_kelly.mp4",
+    "video/youth_bus.mp4",
+    "video/youth_instruction.mp4",
+]
 
 const loadList = [
     //video

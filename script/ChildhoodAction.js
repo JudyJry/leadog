@@ -14,18 +14,8 @@ export default class ChildhoodAction extends Action.ActionPage {
             "video": new Childhood_Kelly_Video(this.manager, this, "video/childhood_kelly.mp4"),
             "rope": new Action.ActionRope(this.manager, this),
             "ui": new Childhood_Kelly_UI_Start(this.manager, this),
-            "logo": new Childhood_Kelly_LogoVideo(this.manager, this)
+            "logo": new Action.LogoVideo(this.manager, this)
         }
-    }
-}
-class Childhood_Kelly_LogoVideo extends Action.LogoVideo {
-    constructor(manager, action) {
-        super(manager, action);
-        this.name = "Childhood_Kelly_LogoVideo";
-        this.onEnd = function () {
-            this.action.children.ui.start();
-            this.manager.removeChild(this.container);
-        }.bind(this);
     }
 }
 class Childhood_Kelly_Video extends Action.ActionVideo {
@@ -139,7 +129,6 @@ class Childhood_Kelly_UI_Start extends Action.ActionUI {
                     text.destroy();
                     this.action.children.video.isStart = true;
                     this.action.children.video.play();
-                    this.action.children.sound.play();
                 }.bind(this)
             }, "+=2");
         }

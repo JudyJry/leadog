@@ -14,18 +14,8 @@ export default class YouthAction_Bus extends Action.ActionPage {
             "video": new Youth_Bus_Video(this.manager, this, "video/youth_bus.mp4"),
             "rope": new Action.ActionRope(this.manager, this),
             "ui": new Youth_Bus_UI_Start(this.manager, this),
-            "logo": new Youth_Bus_LogoVideo(this.manager, this)
+            "logo": new Action.LogoVideo(this.manager, this)
         }
-    }
-}
-class Youth_Bus_LogoVideo extends Action.LogoVideo {
-    constructor(manager, action) {
-        super(manager, action);
-        this.name = "Youth_Bus_LogoVideo";
-        this.onEnd = function () {
-            this.action.children.ui.start();
-            this.manager.removeChild(this.container);
-        }.bind(this);
     }
 }
 class Youth_Bus_Video extends Action.ActionVideo {

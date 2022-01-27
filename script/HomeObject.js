@@ -29,9 +29,9 @@ class Background extends GameObject {
         this.container.zIndex = 10;
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from("image/homepage/island.png");
-            this.spriteHeight = this.sprite.texture.height + 300;
+            this.spriteHeight = 1008;
             this.sprite.anchor.set(0.5);
-            this.manager.canvasScale = this.h / this.spriteHeight;
+            this.manager.canvasScale = this.h / (this.spriteHeight + 300);
             this.sprite.scale.set(this.manager.canvasScale);
             this.container.addChild(this.sprite);
         }
@@ -108,7 +108,7 @@ class Building extends GameObject {
             else {
                 this.manager.arrived(e.name, gf.pointCollision(this.manager.mouse.position, e));
             }
-            
+
             if (this.manager.isArrive(e.name)) {
                 e.sprite.filters = [this.filter];
                 gsap.to(e.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
