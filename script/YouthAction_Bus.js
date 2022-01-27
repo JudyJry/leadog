@@ -33,7 +33,7 @@ class Youth_Bus_Video extends Action.ActionVideo {
         super(manager, action, url);
         this.name = "Youth_Bus_Video";
         //this.pauseTime = [0, 4, 8];
-        this.pauseTime = [0, 16.5, 42];
+        this.pauseTime = [0, 16.5, 45];
         this.isEnd = true;
         this.count = 0;
     }
