@@ -122,10 +122,11 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
         this.name = "Youth_Traffic_UI_Stage1";
         this.scale = 1;
         this.dir = ["東西向", "南北向"];
+        this.dirSound = ["sound/youth_traffic_1.wav", "sound/youth_traffic_2.wav"];
         this.random = Math.floor(Math.random() * 2);
         this.draw = function () {
-            //this.countdown = new Action.ActionCountDown(manager, action, this);
-            //this.countdown.setup();
+            this.sound = new Action.ActionSound(this.manager, this, `youth_traffic_${this.random}`, this.dirSound[this.random]);
+            this.sound.setup();
 
             let title = PIXI.Sprite.from("image/video/youth/traffic/stage_1_title.png");
             let hint = PIXI.Sprite.from("image/video/youth/traffic/stage_1_hint.png");
@@ -168,6 +169,7 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
         }
     }
     onClearGame() {
+        this.sound.pause();
         let gj = new Action.ActionGoodjob(this.manager, this.action);
         gj.setup();
         gsap.to(this.container, {
@@ -179,6 +181,7 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
         });
     }
     update() {
+        this.sound.update();
         try {
             if (Math.floor(this.countdown.times) > 5) {
                 this.manager.removeChild(this.countdown.container);
