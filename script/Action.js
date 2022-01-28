@@ -331,11 +331,11 @@ export class ActionUI extends GameObject {
         e.on("pointerover", onOver.bind(this));
         e.on("pointerout", onOut.bind(this));
 
-        function onTap(event) { this.clickEvent(); }
+        function onTap(event) { this.clickEvent(e); }
         function onOver(event) { this.isPointerOver = true; }
         function onOut(event) { this.isPointerOver = false; }
     }
-    clickEvent() { alert("click " + this.name); }
+    clickEvent(_) { alert("click " + this.name); }
     resize() {
         this.w = window.innerWidth;
         this.h = window.innerHeight;
