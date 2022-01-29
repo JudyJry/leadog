@@ -134,7 +134,7 @@ class Childhood_Kelly_UI_Start extends Action.ActionUI {
         }
     }
     update() {
-        if (this.isPointerOver) {
+        if (this.sprite.isPointerOver) {
             gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
         }
         else {
@@ -337,7 +337,7 @@ class Childhood_Kelly_Stage2_Button extends Action.ActionUI {
                 this.stage.onClearGame();
             } else if (this.count > 0) { this.count--; this.maskUpdate(); }
         }
-        if (this.isPointerOver) {
+        if (this.sprite.isPointerOver) {
             gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
         }
         else {
@@ -436,7 +436,7 @@ class Childhood_Kelly_Stage3_Button extends Action.ActionUI {
         if (Math.floor(this.times) >= 1.5) {
             this.sprite.texture = this.spriteSheet[1];
             this.setInteract();
-            if (this.isPointerOver) {
+            if (this.sprite.isPointerOver) {
                 gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
             }
             else {

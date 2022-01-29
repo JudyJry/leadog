@@ -26,14 +26,26 @@ export default class ResourceLoader {
         this.loader.onProgress.add(this.loadProgressHandler.bind(this));
         this.loader.load(this.init.bind(this));
     }
-    loadAsset(func, onComplete = () => { }) {
+    loadAsset(func, onComplete = () => { }, list = undefined) {
         this.setupLoadingPage();
+        let self = this;
         function process() {
             return new Promise((resolve, _reject) => {
-                func.apply(this, arguments);
-                setTimeout(() => {
-                    resolve();
-                }, 500);
+                if (list !== undefined) {
+                    self.loader.add(list);
+                    self.loader.onProgress.add(self.loadProgressHandler.bind(self));
+                    self.loader.load(
+                        function () {
+                            func.apply(this, arguments);
+                            resolve();
+                        }.bind(self));
+                }
+                else {
+                    func.apply(this, arguments);
+                    setTimeout(() => {
+                        resolve();
+                    }, 500);
+                }
             });
         };
         process()
@@ -41,6 +53,14 @@ export default class ResourceLoader {
                 this.setProgress(100);
                 this.init();
                 onComplete();
+            })
+            .catch(() => {
+                func.apply(this, arguments);
+                setTimeout(() => {
+                    this.setProgress(100);
+                    this.init();
+                    onComplete();
+                }, 500);
             });
     }
     init() {

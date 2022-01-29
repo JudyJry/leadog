@@ -21,8 +21,7 @@ class Youth_Traffic_Video extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "Youth_Traffic_Video";
-        //this.pauseTime = [0, 4, 8];
-        this.pauseTime = [0, 16.5, 45];
+        this.pauseTime = [0, 6, 7.5];
         this.isEnd = true;
         this.count = 0;
     }
@@ -39,28 +38,14 @@ class Youth_Traffic_Video extends Action.ActionVideo {
                     this.action.children.ui.setup();
                     break;
                 case 2:
-                    if (!this.isEnd) {
-                        this.isEnd = true;
-                        this.onEnd();
-                    }
+                    this.action.children.video2 = new Youth_Traffic_Video2(this.manager, this.action,
+                        `video/youth_traffic_${this.random + 1}.mp4`, this.random);
+                    this.action.children.video2.setup();
                     break;
             }
             this.count++;
         }
 
-    }
-    onEnd() {
-        this.drawBg("white");
-        gsap.to(this.bg, {
-            duration: 3, alpha: 1, onComplete: function () {
-                this.action.children.ui = new Youth_Traffic_UI_End(this.manager, this.action);
-                this.action.children.ui.setup();
-                this.action.children.ui.end();
-                this.videoCrol.ontimeupdate = undefined;
-                this.pause();
-                this.videoCrol.currentTime = 0;
-            }.bind(this)
-        });
     }
 }
 class Youth_Traffic_UI_Start extends Action.ActionUI {
@@ -102,13 +87,12 @@ class Youth_Traffic_UI_Start extends Action.ActionUI {
                     this.manager.removeChild(this.container);
                     this.action.children.video.isStart = true;
                     this.action.children.video.play();
-                    this.action.children.sound.play();
                 }.bind(this)
             });
         }
     }
     update() {
-        if (this.isPointerOver) {
+        if (this.sprite.isPointerOver) {
             gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
         }
         else {
@@ -122,11 +106,13 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
         this.name = "Youth_Traffic_UI_Stage1";
         this.scale = 1;
         this.dir = ["東西向", "南北向"];
-        this.dirSound = ["sound/youth_traffic_1.wav", "sound/youth_traffic_2.wav"];
+        this.dirSound = ["sound/youth_traffic_1.mp3", "sound/youth_traffic_2.mp3"];
         this.random = Math.floor(Math.random() * 2);
         this.draw = function () {
-            this.sound = new Action.ActionSound(this.manager, this, `youth_traffic_${this.random}`, this.dirSound[this.random]);
-            this.sound.setup();
+            this.countdown = new Action.ActionCountDown(this.manager, this.action, this);
+            this.countdown.setup();
+            this.sound = new Action.ActionSound(this.manager, this, `youth_traffic_${this.random + 1}`, this.dirSound[this.random]);
+            this.sound.play();
 
             let title = PIXI.Sprite.from("image/video/youth/traffic/stage_1_title.png");
             let hint = PIXI.Sprite.from("image/video/youth/traffic/stage_1_hint.png");
@@ -142,18 +128,18 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
             this.setPosition(hint, 0, -0.3);
             choose_1.anchor.set(0.5);
             choose_1.scale.set(this.scale);
-            this.setPosition(choose_1, 0.35, 0);
+            this.setPosition(choose_1, 0.35, -0.1);
             choose_2.anchor.set(0.5);
             choose_2.scale.set(this.scale);
-            this.setPosition(choose_2, -0.35, 0);
+            this.setPosition(choose_2, -0.35, -0.1);
             button_1.anchor.set(0.5);
             button_1.scale.set(this.scale);
             button_1.name = this.dir[0];
-            this.setPosition(button_1, 0.35, 0);
+            this.setPosition(button_1, 0.35, 0.1);
             button_2.anchor.set(0.5);
             button_2.scale.set(this.scale);
             button_2.name = this.dir[1];
-            this.setPosition(button_2, -0.35, 0);
+            this.setPosition(button_2, -0.35, 0.1);
 
             this.setInteract(button_1);
             this.setInteract(button_2);
@@ -164,8 +150,10 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
         }
     }
     clickEvent(e) {
-        if (e.name == this.dir[this.random]) {
+        if (e.name === this.dir[this.random]) {
             this.onClearGame();
+            this.action.children.video.onClearGame();
+            this.action.children.video.random = this.random;
         }
     }
     onClearGame() {
@@ -181,7 +169,6 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
         });
     }
     update() {
-        this.sound.update();
         try {
             if (Math.floor(this.countdown.times) > 5) {
                 this.manager.removeChild(this.countdown.container);
@@ -197,6 +184,48 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
             this.countdown = new Action.ActionCountDown(this.manager, this.action, this);
             this.countdown.setup();
         }
+    }
+}
+class Youth_Traffic_Video2 extends Action.ActionVideo {
+    constructor(manager, action, url, random) {
+        super(manager, action, url);
+        this.name = "Youth_Traffic_Video2";
+        this.pauseTime = random === 0 ? [0, 9] : [0, 17];
+        this.isEnd = true;
+        this.count = 0;
+        this.random = random;
+    }
+    update() {
+        this.videoCrol.play().then(function () { gsap.to(this.container, { duration: 1, alpha: 1 }); }.bind(this));
+        if (this.currentTime >= this.pauseTime[this.count]) {
+            switch (this.count) {
+                case 0:
+                    this.action.children.video.pause();
+                    break;
+                case 1:
+                    if (!this.isEnd) {
+                        this.action.children.video.videoCrol.ontimeupdate = undefined;
+                        this.action.children.video.videoCrol.currentTime = 0;
+                        this.isEnd = true;
+                        this.onEnd();
+                    }
+                    break;
+            }
+            this.count++;
+        }
+    }
+    onEnd() {
+        this.drawBg("white");
+        gsap.to(this.bg, {
+            duration: 1 + this.random, alpha: 1, onComplete: function () {
+                this.action.children.ui = new Youth_Traffic_UI_End(this.manager, this.action);
+                this.action.children.ui.setup();
+                this.action.children.ui.end();
+                this.videoCrol.ontimeupdate = undefined;
+                this.pause();
+                this.videoCrol.currentTime = 0;
+            }.bind(this)
+        });
     }
 }
 class Youth_Traffic_UI_End extends Action.ActionUI {

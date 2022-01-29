@@ -103,13 +103,12 @@ class Youth_Bus_UI_Start extends Action.ActionUI {
                     this.manager.removeChild(this.container);
                     this.action.children.video.isStart = true;
                     this.action.children.video.play();
-                    this.action.children.sound.play();
                 }.bind(this)
             });
         }
     }
     update() {
-        if (this.isPointerOver) {
+        if (this.sprite.isPointerOver) {
             gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
         }
         else {

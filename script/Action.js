@@ -73,7 +73,7 @@ export class ActionVideo extends GameObject {
         this.bg = new PIXI.Graphics();
         this.draw = function () {
             let promise = new Promise(function (resolve, _) {
-                this.loadVideo(url, 0, 0);
+                this.loadVideo(url);
                 resolve();
             }.bind(this));
             promise.then(function () {
@@ -91,8 +91,7 @@ export class ActionVideo extends GameObject {
             }.bind(this));
         }
     }
-    loadVideo(url, x, y) {
-        this.count = 0;
+    loadVideo(url, x = 0, y = 0) {
         let _x = (x * this.w);
         let _y = (y * this.h);
 
@@ -109,10 +108,12 @@ export class ActionVideo extends GameObject {
         this.container.alpha = 0;
     }
     drawBg(color = "black") {
+        let w = this.w >= 1920 ? this.w : 1920;
+        let h = this.h >= 1920 ? this.h : 1920;
         this.bg.clear();
         this.bg
             .beginFill(ColorSlip[color])
-            .drawRect(-this.w / 2, -this.h / 2, this.w, this.h);
+            .drawRect(-w / 2, -h / 2, w, h);
         this.bg.alpha = 0;
         this.container.addChild(this.bg);
     }
@@ -153,8 +154,8 @@ export class ActionSound {
         this.sound.volume = 0.5;
         this.isEnd = false;
     }
-    play() { this.sound.play(); }
-    pause() { this.sound.pause(); }
+    play() { this.sound.play(); console.log('%s:play', this.name); }
+    pause() { this.sound.pause(); console.log('%s:pause', this.name); }
     onEnd() {
         if (this.sound.volume <= 0) {
             this.sound.pause();
@@ -328,8 +329,8 @@ export class ActionUI extends GameObject {
         e.buttonMode = true;
 
         e.on("pointertap", onTap.bind(this));
-        e.on("pointerover", onOver.bind(this));
-        e.on("pointerout", onOut.bind(this));
+        e.on("pointerover", onOver.bind(e));
+        e.on("pointerout", onOut.bind(e));
 
         function onTap(event) { this.clickEvent(e); }
         function onOver(event) { this.isPointerOver = true; }

@@ -127,7 +127,7 @@ export default class Manager {
             }.bind(this));
         }.bind(this));
     }
-    loadAction(act) {
+    loadAction(act, list = undefined) {
         this.loader.loadAsset(function () {
             this.app.renderer.backgroundColor = ColorSlip.white;
             this.app.stage.x = this.app.renderer.width * this.anchor;
@@ -138,7 +138,7 @@ export default class Manager {
                 this.keyboard.pressed = (k) => { }
                 this.addChild(this.mouse.cursor);
             }.bind(this));
-        }.bind(this));
+        }.bind(this), () => { }, list);
     }
     toOtherPage(e) {
         switch (e.name) {
@@ -188,11 +188,7 @@ export default class Manager {
 }
 
 const loadlist_null = [
-    "video/LOGO.mp4",
     "image/TGDAlogo.png",
-    "video/childhood_kelly.mp4",
-    "video/youth_bus.mp4",
-    "video/youth_instruction.mp4",
 ]
 
 const loadList = [
@@ -201,20 +197,11 @@ const loadList = [
     "video/childhood_kelly.mp4",
     "video/youth_bus.mp4",
     "video/youth_instruction.mp4",
-    //uiSystem
-    "image/home.svg",
-    "image/location.svg",
-    "image/logo.png",
-    "image/menu.svg",
-    "image/notify.svg",
-    "image/player.svg",
-    "image/point.svg",
-    "image/question.svg",
-    "image/search.svg",
-    "image/setting.svg",
-    "image/user.svg",
-    "image/wave.svg",
+    "video/youth_traffic.mp4",
+    "video/youth_traffic_1.mp4",
+    "video/youth_traffic_2.mp4",
     //uiSystem-png
+    "image/logo.png",
     "image/home.png",
     "image/menu.png",
     "image/setting.png",
