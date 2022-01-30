@@ -108,6 +108,14 @@ const loadlist = {
         "image/video/youth/instruction/stage_5_title.png",
         "image/video/youth/instruction/stage_5_hint.png",
     ],
+    instruction2: [
+        "video/youth_instruction2.mp4",
+        "sound/youth_instruction2.wav",
+        "image/video/youth_instruction2/stage_1_title.png",
+        "image/video/youth_instruction2/stage_1_hint.png",
+        "image/video/youth_instruction2/stage_2_title.png",
+        "image/video/youth_instruction2/stage_2_hint.png"
+    ],
     traffic: [
         "video/youth_traffic.mp4",
         "video/youth_traffic_1.mp4",
