@@ -5,6 +5,7 @@ import { linkObject, PageObject, Background } from './GameObject.js';
 import YouthAction_Bus from './YouthAction_bus.js';
 import YouthAction_Instruction from './YouthAction_Instruction.js';
 import YouthAction_Traffic from './YouthAction_Traffic.js';
+import YouthAction_Instruction2 from './YouthAction_Instruction2.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -64,14 +65,15 @@ class Instruction extends linkObject {
         this.y = -0.027;
         this.url = "image/building/youth/instruction.png";
         this.surl = "image/building/youth/instruction_shadow.png";
-        this.random = Math.floor(Math.random() * 2);
+        //this.random = Math.floor(Math.random() * 2);
+        this.random = 1;
     }
     todo() {
         if (this.random === 0) {
             this.manager.loadAction(new YouthAction_Instruction(this.manager), loadlist.instruction);
         }
         else {
-            this.manager.loadAction(new YouthAction_Instruction(this.manager), loadlist.instruction);
+            this.manager.loadAction(new YouthAction_Instruction2(this.manager), loadlist.instruction);
         }
     }
 }

@@ -29,7 +29,7 @@ export default class Manager {
         this.app.stage.x = this.app.renderer.width * this.anchor;
         this.app.stage.y = this.app.renderer.height * this.anchor;
         this.loader = new ResourceLoader(this.app);
-        this.loader.loadTexture(loadlist_null);
+        this.loader.loadTexture(loadList);
 
         this.keyboard = new Keyboard();
         this.mouse = new Mouse(this);
@@ -187,19 +187,7 @@ export default class Manager {
     }
 }
 
-const loadlist_null = [
-    "image/TGDAlogo.png",
-]
-
 const loadList = [
-    //video
-    "video/LOGO.mp4",
-    "video/childhood_kelly.mp4",
-    "video/youth_bus.mp4",
-    "video/youth_instruction.mp4",
-    "video/youth_traffic.mp4",
-    "video/youth_traffic_1.mp4",
-    "video/youth_traffic_2.mp4",
     //uiSystem-png
     "image/logo.png",
     "image/home.png",
@@ -221,6 +209,27 @@ const loadList = [
     "image/homepage/company.png",
     "image/homepage/education.png",
     "image/homepage/event.png",
+    //actionpage
+    "image/TGDAlogo.png",
+    "image/video/count5.png",
+    "image/video/count4.png",
+    "image/video/count3.png",
+    "image/video/count2.png",
+    "image/video/count1.png",
+    "image/video/yes.png",
+    "image/video/no.png",
+    "image/video/know.png",
+    "image/video/bar.png",
+    "image/video/bar_full.png",
+    "image/video/space.png",
+    "image/video/wait.png",
+    "image/video/ok.png",
+    "image/video/cursor.png",
+    "image/video/cursorHint.png",
+    "image/video/Goodjob.png",
+]
+
+const loadList_other = [
     //bron
     "image/building/bron/bron.png",
     "image/building/bron/bron_bg.png",
@@ -275,33 +284,4 @@ const loadList = [
     "image/building/company/exit_shadow.png",
     //education
 
-    //actionpage
-    "image/TGDAlogo.png",
-    "image/video/count5.png",
-    "image/video/count4.png",
-    "image/video/count3.png",
-    "image/video/count2.png",
-    "image/video/count1.png",
-    "image/video/yes.png",
-    "image/video/no.png",
-    "image/video/know.png",
-    "image/video/bar.png",
-    "image/video/bar_full.png",
-    "image/video/space.png",
-    "image/video/wait.png",
-    "image/video/ok.png",
-    "image/video/cursor.png",
-    "image/video/cursorHint.png",
-    "image/video/Goodjob.png",
-    //action_childhood_kelly
-    "image/video/childhood/Kelly/stage_1_title.png",
-    "image/video/childhood/Kelly/stage_1_hint.png",
-    "image/video/childhood/Kelly/stage_2_title.png",
-    "image/video/childhood/Kelly/stage_2_hint.png",
-    "image/video/childhood/Kelly/stage_2_img.jpg",
-    "image/video/childhood/Kelly/stage_3_title.png",
-    "image/video/childhood/Kelly/stage_3_hint.png",
-    //action_youth_bus
-    "image/video/youth/bus/stage_1_title.png",
-    "image/video/youth/bus/stage_1_hint.png",
 ];

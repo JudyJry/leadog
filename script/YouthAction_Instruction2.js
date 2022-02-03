@@ -22,9 +22,10 @@ class Youth_Instruction2_Video extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "Youth_Instruction2_Video";
-        this.pauseTime = [0, 15, 30, 45];
+        this.pauseTime = [0, 9.5, 26.5, 29];
         this.isEnd = true;
         this.count = 0;
+        this.scale = 0.5;
     }
     update() {
         if (this.currentTime > this.pauseTime[this.count]) {
@@ -139,7 +140,7 @@ class Youth_Instruction2_UI_Stage1 extends Action.ActionUI {
             this.setPosition(title, 0.38, -0.42);
             hint.anchor.set(0.5);
             hint.scale.set(this.scale);
-            this.setPosition(hint, 0.284, 0.397);
+            this.setPosition(hint, -0.3, 0);
 
             this.container.addChild(title, hint);
             this.container.alpha = 0;
@@ -154,10 +155,8 @@ class Youth_Instruction2_UI_Stage1 extends Action.ActionUI {
             onComplete: function () {
                 this.manager.removeChild(this.container);
                 this.manager.removeChild(this.action.children.line.container);
-                this.manager.removeChild(this.action.children.rope.container);
                 this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
-                delete this.action.children.rope;
                 delete this.action.children.ui;
             }.bind(this)
         });
@@ -185,7 +184,7 @@ class Youth_Instruction2_Stage1_Line extends Action.ActionLine {
         super(manager, action);
         this.name = "Youth_Instruction2_Stage1_Line"
         this.draw = function () {
-            this.sprite.moveTo(1527, 601).bezierCurveTo(1527, 601, 1656, 533, 1792, 510);
+            this.sprite.moveTo(886, 442).bezierCurveTo(886, 442, 743, 527, 1057, 571);
             this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
@@ -208,10 +207,10 @@ class Youth_Instruction2_UI_Stage2 extends Action.ActionUI {
             let hint = PIXI.Sprite.from("image/video/youth/instruction2/stage_2_hint.png");
             title.anchor.set(0.5);
             title.scale.set(this.scale);
-            this.setPosition(title, 0.38, -0.42);
+            this.setPosition(title, 0.34, -0.42);
             hint.anchor.set(0.5);
             hint.scale.set(this.scale);
-            this.setPosition(hint, 0.284, 0.397);
+            this.setPosition(hint, 0.3, 0.35);
 
             this.container.addChild(title, hint);
             this.container.alpha = 0;
@@ -257,7 +256,7 @@ class Youth_Instruction2_Stage2_Line extends Action.ActionLine {
         super(manager, action);
         this.name = "Youth_Instruction2_Stage2_Line"
         this.draw = function () {
-            this.sprite.moveTo(1527, 601).bezierCurveTo(1527, 601, 1656, 533, 1792, 510);
+            this.sprite.moveTo(671, 619).bezierCurveTo(671, 619, 444, 535, 344, 718);
             this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);

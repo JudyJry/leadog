@@ -71,6 +71,7 @@ export class ActionVideo extends GameObject {
         this.action = action;
         this.name = "Video";
         this.bg = new PIXI.Graphics();
+        this.scale = 1;
         this.draw = function () {
             let promise = new Promise(function (resolve, _) {
                 this.loadVideo(url);
@@ -97,6 +98,7 @@ export class ActionVideo extends GameObject {
 
         this.sprite = new PIXI.Sprite.from(url);
         this.sprite.anchor.set(0.5);
+        this.sprite.scale.set(this.scale);
         this.videoTexture = this.sprite.texture.baseTexture;
         this.videoCrol = this.videoTexture.resource.source;
         this.videoTexture.autoPlay = false;
