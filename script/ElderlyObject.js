@@ -38,8 +38,7 @@ class Story extends linkObject {
         this.y = 0.171;
         this.url = "image/building/elderly/story.png";
         this.surl = "image/building/elderly/story_shadow.png";
-        //this.random = Math.floor(Math.random() * 3);
-        this.random = 3
+        this.random = Math.floor(Math.random() * 4);
     }
     todo() {
         switch (this.random) {
