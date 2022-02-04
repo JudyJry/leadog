@@ -54,7 +54,7 @@ class Bus extends linkObject {
         this.surl = "image/building/youth/bus_shadow.png";
     }
     todo() {
-        this.manager.loadAction(new YouthAction_Bus(this.manager), loadlist.bus);
+        this.manager.loadAction(new YouthAction_Bus(this.manager), loadList.bus);
     }
 }
 class Instruction extends linkObject {
@@ -65,15 +65,16 @@ class Instruction extends linkObject {
         this.y = -0.027;
         this.url = "image/building/youth/instruction.png";
         this.surl = "image/building/youth/instruction_shadow.png";
-        //this.random = Math.floor(Math.random() * 2);
-        this.random = 1;
+        this.random = Math.floor(Math.random() * 2);
     }
     todo() {
-        if (this.random === 0) {
-            this.manager.loadAction(new YouthAction_Instruction(this.manager), loadlist.instruction);
-        }
-        else {
-            this.manager.loadAction(new YouthAction_Instruction2(this.manager), loadlist.instruction);
+        switch (this.random) {
+            case 0:
+                this.manager.loadAction(new YouthAction_Instruction(this.manager), loadList.instruction);
+                break;
+            case 1:
+                this.manager.loadAction(new YouthAction_Instruction2(this.manager), loadList.instruction2);
+                break;
         }
     }
 }
@@ -86,10 +87,10 @@ class Traffic extends linkObject {
         this.url = "image/building/youth/traffic.png";
         this.surl = "image/building/youth/traffic_shadow.png";
     }
-    todo() { this.manager.loadAction(new YouthAction_Traffic(this.manager), loadlist.traffic); }
+    todo() { this.manager.loadAction(new YouthAction_Traffic(this.manager), loadList.traffic); }
 }
 
-const loadlist = {
+const loadList = {
     bus: [
         "video/youth_bus.mp4",
         "sound/youth_bus.wav",
