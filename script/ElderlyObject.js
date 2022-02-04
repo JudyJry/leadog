@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background } from './GameObject.js';
 import { ElderlyAction_Story1, ElderlyAction_Story2, ElderlyAction_Story3 } from './ElderlyAction_Story.js';
+import { ElderlyAction_Hair } from './ElderlyAction_Hair.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -18,7 +19,6 @@ export default class ElderlyObject extends PageObject {
         };
     }
 }
-
 class Distributed extends linkObject {
     constructor(manager) {
         super(manager);
@@ -38,7 +38,8 @@ class Story extends linkObject {
         this.y = 0.171;
         this.url = "image/building/elderly/story.png";
         this.surl = "image/building/elderly/story_shadow.png";
-        this.random = Math.floor(Math.random() * 3);
+        //this.random = Math.floor(Math.random() * 3);
+        this.random = 3
     }
     todo() {
         switch (this.random) {
@@ -50,6 +51,9 @@ class Story extends linkObject {
                 break;
             case 2:
                 this.manager.loadAction(new ElderlyAction_Story3(this.manager), loadList.story3);
+                break;
+            case 3:
+                this.manager.loadAction(new ElderlyAction_Hair(this.manager), loadList.hair);
                 break;
         }
     }
@@ -69,6 +73,16 @@ const loadList = {
         "video/elderly_story3.mp4"
     ],
     hair: [
-
+        "sound/elderly_hair.mp3",
+        "video/elderly_hair.mp4",
+        "image/video/elderly/hair/title_1.png",
+        "image/video/elderly/hair/title_2.png",
+        "image/video/elderly/hair/title_3.png",
+        "image/video/elderly/hair/hint_1.png",
+        "image/video/elderly/hair/hint_2.png",
+        "image/video/elderly/hair/hint_3.png",
+        "image/video/elderly/hair/button_1.png",
+        "image/video/elderly/hair/button_2.png",
+        "image/video/elderly/hair/button_3.png"
     ]
 }

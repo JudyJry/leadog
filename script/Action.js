@@ -147,13 +147,13 @@ export class ActionVideo extends GameObject {
     }
 }
 export class ActionSound {
-    constructor(manager, action, name, url) {
+    constructor(manager, action, name, url, volume = 0.5) {
         this.manager = manager;
         this.action = action;
         this.name = name;
         this.sound = sound.add(name, url);
         this.sound.loop = true;
-        this.sound.volume = 0.5;
+        this.sound.volume = volume;
         this.isEnd = false;
     }
     play() { this.sound.play(); console.log('%s:play', this.name); }
@@ -163,7 +163,6 @@ export class ActionSound {
             this.sound.pause();
         } else {
             this.sound.volume -= 0.2 * this.manager.deltaTime;
-            //console.log(this.sound.volume);
         }
     }
     setup() { }

@@ -10,7 +10,7 @@ export class ElderlyAction_Story1 extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_story1", "sound/elderly_story1.wav"),
+            "sound": new Action.ActionSound(this.manager, this, "elderly_story1", "sound/elderly_story1.wav", 0),
             "video": new Elderly_Story_Video(this.manager, this, "video/elderly_story1.mp4", 178),
             "ui": new Elderly_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
@@ -26,7 +26,7 @@ export class ElderlyAction_Story2 extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_story2", "sound/elderly_story2.mp3"),
+            "sound": new Action.ActionSound(this.manager, this, "elderly_story2", "sound/elderly_story2.mp3", 0),
             "video": new Elderly_Story_Video(this.manager, this, "video/elderly_story2.mp4", 137),
             "ui": new Elderly_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
@@ -42,7 +42,7 @@ export class ElderlyAction_Story3 extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_story3", "sound/elderly_story3.wav"),
+            "sound": new Action.ActionSound(this.manager, this, "elderly_story3", "sound/elderly_story3.wav", 0),
             "video": new Elderly_Story_Video(this.manager, this, "video/elderly_story3.mp4", 116),
             "ui": new Elderly_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
