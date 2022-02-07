@@ -1,60 +1,44 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
-import ElderlyObject from './ElderlyObject';
+import BronObject from './BronObject';
 
-export class ElderlyAction_Story1 extends Action.ActionPage {
+export class BronAction_Story1 extends Action.ActionPage {
     constructor(manager) {
         super(manager);
-        this.name = "ElderlyAction_Story1";
+        this.name = "BronAction_Story1";
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_story1", "sound/elderly_story1.wav"),
-            "video": new Elderly_Story_Video(this.manager, this, "video/elderly_story1.mp4", 178),
-            "ui": new Elderly_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
+            "sound": new Action.ActionSound(this.manager, this, "bron_story1", "sound/bron_story1.wav", 0),
+            "video": new Bron_Story_Video(this.manager, this, "video/bron_story1.mp4", 178),
+            "ui": new Bron_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Elderly_Story_UI_End(this.manager, this,
+        this.end = new Bron_Story_UI_End(this.manager, this,
             `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
     }
 }
-export class ElderlyAction_Story2 extends Action.ActionPage {
+export class BronAction_Story2 extends Action.ActionPage {
     constructor(manager) {
         super(manager);
-        this.name = "ElderlyAction_Story2";
+        this.name = "BronAction_Story2";
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_story2", "sound/elderly_story2.mp3"),
-            "video": new Elderly_Story_Video(this.manager, this, "video/elderly_story2.mp4", 137),
-            "ui": new Elderly_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
+            "sound": new Action.ActionSound(this.manager, this, "bron_story2", "sound/bron_story2.mp3", 0),
+            "video": new Bron_Story_Video(this.manager, this, "video/bron_story2.mp4", 137),
+            "ui": new Bron_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Elderly_Story_UI_End(this.manager, this,
+        this.end = new Bron_Story_UI_End(this.manager, this,
             `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
     }
 }
-export class ElderlyAction_Story3 extends Action.ActionPage {
-    constructor(manager) {
-        super(manager);
-        this.name = "ElderlyAction_Story3";
-        this.offset = 50;
-        this.isPlayGame = false;
-        this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_story3", "sound/elderly_story3.wav"),
-            "video": new Elderly_Story_Video(this.manager, this, "video/elderly_story3.mp4", 116),
-            "ui": new Elderly_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
-            "logo": new Action.LogoVideo(this.manager, this)
-        }
-        this.end = new Elderly_Story_UI_End(this.manager, this,
-            `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
-    }
-}
-class Elderly_Story_Video extends Action.ActionVideo {
+class Bron_Story_Video extends Action.ActionVideo {
     constructor(manager, action, url, end) {
         super(manager, action, url);
-        this.name = "Elderly_Story_Video";
+        this.name = "Bron_Story_Video";
         this.pauseTime = [0, end];
         this.isEnd = true;
         this.count = 0;
@@ -90,10 +74,10 @@ class Elderly_Story_Video extends Action.ActionVideo {
         });
     }
 }
-class Elderly_Story_UI_Start extends Action.ActionUI {
+class Bron_Story_UI_Start extends Action.ActionUI {
     constructor(manager, action, text) {
         super(manager, action);
-        this.name = "Elderly_Story_UI_Start";
+        this.name = "Bron_Story_UI_Start";
         this.isNotStart = true;
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from("image/video/know.png");
@@ -142,10 +126,10 @@ class Elderly_Story_UI_Start extends Action.ActionUI {
         }
     }
 }
-class Elderly_Story_UI_End extends Action.ActionUI {
+class Bron_Story_UI_End extends Action.ActionUI {
     constructor(manager, action, text) {
         super(manager, action);
-        this.name = "Elderly_Story_UI_End";
+        this.name = "Bron_Story_UI_End";
         this.isNotStart = true;
         this.draw = function () {
             let textTitle = new PIXI.Text("任務完成", this.ts);
@@ -189,7 +173,7 @@ class Elderly_Story_UI_End extends Action.ActionUI {
             duration: 1, alpha: 0, onComplete: function () {
                 this.manager.removeChild(this.container);
                 delete this.action.children.ui;
-                this.manager.loadPage(new ElderlyObject(this.manager));
+                this.manager.loadPage(new BronObject(this.manager));
             }.bind(this)
         }, "+=2");
     }
