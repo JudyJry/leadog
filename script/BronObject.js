@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background } from './GameObject.js';
+import { BronAction_Story1, BronAction_Story2 } from './BronAction_Story.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -49,6 +50,27 @@ class Photo extends linkObject {
         this.y = -0.249;
         this.url = "image/building/bron/photo.png";
         this.surl = "image/building/bron/photo_shadow.png";
+        this.random = Math.floor(Math.random() * 2);
     }
-    //todo() { }
+    todo() {
+        switch (this.random) {
+            case 0:
+                this.manager.loadAction(new BronAction_Story1(this.manager), loadList.story1);
+                break;
+            case 1:
+                this.manager.loadAction(new BronAction_Story2(this.manager), loadList.story2);
+                break;
+        }
+    }
+}
+
+const loadList = {
+    story1: [
+        "sound/bron_story1.wav",
+        "video/bron_story1.mp4"
+    ],
+    story2: [
+        "sound/bron_story2.mp3",
+        "video/bron_story2.mp4"
+    ]
 }

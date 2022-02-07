@@ -11,12 +11,12 @@ export class BronAction_Story1 extends Action.ActionPage {
         this.isPlayGame = false;
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "bron_story1", "sound/bron_story1.wav", 0),
-            "video": new Bron_Story_Video(this.manager, this, "video/bron_story1.mp4", 178),
-            "ui": new Bron_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
+            "video": new Bron_Story_Video(this.manager, this, "video/bron_story1.mp4", 46),
+            "ui": new Bron_Story_UI_Start(this.manager, this, "來聽聽剛出生的寶寶都在做什麼吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
         this.end = new Bron_Story_UI_End(this.manager, this,
-            `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+            `謝謝你聆聽剛出生的狗狗的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
     }
 }
 export class BronAction_Story2 extends Action.ActionPage {
@@ -27,12 +27,12 @@ export class BronAction_Story2 extends Action.ActionPage {
         this.isPlayGame = false;
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "bron_story2", "sound/bron_story2.mp3", 0),
-            "video": new Bron_Story_Video(this.manager, this, "video/bron_story2.mp4", 137),
-            "ui": new Bron_Story_UI_Start(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
+            "video": new Bron_Story_Video(this.manager, this, "video/bron_story2.mp4", 30),
+            "ui": new Bron_Story_UI_Start(this.manager, this, "來聽聽剛出生的寶寶都在做什麼吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
         this.end = new Bron_Story_UI_End(this.manager, this,
-            `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+            `謝謝你聆聽剛出生的狗狗的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
     }
 }
 class Bron_Story_Video extends Action.ActionVideo {
