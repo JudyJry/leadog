@@ -11,7 +11,8 @@ import ChildhoodObject from './ChildhoodObject.js';
 import YouthObject from './YouthObject.js';
 import ElderlyObject from './ElderlyObject.js';
 import CompanyObject from './CompanyObject.js';
-import EventObject from './EventObject.js';
+import MarketObject from './MarketObject.js';
+import KnowObject from './KnowObject.js';
 
 export default class Manager {
     constructor() {
@@ -158,43 +159,37 @@ export default class Manager {
                 this.loadPage(new CompanyObject(this));
                 break;
             case "相關活動":
-                this.loadPage(new EventObject(this));
+                this.loadPage(new MarketObject(this));
                 break;
             case "知識教育館":
-                this.toUndonePage(e);
-                break;
-            default:
-                this.toUndonePage(e);
+                this.loadPage(new KnowObject(this));
                 break;
         }
-    }
-    toUndonePage(e) {
-        this.loader.loadAsset(function () {
-            this.removeChild();
-            this.playerPos = this.homeDefaultPos;
-            let t = new PIXI.Text(`這是一個未完成的${e.name}頁面`, new PIXI.TextStyle({
-                fontFamily: "GenSenRounded-B",
-                fontSize: 30,
-                fill: ColorSlip.darkOrange,
-            }));
-            t.anchor.set(0.5);
-            t.position.set(0, 0);
-            this.addChild(t, this.player.container, this.uiSystem.container, this.mouse.cursor);
-            this.app.stage.sortChildren();
-        }.bind(this), () => {
-            e.isEntering = false;
-        });
     }
 }
 
 const loadList = [
     //uiSystem-png
-    "image/logo.png",
+    "image/logo.svg",
     "image/book.svg",
-    "image/home.svg",
+    "image/index.svg",
     "image/menu.svg",
     "image/notify.svg",
     "image/user.svg",
+    "image/bron.svg",
+    "image/childhood.svg",
+    "image/youth.svg",
+    "image/elderly.svg",
+    "image/company.svg",
+    "image/buy.svg",
+    "image/info.svg",
+    "image/market.svg",
+    "image/soundoff.svg",
+    "image/soundon.svg",
+    "image/know.svg",
+    "image/question.svg",
+    "image/ui_1.svg",
+    "image/ui_2.svg",
     //homepage
     "image/homepage/map.png",
     "image/homepage/island.png",
@@ -266,10 +261,10 @@ const loadList_other = [
     "image/building/elderly/distributed_shadow.png",
     "image/building/elderly/story_shadow.png",
     //event
-    "image/building/event/event.png",
-    "image/building/event/event_bg.png",
-    "image/building/event/signup.png",
-    "image/building/event/signup_shadow.png",
+    "image/building/market/market.png",
+    "image/building/market/market_bg.png",
+    "image/building/market/signup.png",
+    "image/building/market/signup_shadow.png",
     //company
     "image/building/company/company.png",
     "image/building/company/company_bg.png",

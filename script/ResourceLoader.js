@@ -44,7 +44,7 @@ export default class ResourceLoader {
                     func.apply(this, arguments);
                     setTimeout(() => {
                         resolve();
-                    }, 500);
+                    }, 200);
                 }
             });
         };
@@ -60,12 +60,12 @@ export default class ResourceLoader {
                     this.setProgress(100);
                     this.init();
                     onComplete();
-                }, 500);
+                }, 200);
             });
     }
     init() {
         gsap.to(this.page, {
-            duration: 1,
+            duration: 0.2,
             alpha: 0,
             onComplete: function () { $("#loadingPage").remove(); }
         });

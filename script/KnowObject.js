@@ -6,10 +6,10 @@ import { linkObject, PageObject, Background } from './GameObject.js';
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
-export default class EventObject extends PageObject {
+export default class KnowObject extends PageObject {
     constructor(manager) {
         super(manager);
-        this.name = "EventObject";
+        this.name = "KnowObject";
         this.children = {
             "background": new Background(manager, "image/building/event/event_bg.png"),
             "signup": new Signup(manager)
