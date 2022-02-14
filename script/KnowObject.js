@@ -11,7 +11,7 @@ export default class KnowObject extends PageObject {
         super(manager);
         this.name = "KnowObject";
         this.children = {
-            "background": new Background(manager, "image/building/event/event_bg.png"),
+            "background": new Background(manager, "image/building/market/market_bg.png"),
             "signup": new Signup(manager)
         };
     }
@@ -23,8 +23,8 @@ class Signup extends linkObject {
         this.name = "報名";
         this.x = -0.093;
         this.y = 0.161;
-        this.url = "image/building/event/signup.png";
-        this.surl = "image/building/event/signup_shadow.png";
+        this.url = "image/building/market/signup.png";
+        this.surl = "image/building/market/signup_shadow.png";
     }
     //todo() { }
 }
