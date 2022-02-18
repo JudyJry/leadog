@@ -10,6 +10,7 @@ const mineTypes = {
     "jpeg": "image/jpeg",
     "jpg": "image/jpg",
     "png": "image/png",
+    "gif": "image/gif",
     "ico": "image/x-icon",
     "svg": "image/svg+xml",
     'ttc': "font/collection",
