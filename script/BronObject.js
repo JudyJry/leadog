@@ -29,7 +29,7 @@ class Calendar extends linkObject {
         this.url = "image/building/bron/calendar.png";
         this.surl = "image/building/bron/calendar_shadow.png";
     }
-    //todo() { }
+    //clickEvent() { }
 }
 class Distributed extends linkObject {
     constructor(manager) {
@@ -40,7 +40,7 @@ class Distributed extends linkObject {
         this.url = "image/building/bron/distributed.png";
         this.surl = "image/building/bron/distributed_shadow.png";
     }
-    //todo() { }
+    //clickEvent() { }
 }
 class Photo extends linkObject {
     constructor(manager) {
@@ -52,7 +52,7 @@ class Photo extends linkObject {
         this.surl = "image/building/bron/photo_shadow.png";
         this.random = Math.floor(Math.random() * 2);
     }
-    todo() {
+    clickEvent() {
         switch (this.random) {
             case 0:
                 this.manager.loadAction(new BronAction_Story1(this.manager), loadList.story1);

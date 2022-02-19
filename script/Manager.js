@@ -53,12 +53,6 @@ export default class Manager {
         this.activeObj.setup();
         this.mouse.setup();
         this.app.stage.sortChildren();
-        this.keyboard.pressed = (k) => {
-            this.activeObj.addKeyEvent(k);
-        }
-        this.mouse.pressed = (m) => {
-            this.activeObj.addMouseEvent(m);
-        }
         this.app.ticker.add((delta) => {
             this.deltaTime = (1 / 60) * delta;
             this.update();
@@ -118,12 +112,6 @@ export default class Manager {
             this.playerPos = this.homeDefaultPos;
             this.activeObj = obj;
             this.activeObj.setup().then(function () {
-                this.keyboard.pressed = (k) => {
-                    this.activeObj.addKeyEvent(k);
-                }
-                this.mouse.pressed = (m) => {
-                    this.activeObj.addMouseEvent(m);
-                }
                 this.app.stage.addChild(this.uiSystem.container, this.mouse.cursor)
                 this.app.stage.sortChildren();
             }.bind(this));

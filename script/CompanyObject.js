@@ -29,7 +29,7 @@ class Commodity extends linkObject {
         this.url = "image/building/company/commodity.png";
         this.surl = "image/building/company/commodity_shadow.png";
     }
-    //todo() { }
+    //clickEvent() { }
 }
 class Donate extends linkObject {
     constructor(manager) {
@@ -40,7 +40,7 @@ class Donate extends linkObject {
         this.url = "image/building/company/donate.png";
         this.surl = "image/building/company/donate_shadow.png";
     }
-    //todo() { }
+    //clickEvent() { }
 }
 class Exit extends linkObject {
     constructor(manager) {
@@ -51,7 +51,7 @@ class Exit extends linkObject {
         this.url = "image/building/company/exit.png";
         this.surl = "image/building/company/exit_shadow.png";
     }
-    todo() { this.manager.toOtherPage(Page.home); }
+    clickEvent() { this.manager.toOtherPage(Page.home); }
 }
 
 

@@ -28,7 +28,7 @@ class Distributed extends linkObject {
         this.url = "image/building/elderly/distributed.png";
         this.surl = "image/building/elderly/distributed_shadow.png";
     }
-    //todo() { }
+    //clickEvent() { }
 }
 class Story extends linkObject {
     constructor(manager) {
@@ -40,7 +40,7 @@ class Story extends linkObject {
         this.surl = "image/building/elderly/story_shadow.png";
         this.random = Math.floor(Math.random() * 4);
     }
-    todo() {
+    clickEvent() {
         switch (this.random) {
             case 0:
                 this.manager.loadAction(new ElderlyAction_Story1(this.manager), loadList.story1);

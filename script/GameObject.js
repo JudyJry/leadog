@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js";
 import gsap from "gsap";
-import * as gf from "./GameFunction.js";
 import { TextStyle } from "./TextStyle.js";
 import { FilterSet } from "./FilterSet.js";
+import { addPointerEvent } from "./GameFunction.js";
 
 export class PageObject {
     constructor(manager) {
@@ -13,7 +13,7 @@ export class PageObject {
         this.isfristLoad = true;
     }
     setup() {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, _) {
             for (let [_, e] of Object.entries(this.children)) { e.setup(); }
             this.manager.app.stage.addChild(this.container);
             resolve();
@@ -24,12 +24,6 @@ export class PageObject {
     }
     update() {
         for (let [_, e] of Object.entries(this.children)) { e.update(); }
-    }
-    addKeyEvent(k) {
-        for (let [_, e] of Object.entries(this.children)) { e.addKeyEvent(k); }
-    }
-    addMouseEvent(m) {
-        for (let [_, e] of Object.entries(this.children)) { e.addMouseEvent(m); }
     }
     addChild(...e) {
         this.container.addChild(...e);
@@ -70,8 +64,6 @@ export class GameObject {
         this.container.scale.set(this.manager.canvasScale);
     }
     update() { }
-    addKeyEvent(k) { }
-    addMouseEvent(m) { }
     destroy() {
         for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
@@ -119,17 +111,13 @@ export class linkObject extends GameObject {
                 this.container.addChild(this.shadow, this.sprite, this.text);
             }
             else { this.container.addChild(this.sprite, this.text); }
+            this.sprite.clickEvent = this.clickEvent.bind(this);
+            addPointerEvent(this.sprite);
             this.container.position.set(_x, _y);
         }
     }
     update() {
-        if (this.manager.isUsePlayer) {
-            this.manager.arrived(this.name, gf.rectCollision(this.manager.player.container, this.sprite));
-        }
-        else {
-            this.manager.arrived(this.name, gf.pointCollision(this.manager.mouse.position, this.sprite));
-        }
-        if (this.manager.isArrive(this.name)) {
+        if (this.sprite.isPointerOver) {
             this.sprite.filters = [this.filter];
             gsap.to(this.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
             gsap.to(this.sprite.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
@@ -140,25 +128,7 @@ export class linkObject extends GameObject {
             gsap.to(this.sprite.scale, { duration: 1, x: this.scale, y: this.scale });
         }
     }
-    addKeyEvent(k) {
-        if (k['Enter'] && this.manager.isUsePlayer) {
-            if (this.manager.isArrive(this.name) && !this.isEntering) {
-                //console.log(`You enter the ${this.name}!`);
-                this.isEntering = true;
-                this.todo();
-            }
-        }
-    }
-    addMouseEvent(m) {
-        if (m && !this.manager.isUsePlayer) {
-            if (this.manager.isArrive(this.name) && !this.isEntering) {
-                //console.log(`You enter the ${this.name}!`);
-                this.isEntering = true;
-                this.todo();
-            }
-        }
-    }
-    todo() {
+    clickEvent() {
         alert(`You Click the ${this.name}!`);
     }
 }

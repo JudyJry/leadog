@@ -14,7 +14,7 @@ export default class Mouse {
         this.x = this.position.x;
         this.y = this.position.y;
         this.isPressed = false;
-        this.pressed = undefined;
+        this.pressed = () => { };
         this.mousePos = function () {
             this.position = this.manager.app.renderer.plugins.interaction.mouse.global;
             this.x = this.position.x;

@@ -26,5 +26,5 @@ class Signup extends linkObject {
         this.url = "image/building/market/signup.png";
         this.surl = "image/building/market/signup_shadow.png";
     }
-    //todo() { }
+    //clickEvent() { }
 }

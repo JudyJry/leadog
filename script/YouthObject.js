@@ -32,7 +32,7 @@ class Graduate extends linkObject {
         this.y = -0.303;
         this.url = "image/building/youth/graduate.png";
     }
-    //todo() { }
+    //clickEvent() { }
 }
 class Info extends linkObject {
     constructor(manager) {
@@ -42,7 +42,7 @@ class Info extends linkObject {
         this.y = -0.316;
         this.url = "image/building/youth/info.png";
     }
-    //todo() { }
+    //clickEvent() { }
 }
 class Bus extends linkObject {
     constructor(manager) {
@@ -53,7 +53,7 @@ class Bus extends linkObject {
         this.url = "image/building/youth/bus.png";
         this.surl = "image/building/youth/bus_shadow.png";
     }
-    todo() {
+    clickEvent() {
         this.manager.loadAction(new YouthAction_Bus(this.manager), loadList.bus);
     }
 }
@@ -67,7 +67,7 @@ class Instruction extends linkObject {
         this.surl = "image/building/youth/instruction_shadow.png";
         this.random = Math.floor(Math.random() * 2);
     }
-    todo() {
+    clickEvent() {
         switch (this.random) {
             case 0:
                 this.manager.loadAction(new YouthAction_Instruction(this.manager), loadList.instruction);
@@ -87,7 +87,7 @@ class Traffic extends linkObject {
         this.url = "image/building/youth/traffic.png";
         this.surl = "image/building/youth/traffic_shadow.png";
     }
-    todo() { this.manager.loadAction(new YouthAction_Traffic(this.manager), loadList.traffic); }
+    clickEvent() { this.manager.loadAction(new YouthAction_Traffic(this.manager), loadList.traffic); }
 }
 
 const loadList = {

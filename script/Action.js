@@ -172,8 +172,6 @@ export class ActionSound {
         if (this.isEnd) { this.onEnd(); }
         else this.sound.volume = this.manager.isMute ? 0 : this.volume;
     }
-    addKeyEvent(k) { }
-    addMouseEvent(m) { }
 }
 export class ActionLine extends GameObject {
     constructor(manager, action) {

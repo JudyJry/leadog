@@ -29,7 +29,7 @@ class Toys extends linkObject {
         this.url = "image/building/childhood/toys.png";
         this.surl = "image/building/childhood/toys_shadow.png"
     }
-    todo() {
+    clickEvent() {
         this.manager.loadAction(new ChildhoodAction(this.manager), loadList.toys);
     }
 }
@@ -42,7 +42,7 @@ class Doll extends linkObject {
         this.url = "image/building/childhood/doll.png";
         this.surl = "image/building/childhood/doll_shadow.png"
     }
-    //todo() {}
+    //clickEvent() {}
 }
 class Book extends linkObject {
     constructor(manager) {
@@ -53,7 +53,7 @@ class Book extends linkObject {
         this.url = "image/building/childhood/book.png";
         this.surl = "image/building/childhood/book_shadow.png"
     }
-    //todo() {}
+    //clickEvent() {}
 }
 class WallCalendar extends linkObject {
     constructor(manager) {
@@ -64,7 +64,7 @@ class WallCalendar extends linkObject {
         this.url = "image/building/childhood/wallCalendar.png";
         this.surl = "image/building/childhood/wallCalendar_shadow.png"
     }
-    //todo() {}
+    //clickEvent() {}
 }
 
 const loadList = {
