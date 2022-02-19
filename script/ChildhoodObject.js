@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { PageObject, linkObject, Background } from './GameObject.js';
-import ChildhoodAction from './ChildhoodAction.js';
+import ChildhoodAction_Kelly from './ChildhoodAction.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -30,7 +30,7 @@ class Toys extends linkObject {
         this.surl = "image/building/childhood/toys_shadow.png"
     }
     clickEvent() {
-        this.manager.loadAction(new ChildhoodAction(this.manager), loadList.toys);
+        this.manager.loadAction(new ChildhoodAction_Kelly(this.manager), loadList.toys);
     }
 }
 class Doll extends linkObject {

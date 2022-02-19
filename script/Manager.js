@@ -133,7 +133,7 @@ export default class Manager {
     toOtherPage(e) {
         this.removeChild();
         this.app.stage.removeChildren();
-        switch (e.name) {
+        switch (e) {
             case Page.home:
                 this.loadPage(new HomeObject(this));
                 break;

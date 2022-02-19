@@ -115,17 +115,14 @@ class Building extends GameObject {
             let _x = (homePageData[e.dataIndex].x * this.w);
             let _y = (homePageData[e.dataIndex].y * this.h);
             let tl = gsap.timeline();
-            tl.to(this.page.container, {
-                duration: 0.5, x: -_x * this.zoomIn, y: -_y * this.zoomIn,
-            });
-            tl.to(this.page.container.scale, {
-                duration: 0.5, x: this.zoomIn, y: this.zoomIn,
-                onComplete: function () {
-                    this.page.container.scale.set(1);
-                    this.manager.toOtherPage(e);
-                }.bind(this)
-            }, 0);
+            tl.to(this.page.container, { duration: 0.5, x: -_x * this.zoomIn, y: -_y * this.zoomIn });
+            tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn }, 0);
+            tl.to(this.page.container, { duration: 0.5, onComplete: enter.bind(this) });
         }
+        function enter() {
+            this.page.container.scale.set(1);
+            this.manager.toOtherPage(e.name);
+        };
     }
     update() {
         this.container.children.forEach((e) => {

@@ -434,7 +434,7 @@ class Youth_Instruction_UI_Stage5 extends Action.ActionUI {
             let hint = PIXI.Sprite.from("image/video/youth/instruction/stage_5_hint.png");
             title.anchor.set(0.5);
             title.scale.set(this.scale);
-            this.setPosition(title, 0.38, -0.42);
+            this.setPosition(title, 0.37, -0.42);
             hint.anchor.set(0.5);
             hint.scale.set(this.scale);
             this.setPosition(hint, 0.1, -0.3);

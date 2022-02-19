@@ -51,7 +51,9 @@ class Exit extends linkObject {
         this.url = "image/building/company/exit.png";
         this.surl = "image/building/company/exit_shadow.png";
     }
-    clickEvent() { this.manager.toOtherPage(Page.home); }
+    clickEvent() {
+        this.manager.toOtherPage(Page.home);
+    }
 }
 
 

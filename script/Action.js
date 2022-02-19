@@ -29,39 +29,17 @@ export class LogoVideo extends GameObject {
             this.action.children.sound.play();
             this.manager.removeChild(this.container);
         }.bind(this);
-        this.isEnd = true;
-        this.draw = function () {
-            let promise = new Promise(function (resolve, _) {
-                this.loadVideo();
-                resolve();
-            }.bind(this));
-            promise.then(function () {
-                this.videoCrol.pause();
-                this.videoCrol.currentTime = 0;
-                this.videoCrol.play();
-                this.isEnd = false;
-                console.log("load " + this.name);
-            }.bind(this)).catch(function () {
-                console.error("fall load " + this.name);
-            }.bind(this));
-        }
-    }
-    loadVideo(x = 0, y = 0) {
-        let _x = (x * this.w);
-        let _y = (y * this.h);
-        this.sprite = new PIXI.Sprite.from("video/LOGO.mp4");
-        this.sprite.anchor.set(0.5);
-        this.videoTexture = this.sprite.texture.baseTexture;
-        this.videoCrol = this.videoTexture.resource.source;
-        this.videoCrol.muted = false;
-        this.container.addChild(this.sprite);
-        this.container.position.set(_x, _y);
-        //console.log(this.videoCrol);
-    }
-    update() {
-        if (this.videoCrol.ended && !this.isEnd) {
-            this.isEnd = true;
-            this.onEnd();
+        this.draw = function (x = 0, y = -0.1) {
+            let _x = (x * this.w);
+            let _y = (y * this.h);
+            this.sprite = new PIXI.Sprite.from("image/logo.svg");
+            this.sprite.anchor.set(0.5);
+            this.sprite.scale.set(2);
+            this.container.addChild(this.sprite);
+            this.container.position.set(_x, _y);
+            let tl = gsap.timeline();
+            tl.from(this.sprite, { duration: 2, alpha: 0 });
+            tl.from(this.sprite, { duration: 2, alpha: 1, onComplete: this.onEnd });
         }
     }
 }

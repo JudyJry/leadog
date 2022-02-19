@@ -10,7 +10,7 @@ export class BronAction_Story1 extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "bron_story1", "sound/bron_story1.wav", 0),
+            "sound": new Action.ActionSound(this.manager, this, "bron_story", "sound/bron_story.mp3", 0),
             "video": new Bron_Story_Video(this.manager, this, "video/bron_story1.mp4", 46),
             "ui": new Bron_Story_UI_Start(this.manager, this, "來聽聽剛出生的寶寶都在做什麼吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
@@ -26,7 +26,7 @@ export class BronAction_Story2 extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "bron_story2", "sound/bron_story2.mp3", 0),
+            "sound": new Action.ActionSound(this.manager, this, "bron_story", "sound/bron_story.mp3", 0),
             "video": new Bron_Story_Video(this.manager, this, "video/bron_story2.mp4", 30),
             "ui": new Bron_Story_UI_Start(this.manager, this, "來聽聽剛出生的寶寶都在做什麼吧！"),
             "logo": new Action.LogoVideo(this.manager, this)

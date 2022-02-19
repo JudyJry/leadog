@@ -3,10 +3,10 @@ import gsap from "gsap";
 import * as Action from "./Action";
 import { Page } from './Data';
 
-export default class ChildhoodAction extends Action.ActionPage {
+export default class ChildhoodAction_Kelly extends Action.ActionPage {
     constructor(manager) {
         super(manager);
-        this.name = "ChildhoodAction";
+        this.name = "ChildhoodAction_Kelly";
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
@@ -22,8 +22,7 @@ class Childhood_Kelly_Video extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "Childhood_Kelly_Video";
-        //this.pauseTime = [0, 2, 4, 6, 8];
-        this.pauseTime = [0, 10.5, 30, 50.31, 57];
+        this.pauseTime = [0, 9.8, 29.266, 49.533, 57];
         this.isEnd = true;
         this.count = 0;
     }

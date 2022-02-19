@@ -66,11 +66,11 @@ class Photo extends linkObject {
 
 const loadList = {
     story1: [
-        "sound/bron_story1.wav",
+        "sound/bron_story.mp3",
         "video/bron_story1.mp4"
     ],
     story2: [
-        "sound/bron_story2.mp3",
+        "sound/bron_story.mp3",
         "video/bron_story2.mp4"
     ]
 }

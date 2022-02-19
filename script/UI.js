@@ -246,7 +246,7 @@ class Index extends UI {
             s.scale.set(0.8);
             if (i < 4) { s.position.set(90 + (i * 75), 25); }
             else if (i >= 4) { s.position.set(90 + ((i - 4) * 75), 95); }
-            s.clickEvent = function () { this.manager.toOtherPage(uiData[i]); }.bind(this);
+            s.clickEvent = function () { this.manager.toOtherPage(uiData[i].name); }.bind(this);
             addPointerEvent(s);
             this.index.addChild(s);
         }
