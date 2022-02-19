@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
-import YouthObject from './YouthObject';
+import { Page } from './Data';
 
 export default class YouthAction_Instruction extends Action.ActionPage {
     constructor(manager) {
@@ -22,7 +22,6 @@ class Youth_Instruction_Video extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "Youth_Instruction_Video";
-        //this.pauseTime = [0, 4, 8];
         this.pauseTime = [0, 4, 10, 16, 26.2, 52.5, 65];
         this.isEnd = true;
         this.count = 0;
@@ -539,7 +538,7 @@ class Youth_Instruction_UI_End extends Action.ActionUI {
             duration: 1, alpha: 0, onComplete: function () {
                 this.manager.removeChild(this.container);
                 delete this.action.children.ui;
-                this.manager.loadPage(new YouthObject(this.manager));
+                this.manager.toOtherPage(Page.youth);
             }.bind(this)
         }, "+=2");
     }

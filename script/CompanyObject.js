@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background } from './GameObject.js';
-import HomeObject from './HomeObject.js';
+import { Page } from './Data.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -51,7 +51,7 @@ class Exit extends linkObject {
         this.url = "image/building/company/exit.png";
         this.surl = "image/building/company/exit_shadow.png";
     }
-    todo() { this.manager.loadPage(new HomeObject (this.manager)); }
+    todo() { this.manager.toOtherPage(Page.home); }
 }
 
 

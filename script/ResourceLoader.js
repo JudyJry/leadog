@@ -1,5 +1,8 @@
+import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import $ from "jquery";
+import { AnimatedGIFLoader } from '@pixi/gif';
+PIXI.Loader.registerPlugin(AnimatedGIFLoader);
 
 export default class ResourceLoader {
     constructor(app) {

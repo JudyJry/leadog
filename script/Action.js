@@ -103,7 +103,7 @@ export class ActionVideo extends GameObject {
         this.videoCrol = this.videoTexture.resource.source;
         this.videoTexture.autoPlay = false;
         this.videoTexture.resource.autoPlay = false;
-        this.videoCrol.muted = false;
+        this.videoCrol.muted = this.manager.isMute;
         this.currentTime = this.videoCrol.currentTime;
         this.container.addChild(this.sprite);
         this.container.position.set(_x, _y);
@@ -137,7 +137,7 @@ export class ActionVideo extends GameObject {
         this.draw();
     }
     update() {
-        //if (this.videoCrol.ended) this.onEnd();
+        this.videoCrol.muted = this.manager.isMute;
     }
     play() {
         this.videoCrol.play();
@@ -153,7 +153,8 @@ export class ActionSound {
         this.name = name;
         this.sound = sound.add(name, url);
         this.sound.loop = true;
-        this.sound.volume = volume;
+        this.sound.volume = this.manager.isMute ? 0 : volume;
+        this.volume = volume;
         this.isEnd = false;
     }
     play() { this.sound.play(); console.log('%s:play', this.name); }
@@ -169,6 +170,7 @@ export class ActionSound {
     resize() { }
     update() {
         if (this.isEnd) { this.onEnd(); }
+        else this.sound.volume = this.manager.isMute ? 0 : this.volume;
     }
     addKeyEvent(k) { }
     addMouseEvent(m) { }

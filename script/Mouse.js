@@ -37,7 +37,7 @@ export default class Mouse {
         this.sprite.scale.set(this.scale);
         this.cursor.addChild(this.sprite);
         this.cursor.position.set(-this.w / 2, -this.h / 2);
-        this.manager.addChild(this.cursor);
+        this.manager.app.stage.addChild(this.cursor);
     }
     resize() {
         this.w = this.manager.w;

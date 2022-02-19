@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
-import YouthObject from './YouthObject';
+import { Page } from './Data';
 
 export default class YouthAction_Traffic extends Action.ActionPage {
     constructor(manager) {
@@ -277,7 +277,7 @@ class Youth_Traffic_UI_End extends Action.ActionUI {
             duration: 1, alpha: 0, onComplete: function () {
                 this.manager.removeChild(this.container);
                 delete this.action.children.ui;
-                this.manager.loadPage(new YouthObject(this.manager));
+                this.manager.toOtherPage(Page.youth);
             }.bind(this)
         }, "+=2");
     }

@@ -13,6 +13,7 @@ import ElderlyObject from './ElderlyObject.js';
 import CompanyObject from './CompanyObject.js';
 import MarketObject from './MarketObject.js';
 import KnowObject from './KnowObject.js';
+import { Page } from './Data.js';
 
 export default class Manager {
     constructor() {
@@ -43,6 +44,7 @@ export default class Manager {
         this.player = new Player(this);
         this.activeObj = new HomeObject(this);
 
+        this.isMute = false;
         this.isUsePlayer = false;
     }
     setup() {
@@ -87,7 +89,7 @@ export default class Manager {
     test() {
         if (k['Enter']) {
             //以中心比例定位(x,y)座標
-            let mousePos = manager.app.renderer.plugins.interaction.mouse.global;
+            let mousePos = this.manager.app.renderer.plugins.interaction.mouse.global;
             let pos = {
                 x: (mousePos.x / w) - 0.5,
                 y: (mousePos.y / h) - 0.5
@@ -100,12 +102,12 @@ export default class Manager {
     isArrive(building) { return this.isArriveBuilding[building] }
 
     addChild(...e) {
-        this.app.stage.addChild(...e);
-        this.app.stage.sortChildren();
+        this.activeObj.container.addChild(...e);
+        this.activeObj.container.sortChildren();
     }
     removeChild(...e) {
-        if (e.length === 0) { this.app.stage.removeChildren(); }
-        else { this.app.stage.removeChild(...e); }
+        if (e.length === 0) { this.activeObj.container.removeChildren(); }
+        else { this.activeObj.container.removeChild(...e); }
     }
 
     loadPage(obj) {
@@ -113,17 +115,16 @@ export default class Manager {
             this.app.renderer.backgroundColor = ColorSlip.lightBlue;
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
-            this.removeChild();
             this.playerPos = this.homeDefaultPos;
-            obj.setup().then(function () {
-                this.activeObj = obj;
+            this.activeObj = obj;
+            this.activeObj.setup().then(function () {
                 this.keyboard.pressed = (k) => {
                     this.activeObj.addKeyEvent(k);
                 }
                 this.mouse.pressed = (m) => {
                     this.activeObj.addMouseEvent(m);
                 }
-                this.addChild(this.player.container, this.uiSystem.container, this.mouse.cursor);
+                this.app.stage.addChild(this.uiSystem.container, this.mouse.cursor)
                 this.app.stage.sortChildren();
             }.bind(this));
         }.bind(this));
@@ -142,26 +143,31 @@ export default class Manager {
         }.bind(this), () => { }, list);
     }
     toOtherPage(e) {
+        this.removeChild();
+        this.app.stage.removeChildren();
         switch (e.name) {
-            case "出生":
+            case Page.home:
+                this.loadPage(new HomeObject(this));
+                break;
+            case Page.bron:
                 this.loadPage(new BronObject(this));
                 break;
-            case "幼年":
+            case Page.childhood:
                 this.loadPage(new ChildhoodObject(this));
                 break;
-            case "壯年":
+            case Page.youth:
                 this.loadPage(new YouthObject(this));
                 break;
-            case "老年":
+            case Page.elderly:
                 this.loadPage(new ElderlyObject(this));
                 break;
-            case "LEADOG公司":
+            case Page.company:
                 this.loadPage(new CompanyObject(this));
                 break;
-            case "相關活動":
+            case Page.market:
                 this.loadPage(new MarketObject(this));
                 break;
-            case "知識教育館":
+            case Page.know:
                 this.loadPage(new KnowObject(this));
                 break;
         }
@@ -199,8 +205,8 @@ const loadList = [
     "image/homepage/youth.png",
     "image/homepage/elderly.png",
     "image/homepage/company.png",
-    "image/homepage/education.png",
-    "image/homepage/event.png",
+    "image/homepage/know.png",
+    "image/homepage/market.png",
     //actionpage
     "image/TGDAlogo.png",
     "image/video/count5.png",

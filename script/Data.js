@@ -5,7 +5,7 @@ const objType = Object.freeze({
     "other": 4
 });
 
-const pageEnum = Object.freeze({
+const Page = Object.freeze({
     "home": "首頁",
     "bron": "出生",
     "childhood": "幼年",
@@ -17,17 +17,17 @@ const pageEnum = Object.freeze({
 });
 
 const uiData = [
-    { name: pageEnum.home, url: "image/home.svg" },
-    { name: pageEnum.market, url: "image/market.svg" },
-    { name: pageEnum.know, url: "image/know.svg" },
-    { name: pageEnum.company, url: "image/company.svg" },
-    { name: pageEnum.bron, url: "image/bron.svg" },
-    { name: pageEnum.childhood, url: "image/childhood.svg" },
-    { name: pageEnum.youth, url: "image/youth.svg" },
-    { name: pageEnum.elderly, url: "image/elderly.svg" },
+    { name: Page.home, url: "image/home.svg" },
+    { name: Page.market, url: "image/market.svg" },
+    { name: Page.know, url: "image/know.svg" },
+    { name: Page.company, url: "image/company.svg" },
+    { name: Page.bron, url: "image/bron.svg" },
+    { name: Page.childhood, url: "image/childhood.svg" },
+    { name: Page.youth, url: "image/youth.svg" },
+    { name: Page.elderly, url: "image/elderly.svg" },
 ];
 
-const buildingData = [
+const homePageData = [
     { type: objType.building, name: "出生", url: "image/homepage/bron.png", x: 0.157, y: 0.116 },
     { type: objType.building, name: "幼年", url: "image/homepage/childhood.png", x: 0.123, y: -0.029 },
     { type: objType.building, name: "壯年", url: "image/homepage/youth.png", x: 0.057, y: 0.124 },
@@ -37,4 +37,4 @@ const buildingData = [
     { type: objType.building, name: "相關活動", url: "image/homepage/market.png", x: 0.158, y: -0.227 },
 ];
 
-export { objType, pageEnum, buildingData, uiData };
+export { objType, Page, homePageData, uiData };

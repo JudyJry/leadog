@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
-import ChildhoodObject from './ChildhoodObject';
+import { Page } from './Data';
 
 export default class ChildhoodAction extends Action.ActionPage {
     constructor(manager) {
@@ -494,7 +494,7 @@ class Childhood_Kelly_UI_End extends Action.ActionUI {
             duration: 1, alpha: 0, onComplete: function () {
                 this.manager.removeChild(this.container);
                 delete this.action.children.ui;
-                this.manager.loadPage(new ChildhoodObject(this.manager));
+                this.manager.toOtherPage(Page.childhood);
             }.bind(this)
         }, "+=2");
     }

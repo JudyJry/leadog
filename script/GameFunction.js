@@ -9,6 +9,19 @@ export function debounce(f, delay = 250) {
         timer = setTimeout(() => { f.apply(context, args); }, delay)
     }
 }
+
+export function addPointerEvent(e) {
+    e.interactive = true;
+    e.buttonMode = true;
+    e.on("pointertap", onTap);
+    e.on("pointerover", onOver);
+    e.on("pointerout", onOut);
+
+    function onTap(event) { e.clickEvent(e); }
+    function onOver(event) { e.isPointerOver = true; }
+    function onOut(event) { e.isPointerOver = false; }
+}
+
 export function scopeCollision(a, b) {
     let aa = a.getBounds();
     let bb = b.getBounds();

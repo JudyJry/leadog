@@ -8,12 +8,14 @@ export class PageObject {
     constructor(manager) {
         this.manager = manager;
         this.name = "PageObject";
+        this.container = new PIXI.Container();
         this.children = {};
         this.isfristLoad = true;
     }
     setup() {
         return new Promise(function (resolve, reject) {
             for (let [_, e] of Object.entries(this.children)) { e.setup(); }
+            this.manager.app.stage.addChild(this.container);
             resolve();
         }.bind(this))
     }
@@ -23,14 +25,19 @@ export class PageObject {
     update() {
         for (let [_, e] of Object.entries(this.children)) { e.update(); }
     }
-    reload() {
-        for (let [_, e] of Object.entries(this.children)) { this.manager.addChild(e.container); }
-    }
     addKeyEvent(k) {
         for (let [_, e] of Object.entries(this.children)) { e.addKeyEvent(k); }
     }
     addMouseEvent(m) {
         for (let [_, e] of Object.entries(this.children)) { e.addMouseEvent(m); }
+    }
+    addChild(...e) {
+        this.container.addChild(...e);
+        this.container.sortChildren();
+    }
+    removeChild(...e) {
+        if (e.length === 0) { this.container.removeChildren(); }
+        else { this.container.removeChild(...e); }
     }
     destroy() {
         if (this.children) {
@@ -52,12 +59,15 @@ export class GameObject {
     }
     setup() {
         this.draw();
+        this.container.scale.set(this.manager.canvasScale);
         this.manager.addChild(this.container);
     }
     resize() {
+        this.w = this.manager.w;
         this.h = this.manager.h;
         this.container.removeChildren();
         this.draw();
+        this.container.scale.set(this.manager.canvasScale);
     }
     update() { }
     addKeyEvent(k) { }
@@ -67,17 +77,15 @@ export class GameObject {
     }
 }
 export class Background extends GameObject {
-    constructor(manager, url, height = 1080) {
+    constructor(manager, url, height = window.innerHeight) {
         super(manager);
         this.url = url;
         this.name = "Background";
         this.container.zIndex = 10;
-        this.h = 1080;
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from(this.url);
             this.sprite.anchor.set(0.5);
             this.manager.canvasScale = this.h / height;
-            this.sprite.scale.set(this.manager.canvasScale);
             this.container.addChild(this.sprite);
         }
     }

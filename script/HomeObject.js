@@ -1,10 +1,11 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { GameObject, PageObject } from './GameObject.js';
+import { Background, GameObject, PageObject } from './GameObject.js';
 import * as gf from "./GameFunction.js";
 import { TextStyle } from './TextStyle.js';
 import { FilterSet } from './FilterSet.js';
+import { homePageData, objType } from './Data.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -14,192 +15,171 @@ export default class HomeObject extends PageObject {
         super(manager);
         this.name = "HomeObject";
         this.children = {
-            "background": new Background(manager),
-            "wave": new Wave(manager),
-            "building": new Building(manager),
-            "tree": new Tree(manager)
+            "background": new Background(manager, "image/homepage/map.png"),
+            "building": new Building(manager, this)
         };
     }
 }
-
-class Background extends GameObject {
-    constructor(manager) {
-        super(manager);
-        this.name = "Background"
-        this.container.zIndex = 10;
-        this.draw = function () {
-            this.sprite.texture = PIXI.Texture.from("image/homepage/island.png");
-            this.spriteHeight = 1008;
-            this.sprite.anchor.set(0.5);
-            this.manager.canvasScale = this.h / (this.spriteHeight + 300);
-            this.sprite.scale.set(this.manager.canvasScale);
-            this.container.addChild(this.sprite);
-        }
-    }
-}
 class Building extends GameObject {
-    constructor(manager) {
+    constructor(manager, page) {
         super(manager);
         this.name = "Building"
+        this.page = page;
         this.filter = FilterSet.link;
         this.container.zIndex = 20;
-        this.scale = 0.7;
+        this.scale = 1;
         this.spriteHeight = 100;
-        this.textHeight = this.spriteHeight + 10;
+        this.space = 10;
+        this.zoomIn = 3;
         this.w = 1920;
         this.ts = TextStyle.link;
         this.draw = function () {
-            this.drawBuilding("出生", "image/homepage/bron.png", 0.154, 0.141);
-            this.drawBuilding("幼年", "image/homepage/childhood.png", 0.109, -0.042);
-            this.drawBuilding("壯年", "image/homepage/youth.png", 0.029, 0.098);
-            this.drawBuilding("老年", "image/homepage/elderly.png", -0.068, 0.098);
-            this.drawBuilding("知識教育館", "image/homepage/education.png", 0.007, -0.165);
-            this.drawBuilding("LEADOG公司", "image/homepage/company.png", -0.126, -0.183);
-            this.drawBuilding("相關活動", "image/homepage/event.png", 0.137, -0.296);
+            homePageData.forEach(function (data, i) {
+                switch (data.type) {
+                    case objType.building:
+                        this.drawBuilding(i, data.name, data.url, data.x, data.y);
+                        break;
+                    case objType.character:
+                        this.drawCharacter(i, data.name, data.url, data.x, data.y);
+                        break;
+                    case objType.animation:
+                        this.drawAnimation(i, data.name, data.url, data.x, data.y);
+                        break;
+                    case objType.other:
+                        this.drawOther(i, data.name, data.url, data.x, data.y);
+                        break;
+                }
+            }.bind(this));
         }
     }
-    drawBuilding(n, url, x, y) {
+    drawBuilding(i, n, url, x, y) {
         let _x = (x * this.w);
         let _y = (y * this.h);
-        let c = new PIXI.Container();
+        let c = PIXI.Sprite.from(url);
         c.name = n;
-        c.sprite = PIXI.Sprite.from(url);
-        c.text = new PIXI.Text(c.name, this.ts);
+        c.dataIndex = i;
         c.isEntering = false;
+        c.anchor.set(0.5);
+        c.scale.set(this.scale);
+        c.filters = [this.filter];
+        c.clickEvent = this.buildingClickEvent.bind(this);
+        gf.addPointerEvent(c);
 
-        c.sprite.anchor.set(0.5);
-        c.sprite.scale.set(this.scale);
-        c.sprite.filters = [this.filter];
+        c.text = new PIXI.Text(c.name, this.ts);
+        c.text.zIndex = 100;
         c.text.anchor.set(0.5);
-        c.text.position.set(0, this.spriteHeight * -1);
+        c.text.originHeight = (this.spriteHeight * -1) + _y;
+        c.text.position.set(_x, c.text.originHeight);
         c.text.alpha = 0;
 
         c.position.set(_x, _y);
-        c.addChild(c.sprite, c.text);
+        this.container.addChild(c);
+        this.manager.addChild(c.text);
+    }
+    drawCharacter(i, n, url, x, y) {
+        let _x = (x * this.w);
+        let _y = (y * this.h);
+        let c = PIXI.Sprite.from(url);
+        c.name = n;
+        c.dataIndex = i;
+        c.anchor.set(0.5);
+        c.scale.set(this.scale);
+        c.position.set(_x, _y);
         this.container.addChild(c);
     }
-    addKeyEvent(k) {
-        if (k['Enter'] && this.manager.isUsePlayer) {
-            this.container.children.forEach((e) => {
-                if (this.manager.isArrive(e.name) && !e.isEntering) {
-                    //console.log(`You enter the ${e.name}!`);
-                    e.isEntering = true;
-                    this.manager.toOtherPage(e);
-                }
-            });
-        }
+    drawAnimation(i, n, url, x, y) {
+        let _x = (x * this.w);
+        let _y = (y * this.h);
+        let c = PIXI.Sprite.from(url);
+        c.name = n;
+        c.dataIndex = i;
+        c.anchor.set(0.5);
+        c.scale.set(this.scale);
+        c.position.set(_x, _y);
+        this.container.addChild(c);
     }
-    addMouseEvent(m) {
-        if (m && !this.manager.isUsePlayer) {
-            this.container.children.forEach((e) => {
-                if (this.manager.isArrive(e.name) && !e.isEntering) {
-                    console.log(`You enter the ${e.name}!`);
-                    e.isEntering = true;
-                    this.manager.toOtherPage(e);
-                }
+    drawOther(i, n, url, x, y) {
+        let _x = (x * this.w);
+        let _y = (y * this.h);
+        let c = PIXI.Sprite.from(url);
+        c.name = n;
+        c.dataIndex = i;
+        c.anchor.set(0.5);
+        c.scale.set(this.scale);
+        c.position.set(_x, _y);
+        this.container.addChild(c);
+    }
+    buildingClickEvent(e) {
+        if (!e.isEntering) {
+            e.isEntering = true;
+            let _x = (homePageData[e.dataIndex].x * this.w);
+            let _y = (homePageData[e.dataIndex].y * this.h);
+            let tl = gsap.timeline();
+            tl.to(this.page.container, {
+                duration: 0.5, x: -_x * this.zoomIn, y: -_y * this.zoomIn,
             });
+            tl.to(this.page.container.scale, {
+                duration: 0.5, x: this.zoomIn, y: this.zoomIn,
+                onComplete: function () {
+                    this.page.container.scale.set(1);
+                    this.manager.toOtherPage(e);
+                }.bind(this)
+            }, 0);
         }
     }
     update() {
         this.container.children.forEach((e) => {
-            if (this.manager.isUsePlayer) {
-                this.manager.arrived(e.name, gf.rectCollision(this.manager.player.container, e));
+            if (e.isPointerOver) {
+                e.filters = [this.filter];
+                gsap.to(e.text, { duration: 1, y: e.text.originHeight - this.space, alpha: 1 });
+                gsap.to(e.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
             }
             else {
-                this.manager.arrived(e.name, gf.pointCollision(this.manager.mouse.position, e));
-            }
-
-            if (this.manager.isArrive(e.name)) {
-                e.sprite.filters = [this.filter];
-                gsap.to(e.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
-                gsap.to(e.sprite.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
-            }
-            else {
-                e.sprite.filters = [];
-                gsap.to(e.text, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
-                gsap.to(e.sprite.scale, { duration: 1, x: this.scale, y: this.scale });
+                e.filters = [];
+                gsap.to(e.text, { duration: 0.5, y: e.text.originHeight, alpha: 0 });
+                gsap.to(e.scale, { duration: 1, x: this.scale, y: this.scale });
             }
         });
     }
 }
-class Tree extends GameObject {
-    constructor(manager) {
-        super(manager);
-        this.name = 'Tree';
-        this.container.zIndex = 30;
-        this.angle = 15 * (Math.PI / 180);
-        this.scale = 0.8;
-        this.draw = function () {
-            this.drawTree("image/homepage/tree_front.png", 0.05, 0.121);
+
+class TestGif {
+    constructor(manager, src) {
+        this.manager = manager;
+        this.anim = undefined;
+        try { this.manager.app.loader.add(src); }
+        catch { }
+        this.manager.app.loader.load((_) => {
+            this.playAnimation(src);
+            console.log(this.anim);
+        });
+        this.x = this.manager.w * 0.4;
+        this.y = this.manager.h * 0.4;
+        this.speed = 5;
+        this.scale = -0.5;
+    }
+    playAnimation(src) {
+        this.clearAnimation();
+        this.anim = this.manager.app.loader.resources[src].animation;
+        this.manager.app.stage.addChild(this.anim);
+        this.anim.scale.set(this.scale, 0.5);
+        this.anim.anchor.set(0.5);
+        this.anim.position.set(this.x, this.y);
+        this.anim.onLoop = () => console.log('Looped!');
+        this.anim.onComplete = () => console.log('Completed!');
+        this.anim.play();
+    }
+    clearAnimation() {
+        if (this.anim) {
+            this.anim.stop();
+            this.anim.currentFrame = 0;
+            this.manager.app.stage.removeChild(this.anim);
+            this.anim = null;
         }
     }
-    drawTree(url, x, y) {
-        let _x = (x * this.w);
-        let _y = (y * this.h);
-        let tree = PIXI.Sprite.from(url);
-        tree.anchor.set(0.5);
-        tree.scale.set(this.scale);
-        tree.position.set(_x, _y);
-        this.container.addChild(tree);
-    }
-    /*
-    update() {
-        for (let i = 0; i < this.container.children.length; i++) {
-            let e = this.container.children[i];
-            this.manager.arrived(this.name + i, gf.rectCollision(this.manager.player.container, e));
-            if (this.manager.isArrive(this.name + i)) {
-                let collision = gf.directionCollision(this.manager.player.container, e);
-                if (collision == "left") {
-                    gsap.to(e, {
-                        duration: 1,
-                        rotation: this.angle
-                    });
-                }
-                else if (collision == "right") {
-                    gsap.to(e, {
-                        duration: 1,
-                        rotation: this.angle * -1
-                    });
-                }
-            }
-            else {
-                gsap.to(e, {
-                    duration: 5,
-                    rotation: 0
-                });
-            }
-        }
-    }
-    */
-}
-class Wave extends GameObject {
-    constructor(manager) {
-        super(manager);
-        this.name = 'Wave';
-        this.container.zIndex = 0;
-        this.time = 2;
-        this.delay = 0.8;
-        this.scale = 0.2;
-        this.w = 1920;
-        this.draw = function () {
-            this.drawWave(-0.3, -0.4, this.delay * 0);
-            this.drawWave(-0.5, -0.3, this.delay * 1);
-            this.drawWave(0.3, 0.4, this.delay * 2);
-            this.drawWave(-0.5, 0.3, this.delay * 3);
-            this.drawWave(0.3, -0.4, this.delay * 4);
-            this.container.position.set(0, 0);
-        }
-    }
-    drawWave(x, y, d) {
-        let _x = (x * this.w);
-        let _y = (y * this.h);
-        let s = PIXI.Sprite.from("image/wave.svg");
-        s.scale.set(this.scale);
-        s.alpha = 0;
-        s.position.set(_x, _y);
-        let tl = gsap.timeline({ repeat: -1, repeatDelay: 1, delay: d });
-        tl.to(s, { duration: this.time, x: _x + 50, alpha: 1, ease: "none" });
-        tl.to(s, { duration: this.time, x: _x + 100, alpha: 0, ease: "none" });
-        this.container.addChild(s);
+    move(x, y) {
+        this.x += x;
+        this.y += y;
+        this.anim.position.set(this.x, this.y);
     }
 }

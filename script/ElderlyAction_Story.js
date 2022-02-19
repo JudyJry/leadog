@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
-import ElderlyObject from './ElderlyObject';
+import { Page } from './Data';
 
 export class ElderlyAction_Story1 extends Action.ActionPage {
     constructor(manager) {
@@ -189,7 +189,7 @@ class Elderly_Story_UI_End extends Action.ActionUI {
             duration: 1, alpha: 0, onComplete: function () {
                 this.manager.removeChild(this.container);
                 delete this.action.children.ui;
-                this.manager.loadPage(new ElderlyObject(this.manager));
+                this.manager.toOtherPage(Page.elderly);
             }.bind(this)
         }, "+=2");
     }

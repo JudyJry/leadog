@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
-import BronObject from './BronObject';
+import { Page } from './Data';
 
 export class BronAction_Story1 extends Action.ActionPage {
     constructor(manager) {
@@ -173,7 +173,7 @@ class Bron_Story_UI_End extends Action.ActionUI {
             duration: 1, alpha: 0, onComplete: function () {
                 this.manager.removeChild(this.container);
                 delete this.action.children.ui;
-                this.manager.loadPage(new BronObject(this.manager));
+                this.manager.toOtherPage(Page.bron);
             }.bind(this)
         }, "+=2");
     }

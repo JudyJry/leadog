@@ -1,15 +1,9 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import HomeObject from './HomeObject.js';
 import { TextStyle } from './TextStyle.js';
-import BronObject from './BronObject.js';
-import ChildhoodObject from './ChildhoodObject.js';
-import YouthObject from './YouthObject.js';
-import ElderlyObject from './ElderlyObject.js';
-import CompanyObject from './CompanyObject.js';
-import MarketObject from './MarketObject.js';
-import KnowObject from './KnowObject.js';
+import { addPointerEvent } from './GameFunction.js';
+import { uiData } from './Data.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -21,7 +15,7 @@ export default class UIsystem {
         this.h = this.manager.h;
         this.container = new PIXI.Container();
         this.uiContainer = new PIXI.Container();
-        this.uiSpacing = -100;
+        this.uiSpacing = 85;
         this.container.zIndex = 100;
         this.uiContainer.zIndex = 100;
         this.ui = {
@@ -36,25 +30,26 @@ export default class UIsystem {
     }
     drawLogo() {
         this.logo = PIXI.Sprite.from("image/logo.svg");
-        this.logo.position.set(-0.49 * this.w, -0.52 * this.h);
+        this.logo.scale.set(0.8);
+        this.logo.position.set((-0.5 * this.w) + 30, (-0.5 * this.h) + 10);
         this.container.addChild(this.logo);
     }
     setup() {
         for (let [_, e] of Object.entries(this.ui)) { e.setup(); }
-        this.uiContainer.position.set((0.5 * this.w) - 96, (-0.4 * this.h));
+        this.uiContainer.position.set((-0.5 * this.w) + 110, (-0.5 * this.h) + 240);
         this.drawLogo();
         this.crol.setup();
         this.crol.addCrolEvent();
         this.container.addChild(this.uiContainer);
         this.container.position.set(0, 0);
-        this.manager.addChild(this.container);
+        this.manager.app.stage.addChild(this.container);
     }
     resize() {
         this.w = this.manager.w;
         this.h = this.manager.h;
         for (let [_, e] of Object.entries(this.ui)) { e.resize(); }
-        this.uiContainer.position.set((0.5 * this.w) - 96, (-0.4 * this.h));
-        this.logo.position.set(-0.49 * this.w, -0.52 * this.h);
+        this.uiContainer.position.set((-0.5 * this.w) + 110, (-0.5 * this.h) + 240);
+        this.logo.position.set((-0.5 * this.w) + 30, (-0.5 * this.h) + 10);
         this.crol.resize();
     }
     update() {
@@ -72,7 +67,7 @@ export class UI {
         this.icon = undefined;
         this.w = window.innerWidth;
         this.h = window.innerHeight;
-        this.scale = 1;
+        this.scale = 0.75;
         this.ts = TextStyle.UI;
         this.tsm = TextStyle.UI_small;
     }
@@ -80,25 +75,15 @@ export class UI {
         let icon = PIXI.Sprite.from(path);
         icon.scale.set(this.scale);
         icon.anchor.set(anchor);
+        icon.clickEvent = this.clickEvent.bind(this);
         return icon;
-    }
-    addPointerEvent(e = this.icon) {
-        e.interactive = true;
-        e.buttonMode = true;
-        e.on("pointertap", onTap.bind(this));
-        e.on("pointerover", onOver);
-        e.on("pointerout", onOut);
-
-        function onTap(event) { this.clickEvent(e); }
-        function onOver(event) { e.isPointerOver = true; }
-        function onOut(event) { e.isPointerOver = false; }
     }
     clickEvent() {
         alert("click " + this.name);
     }
     setup() {
         this.draw();
-        if (this.icon) this.addPointerEvent();
+        if (this.icon) addPointerEvent(this.icon);
         this.UIsystem.uiContainer.addChild(this.container);
     }
     resize() {
@@ -106,7 +91,7 @@ export class UI {
         this.h = window.innerHeight;
         this.container.removeChildren();
         this.draw();
-        if (this.icon) this.addPointerEvent();
+        if (this.icon) addPointerEvent(this.icon);
     }
     update() {
         if (this.icon.isPointerOver) {
@@ -123,7 +108,7 @@ class Book extends UI {
         this.name = "Book";
         this.draw = function () {
             this.icon = this.drawIcon('image/book.svg');
-            this.container.position.set(4 * this.UIsystem.uiSpacing, 0);
+            this.container.position.set(0, 0 * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
@@ -134,7 +119,7 @@ class Notify extends UI {
         this.name = "Notify";
         this.draw = function () {
             this.icon = this.drawIcon('image/notify.svg');
-            this.container.position.set(3 * this.UIsystem.uiSpacing, 0);
+            this.container.position.set(0, 1 * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
@@ -148,13 +133,13 @@ class User extends UI {
         this.draw = function () {
             this.icon = this.drawIcon('image/user.svg');
             this.drawIndex();
-            this.container.position.set(2 * this.UIsystem.uiSpacing, 0);
+            this.container.position.set(0, 2 * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
     drawIndex() {
         this.indexBg = PIXI.Sprite.from("image/ui_1.svg");
-        this.indexBg.anchor.set(0.5, 0);
+        this.indexBg.anchor.set(0.05, 0.5);
         this.indexBg.scale.set(this.scale);
         this.index.addChild(this.indexBg);
         drawItem(this, 0, "image/buy.svg",
@@ -162,24 +147,14 @@ class User extends UI {
         drawItem(this, 1, "image/info.svg",
             function () { }.bind(this));
 
-        function addPointerEvent(e) {
-            e.interactive = true;
-            e.buttonMode = true;
-            e.on("pointertap", onTap);
-            e.on("pointerover", onOver);
-            e.on("pointerout", onOut);
-
-            function onTap(event) { e.clickEvent(); }
-            function onOver(event) { e.isPointerOver = true; }
-            function onOut(event) { e.isPointerOver = false; }
-        }
         function drawItem(self, index, path, clickEvent) {
-            let home = PIXI.Sprite.from(path);
-            home.anchor.set(0.5);
-            home.position.set(0, 100 + (index * 74));
-            home.clickEvent = clickEvent;
-            addPointerEvent(home);
-            self.index.addChild(home);
+            let i = PIXI.Sprite.from(path);
+            i.anchor.set(0.5, 1);
+            i.scale.set(0.8);
+            i.position.set(90 + (index * 75), 25);
+            i.clickEvent = clickEvent;
+            addPointerEvent(i);
+            self.index.addChild(i);
         }
     }
     clickEvent() {
@@ -202,38 +177,38 @@ class Menu extends UI {
         this.draw = function () {
             this.icon = this.drawIcon('image/menu.svg');
             this.drawIndex();
-            this.container.position.set(1 * this.UIsystem.uiSpacing, 0);
+            this.container.position.set(0, 3 * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
     drawIndex() {
         this.indexBg = PIXI.Sprite.from("image/ui_1.svg");
-        this.indexBg.anchor.set(0.5, 0);
+        this.indexBg.anchor.set(0.05, 0.5);
         this.indexBg.scale.set(this.scale);
         this.index.addChild(this.indexBg);
         drawItem(this, 0, "image/question.svg",
             function () { }.bind(this));
-        drawItem(this, 1, "image/soundon.svg",
-            function () { }.bind(this));
-
-        function addPointerEvent(e) {
-            e.interactive = true;
-            e.buttonMode = true;
-            e.on("pointertap", onTap);
-            e.on("pointerover", onOver);
-            e.on("pointerout", onOut);
-
-            function onTap(event) { e.clickEvent(); }
-            function onOver(event) { e.isPointerOver = true; }
-            function onOut(event) { e.isPointerOver = false; }
-        }
+        this.sound = drawItem(this, 1, "image/soundon.svg",
+            function () {
+                let e = this.sound;
+                if (this.manager.isMute == false) {
+                    e.texture = PIXI.Texture.from("image/soundoff.svg");
+                    this.manager.isMute = true;
+                }
+                else if (this.manager.isMute == true) {
+                    e.texture = PIXI.Texture.from("image/soundon.svg");
+                    this.manager.isMute = false;
+                }
+            }.bind(this));
         function drawItem(self, index, path, clickEvent) {
-            let home = PIXI.Sprite.from(path);
-            home.anchor.set(0.5);
-            home.position.set(0, 100 + (index * 74));
-            home.clickEvent = clickEvent;
-            addPointerEvent(home);
-            self.index.addChild(home);
+            let i = PIXI.Sprite.from(path);
+            i.anchor.set(0.5, 1);
+            i.scale.set(0.8);
+            i.position.set(90 + (index * 75), 25);
+            i.clickEvent = clickEvent;
+            addPointerEvent(i);
+            self.index.addChild(i);
+            return i;
         }
     }
     clickEvent() {
@@ -256,51 +231,24 @@ class Index extends UI {
         this.draw = function () {
             this.icon = this.drawIcon('image/index.svg');
             this.drawIndex();
-            this.container.position.set(0 * this.UIsystem.uiSpacing, 0);
+            this.container.position.set(0, 4 * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
     drawIndex() {
         this.indexBg = PIXI.Sprite.from("image/ui_2.svg");
-        this.indexBg.anchor.set(0.5, 0);
+        this.indexBg.anchor.set(0, 0.24);
         this.indexBg.scale.set(this.scale);
         this.index.addChild(this.indexBg);
-        drawItem(this, 0, "image/home.svg",
-            function () { this.manager.loadPage(new HomeObject(this.manager)); }.bind(this));
-        drawItem(this, 1, "image/bron.svg",
-            function () { this.manager.loadPage(new BronObject(this.manager)); }.bind(this));
-        drawItem(this, 2, "image/childhood.svg",
-            function () { this.manager.loadPage(new ChildhoodObject(this.manager)); }.bind(this));
-        drawItem(this, 3, "image/youth.svg",
-            function () { this.manager.loadPage(new YouthObject(this.manager)); }.bind(this));
-        drawItem(this, 4, "image/elderly.svg",
-            function () { this.manager.loadPage(new ElderlyObject(this.manager)); }.bind(this));
-        drawItem(this, 5, "image/market.svg",
-            function () { this.manager.loadPage(new MarketObject(this.manager)); }.bind(this));
-        drawItem(this, 6, "image/know.svg",
-            function () { this.manager.loadPage(new KnowObject(this.manager)); }.bind(this));
-        drawItem(this, 7, "image/company.svg",
-            function () { this.manager.loadPage(new CompanyObject(this.manager)); }.bind(this));
-
-
-        function addPointerEvent(e) {
-            e.interactive = true;
-            e.buttonMode = true;
-            e.on("pointertap", onTap);
-            e.on("pointerover", onOver);
-            e.on("pointerout", onOut);
-
-            function onTap(event) { e.clickEvent(); }
-            function onOver(event) { e.isPointerOver = true; }
-            function onOut(event) { e.isPointerOver = false; }
-        }
-        function drawItem(self, index, path, clickEvent) {
-            let home = PIXI.Sprite.from(path);
-            home.anchor.set(0.5);
-            home.position.set(0, 100 + (index * 74));
-            home.clickEvent = clickEvent;
-            addPointerEvent(home);
-            self.index.addChild(home);
+        for (let i = 0; i < uiData.length; i++) {
+            let s = PIXI.Sprite.from(uiData[i].url);
+            s.anchor.set(0.5, 1);
+            s.scale.set(0.8);
+            if (i < 4) { s.position.set(90 + (i * 75), 25); }
+            else if (i >= 4) { s.position.set(90 + ((i - 4) * 75), 95); }
+            s.clickEvent = function () { this.manager.toOtherPage(uiData[i]); }.bind(this);
+            addPointerEvent(s);
+            this.index.addChild(s);
         }
     }
     clickEvent() {
@@ -364,7 +312,7 @@ class CrolArrow extends UI {
     }
     setup() {
         this.draw();
-        if (this.icon) this.addPointerEvent();
+        if (this.icon) this.addPointerEvent(this.icon);
         this.UIsystem.container.addChild(this.container);
     }
     update(p = this.manager.player, k = this.manager.keyboard.key, m = this.manager.mouse.isPressed) {
