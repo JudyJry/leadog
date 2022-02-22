@@ -184,6 +184,10 @@ const loadList = [
     "image/question.svg",
     "image/ui_1.svg",
     "image/ui_2.svg",
+    //page-ui
+    "image/cancel.svg",
+    "image/arrow_right.svg",
+    "image/arrow_left.svg",
     //homepage
     "image/homepage/map.png",
     "image/homepage/island.png",

@@ -20,11 +20,11 @@ class BlinkGlowFilter {
             color: this.options.color,
             quality: this.options.quality
         });
-        this.Maxblink = this.filter.outerStrength;
+        this.Maxblink = this.options.outerStrength;
         this.blinkSpeed = this.options.blinkSpeed;
     }
     effect() {
-        if (this.filter.outerStrength >= this.Maxblink || this.filter.outerStrength <= 0) {
+        if (this.filter.outerStrength > this.Maxblink || this.filter.outerStrength <= 0) {
             this.blinkSpeed = -this.blinkSpeed;
         }
         this.filter.outerStrength += this.blinkSpeed;

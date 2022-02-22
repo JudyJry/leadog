@@ -336,3 +336,53 @@ class CrolArrow extends UI {
         }
     }
 }
+
+export class Cancel {
+    constructor(manager, x, y, clickEvent) {
+        this.manager = manager;
+        this.name = "Cancel";
+        this.container = new PIXI.Container();
+        this.container.zIndex = 100;
+        this.icon = undefined;
+        this.clickEvent = clickEvent;
+        this.scale = 1;
+        this.x = x;
+        this.y = y;
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+        this.draw = function () {
+            this.icon = this.drawIcon('image/cancel.svg');
+            this.container.position.set(this.x, this.y);
+            this.container.addChild(this.icon);
+            addPointerEvent(this.icon);
+        }
+    }
+    drawIcon(path, anchor = 0.5) {
+        let icon = PIXI.Sprite.from(path);
+        icon.scale.set(this.scale);
+        icon.anchor.set(anchor);
+        icon.clickEvent = this.clickEvent;
+        return icon;
+    }
+    setup() {
+        this.draw();
+        this.manager.addChild(this.container);
+    }
+    resize() {
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+        this.container.removeChildren();
+        this.draw();
+    }
+    update() {
+        if (this.icon.isPointerOver) {
+            gsap.to(this.icon, { duration: 0.5, pixi: { brightness: 0.9 } });
+        }
+        else {
+            gsap.to(this.icon, { duration: 0.5, pixi: { brightness: 1 } });
+        }
+    }
+    remove() {
+        this.manager.removeChild(this.container);
+    }
+}
