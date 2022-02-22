@@ -4,11 +4,11 @@ import { ColorSlip } from './ColorSlip';
 const FilterSet = {
     link: new GlowFilter({
         distance: 10,
-        outerStrength: 7,
-        innerStrength: 0,
+        outerStrength: 5,
+        innerStrength: 0.1,
         color: ColorSlip.yellow,
-        quality: 0.5
+        quality: 0.1
     }),
-    
+
 }
 export { FilterSet };

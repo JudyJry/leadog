@@ -9,7 +9,9 @@ export function debounce(f, delay = 250) {
         timer = setTimeout(() => { f.apply(context, args); }, delay)
     }
 }
-
+export function deepclone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
 export function addPointerEvent(e) {
     e.interactive = true;
     e.buttonMode = true;

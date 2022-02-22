@@ -132,3 +132,39 @@ export class linkObject extends GameObject {
         alert(`You Click the ${this.name}!`);
     }
 }
+export class PageObject2 {
+    constructor(manager) {
+        this.manager = manager;
+        this.name = "PageObject2";
+        this.container = new PIXI.Container();
+        this.children = {};
+        this.isfristLoad = true;
+    }
+    setup() {
+        return new Promise(function (resolve, _) {
+            for (let [_, e] of Object.entries(this.children)) { e.setup(); }
+            this.manager.app.stage.addChild(this.container);
+            resolve();
+        }.bind(this))
+    }
+    resize() {
+        for (let [_, e] of Object.entries(this.children)) { e.resize(); }
+    }
+    update() {
+        for (let [_, e] of Object.entries(this.children)) { e.update(); }
+    }
+    addChild(...e) {
+        this.container.addChild(...e);
+        this.container.sortChildren();
+    }
+    removeChild(...e) {
+        if (e.length === 0) { this.container.removeChildren(); }
+        else { this.container.removeChild(...e); }
+    }
+    destroy() {
+        if (this.children) {
+            for (let [_, e] of Object.entries(this.children)) { e.destroy(); }
+        }
+        for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
+    }
+}
