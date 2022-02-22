@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, GameObject } from './GameObject.js';
 import { FilterSet } from './FilterSet.js';
-import { addPointerEvent, deepclone } from './GameFunction.js';
+import { addPointerEvent } from './GameFunction.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -12,6 +12,7 @@ export default class KnowObject extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "KnowObject";
+        this.container = new PIXI.Container();
         this.children = {
             "background": new bg(this.manager, this, "image/building/know/bg.png"),
             "billboard": new Billboard(this.manager, this)
@@ -36,7 +37,7 @@ class bg extends GameObject {
             this.sprite.anchor.set(0.5);
             this.manager.canvasScale = this.h / height;
             this.container.addChild(this.sprite);
-            this.container.position.x = this.wall.left;
+            this.page.container.position.x = this.wall.left;
         }
     }
     update() {
@@ -60,16 +61,14 @@ class Billboard extends GameObject {
         this.x = -0.189;
         this.y = 0.017;
         this.url = "image/building/know/billboard.png";
-        this.filter = FilterSet.link;
-        this.blink = FilterSet.link;
-        this.Maxblink = this.filter.outerStrength;
-        this.blinkSpeed = 0.1;
+        this.blink = FilterSet.blink;
         this.draw = function () {
             let _x = (this.x * this.w);
             let _y = (this.y * this.h);
             this.sprite.texture = PIXI.Texture.from(this.url);
             this.sprite.anchor.set(0.5);
             this.sprite.scale.set(this.scale);
+            this.sprite.filters = [this.blink.filter];
             this.text = new PIXI.Text(this.name, this.ts);
             this.text.anchor.set(0.5);
             this.text.position.set(0, 50 * -1);
@@ -83,22 +82,15 @@ class Billboard extends GameObject {
     }
     update() {
         if (this.sprite.isPointerOver) {
-            this.sprite.filters = [this.filter];
+            this.blink.setOuter(5);
             gsap.to(this.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
-            gsap.to(this.sprite.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
+            //gsap.to(this.sprite.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
         }
         else {
-            this.blinkEffect();
+            this.blink.effect();
             gsap.to(this.text, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
-            gsap.to(this.sprite.scale, { duration: 1, x: this.scale, y: this.scale });
+            //gsap.to(this.sprite.scale, { duration: 1, x: this.scale, y: this.scale });
         }
-    }
-    blinkEffect(e = this.sprite) {
-        if (this.blink.outerStrength >= this.Maxblink || this.blink.outerStrength <= 0) {
-            this.blinkSpeed = -this.blinkSpeed;
-        }
-        this.blink.outerStrength += this.blinkSpeed;
-        e.filters = [this.blink];
     }
     clickEvent() {
         alert(`You Click the ${this.name}!`);
