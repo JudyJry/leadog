@@ -30,7 +30,7 @@ export default class Manager {
         this.app.stage.x = this.app.renderer.width * this.anchor;
         this.app.stage.y = this.app.renderer.height * this.anchor;
         this.loader = new ResourceLoader(this.app);
-        this.loader.loadTexture(loadList.ui + loadList.home);
+        this.loader.loadTexture(loadList.ui.concat(loadList.home));
 
         this.keyboard = new Keyboard();
         this.mouse = new Mouse(this);
@@ -195,6 +195,7 @@ const loadList = {
     ],
     "childhood": [
         "image/building/childhood/bg.png",
+        "image/building/childhood/door.png",
         "image/building/childhood/book.png",
         "image/building/childhood/puzzle.png",
         "image/building/childhood/video.png",

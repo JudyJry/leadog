@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { linkObject, PageObject, Background, Player } from './GameObject.js';
+import { linkObject, PageObject, Background, Player, Door } from './GameObject.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -14,6 +14,7 @@ export default class KnowObject extends PageObject {
         this.isZoomIn = false;
         this.children = {
             "background": new Background(this.manager, this, "image/building/know/bg.png"),
+            "door": new Door(this.manager, this, -0.411, -0.054, "image/building/know/door.png"),
             "billboard": new Billboard(this.manager, this),
             "blackboard": new Blackboard(this.manager, this),
             "gashapon": new Gashapon(this.manager, this),

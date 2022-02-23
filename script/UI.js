@@ -304,6 +304,7 @@ export class Cancel {
         }
     }
     remove() {
+        this.container.removeChildren();
         this.manager.removeChild(this.container);
     }
 }

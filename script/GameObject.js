@@ -5,6 +5,7 @@ import { FilterSet } from "./FilterSet.js";
 import { addPointerEvent } from "./GameFunction.js";
 import { Cancel } from "./UI.js";
 import { math } from "./math.js";
+import { Page } from "./Data.js";
 
 
 export class PageObject {
@@ -72,7 +73,7 @@ export class GameObject {
     }
 }
 export class Background extends GameObject {
-    constructor(manager, page, url, height = window.innerHeight) {
+    constructor(manager, page, url, width = window.innerWidth, height = window.innerHeight) {
         super(manager);
         this.page = page;
         this.url = url;
@@ -80,14 +81,14 @@ export class Background extends GameObject {
         this.container.zIndex = 10;
         this.space = 300;
         this.speed = 5;
-        this.wall = {
-            "right": (-this.w / 2) + ((this.space / 10) + this.speed),
-            "left": (this.w / 2) - ((this.space / 10) + this.speed)
-        }
         this.draw = function () {
+            this.wall = {
+                "right": (-this.w / 2) + ((this.space / 10) + this.speed),
+                "left": (this.w / 2) - ((this.space / 10) + this.speed)
+            }
             this.sprite.texture = PIXI.Texture.from(this.url);
             this.sprite.anchor.set(0.5);
-            this.manager.canvasScale = this.h / height;
+            this.manager.canvasScale = this.w / width <= this.h / height ? this.w / width : this.h / height;
             this.container.addChild(this.sprite);
             this.page.container.position.x = this.wall.left;
         }
@@ -218,5 +219,19 @@ export class Player extends GameObject {
         else {
             gsap.to(this.container, { duration: 0.5, x: "+=0" });
         }
+    }
+}
+export class Door extends linkObject {
+    constructor(manager, page, x, y, url) {
+        super(manager, page);
+        this.name = "Door";
+        this.x = x;
+        this.y = y;
+        this.url = url;
+        this.zoomIn = 1;
+        this.fadeText = "離開房間";
+    }
+    clickEvent() {
+        this.manager.toOtherPage(Page.home);
     }
 }
