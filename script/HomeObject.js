@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { Background, GameObject, PageObject } from './GameObject.js';
+import { GameObject, PageObject } from './GameObject.js';
 import * as gf from "./GameFunction.js";
 import { TextStyle } from './TextStyle.js';
 import { FilterSet } from './FilterSet.js';
@@ -20,12 +20,26 @@ export default class HomeObject extends PageObject {
         };
     }
 }
+class Background extends GameObject {
+    constructor(manager, url, height = window.innerHeight) {
+        super(manager);
+        this.url = url;
+        this.name = "Background";
+        this.container.zIndex = 10;
+        this.draw = function () {
+            this.sprite.texture = PIXI.Texture.from(this.url);
+            this.sprite.anchor.set(0.5);
+            this.manager.canvasScale = this.h / height;
+            this.container.addChild(this.sprite);
+        }
+    }
+}
 class Building extends GameObject {
     constructor(manager, page) {
         super(manager);
         this.name = "Building"
         this.page = page;
-        this.filter = FilterSet.link;
+        this.filter = FilterSet.link();
         this.container.zIndex = 20;
         this.scale = 1;
         this.spriteHeight = 100;

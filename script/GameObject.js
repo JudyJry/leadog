@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { TextStyle } from "./TextStyle.js";
 import { FilterSet } from "./FilterSet.js";
 import { addPointerEvent } from "./GameFunction.js";
+import { Cancel } from "./UI.js";
 
 export class PageObject {
     constructor(manager) {
@@ -69,66 +70,115 @@ export class GameObject {
     }
 }
 export class Background extends GameObject {
-    constructor(manager, url, height = window.innerHeight) {
+    constructor(manager, page, url, height = window.innerHeight) {
         super(manager);
+        this.page = page;
         this.url = url;
         this.name = "Background";
         this.container.zIndex = 10;
+        this.space = 300;
+        this.speed = 5;
+        this.wall = {
+            "right": (-this.w / 2) + ((this.space / 10) + this.speed),
+            "left": (this.w / 2) - ((this.space / 10) + this.speed)
+        }
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from(this.url);
             this.sprite.anchor.set(0.5);
             this.manager.canvasScale = this.h / height;
             this.container.addChild(this.sprite);
+            this.page.container.position.x = this.wall.left;
+        }
+    }
+    update() {
+        if (!this.page.isZoomIn) {
+            const frame = this.page.container;
+            if (this.manager.mouse.x > this.w - this.space && frame.position.x > this.wall.right) {
+                let distance = (this.space - (this.w - this.manager.mouse.x)) / 10;
+                frame.position.x -= this.speed + distance;
+            }
+            if (this.manager.mouse.x < this.space && frame.position.x < this.wall.left) {
+                let distance = (this.space - this.manager.mouse.x) / 10;
+                frame.position.x += this.speed + distance;
+            }
         }
     }
 }
 export class linkObject extends GameObject {
-    constructor(manager) {
+    constructor(manager, page) {
         super(manager);
+        this.page = page;
         this.name = "linkObject";
         this.container.zIndex = 20;
-        this.scale = 1;
-        this.filter = FilterSet.link;
-        this.spriteHeight = 100;
-        this.textHeight = this.spriteHeight + 10;
         this.x = 0;
         this.y = 0;
-        this.url = "image/location.svg";
-        this.surl = undefined;
+        this.url = "image/building/know/billboard.png";
+        this.aurl = undefined;
+        this.spriteHeight = 250;
+        this.zoomIn = 2;
+        this.fadeText = "點擊認識"
         this.draw = function () {
-            let _x = (this.x * this.w);
-            let _y = (this.y * this.h);
+            this._x = (this.x * this.w * 2);
+            this._y = (this.y * this.h * 2);
             this.sprite.texture = PIXI.Texture.from(this.url);
             this.sprite.anchor.set(0.5);
             this.sprite.scale.set(this.scale);
-            this.text = new PIXI.Text(this.name, this.ts);
-            this.text.anchor.set(0.5);
-            this.text.position.set(0, 50 * -1);
-            if (this.surl) {
-                this.shadow = PIXI.Sprite.from(this.surl);
-                this.shadow.anchor.set(0.5);
-                this.shadow.scale.set(this.scale);
-                this.container.addChild(this.shadow, this.sprite, this.text);
+            if (this.aurl) {
+                this.blink = FilterSet.blink_alpha();
+                this.alphaSprite = PIXI.Sprite.from(this.aurl);
+                this.alphaSprite.anchor.set(0.5);
+                this.alphaSprite.scale.set(this.scale);
+                this.alphaSprite.filters = [this.blink.filter];
+                this.blink.knockout = true;
+                this.container.addChild(this.alphaSprite);
             }
-            else { this.container.addChild(this.sprite, this.text); }
+            else {
+                this.blink = FilterSet.blink();
+                this.sprite.filters = [this.blink.filter];
+            }
+            this.text = new PIXI.Text(this.fadeText, this.ts);
+            this.text.anchor.set(0.5);
+            this.textHeight = this.spriteHeight + 10;
+
+            this.container.addChild(this.sprite, this.text);
+
             this.sprite.clickEvent = this.clickEvent.bind(this);
             addPointerEvent(this.sprite);
-            this.container.position.set(_x, _y);
+            this.container.position.set(this._x, this._y);
         }
     }
     update() {
         if (this.sprite.isPointerOver) {
-            this.sprite.filters = [this.filter];
+            this.blink.outerStrength = 5;
             gsap.to(this.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
-            gsap.to(this.sprite.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
         }
-        else {
-            this.sprite.filters = [];
+        else if (!this.page.isZoomIn) {
+            this.blink.effect();
             gsap.to(this.text, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
-            gsap.to(this.sprite.scale, { duration: 1, x: this.scale, y: this.scale });
         }
+        else { this.blink.outerStrength = 0; }
+        if (this.cancel) { this.cancel.update(); }
     }
     clickEvent() {
-        alert(`You Click the ${this.name}!`);
+        let tl = gsap.timeline();
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
+        this.page.isZoomIn = true;
+        this.drawCancel();
+    }
+    drawCancel() {
+        let ch = this.sprite.height / 2;
+        let cw = this.sprite.width / 2;
+        this.cancel = new Cancel(this.manager,
+            this._x + cw + 50, this._y - ch + 60,
+            function () { this.cancelEvent() }.bind(this));
+        this.cancel.setup();
+    }
+    cancelEvent() {
+        let tl = gsap.timeline();
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.page.isZoomIn = false;
+        this.cancel.remove();
     }
 }

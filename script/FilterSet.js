@@ -8,6 +8,7 @@ let BlinkGlowFilterOptions = {
     innerStrength: 0.1,
     color: ColorSlip.yellow,
     quality: 0.1,
+    knockout: false,
     blinkSpeed: 0.05
 }
 class BlinkGlowFilter {
@@ -18,7 +19,8 @@ class BlinkGlowFilter {
             outerStrength: this.options.outerStrength,
             innerStrength: this.options.innerStrength,
             color: this.options.color,
-            quality: this.options.quality
+            quality: this.options.quality,
+            knockout: this.options.knockout
         });
         this.Maxblink = this.options.outerStrength;
         this.blinkSpeed = this.options.blinkSpeed;
@@ -29,18 +31,49 @@ class BlinkGlowFilter {
         }
         this.filter.outerStrength += this.blinkSpeed;
     }
-    setOuter(number) {
-        this.filter.outerStrength = number;
-    }
+    /**
+     * @param {number} number
+     */
+    get distance() { return this.filter.distance; }
+    set distance(number) { this.filter.distance = number; }
+    /**
+     * @param {number} number
+     */
+    get outerStrength() { return this.filter.outerStrength; }
+    set outerStrength(number) { this.filter.outerStrength = number; }
+    /**
+     * @param {number} number
+     */
+    get innerStrength() { return this.filter.innerStrength; }
+    set innerStrength(number) { this.filter.innerStrength = number; }
+    /**
+     * @param {number} number
+     */
+    get color() { return this.filter.color; }
+    set color(number) { this.filter.color = number; }
+    /**
+     * @param {number} number
+     */
+    get quality() { return this.filter.quality; }
+    set quality(number) { this.filter.quality = number; }
+    /**
+    * @param {boolean} boolean
+    */
+    get knockout() { return this.filter.knockout; }
+    set knockout(boolean) { this.filter.knockout = boolean; }
 }
 const FilterSet = {
-    link: new GlowFilter({
-        distance: 10,
+    link: () => new GlowFilter({
+        distance: 5,
         outerStrength: 5,
-        innerStrength: 0.1,
+        innerStrength: 0,
         color: ColorSlip.yellow,
         quality: 0.1
     }),
-    blink: new BlinkGlowFilter()
+    blink: () => new BlinkGlowFilter(),
+    blink_alpha: () => new BlinkGlowFilter({
+        innerStrength: 0,
+        knockout: true
+    })
 }
 export { FilterSet };
