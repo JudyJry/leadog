@@ -4,6 +4,8 @@ import { TextStyle } from "./TextStyle.js";
 import { FilterSet } from "./FilterSet.js";
 import { addPointerEvent } from "./GameFunction.js";
 import { Cancel } from "./UI.js";
+import { math } from "./math.js";
+
 
 export class PageObject {
     constructor(manager) {
@@ -180,5 +182,41 @@ export class linkObject extends GameObject {
         tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
         this.page.isZoomIn = false;
         this.cancel.remove();
+    }
+}
+export class Player extends GameObject {
+    constructor(manager, page) {
+        super(manager);
+        this.page = page;
+        this.name = "Player";
+        this.mouse = this.manager.mouse;
+        this.container.zIndex = 90;
+        this.scale = 0.5;
+        this.x = -0.412;
+        this.y = 0.119;
+        this.speed = 25;
+        this.draw = function () {
+            this._x = (this.x * this.w * 2);
+            this._y = (this.y * this.h * 2);
+            this.sprite.texture = PIXI.Texture.from("image/player.svg");
+            this.sprite.anchor.set(0.5);
+            this.sprite.scale.set(this.scale);
+            this.container.addChild(this.sprite);
+            this.container.position.set(this._x, this._y);
+        }
+    }
+    update() {
+        let mx = math.Map(this.mouse.x, 0, this.w, -this.w / 2, this.w / 2) - this.page.container.position.x;
+        if (mx > this.container.position.x + 50) {
+            gsap.to(this.container, { duration: 0.5, x: "+=" + this.speed });
+            this.sprite.scale.set(this.scale, this.scale);
+        }
+        else if (mx < this.container.position.x - 50) {
+            gsap.to(this.container, { duration: 0.5, x: "-=" + this.speed });
+            this.sprite.scale.set(-this.scale, this.scale);
+        }
+        else {
+            gsap.to(this.container, { duration: 0.5, x: "+=0" });
+        }
     }
 }

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { linkObject, PageObject, Background } from './GameObject.js';
+import { linkObject, PageObject, Background, Player } from './GameObject.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -17,6 +17,7 @@ export default class KnowObject extends PageObject {
             "billboard": new Billboard(this.manager, this),
             "blackboard": new Blackboard(this.manager, this),
             "gashapon": new Gashapon(this.manager, this),
+            "player": new Player(this.manager, this)
         };
     }
 }
@@ -27,7 +28,6 @@ class Billboard extends linkObject {
         this.x = -0.189;
         this.y = 0.017;
         this.url = "image/building/know/billboard.png";
-        this.spriteHeight = 250;
         this.zoomIn = 2;
     }
 }
@@ -38,7 +38,6 @@ class Blackboard extends linkObject {
         this.x = -0.017;
         this.y = -0.095;
         this.url = "image/building/know/blackboard.png";
-        this.spriteHeight = 250;
         this.zoomIn = 2;
     }
 }
@@ -50,7 +49,6 @@ class Gashapon extends linkObject {
         this.y = -0.05;
         this.url = "image/building/know/gashapon.png";
         this.aurl = "image/building/know/gashapon_alpha.png";
-        this.spriteHeight = 250;
         this.zoomIn = 1.2;
         this.fadeText = "開始遊戲";
     }
