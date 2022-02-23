@@ -77,7 +77,6 @@ export default class Manager {
     }
     loadPage(obj, list = undefined) {
         this.loader.loadAsset(function () {
-            this.app.renderer.backgroundColor = ColorSlip.lightBlue;
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
             this.activeObj = obj;
@@ -105,27 +104,35 @@ export default class Manager {
         this.app.stage.removeChildren();
         switch (e) {
             case Page.home:
+                this.app.renderer.backgroundColor = ColorSlip.lightBlue;
                 this.loadPage(new HomeObject(this), loadList.home);
                 break;
             case Page.bron:
+                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
                 this.loadPage(new BronObject(this), loadList.bron);
                 break;
             case Page.childhood:
+                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
                 this.loadPage(new ChildhoodObject(this), loadList.childhood);
                 break;
             case Page.youth:
+                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
                 this.loadPage(new YouthObject(this), loadList.youth);
                 break;
             case Page.elderly:
+                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
                 this.loadPage(new ElderlyObject(this), loadList.elderly);
                 break;
             case Page.company:
+                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
                 this.loadPage(new CompanyObject(this), loadList.company);
                 break;
             case Page.market:
+                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
                 this.loadPage(new MarketObject(this), loadList.market);
                 break;
             case Page.know:
+                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
                 this.loadPage(new KnowObject(this), loadList.know);
                 break;
         }
@@ -191,7 +198,11 @@ const loadList = {
         "image/homepage/market.png",
     ],
     "bron": [
-        //"image/building/bron/bg.png",
+        "image/building/bron/bg.png",
+        "image/building/bron/clan.png",
+        "image/building/bron/clan_tree.png",
+        "image/building/bron/map.png",
+        "image/building/bron/video.png",
     ],
     "childhood": [
         "image/building/childhood/bg.png",
