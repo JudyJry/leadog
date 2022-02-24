@@ -18,6 +18,15 @@ export class ActionPage extends PageObject {
         this.isPlayGame = false;
     }
     resize() { }
+    update() {
+        if (this.manager.mouse.x < 250) {
+            gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
+        }
+        else if (this.manager.mouse.x > 500) {
+            gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
+        }
+        for (let [_, e] of Object.entries(this.children)) { e.update(); }
+    }
 }
 export class LogoVideo extends GameObject {
     constructor(manager, action) {

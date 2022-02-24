@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { linkObject, PageObject, Background } from './GameObject.js';
+import { linkObject, PageObject, Background, Player } from './GameObject.js';
 import { ElderlyAction_Story1, ElderlyAction_Story2, ElderlyAction_Story3 } from './ElderlyAction_Story.js';
 import { ElderlyAction_Hair } from './ElderlyAction_Hair.js';
 
@@ -13,34 +13,27 @@ export default class ElderlyObject extends PageObject {
         super(manager);
         this.name = "ElderlyObject";
         this.children = {
-            "background": new Background(manager, "image/building/elderly/elderly_bg.png"),
-            "distributed": new Distributed(manager),
-            "story": new Story(manager)
+            "background": new Background(this.manager, this, "image/building/elderly/bg.png"),
+            "video": new Video(this.manager, this),
+            "player": new Player(this.manager, this)
         };
     }
 }
-class Distributed extends linkObject {
-    constructor(manager) {
-        super(manager);
-        this.name = "收養分佈地圖";
-        this.x = -0.145;
-        this.y = -0.269;
-        this.url = "image/building/elderly/distributed.png";
-        this.surl = "image/building/elderly/distributed_shadow.png";
-    }
-    //clickEvent() { }
-}
-class Story extends linkObject {
-    constructor(manager) {
-        super(manager);
-        this.name = "收養家庭故事";
-        this.x = -0.08;
-        this.y = 0.171;
-        this.url = "image/building/elderly/story.png";
-        this.surl = "image/building/elderly/story_shadow.png";
+class Video extends linkObject {
+    constructor(manager, page) {
+        super(manager, page);
+        this.name = "Video";
+        this.x = -0.103;
+        this.y = -0.067;
+        this.url = "image/building/elderly/video.png";
+        this.zoomIn = 2;
+        this.fadeText = "點擊播放影片";
+        this.spriteHeight = 10;
         this.random = Math.floor(Math.random() * 4);
     }
     clickEvent() {
+        this.page.container.scale.set(1);
+        this.page.container.position.set(0, 0);
         switch (this.random) {
             case 0:
                 this.manager.loadAction(new ElderlyAction_Story1(this.manager), loadList.story1);
@@ -55,9 +48,9 @@ class Story extends linkObject {
                 this.manager.loadAction(new ElderlyAction_Hair(this.manager), loadList.hair);
                 break;
         }
+
     }
 }
-
 const loadList = {
     story1: [
         "sound/elderly_story1.wav",
