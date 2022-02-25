@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import gsap from "gsap";
 import { TextStyle } from "./TextStyle.js";
 import { FilterSet } from "./FilterSet.js";
-import { addPointerEvent } from "./GameFunction.js";
+import { addPointerEvent, createSprite } from "./GameFunction.js";
 import { Cancel } from "./UI.js";
 import { math } from "./math.js";
 import { Page } from "./Data.js";
@@ -16,6 +16,7 @@ export class PageObject {
         this.children = {};
     }
     setup() {
+        this.container.name = this.name;
         return new Promise(function (resolve, _) {
             for (let [_, e] of Object.entries(this.children)) { e.setup(); }
             this.manager.app.stage.addChild(this.container);
@@ -57,6 +58,7 @@ export class GameObject {
     }
     setup() {
         this.draw();
+        this.container.name = this.name;
         this.container.scale.set(this.manager.canvasScale);
         this.manager.addChild(this.container);
     }
@@ -142,7 +144,6 @@ export class linkObject extends GameObject {
             this.text = new PIXI.Text(this.fadeText, this.ts);
             this.text.anchor.set(0.5);
             this.textHeight = this.spriteHeight + 10;
-
             this.container.addChild(this.sprite, this.text);
 
             this.sprite.clickEvent = this.clickEvent.bind(this);
@@ -160,29 +161,39 @@ export class linkObject extends GameObject {
             gsap.to(this.text, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
         }
         else { this.blink.outerStrength = 0; }
-        if (this.cancel) { this.cancel.update(); }
+    }
+    resize() {
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.removeChildren();
+        this.draw();
+        this.container.scale.set(this.manager.canvasScale);
     }
     clickEvent() {
         let tl = gsap.timeline();
         tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
         tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
         this.page.isZoomIn = true;
-        this.drawCancel();
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
     }
     drawCancel() {
         let ch = this.sprite.height / 2;
         let cw = this.sprite.width / 2;
-        this.cancel = new Cancel(this.manager,
-            this._x + cw + 50, this._y - ch + 60,
-            function () { this.cancelEvent() }.bind(this));
-        this.cancel.setup();
+        this.cancel = createSprite('image/cancel.svg', 0.5, this.scale);
+        this.cancel.position.set(cw + 50, -ch + 60);
+        this.cancel.clickEvent = this.cancelEvent.bind(this);
+        addPointerEvent(this.cancel);
+        this.container.addChild(this.cancel);
+        this.cancel.visible = false;
     }
     cancelEvent() {
         let tl = gsap.timeline();
         tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
         tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
         this.page.isZoomIn = false;
-        this.cancel.remove();
+        this.cancel.visible = false;
+        this.cancel = undefined;
     }
 }
 export class Player extends GameObject {

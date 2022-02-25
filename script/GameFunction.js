@@ -9,8 +9,31 @@ export function debounce(f, delay = 250) {
         timer = setTimeout(() => { f.apply(context, args); }, delay)
     }
 }
-export function deepclone(obj) {
-    return JSON.parse(JSON.stringify(obj));
+export function createSprite(url, anchor = { x: 0, y: 0 }, scale = { x: 0, y: 0 }) {
+    let s = PIXI.Sprite.from(url);
+    switch (Object.prototype.toString.call(anchor)) {
+        case "[object Number]":
+            s.anchor.set(anchor);
+            break;
+        case "[object Array]":
+            s.anchor.set(anchor[0], anchor[1]);
+            break;
+        case "[object Object]":
+            s.anchor.set(anchor.x, anchor.y);
+            break;
+    }
+    switch (Object.prototype.toString.call(scale)) {
+        case "[object Number]":
+            s.scale.set(scale);
+            break;
+        case "[object Array]":
+            s.scale.set(scale[0], scale[1]);
+            break;
+        case "[object Object]":
+            s.scale.set(scale.x, scale.y);
+            break;
+    }
+    return s
 }
 export function addPointerEvent(e) {
     e.interactive = true;

@@ -4,6 +4,7 @@ import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, Door } from './GameObject.js';
 import { ElderlyAction_Story1, ElderlyAction_Story2, ElderlyAction_Story3 } from './ElderlyAction_Story.js';
 import { ElderlyAction_Hair } from './ElderlyAction_Hair.js';
+import { addPointerEvent, createSprite } from './GameFunction.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -14,7 +15,7 @@ export default class ElderlyObject extends PageObject {
         this.name = "ElderlyObject";
         this.children = {
             "background": new Background(this.manager, this, "image/building/elderly/bg.png"),
-            "door": new Door(this.manager, this, -0.403, -0.067, "image/building/childhood/door.png"),
+            "door": new Door(this.manager, this, -0.403, -0.067, "image/building/elderly/door.png"),
             "video": new Video(this.manager, this),
             "tv": new Tv(this.manager, this),
             "book": new Book(this.manager, this),
@@ -28,9 +29,9 @@ class Video extends linkObject {
         super(manager, page);
         this.name = "Video";
         this.x = -0.103;
-        this.y = -0.067;
+        this.y = -0.077;
         this.url = "image/building/elderly/video.png";
-        this.zoomIn = 2;
+        this.zoomIn = 1.6;
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
         this.random = Math.floor(Math.random() * 3);
@@ -49,30 +50,82 @@ class Video extends linkObject {
         this.drawVideo();
         this.drawUI();
     }
-    drawVideo() {
-        this.manager.loader.load(this.videoList[this.random],
-            function (loader, resources) {
-                this.video = new PIXI.Sprite(resources[this.videoList[this.random]].texture);
-                this.video.anchor.set(0.5);
-                this.video.scale.set(this.scale);
-                this.videoTexture = this.video.texture.baseTexture;
-                this.videoCrol = this.videoTexture.resource.source;
-                this.videoTexture.autoPlay = false;
-                this.videoTexture.resource.autoPlay = false;
-                this.videoCrol.muted = this.manager.isMute;
-                this.currentTime = this.videoCrol.currentTime;
-                this.container.addChild(this.video);
-                this.container.position.set(0, -2.5);
-                this.container.alpha = 0;
-            }.bind(this));
+    cancelEvent() {
+        let tl = gsap.timeline();
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.page.isZoomIn = false;
+        this.cancel.remove();
+        //this.videoCrol.pause();
+        this.container.removeChild(this.video, this.ui);
+    }
+    drawVideo(url = this.videoList[this.random]) {
+        this.video = createSprite(url, 0.5, 0.44);
+        this.videoTexture = this.video.texture.baseTexture;
+        this.videoCrol = this.videoTexture.resource.source;
+        this.videoTexture.autoPlay = false;
+        this.videoTexture.resource.autoPlay = false;
+        this.videoCrol.muted = this.manager.isMute;
+        this.currentTime = this.videoCrol.currentTime;
+        this.video.position.set(0, -7.5);
+        //this.video.alpha = 0;
+        this.videoCrol.pause();
+        this.videoCrol.currentTime = 0;
+        this.videoCrol.ontimeupdate = () => {
+            this.currentTime = this.videoCrol.currentTime;
+        };
+        this.container.addChildAt(this.video, 1);
+        this.videoCrol.play();
+        this.video.clickEvent = function () {
+            if (this.videoCrol.paused) { this.videoCrol.play(); this.playButton.texture = PIXI.Texture.from("image/video/pause.png"); }
+            else { this.videoCrol.pause(); this.playButton.texture = PIXI.Texture.from("image/video/play.png"); }
+        }.bind(this);
+        addPointerEvent(this.video);
     }
     drawUI() {
         this.ui = new PIXI.Container();
-        this.frame = PIXI.Sprite.from("image/video/video.png");
-        this.frame.anchor.set(0.5);
-        this.frame.scale.set(this.scale);
-        this.container.addChild(this.frame);
+        this.frame = createSprite("image/video/video.png", 0.5, this.scale);
+        this.playButton = createSprite("image/video/play.png", 0.5, this.scale);
+        this.volumeButton = createSprite("image/video/volume.png", 0.5, this.scale);
+        this.nextButton = createSprite("image/video/next.png", 0.5, this.scale);
+        this.fullButton = createSprite("image/video/full.png", 0.5, this.scale);
 
+        let standard = -385;
+        let h = 260;
+        let space = 42;
+        this.playButton.position.set(standard, h);
+        this.nextButton.position.set(standard + space * 1, h);
+        this.volumeButton.position.set(standard + space * 2, h);
+        this.fullButton.position.set(-standard, h);
+
+        this.playButton.clickEvent = function () {
+            if (this.videoCrol.paused) { this.videoCrol.play(); this.playButton.texture = PIXI.Texture.from("image/video/pause.png"); }
+            else { this.videoCrol.pause(); this.playButton.texture = PIXI.Texture.from("image/video/play.png"); }
+        }.bind(this);
+
+        this.nextButton.clickEvent = function () {
+            if (this.random === 2) { this.random = 0 }
+            else { this.random += 1 }
+            this.container.removeChild(this.video);
+            this.drawVideo();
+        }.bind(this);
+
+        this.volumeButton.clickEvent = function () {
+            if (this.videoCrol.muted) { this.videoCrol.muted = false; this.volumeButton.texture = PIXI.Texture.from("image/video/volume.png"); }
+            else { this.videoCrol.muted = true; this.volumeButton.texture = PIXI.Texture.from("image/video/volume_off.png"); }
+        }.bind(this);
+
+        this.fullButton.clickEvent = function () {
+
+        }.bind(this);
+
+        addPointerEvent(this.playButton);
+        addPointerEvent(this.volumeButton);
+        addPointerEvent(this.nextButton);
+        addPointerEvent(this.fullButton);
+
+        this.ui.addChild(this.frame, this.playButton, this.volumeButton, this.nextButton, this.fullButton);
+        this.container.addChild(this.ui);
     }
 
 }

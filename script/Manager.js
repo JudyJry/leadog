@@ -172,7 +172,8 @@ const loadList = {
         "image/video/play.png",
         "image/video/pause.png",
         "image/video/next.png",
-        "image/video/sound.png",
+        "image/video/volume.png",
+        "image/video/volume_off.png",
         "image/video/full.png",
         //actionpage
         "image/TGDAlogo.png",
