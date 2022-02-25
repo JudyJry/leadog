@@ -28,7 +28,7 @@ class Video extends linkObject {
         this.name = "Video";
         this.x = -0.291;
         this.y = -0.046;
-        this.url = "image/building/childhood/video.png";
+        this.url = "image/building/bron/video.png";
         this.zoomIn = 2;
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
@@ -88,7 +88,7 @@ class Clan extends linkObject {
 class Map extends linkObject {
     constructor(manager, page) {
         super(manager, page);
-        this.name = "Puzzle";
+        this.name = "Map";
         this.x = 0.424;
         this.y = -0.082;
         this.url = "image/building/bron/map.png";

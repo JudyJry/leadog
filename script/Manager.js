@@ -143,6 +143,7 @@ const loadList = {
     "ui": [
         //uiSystem-png
         "image/logo.svg",
+        "image/logo@2x.png",
         "image/book.svg",
         "image/index.svg",
         "image/menu.svg",
@@ -166,6 +167,13 @@ const loadList = {
         "image/cancel.svg",
         "image/arrow_right.svg",
         "image/arrow_left.svg",
+        //video-ui
+        "image/video/video.png",
+        "image/video/play.png",
+        "image/video/pause.png",
+        "image/video/next.png",
+        "image/video/sound.png",
+        "image/video/full.png",
         //actionpage
         "image/TGDAlogo.png",
         "image/video/count5.png",
@@ -212,10 +220,12 @@ const loadList = {
         "image/building/childhood/video.png",
     ],
     "youth": [
-        //"image/building/youth/bg.png",
+        "image/building/youth/bg.png",
+        "image/building/youth/video.png",
     ],
     "elderly": [
-        //"image/building/elderly/bg.png",
+        "image/building/elderly/bg.png",
+        "image/building/elderly/video.png",
     ],
     "know": [
         "image/building/know/bg.png",

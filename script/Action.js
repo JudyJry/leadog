@@ -41,7 +41,7 @@ export class LogoVideo extends GameObject {
         this.draw = function (x = 0, y = -0.1) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.sprite = new PIXI.Sprite.from("image/logo.svg");
+            this.sprite = new PIXI.Sprite.from("image/logo@2x.png");
             this.sprite.anchor.set(0.5);
             this.sprite.scale.set(2);
             this.container.addChild(this.sprite);

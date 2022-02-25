@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { linkObject, PageObject, Background, Player } from './GameObject.js';
+import { linkObject, PageObject, Background, Player, Door } from './GameObject.js';
 import { ElderlyAction_Story1, ElderlyAction_Story2, ElderlyAction_Story3 } from './ElderlyAction_Story.js';
 import { ElderlyAction_Hair } from './ElderlyAction_Hair.js';
 
@@ -14,7 +14,11 @@ export default class ElderlyObject extends PageObject {
         this.name = "ElderlyObject";
         this.children = {
             "background": new Background(this.manager, this, "image/building/elderly/bg.png"),
+            "door": new Door(this.manager, this, -0.403, -0.067, "image/building/childhood/door.png"),
             "video": new Video(this.manager, this),
+            "tv": new Tv(this.manager, this),
+            "book": new Book(this.manager, this),
+            "map": new Map(this.manager, this),
             "player": new Player(this.manager, this)
         };
     }
@@ -29,7 +33,7 @@ class Video extends linkObject {
         this.zoomIn = 2;
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
-        this.random = Math.floor(Math.random() * 4);
+        this.random = Math.floor(Math.random() * 3);
     }
     clickEvent() {
         this.page.container.scale.set(1);
@@ -44,11 +48,47 @@ class Video extends linkObject {
             case 2:
                 this.manager.loadAction(new ElderlyAction_Story3(this.manager), loadList.story3);
                 break;
-            case 3:
-                this.manager.loadAction(new ElderlyAction_Hair(this.manager), loadList.hair);
-                break;
         }
 
+    }
+}
+class Tv extends linkObject {
+    constructor(manager, page) {
+        super(manager, page);
+        this.name = "Tv";
+        this.x = 0.276;
+        this.y = 0;
+        this.url = "image/building/elderly/tv.png";
+        this.zoomIn = 2;
+        this.fadeText = "點擊播放影片";
+        this.spriteHeight = 10;
+        this.random = Math.floor(Math.random() * 4);
+    }
+    clickEvent() {
+        this.page.container.scale.set(1);
+        this.page.container.position.set(0, 0);
+        this.manager.loadAction(new ElderlyAction_Hair(this.manager), loadList.hair);
+    }
+}
+class Map extends linkObject {
+    constructor(manager, page) {
+        super(manager, page);
+        this.name = "Map";
+        this.x = 0.44;
+        this.y = -0.081;
+        this.url = "image/building/elderly/map.png";
+        this.zoomIn = 1.5;
+    }
+}
+class Book extends linkObject {
+    constructor(manager, page) {
+        super(manager, page);
+        this.name = "Book";
+        this.x = -0.294;
+        this.y = -0.121;
+        this.url = "image/building/elderly/book.png";
+        this.zoomIn = 2;
+        this.spriteHeight = 120;
     }
 }
 const loadList = {
