@@ -7,7 +7,7 @@ const objType = Object.freeze({
 
 const Page = Object.freeze({
     "home": "首頁",
-    "bron": "出生",
+    "born": "出生",
     "childhood": "幼年",
     "youth": "壯年",
     "elderly": "老年",
@@ -21,14 +21,14 @@ const uiData = [
     { name: Page.market, url: "image/market.svg" },
     { name: Page.know, url: "image/know.svg" },
     { name: Page.company, url: "image/company.svg" },
-    { name: Page.bron, url: "image/bron.svg" },
+    { name: Page.born, url: "image/born.svg" },
     { name: Page.childhood, url: "image/childhood.svg" },
     { name: Page.youth, url: "image/youth.svg" },
     { name: Page.elderly, url: "image/elderly.svg" },
 ];
 
 const homePageData = [
-    { type: objType.building, name: "出生", url: "image/homepage/bron.png", x: 0.157, y: 0.116 },
+    { type: objType.building, name: "出生", url: "image/homepage/born.png", x: 0.157, y: 0.116 },
     { type: objType.building, name: "幼年", url: "image/homepage/childhood.png", x: 0.123, y: -0.029 },
     { type: objType.building, name: "壯年", url: "image/homepage/youth.png", x: 0.057, y: 0.124 },
     { type: objType.building, name: "老年", url: "image/homepage/elderly.png", x: -0.023, y: 0.098 },

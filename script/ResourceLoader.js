@@ -74,4 +74,8 @@ export default class ResourceLoader {
         });
         //console.log("All files loaded");
     }
+    load(list, onComplete = (loader, resources) => { }) {
+        this.loader.add(list);
+        this.loader.load(onComplete);
+    }
 }

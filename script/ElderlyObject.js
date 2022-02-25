@@ -34,23 +34,47 @@ class Video extends linkObject {
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
         this.random = Math.floor(Math.random() * 3);
+        this.videoList = [
+            "video/elderly_story1.mp4",
+            "video/elderly_story2.mp4",
+            "video/elderly_story3.mp4"
+        ];
     }
     clickEvent() {
-        this.page.container.scale.set(1);
-        this.page.container.position.set(0, 0);
-        switch (this.random) {
-            case 0:
-                this.manager.loadAction(new ElderlyAction_Story1(this.manager), loadList.story1);
-                break;
-            case 1:
-                this.manager.loadAction(new ElderlyAction_Story2(this.manager), loadList.story2);
-                break;
-            case 2:
-                this.manager.loadAction(new ElderlyAction_Story3(this.manager), loadList.story3);
-                break;
-        }
+        let tl = gsap.timeline();
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
+        this.page.isZoomIn = true;
+        this.drawCancel();
+        this.drawVideo();
+        this.drawUI();
+    }
+    drawVideo() {
+        this.manager.loader.load(this.videoList[this.random],
+            function (loader, resources) {
+                this.video = new PIXI.Sprite(resources[this.videoList[this.random]].texture);
+                this.video.anchor.set(0.5);
+                this.video.scale.set(this.scale);
+                this.videoTexture = this.video.texture.baseTexture;
+                this.videoCrol = this.videoTexture.resource.source;
+                this.videoTexture.autoPlay = false;
+                this.videoTexture.resource.autoPlay = false;
+                this.videoCrol.muted = this.manager.isMute;
+                this.currentTime = this.videoCrol.currentTime;
+                this.container.addChild(this.video);
+                this.container.position.set(0, -2.5);
+                this.container.alpha = 0;
+            }.bind(this));
+    }
+    drawUI() {
+        this.ui = new PIXI.Container();
+        this.frame = PIXI.Sprite.from("image/video/video.png");
+        this.frame.anchor.set(0.5);
+        this.frame.scale.set(this.scale);
+        this.container.addChild(this.frame);
 
     }
+
 }
 class Tv extends linkObject {
     constructor(manager, page) {

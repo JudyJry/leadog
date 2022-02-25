@@ -5,7 +5,7 @@ import Keyboard from "./KeyBoard.js";
 import Mouse from './Mouse.js';
 import UIsystem from './UI.js';
 import HomeObject from "./HomeObject.js";
-import BronObject from './BronObject.js';
+import BornObject from './BornObject.js';
 import ChildhoodObject from './ChildhoodObject.js';
 import YouthObject from './YouthObject.js';
 import ElderlyObject from './ElderlyObject.js';
@@ -107,9 +107,9 @@ export default class Manager {
                 this.app.renderer.backgroundColor = ColorSlip.lightBlue;
                 this.loadPage(new HomeObject(this), loadList.home);
                 break;
-            case Page.bron:
+            case Page.born:
                 this.app.renderer.backgroundColor = ColorSlip.lightYellow;
-                this.loadPage(new BronObject(this), loadList.bron);
+                this.loadPage(new BornObject(this), loadList.born);
                 break;
             case Page.childhood:
                 this.app.renderer.backgroundColor = ColorSlip.lightYellow;
@@ -149,7 +149,7 @@ const loadList = {
         "image/menu.svg",
         "image/notify.svg",
         "image/user.svg",
-        "image/bron.svg",
+        "image/born.svg",
         "image/childhood.svg",
         "image/youth.svg",
         "image/elderly.svg",
@@ -197,7 +197,7 @@ const loadList = {
         "image/homepage/map.png",
         "image/homepage/island.png",
         "image/homepage/tree_front.png",
-        "image/homepage/bron.png",
+        "image/homepage/born.png",
         "image/homepage/childhood.png",
         "image/homepage/youth.png",
         "image/homepage/elderly.png",
@@ -205,12 +205,12 @@ const loadList = {
         "image/homepage/know.png",
         "image/homepage/market.png",
     ],
-    "bron": [
-        "image/building/bron/bg.png",
-        "image/building/bron/clan.png",
-        "image/building/bron/clan_tree.png",
-        "image/building/bron/map.png",
-        "image/building/bron/video.png",
+    "born": [
+        "image/building/born/bg.png",
+        "image/building/born/clan.png",
+        "image/building/born/clan_tree.png",
+        "image/building/born/map.png",
+        "image/building/born/video.png",
     ],
     "childhood": [
         "image/building/childhood/bg.png",

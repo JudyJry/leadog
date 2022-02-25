@@ -2,19 +2,19 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player } from './GameObject.js';
-import { BronAction_Story1, BronAction_Story2 } from './BronAction_Story.js';
+import { BornAction_Story1, BornAction_Story2 } from './BornAction_Story.js';
 import { FilterSet } from './FilterSet.js';
 import { addPointerEvent } from './GameFunction.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
-export default class BronObject extends PageObject {
+export default class BornObject extends PageObject {
     constructor(manager) {
         super(manager);
-        this.name = "BronObject";
+        this.name = "BornObject";
         this.children = {
-            "background": new Background(this.manager, this, "image/building/bron/bg.png"),
+            "background": new Background(this.manager, this, "image/building/born/bg.png"),
             "video": new Video(this.manager, this),
             "clan": new Clan(this.manager, this),
             "map": new Map(this.manager, this),
@@ -28,7 +28,7 @@ class Video extends linkObject {
         this.name = "Video";
         this.x = -0.291;
         this.y = -0.046;
-        this.url = "image/building/bron/video.png";
+        this.url = "image/building/born/video.png";
         this.zoomIn = 2;
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
@@ -39,10 +39,10 @@ class Video extends linkObject {
         this.page.container.position.set(0, 0);
         switch (this.random) {
             case 0:
-                this.manager.loadAction(new BronAction_Story1(this.manager), loadList.toys);
+                this.manager.loadAction(new BornAction_Story1(this.manager), loadList.toys);
                 break;
             case 1:
-                this.manager.loadAction(new BronAction_Story2(this.manager), loadList.toys);
+                this.manager.loadAction(new BornAction_Story2(this.manager), loadList.toys);
                 break;
         }
 
@@ -54,8 +54,8 @@ class Clan extends linkObject {
         this.name = "Clan";
         this.x = 0.162;
         this.y = 0.205;
-        this.url = "image/building/bron/clan.png";
-        this.turl = "image/building/bron/clan_tree.png";
+        this.url = "image/building/born/clan.png";
+        this.turl = "image/building/born/clan_tree.png";
         this.zoomIn = 2;
         this.spriteHeight = 120;
         this.draw = function () {
@@ -91,18 +91,18 @@ class Map extends linkObject {
         this.name = "Map";
         this.x = 0.424;
         this.y = -0.082;
-        this.url = "image/building/bron/map.png";
+        this.url = "image/building/born/map.png";
         this.zoomIn = 1.5;
     }
 }
 
 const loadList = {
     story1: [
-        "sound/bron_story.mp3",
-        "video/bron_story1.mp4"
+        "sound/born_story.mp3",
+        "video/born_story1.mp4"
     ],
     story2: [
-        "sound/bron_story.mp3",
-        "video/bron_story2.mp4"
+        "sound/born_story.mp3",
+        "video/born_story2.mp4"
     ]
 }

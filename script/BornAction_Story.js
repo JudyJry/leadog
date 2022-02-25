@@ -3,42 +3,42 @@ import gsap from "gsap";
 import * as Action from "./Action";
 import { Page } from './Data';
 
-export class BronAction_Story1 extends Action.ActionPage {
+export class BornAction_Story1 extends Action.ActionPage {
     constructor(manager) {
         super(manager);
-        this.name = "BronAction_Story1";
+        this.name = "BornAction_Story1";
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "bron_story", "sound/bron_story.mp3", 0),
-            "video": new Bron_Story_Video(this.manager, this, "video/bron_story1.mp4", 46),
-            "ui": new Bron_Story_UI_Start(this.manager, this, "來聽聽剛出生的寶寶都在做什麼吧！"),
+            "sound": new Action.ActionSound(this.manager, this, "born_story", "sound/born_story.mp3", 0),
+            "video": new Born_Story_Video(this.manager, this, "video/born_story1.mp4", 46),
+            "ui": new Born_Story_UI_Start(this.manager, this, "來聽聽剛出生的寶寶都在做什麼吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Bron_Story_UI_End(this.manager, this,
+        this.end = new Born_Story_UI_End(this.manager, this,
             `謝謝你聆聽剛出生的狗狗的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
     }
 }
-export class BronAction_Story2 extends Action.ActionPage {
+export class BornAction_Story2 extends Action.ActionPage {
     constructor(manager) {
         super(manager);
-        this.name = "BronAction_Story2";
+        this.name = "BornAction_Story2";
         this.offset = 50;
         this.isPlayGame = false;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "bron_story", "sound/bron_story.mp3", 0),
-            "video": new Bron_Story_Video(this.manager, this, "video/bron_story2.mp4", 30),
-            "ui": new Bron_Story_UI_Start(this.manager, this, "來聽聽剛出生的寶寶都在做什麼吧！"),
+            "sound": new Action.ActionSound(this.manager, this, "born_story", "sound/born_story.mp3", 0),
+            "video": new Born_Story_Video(this.manager, this, "video/born_story2.mp4", 30),
+            "ui": new Born_Story_UI_Start(this.manager, this, "來聽聽剛出生的寶寶都在做什麼吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Bron_Story_UI_End(this.manager, this,
+        this.end = new Born_Story_UI_End(this.manager, this,
             `謝謝你聆聽剛出生的狗狗的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
     }
 }
-class Bron_Story_Video extends Action.ActionVideo {
+class Born_Story_Video extends Action.ActionVideo {
     constructor(manager, action, url, end) {
         super(manager, action, url);
-        this.name = "Bron_Story_Video";
+        this.name = "Born_Story_Video";
         this.pauseTime = [0, end];
         this.isEnd = true;
         this.count = 0;
@@ -74,10 +74,10 @@ class Bron_Story_Video extends Action.ActionVideo {
         });
     }
 }
-class Bron_Story_UI_Start extends Action.ActionUI {
+class Born_Story_UI_Start extends Action.ActionUI {
     constructor(manager, action, text) {
         super(manager, action);
-        this.name = "Bron_Story_UI_Start";
+        this.name = "Born_Story_UI_Start";
         this.isNotStart = true;
         this.draw = function () {
             this.sprite.texture = PIXI.Texture.from("image/video/know.png");
@@ -126,10 +126,10 @@ class Bron_Story_UI_Start extends Action.ActionUI {
         }
     }
 }
-class Bron_Story_UI_End extends Action.ActionUI {
+class Born_Story_UI_End extends Action.ActionUI {
     constructor(manager, action, text) {
         super(manager, action);
-        this.name = "Bron_Story_UI_End";
+        this.name = "Born_Story_UI_End";
         this.isNotStart = true;
         this.draw = function () {
             let textTitle = new PIXI.Text("任務完成", this.ts);
@@ -173,7 +173,7 @@ class Bron_Story_UI_End extends Action.ActionUI {
             duration: 1, alpha: 0, onComplete: function () {
                 this.manager.removeChild(this.container);
                 delete this.action.children.ui;
-                this.manager.toOtherPage(Page.bron);
+                this.manager.toOtherPage(Page.born);
             }.bind(this)
         }, "+=2");
     }

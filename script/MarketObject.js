@@ -11,7 +11,7 @@ export default class MarketObject extends PageObject {
         super(manager);
         this.name = "MarketObject";
         this.children = {
-            "background": new Background(this.manager, this, "image/building/bron/bg.png"),
+            "background": new Background(this.manager, this, "image/building/born/bg.png"),
             "player": new Player(this.manager, this)
         };
     }
