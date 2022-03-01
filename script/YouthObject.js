@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { linkObject, PageObject, Background, Player } from './GameObject.js';
+import { linkObject, PageObject, Background, Player, Video } from './GameObject.js';
 import YouthAction_Bus from './YouthAction_bus.js';
 import YouthAction_Instruction from './YouthAction_Instruction.js';
 import YouthAction_Traffic from './YouthAction_Traffic.js';
@@ -16,41 +16,35 @@ export default class YouthObject extends PageObject {
         this.name = "YouthObject";
         this.children = {
             "background": new Background(this.manager, this, "image/building/youth/bg.png"),
-            "video": new Video(this.manager, this),
+            "video": new YouthVideo(this.manager, this),
+            "video": new Graduate(this.manager, this),
             "player": new Player(this.manager, this)
         };
     }
 }
-class Video extends linkObject {
+class YouthVideo extends Video {
     constructor(manager, page) {
         super(manager, page);
         this.name = "Video";
         this.x = 0.363;
         this.y = -0.037;
         this.url = "image/building/youth/video.png";
-        this.zoomIn = 2;
-        this.fadeText = "點擊播放影片";
-        this.spriteHeight = 10;
-        this.random = Math.floor(Math.random() * 4);
+        this.videoList = [
+            function () { return new YouthAction_Bus(this.manager, this) }.bind(this),
+            function () { return new YouthAction_Traffic(this.manager, this) }.bind(this),
+            function () { return new YouthAction_Instruction(this.manager, this) }.bind(this),
+            function () { return new YouthAction_Instruction2(this.manager, this) }.bind(this),
+        ]
     }
-    clickEvent() {
-        this.page.container.scale.set(1);
-        this.page.container.position.set(0, 0);
-        switch (this.random) {
-            case 0:
-                this.manager.loadAction(new YouthAction_Bus(this.manager), loadList.bus);
-                break;
-            case 1:
-                this.manager.loadAction(new YouthAction_Traffic(this.manager), loadList.traffic);
-                break;
-            case 2:
-                this.manager.loadAction(new YouthAction_Instruction(this.manager), loadList.instruction);
-                break;
-            case 3:
-                this.manager.loadAction(new YouthAction_Instruction2(this.manager), loadList.instruction2);
-                break;
-        }
-
+}
+class Graduate extends linkObject {
+    constructor(manager, page) {
+        super(manager, page);
+        this.name = "Graduate";
+        this.x = -0.241;
+        this.y = -0.077;
+        this.url = "image/building/youth/graduate.png";
+        this.zoomIn = 1.5;
     }
 }
 const loadList = {

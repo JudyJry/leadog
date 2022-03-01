@@ -76,6 +76,6 @@ export default class ResourceLoader {
     }
     load(list, onComplete) {
         this.loader.add(list);
-        this.loader.load((loader, resources) => { onComplete(loader, resources) });
+        this.loader.load(onComplete);
     }
 }

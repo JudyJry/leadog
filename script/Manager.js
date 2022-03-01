@@ -13,6 +13,7 @@ import CompanyObject from './CompanyObject.js';
 import MarketObject from './MarketObject.js';
 import KnowObject from './KnowObject.js';
 import { Page } from './Data.js';
+import { addPointerEvent } from './GameFunction.js';
 
 export default class Manager {
     constructor() {
@@ -74,6 +75,11 @@ export default class Manager {
     removeChild(...e) {
         if (e.length === 0) { this.activeObj.container.removeChildren(); }
         else { this.activeObj.container.removeChild(...e); }
+    }
+    activeCancel(boolean, event = () => { }) {
+        this.uiSystem.ui.cancel.icon.visible = boolean;
+        this.uiSystem.ui.cancel.icon.clickEvent = event;
+        addPointerEvent(this.uiSystem.cancel);
     }
     loadPage(obj, list = undefined) {
         this.loader.loadAsset(function () {

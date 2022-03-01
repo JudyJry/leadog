@@ -113,14 +113,6 @@ class Youth_Instruction2_UI_Start extends Action.ActionUI {
             });
         }
     }
-    update() {
-        if (this.sprite.isPointerOver) {
-            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
-        }
-        else {
-            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
-        }
-    }
 }
 class Youth_Instruction2_UI_Stage1 extends Action.ActionUI {
     constructor(manager, action) {

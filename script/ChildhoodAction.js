@@ -132,14 +132,6 @@ class Childhood_Kelly_UI_Start extends Action.ActionUI {
             }, "+=2");
         }
     }
-    update() {
-        if (this.sprite.isPointerOver) {
-            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
-        }
-        else {
-            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
-        }
-    }
 }
 class Childhood_Kelly_UI_Stage1 extends Action.ActionUI {
     constructor(manager, action) {
@@ -160,6 +152,7 @@ class Childhood_Kelly_UI_Stage1 extends Action.ActionUI {
             hint.anchor.set(0.5);
             hint.scale.set(this.scale);
             this.setPosition(hint, -0.25, 0.05);
+
 
             this.container.addChild(title, hint);
             this.container.alpha = 0;
@@ -301,7 +294,7 @@ class Childhood_Kelly_Stage2_Button extends Action.ActionUI {
             this.setPosition(this.sprite, 0, 0.32);
             this.setPosition(this.bar, 0, 0.18);
             this.setPosition(this.fullbar, 0, 0.18);
-            this.setInteract();
+            this.setInteract(this.sprite);
 
             this.barGsap = gsap.timeline()
                 .to(this.bg, { duration: 0.1, alpha: 1, ease: "steps(1)" })
@@ -335,12 +328,6 @@ class Childhood_Kelly_Stage2_Button extends Action.ActionUI {
                 this.onClearGame();
                 this.stage.onClearGame();
             } else if (this.count > 0) { this.count--; this.maskUpdate(); }
-        }
-        if (this.sprite.isPointerOver) {
-            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
-        }
-        else {
-            gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
         }
     }
 }
@@ -416,9 +403,9 @@ class Childhood_Kelly_Stage3_Button extends Action.ActionUI {
             this.sprite.scale.set(this.scale);
             this.container.addChild(this.sprite);
             this.setPosition(this.sprite, -0.3, 0.1);
+            setTimeout(this.wait.bind(this), 1.5);
         }
     }
-
     onClearGame() {
         this.manager.removeChild(this.container);
     }
@@ -430,18 +417,9 @@ class Childhood_Kelly_Stage3_Button extends Action.ActionUI {
             this.stage.onClearGame();
         }
     }
-    update() {
-        this.times += this.manager.deltaTime;
-        if (Math.floor(this.times) >= 1.5) {
-            this.sprite.texture = this.spriteSheet[1];
-            this.setInteract();
-            if (this.sprite.isPointerOver) {
-                gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 0.9 } });
-            }
-            else {
-                gsap.to(this.sprite, { duration: 0.5, pixi: { brightness: 1 } });
-            }
-        }
+    wait() {
+        this.sprite.texture = this.spriteSheet[1];
+        this.setInteract(this.sprite);
     }
 }
 class Childhood_Kelly_UI_End extends Action.ActionUI {

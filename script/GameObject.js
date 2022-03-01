@@ -3,7 +3,6 @@ import gsap from "gsap";
 import { TextStyle } from "./TextStyle.js";
 import { FilterSet } from "./FilterSet.js";
 import { addPointerEvent, createSprite } from "./GameFunction.js";
-import { Cancel } from "./UI.js";
 import { math } from "./math.js";
 import { Page } from "./Data.js";
 
@@ -122,6 +121,7 @@ export class linkObject extends GameObject {
         this.spriteHeight = 250;
         this.zoomIn = 2;
         this.fadeText = "點擊認識"
+        this.isClick = false;
         this.draw = function () {
             this._x = (this.x * this.w * 2);
             this._y = (this.y * this.h * 2);
@@ -144,23 +144,28 @@ export class linkObject extends GameObject {
             this.text = new PIXI.Text(this.fadeText, this.ts);
             this.text.anchor.set(0.5);
             this.textHeight = this.spriteHeight + 10;
+            this.text.position.y = -this.spriteHeight;
+            this.text.alpha = 0;
             this.container.addChild(this.sprite, this.text);
 
             this.sprite.clickEvent = this.clickEvent.bind(this);
+            this.sprite.overEvent = this.overEvent.bind(this);
             addPointerEvent(this.sprite);
             this.container.position.set(this._x, this._y);
         }
     }
     update() {
-        if (this.sprite.isPointerOver) {
+        if (this.page.isZoomIn) {
+            this.blink.outerStrength = 0;
+            this.text.position.y = -this.spriteHeight;
+            this.text.alpha = 0;
+        }
+        else if (this.sprite.isPointerOver) {
             this.blink.outerStrength = 5;
-            gsap.to(this.text, { duration: 1, y: this.textHeight * -1, alpha: 1 });
         }
-        else if (!this.page.isZoomIn) {
+        else {
             this.blink.effect();
-            gsap.to(this.text, { duration: 0.5, y: this.spriteHeight * -1, alpha: 0 });
         }
-        else { this.blink.outerStrength = 0; }
     }
     resize() {
         this.w = this.manager.w;
@@ -169,11 +174,25 @@ export class linkObject extends GameObject {
         this.draw();
         this.container.scale.set(this.manager.canvasScale);
     }
+    overEvent(e) {
+        if (e.isPointerOver) {
+            gsap.killTweensOf(this.text);
+            gsap.to(this.text, { duration: 1, y: -this.textHeight, alpha: 1 });
+        }
+        else {
+            gsap.killTweensOf(this.text);
+            gsap.to(this.text, { duration: 0.5, y: -this.spriteHeight, alpha: 0 });
+        }
+    }
     clickEvent() {
+        this.sprite.interactive = false;
+        this.sprite.filters = [];
         let tl = gsap.timeline();
         tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
         tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
+        this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
+        this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
     }
@@ -188,9 +207,15 @@ export class linkObject extends GameObject {
         this.cancel.visible = false;
     }
     cancelEvent() {
-        let tl = gsap.timeline();
+        this.sprite.filters = [this.blink.filter];
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.sprite.interactive = true;
+            }.bind(this)
+        });
         tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
         tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.isClick = false;
         this.page.isZoomIn = false;
         this.cancel.visible = false;
         this.cancel = undefined;
@@ -218,6 +243,10 @@ export class Player extends GameObject {
         }
     }
     update() {
+        if (!this.page.isZoomIn) { this.mouseMove(); }
+    }
+    mouseMove() {
+        this.container.alpha = 1;
         let mx = math.Map(this.mouse.x, 0, this.w, -this.w / 2, this.w / 2) - this.page.container.position.x;
         if (mx > this.container.position.x + 50) {
             gsap.to(this.container, { duration: 0.5, x: "+=" + this.speed });
@@ -230,6 +259,18 @@ export class Player extends GameObject {
         else {
             gsap.to(this.container, { duration: 0.5, x: "+=0" });
         }
+    }
+    breath() {
+        let tl = gsap.timeline({ repeat: -1 });
+        tl.to(this.container.scale, { duration: 1.5, y: "-=0.05" });
+        tl.to(this.container.scale, { duration: 1.5, y: "+=0.05" }, 2);
+    }
+    move(x, sw) {
+        this.container.alpha = 0;
+        /* let distance = this.container.position.x - x;
+        let _x = x + ((sw / 2) * Math.sign(distance)) + (100 * Math.sign(distance));
+        this.sprite.scale.set(this.scale * -Math.sign(distance), this.scale);
+        gsap.to(this.container, { duration: (Math.abs(distance) / this.speed / 8), x: _x }); */
     }
 }
 export class Door extends linkObject {
@@ -244,5 +285,207 @@ export class Door extends linkObject {
     }
     clickEvent() {
         this.manager.toOtherPage(Page.home);
+    }
+}
+export class Video extends linkObject {
+    constructor(manager, page) {
+        super(manager, page);
+        this.name = "Video";
+        this.x = 0;
+        this.y = 0;
+        this.url = undefined;
+        this.zoomIn = 1.6;
+        this.fadeText = "點擊播放影片";
+        this.spriteHeight = 10;
+        this.videoList = [];
+        this.random = Math.floor(Math.random() * this.videoList.length);
+    }
+    resize() {
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.scale.set(this.manager.canvasScale);
+        if (this.isClick && this.fullButton) {
+            if (!this.fullButton.turn) {
+                this.page.container.scale.set(this.zoomIn * this.manager.canvasScale);
+                this.page.container.position.set(-this._x * this.zoomIn, -this._y * this.zoomIn);
+            }
+            else if (this.fullButton.turn) {
+                let fz = 2.3;
+                this.page.container.scale.set(fz);
+                this.page.container.position.set(-this._x * fz, (-this._y * fz) + 7.5);
+            }
+        }
+    }
+    update() {
+        if (this.page.isZoomIn) {
+            this.blink.outerStrength = 0;
+            this.text.position.y = -this.spriteHeight;
+            this.text.alpha = 0;
+            if (this.isClick) {
+                this.video.update();
+                if (this.fullButton.turn) {
+                    if (this.manager.mouse.x < 250) {
+                        gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
+                    }
+                    else if (this.manager.mouse.x > 500) {
+                        gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
+                    }
+                    if (this.manager.mouse.y > this.h - 110) {
+                        gsap.to(this.ui, { duration: 1, y: -55 - (screen.height - this.h) });
+                    }
+                    else if (this.manager.mouse.y < this.h - 110) {
+                        gsap.to(this.ui, { duration: 1, y: 0 });
+                    }
+                }
+                else {
+                    this.manager.uiSystem.container.position.x = 0;
+                    this.ui.position.set(0);
+                }
+            }
+        }
+        else if (this.sprite.isPointerOver) {
+            this.blink.outerStrength = 5;
+        }
+        else {
+            this.blink.effect();
+        }
+    }
+    clickEvent() {
+        this.sprite.interactive = false;
+        let tl = gsap.timeline();
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
+        this.page.children.player.move(this._x, this.sprite.width);
+
+        this.video = this.videoList[this.random]();
+        this.video.setup();
+        this.video.container.position.set(0, -7.4);
+        this.drawUI();
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+        this.page.isZoomIn = true;
+        this.isClick = true;
+    }
+    cancelEvent() {
+        let tl = gsap.timeline({ onComplete: function () { this.sprite.interactive = true; }.bind(this) });
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.pause();
+        this.container.removeChild(this.video.container, this.ui);
+
+        this.page.isZoomIn = false;
+        this.isClick = false;
+        this.cancel.visible = false;
+        this.video = undefined;
+        this.cancel = undefined;
+        if (this.fullButton.turn) {
+            closeFullscreen();
+            this.fullButton.turn = false;
+        }
+        gsap.killTweensOf(this.manager.uiSystem.container);
+        this.manager.uiSystem.container.position.x = 0;
+
+        function closeFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+    drawUI() {
+        this.ui = new PIXI.Container();
+        this.frame = createSprite("image/video/video.png", 0.5, this.scale);
+        this.playButton = createSprite("image/video/play.png", 0.5, this.scale);
+        this.volumeButton = createSprite("image/video/volume.png", 0.5, this.scale);
+        this.nextButton = createSprite("image/video/next.png", 0.5, this.scale);
+        this.fullButton = createSprite("image/video/full.png", 0.5, this.scale);
+
+        let standard = -385;
+        let h = 260;
+        let space = 45;
+        this.playButton.position.set(standard, h);
+        this.nextButton.position.set(standard + space * 1, h);
+        this.volumeButton.position.set(standard + space * 2, h);
+        this.fullButton.position.set(-standard, h);
+
+        this.playButton.clickEvent = this.video.videoSprite.clickEvent = function () {
+            if (this.video.videoCrol.paused) { this.play(); } else { this.pause(); }
+        }.bind(this);
+
+        this.nextButton.clickEvent = function () {
+            if (this.random === 2) { this.random = 0 }
+            else { this.random += 1 }
+            this.pause();
+            this.container.removeChild(this.video.container);
+            this.video = this.videoList[this.random]();
+            this.video.container.position.set(0, -7.4);
+            this.video.videoCrol.muted = this.volumeButton.turn;
+        }.bind(this);
+
+        this.volumeButton.clickEvent = function () {
+            if (this.video.videoCrol.muted) {
+                this.volumeButton.turn = false;
+                this.video.videoCrol.muted = false;
+                this.video.sound.volume = 0.5;
+                this.volumeButton.texture = PIXI.Texture.from("image/video/volume.png");
+            }
+            else {
+                this.volumeButton.turn = true;
+                this.video.videoCrol.muted = true;
+                this.video.sound.volume = 0;
+                this.volumeButton.texture = PIXI.Texture.from("image/video/volume_off.png");
+            }
+        }.bind(this);
+
+        this.fullButton.clickEvent = function () {
+            if (this.fullButton.turn) {
+                closeFullscreen();
+                this.fullButton.turn = false;
+            }
+            else {
+                openFullscreen(document.documentElement);
+                this.fullButton.turn = true;
+            }
+            function openFullscreen(elem) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+            }
+            function closeFullscreen() {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+            }
+        }.bind(this);
+
+        addPointerEvent(this.playButton);
+        addPointerEvent(this.volumeButton);
+        addPointerEvent(this.nextButton);
+        addPointerEvent(this.fullButton);
+        addPointerEvent(this.video.videoSprite);
+
+        this.ui.addChild(this.frame, this.playButton, this.volumeButton, this.nextButton, this.fullButton);
+        this.container.addChild(this.ui);
+    }
+    play() {
+        this.video.videoCrol.play();
+        this.video.sound.play();
+        this.playButton.texture = PIXI.Texture.from("image/video/pause.png");
+    }
+    pause() {
+        this.video.videoCrol.pause();
+        this.video.sound.pause();
+        this.playButton.texture = PIXI.Texture.from("image/video/play.png");
     }
 }

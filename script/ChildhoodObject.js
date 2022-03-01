@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { PageObject, linkObject, Background, Player, Door } from './GameObject.js';
+import { PageObject, linkObject, Background, Player, Door, Video } from './GameObject.js';
 import ChildhoodAction_Kelly from './ChildhoodAction.js';
 
 gsap.registerPlugin(PixiPlugin);
@@ -14,28 +14,21 @@ export default class ChildhoodObject extends PageObject {
         this.children = {
             "background": new Background(this.manager, this, "image/building/childhood/bg.png"),
             "door": new Door(this.manager, this, -0.404, -0.032, "image/building/childhood/door.png"),
-            "video": new Video(this.manager, this),
+            "video": new ChildhoodVideo(this.manager, this),
             "book": new Book(this.manager, this),
             "puzzle": new Puzzle(this.manager, this),
             "player": new Player(this.manager, this)
         };
     }
 }
-class Video extends linkObject {
+class ChildhoodVideo extends Video {
     constructor(manager, page) {
         super(manager, page);
         this.name = "Video";
         this.x = 0.372;
         this.y = -0.059;
         this.url = "image/building/childhood/video.png";
-        this.zoomIn = 2;
-        this.fadeText = "點擊播放影片";
-        this.spriteHeight = 10;
-    }
-    clickEvent() {
-        this.page.container.scale.set(1);
-        this.page.container.position.set(0, 0);
-        this.manager.loadAction(new ChildhoodAction_Kelly(this.manager), loadList.toys);
+        this.videoList = [function () { return new ChildhoodAction_Kelly(this.manager, this) }.bind(this)];
     }
 }
 class Book extends linkObject {

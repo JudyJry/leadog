@@ -75,8 +75,8 @@ class Building extends GameObject {
         c.isEntering = false;
         c.anchor.set(0.5);
         c.scale.set(this.scale);
-        c.filters = [this.filter];
         c.clickEvent = this.buildingClickEvent.bind(this);
+        c.overEvent = this.buildingOverEvent.bind(this);
         gf.addPointerEvent(c);
 
         c.text = new PIXI.Text(c.name, this.ts);
@@ -138,20 +138,23 @@ class Building extends GameObject {
             this.manager.toOtherPage(e.name);
         };
     }
-    update() {
-        this.container.children.forEach((e) => {
-            if (e.isPointerOver) {
-                e.filters = [this.filter];
-                gsap.to(e.text, { duration: 1, y: e.text.originHeight - this.space, alpha: 1 });
-                gsap.to(e.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
-            }
-            else {
-                e.filters = [];
-                gsap.to(e.text, { duration: 0.5, y: e.text.originHeight, alpha: 0 });
-                gsap.to(e.scale, { duration: 1, x: this.scale, y: this.scale });
-            }
-        });
+    buildingOverEvent(e) {
+        if (e.isPointerOver) {
+            gsap.killTweensOf(e.text);
+            gsap.killTweensOf(e.scale);
+            e.filters = [this.filter];
+            gsap.to(e.text, { duration: 1, y: e.text.originHeight - this.space, alpha: 1 });
+            gsap.to(e.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
+        }
+        else {
+            e.filters = [];
+            gsap.killTweensOf(e.text);
+            gsap.killTweensOf(e.scale);
+            gsap.to(e.text, { duration: 0.5, y: e.text.originHeight, alpha: 0 });
+            gsap.to(e.scale, { duration: 1, x: this.scale, y: this.scale });
+        }
     }
+    update() { }
 }
 
 class TestGif {

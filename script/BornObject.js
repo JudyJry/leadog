@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { linkObject, PageObject, Background, Player } from './GameObject.js';
+import { linkObject, PageObject, Background, Player, Video } from './GameObject.js';
 import { BornAction_Story1, BornAction_Story2 } from './BornAction_Story.js';
 import { FilterSet } from './FilterSet.js';
-import { addPointerEvent } from './GameFunction.js';
+import { addPointerEvent, createSprite } from './GameFunction.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -15,37 +15,25 @@ export default class BornObject extends PageObject {
         this.name = "BornObject";
         this.children = {
             "background": new Background(this.manager, this, "image/building/born/bg.png"),
-            "video": new Video(this.manager, this),
+            "video": new BornVideo(this.manager, this),
             "clan": new Clan(this.manager, this),
             "map": new Map(this.manager, this),
             "player": new Player(this.manager, this)
         };
     }
 }
-class Video extends linkObject {
+class BornVideo extends Video {
     constructor(manager, page) {
         super(manager, page);
         this.name = "Video";
         this.x = -0.291;
         this.y = -0.046;
         this.url = "image/building/born/video.png";
-        this.zoomIn = 2;
-        this.fadeText = "點擊播放影片";
-        this.spriteHeight = 10;
-        this.random = Math.floor(Math.random() * 2);
-    }
-    clickEvent() {
-        this.page.container.scale.set(1);
-        this.page.container.position.set(0, 0);
-        switch (this.random) {
-            case 0:
-                this.manager.loadAction(new BornAction_Story1(this.manager), loadList.toys);
-                break;
-            case 1:
-                this.manager.loadAction(new BornAction_Story2(this.manager), loadList.toys);
-                break;
-        }
-
+        this.zoomIn = 1.6;
+        this.videoList = [
+            function () { return new BornAction_Story1(this.manager, this) }.bind(this),
+            function () { return new BornAction_Story2(this.manager, this) }.bind(this)
+        ];
     }
 }
 class Clan extends linkObject {

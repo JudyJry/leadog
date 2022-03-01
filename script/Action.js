@@ -6,44 +6,80 @@ import { PixiPlugin } from "gsap/PixiPlugin";
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ColorSlip } from './ColorSlip';
 import { TextStyle } from './TextStyle';
+import { addPointerEvent, createSprite, createText } from "./GameFunction.js";
 
 gsap.registerPlugin(PixiPlugin);
 gsap.registerPlugin(MotionPathPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
 export class ActionPage extends PageObject {
-    constructor(manager) {
+    constructor(manager, obj) {
         super(manager);
+        this.obj = obj;
         this.name = "ActionPage";
         this.isPlayGame = false;
+        this.videoScale = 0.44;
+    }
+    drawBg() {
+        let bg = new PIXI.Sprite(PIXI.Texture.WHITE);
+        bg.anchor.set(0.5);
+        bg.width = 1920;
+        bg.height = 1080;
+        return bg;
+    }
+    setup() {
+        this.container.name = this.name;
+        return new Promise(function (resolve, _) {
+            this.container.addChild(this.drawBg());
+            for (let [_, e] of Object.entries(this.children)) { e.setup(); }
+            this.obj.container.addChildAt(this.container, 1);
+            this.container.scale.set(this.videoScale);
+            resolve();
+        }.bind(this))
     }
     resize() { }
     update() {
-        if (this.manager.mouse.x < 250) {
-            gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
-        }
-        else if (this.manager.mouse.x > 500) {
-            gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
-        }
         for (let [_, e] of Object.entries(this.children)) { e.update(); }
     }
+    /**
+     * @returns {PIXI.Sprite}
+     */
+    get videoSprite() { return this.children.video.sprite }
+    /**
+     * @returns {HTMLVideoElement}
+     */
+    get videoCrol() { return this.children.video.videoCrol }
+    /**
+     * @returns {ActionSound}
+     */
+    get sound() { return this.children.sound }
 }
-export class LogoVideo extends GameObject {
+class ActionObject extends GameObject {
     constructor(manager, action) {
         super(manager);
         this.action = action;
+        this.name = "ActionObject";
+    }
+    setup() {
+        this.draw();
+        this.container.name = this.name;
+        this.container.scale.set(this.manager.canvasScale);
+        this.action.addChild(this.container);
+    }
+}
+export class LogoVideo extends ActionObject {
+    constructor(manager, action) {
+        super(manager, action);
         this.name = "LogoVideo";
         this.onEnd = function () {
             this.action.children.ui.start();
             this.action.children.sound.play();
-            this.manager.removeChild(this.container);
+            this.action.removeChild(this.container);
         }.bind(this);
         this.draw = function (x = 0, y = -0.1) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.sprite = new PIXI.Sprite.from("image/logo@2x.png");
-            this.sprite.anchor.set(0.5);
-            this.sprite.scale.set(2);
+            this.sprite = createSprite("image/logo@2x.png", 0.5, 2);
             this.container.addChild(this.sprite);
             this.container.position.set(_x, _y);
             let tl = gsap.timeline();
@@ -52,10 +88,9 @@ export class LogoVideo extends GameObject {
         }
     }
 }
-export class ActionVideo extends GameObject {
+export class ActionVideo extends ActionObject {
     constructor(manager, action, url) {
-        super(manager);
-        this.action = action;
+        super(manager, action);
         this.name = "Video";
         this.bg = new PIXI.Graphics();
         this.scale = 1;
@@ -98,7 +133,7 @@ export class ActionVideo extends GameObject {
     }
     drawBg(color = "black") {
         let w = this.w >= 1920 ? this.w : 1920;
-        let h = this.h >= 1920 ? this.h : 1920;
+        let h = this.h >= 1080 ? this.h : 1080;
         this.bg.clear();
         this.bg
             .beginFill(ColorSlip[color])
@@ -160,10 +195,9 @@ export class ActionSound {
         else this.sound.volume = this.manager.isMute ? 0 : this.volume;
     }
 }
-export class ActionLine extends GameObject {
+export class ActionLine extends ActionObject {
     constructor(manager, action) {
-        super(manager);
-        this.action = action;
+        super(manager, action);
         this.name = "Line";
         this.isFrist = true;
         this.lineStyle = {
@@ -177,9 +211,7 @@ export class ActionLine extends GameObject {
         this.container.alpha = 1;
     }
     drawHint() {
-        this.hint = PIXI.Sprite.from("image/video/cursorHint.png");
-        this.hint.anchor.set(0.5);
-        this.hint.scale.set(0.3);
+        this.hint = createSprite("image/video/cursorHint.png", 0.5, 0.3);
         this.container.addChild(this.hint);
     }
     hintAnim() {
@@ -214,10 +246,9 @@ export class ActionLine extends GameObject {
         }
     }
 }
-export class ActionRope extends GameObject {
+export class ActionRope extends ActionObject {
     constructor(manager, action) {
-        super(manager);
-        this.action = action;
+        super(manager, action);
         this.name = "Rope";
         this.offset = 100;
         this.container.zIndex = 100;
@@ -298,10 +329,9 @@ export class ActionRope extends GameObject {
         if (this.action.isPlayGame) this.onPlay();
     }
 }
-export class ActionUI extends GameObject {
+export class ActionUI extends ActionObject {
     constructor(manager, action) {
-        super(manager);
-        this.action = action;
+        super(manager, action);
         this.name = "ActionUI";
         this.ts = TextStyle.Act;
         this.tsm = TextStyle.Act_small;
@@ -313,31 +343,32 @@ export class ActionUI extends GameObject {
         e.position.set(_x, _y);
     }
     setInteract(e = this.sprite) {
-        e.interactive = true;
-        e.buttonMode = true;
-
-        e.on("pointertap", onTap.bind(this));
-        e.on("pointerover", onOver.bind(e));
-        e.on("pointerout", onOut.bind(e));
-
-        function onTap(event) { this.clickEvent(e); }
-        function onOver(event) { this.isPointerOver = true; }
-        function onOut(event) { this.isPointerOver = false; }
+        e.clickEvent = this.clickEvent.bind(this);
+        e.overEvent = this.overEvent.bind(this);
+        addPointerEvent(e);
     }
     clickEvent(_) { alert("click " + this.name); }
+    overEvent(e) {
+        if (e.isPointerOver) {
+            gsap.killTweensOf(e);
+            gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
+        }
+        else {
+            gsap.killTweensOf(e);
+            gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
+        }
+    }
     resize() {
         this.w = window.innerWidth;
         this.h = window.innerHeight;
         this.container.removeChildren();
         this.draw();
     }
-    update() {
-    }
+    update() { }
 }
-export class ActionCountDown extends GameObject {
+export class ActionCountDown extends ActionObject {
     constructor(manager, action, stage) {
-        super(manager);
-        this.action = action;
+        super(manager, action);
         this.stage = stage;
         this.name = "ActionCountDown";
         this.scale = 0.25;
@@ -367,28 +398,25 @@ export class ActionCountDown extends GameObject {
         this.sprite.texture = this.textureList[Math.floor(this.times)];
     }
 }
-export class ActionGoodjob extends GameObject {
+export class ActionGoodjob extends ActionObject {
     constructor(manager, action) {
-        super(manager);
-        this.action = action;
+        super(manager, action);
         this.name = "ActionGoodjob";
         this.scale = 0.2;
         this.draw = function (x = -0.3, y = 0.35) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.sprite.texture = PIXI.Texture.from("image/video/Goodjob.png");
-            this.sprite.anchor.set(0.5);
-            this.sprite.scale.set(this.scale);
+            this.sprite = createSprite("image/video/Goodjob.png", 0.5, this.scale);
             this.container.addChild(this.sprite);
             this.container.position.set(_x, _y);
         }
     }
     setup() {
         this.draw();
-        this.manager.addChild(this.container);
+        this.action.addChild(this.container);
         let tl = gsap.timeline({
             onComplete: function () {
-                this.manager.removeChild(this.container);
+                this.action.removeChild(this.container);
                 this.container.destroy({ children: true });
                 this.destroy();
             }.bind(this)
@@ -396,4 +424,92 @@ export class ActionGoodjob extends GameObject {
         tl.to(this.sprite.scale, { duration: 0.5, x: 0.6, y: 0.6, ease: "back.out(1.7)" });
         tl.to(this.sprite.scale, { duration: 0.5, x: 0, y: 0, ease: "back.in(1.7)" }, "+=1");
     }
-} 
+}
+
+export class ActionStart extends ActionUI {
+    constructor(manager, action, text) {
+        super(manager, action);
+        this.name = "ActionStart";
+        this.isNotStart = true;
+        this.draw = function () {
+            this.sprite = createSprite("image/video/know.png", 0.5, this.scale);
+            this.setPosition(this.sprite, 0, 0.3);
+            this.sprite.alpha = 0;
+
+            let textTitle = createText("任務目標", this.ts);
+            this.setPosition(textTitle, 0, -0.3);
+            let textDescribe = createText(text, this.tsm);
+            this.setPosition(textDescribe, 0, 0);
+            this.container.addChild(textTitle, textDescribe, this.sprite);
+            this.container.alpha = 0;
+        }
+    }
+    start() {
+        let tl = gsap.timeline();
+        tl.to(this.container, { duration: 1, alpha: 1 }, 1);
+        tl.to(this.sprite, {
+            duration: 1, alpha: 1,
+            onComplete: function () { this.setInteract(this.sprite); }.bind(this)
+        }, "+=0.5");
+    }
+    clickEvent() {
+        if (this.isNotStart) {
+            this.isNotStart = false;
+            gsap.to(this.container, {
+                duration: 1, alpha: 0, onComplete: function () {
+                    this.action.removeChild(this.container);
+                    this.action.children.video.isStart = true;
+                    this.action.children.video.play();
+                }.bind(this)
+            });
+        }
+    }
+}
+export class ActionEnd extends ActionUI {
+    constructor(manager, action, text) {
+        super(manager, action);
+        this.name = "ActionEnd";
+        this.isNotStart = true;
+        this.draw = function () {
+            let textTitle = createText("任務完成", this.ts);
+            this.setPosition(textTitle, 0, -0.3);
+            let textDescribe = createText(text, this.tsm);
+            this.setPosition(textDescribe, 0, 0);
+            this.container.addChild(textTitle, textDescribe);
+            this.container.alpha = 0;
+        }
+    }
+    draw2() {
+        this.sprite.texture = PIXI.Texture.from("image/TGDAlogo.png");
+        this.sprite.anchor.set(0.5);
+        this.sprite.scale.set(1.5);
+        this.setPosition(this.sprite, -0.018, -0.012);
+
+        this.container.removeChildren();
+        let text1 = createText("感謝", this.tsm);
+        this.setPosition(text1, -0.156, 0);
+        let text2 = createText("協助拍攝", this.tsm);
+        this.setPosition(text2, 0.146, 0);
+        this.container.addChild(text1, text2, this.sprite);
+        this.container.alpha = 0;
+    }
+    end() {
+        this.action.children.sound.isEnd = true;
+        let tl = gsap.timeline();
+        tl.to(this.container, { duration: 1, alpha: 1 });
+        tl.to(this.container, {
+            duration: 1, alpha: 0, onComplete: function () {
+                this.draw2();
+            }.bind(this)
+        }, "+=2");
+        tl.to(this.container, { duration: 1, alpha: 1 });
+        tl.to(this.container, {
+            duration: 1, alpha: 0, onComplete: function () {
+                this.action.removeChild(this.container);
+                delete this.action.children.ui;
+                this.action.obj.cancelEvent();
+                this.manager.uiSystem.container.position.set(0);
+            }.bind(this)
+        }, "+=2");
+    }
+}

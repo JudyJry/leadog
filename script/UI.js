@@ -24,6 +24,7 @@ export default class UIsystem {
             "user": new User(this.manager, this),
             "menu": new Menu(this.manager, this),
             "home": new Index(this.manager, this),
+            "cancel": new Cancel(this.manager, this)
         }
         this.logo = undefined;
     }
@@ -71,14 +72,25 @@ export class UI {
         icon.scale.set(this.scale);
         icon.anchor.set(anchor);
         icon.clickEvent = this.clickEvent.bind(this);
+        icon.overEvent = this.overEvent.bind(this);
+        addPointerEvent(icon);
         return icon;
+    }
+    overEvent(e) {
+        if (e.isPointerOver) {
+            gsap.killTweensOf(e);
+            gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
+        }
+        else {
+            gsap.killTweensOf(e);
+            gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
+        }
     }
     clickEvent() {
         alert("click " + this.name);
     }
     setup() {
         this.draw();
-        if (this.icon) addPointerEvent(this.icon);
         this.UIsystem.uiContainer.addChild(this.container);
     }
     resize() {
@@ -86,15 +98,8 @@ export class UI {
         this.h = window.innerHeight;
         this.container.removeChildren();
         this.draw();
-        if (this.icon) addPointerEvent(this.icon);
     }
     update() {
-        if (this.icon.isPointerOver) {
-            gsap.to(this.icon, { duration: 0.5, pixi: { brightness: 0.9 } });
-        }
-        else {
-            gsap.to(this.icon, { duration: 0.5, pixi: { brightness: 1 } });
-        }
     }
 }
 class Book extends UI {
@@ -254,6 +259,22 @@ class Index extends UI {
         else {
             this.container.removeChild(this.index);
             this.turn = false;
+        }
+    }
+}
+class Cancel extends UI {
+    constructor(manager, UIsystem) {
+        super(manager, UIsystem);
+        this.name = "Cancel";
+        this.turn = false;
+        this.index = new PIXI.Container();
+        this.scale = 0.85;
+        this.draw = function () {
+            this.icon = this.drawIcon('image/cancel.svg');
+            this.icon.scale.set(-this.scale, this.scale);
+            this.container.position.set(15, 5 * this.UIsystem.uiSpacing);
+            this.container.addChild(this.icon);
+            this.icon.visible = false;
         }
     }
 }

@@ -9,8 +9,34 @@ export function debounce(f, delay = 250) {
         timer = setTimeout(() => { f.apply(context, args); }, delay)
     }
 }
-export function createSprite(url, anchor = { x: 0, y: 0 }, scale = { x: 0, y: 0 }) {
+export function createSprite(url, anchor = 0.5, scale = 1) {
     let s = PIXI.Sprite.from(url);
+    switch (Object.prototype.toString.call(anchor)) {
+        case "[object Number]":
+            s.anchor.set(anchor);
+            break;
+        case "[object Array]":
+            s.anchor.set(anchor[0], anchor[1]);
+            break;
+        case "[object Object]":
+            s.anchor.set(anchor.x, anchor.y);
+            break;
+    }
+    switch (Object.prototype.toString.call(scale)) {
+        case "[object Number]":
+            s.scale.set(scale);
+            break;
+        case "[object Array]":
+            s.scale.set(scale[0], scale[1]);
+            break;
+        case "[object Object]":
+            s.scale.set(scale.x, scale.y);
+            break;
+    }
+    return s
+}
+export function createText(string, style, anchor = 0.5, scale = 1) {
+    let s = new PIXI.Text(string, style);
     switch (Object.prototype.toString.call(anchor)) {
         case "[object Number]":
             s.anchor.set(anchor);
@@ -39,12 +65,19 @@ export function addPointerEvent(e) {
     e.interactive = true;
     e.buttonMode = true;
     e.on("pointertap", onTap);
-    e.on("pointerover", onOver);
-    e.on("pointerout", onOut);
+    if (e.overEvent) {
+        e.on("pointerover", onOverE);
+        e.on("pointerout", onOutE);
+    } else {
+        e.on("pointerover", onOver);
+        e.on("pointerout", onOut);
+    }
 
     function onTap(event) { e.clickEvent(e); }
     function onOver(event) { e.isPointerOver = true; }
     function onOut(event) { e.isPointerOver = false; }
+    function onOverE(event) { e.isPointerOver = true; e.overEvent(e); }
+    function onOutE(event) { e.isPointerOver = false; e.overEvent(e); }
 }
 
 export function scopeCollision(a, b) {

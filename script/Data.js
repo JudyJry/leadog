@@ -37,4 +37,29 @@ const homePageData = [
     { type: objType.building, name: "相關活動", url: "image/homepage/market.png", x: 0.158, y: -0.227 },
 ];
 
-export { objType, Page, homePageData, uiData };
+const videoData = {
+    elderly: [
+        {
+            name: "elderly_story1",
+            url: "video/elderly_story1.mp4",
+            soundUrl: "sound/elderly_story1.wav",
+            startText: "一起看看狗狗與收養家庭的故事吧！",
+            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`
+        },
+        {
+            name: "elderly_story2",
+            url: "video/elderly_story2.mp4",
+            soundUrl: "sound/elderly_story2.mp3",
+            startText: "一起看看狗狗與收養家庭的故事吧！",
+            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`
+        },
+        {
+            name: "elderly_story3",
+            url: "video/elderly_story3.mp4",
+            soundUrl: "sound/elderly_story3.wav",
+            startText: "一起看看狗狗與收養家庭的故事吧！",
+            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`
+        }
+    ]
+}
+export { objType, Page, homePageData, uiData, videoData };
