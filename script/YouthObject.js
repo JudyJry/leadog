@@ -17,7 +17,7 @@ export default class YouthObject extends PageObject {
         this.children = {
             "background": new Background(this.manager, this, "image/building/youth/bg.png"),
             "video": new YouthVideo(this.manager, this),
-            "video": new Graduate(this.manager, this),
+            "graduate": new Graduate(this.manager, this),
             "player": new Player(this.manager, this)
         };
     }

@@ -4,18 +4,21 @@ import * as Action from "./Action";
 import { Page } from './Data';
 
 export default class ChildhoodAction_Kelly extends Action.ActionPage {
-    constructor(manager) {
-        super(manager);
+    constructor(manager, obj) {
+        super(manager, obj);
         this.name = "ChildhoodAction_Kelly";
         this.offset = 50;
         this.isPlayGame = false;
+        this.videoScale = 0.44;
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "childhood_kelly", "sound/childhood_kelly.wav"),
             "video": new Childhood_Kelly_Video(this.manager, this, "video/childhood_kelly.mp4"),
             "rope": new Action.ActionRope(this.manager, this),
-            "ui": new Childhood_Kelly_UI_Start(this.manager, this),
+            "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗在寄養家庭中習慣人類社會生活吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
+        this.end = new Action.ActionEnd(this.manager, this,
+            `謝謝你幫助狗狗完成在寄養家庭階段的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
     }
 }
 class Childhood_Kelly_Video extends Action.ActionVideo {
@@ -61,77 +64,6 @@ class Childhood_Kelly_Video extends Action.ActionVideo {
         }
 
     }
-    onEnd() {
-        this.drawBg("white");
-        gsap.to(this.bg, {
-            duration: 3, alpha: 1, onComplete: function () {
-                this.action.children.ui = new Childhood_Kelly_UI_End(this.manager, this.action);
-                this.action.children.ui.setup();
-                this.action.children.ui.end();
-                this.videoCrol.ontimeupdate = undefined;
-                this.pause();
-                this.videoCrol.currentTime = 0;
-            }.bind(this)
-        });
-    }
-}
-class Childhood_Kelly_UI_Start extends Action.ActionUI {
-    constructor(manager, action) {
-        super(manager, action);
-        this.name = "Childhood_Kelly_UI_Start";
-        this.isNotStart = true;
-        this.draw = function () {
-            this.sprite.texture = PIXI.Texture.from("image/video/know.png");
-            this.sprite.anchor.set(0.5);
-            this.sprite.scale.set(this.scale);
-            this.setPosition(this.sprite, 0, 0.3);
-            this.sprite.alpha = 0;
-
-            let textTitle = new PIXI.Text("任務目標", this.ts);
-            textTitle.anchor.set(0.5);
-            this.setPosition(textTitle, 0, -0.3);
-            let textDescribe = new PIXI.Text("一起幫助狗狗在寄養家庭中習慣人類社會生活吧！", this.tsm);
-            textDescribe.anchor.set(0.5);
-            this.setPosition(textDescribe, 0, 0);
-
-            this.container.addChild(textTitle, textDescribe, this.sprite);
-            this.container.alpha = 0;
-        }
-    }
-    start() {
-        let tl = gsap.timeline();
-        tl.to(this.container, { duration: 1, alpha: 1 }, 1);
-        tl.to(this.sprite, {
-            duration: 1, alpha: 1,
-            onComplete: function () { this.setInteract(this.sprite); }.bind(this)
-        }, "+=0.5");
-    }
-    clickEvent() {
-        if (this.isNotStart) {
-            this.isNotStart = false;
-            let text = new PIXI.Text("新的一天開始了", this.ts);
-            text.anchor.set(0.5);
-            text.alpha = 0;
-            this.setPosition(text, 0, 0);
-
-            let tl = gsap.timeline();
-            tl.to(this.container, {
-                duration: 1, alpha: 0, onComplete: function () {
-                    this.manager.removeChild(this.container);
-                    this.manager.addChild(text);
-                }.bind(this)
-            });
-            tl.to(text, { duration: 0.5, alpha: 1 }, "+=1");
-            tl.to(text, {
-                duration: 0.5, alpha: 0, onComplete: function () {
-                    this.manager.removeChild(text);
-                    text.destroy();
-                    this.action.children.video.isStart = true;
-                    this.action.children.video.play();
-                }.bind(this)
-            }, "+=2");
-        }
-    }
 }
 class Childhood_Kelly_UI_Stage1 extends Action.ActionUI {
     constructor(manager, action) {
@@ -165,9 +97,9 @@ class Childhood_Kelly_UI_Stage1 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
-                this.manager.removeChild(this.action.children.line.container);
-                this.manager.removeChild(this.action.children.rope.container);
+                this.action.removeChild(this.container);
+                this.action.removeChild(this.action.children.line.container);
+                this.action.removeChild(this.action.children.rope.container);
                 this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
                 delete this.action.children.rope;
@@ -178,7 +110,7 @@ class Childhood_Kelly_UI_Stage1 extends Action.ActionUI {
     update() {
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -203,7 +135,7 @@ class Childhood_Kelly_Stage1_Line extends Action.ActionLine {
             this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
-            this.manager.app.stage.sortChildren();
+            this.action.container.sortChildren();
         }
     }
 }
@@ -238,9 +170,8 @@ class Childhood_Kelly_UI_Stage2 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
+                this.action.removeChild(this.container);
                 delete this.action.children.ui;
-
             }.bind(this)
         });
     }
@@ -248,7 +179,7 @@ class Childhood_Kelly_UI_Stage2 extends Action.ActionUI {
         this.button.update();
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -316,7 +247,7 @@ class Childhood_Kelly_Stage2_Button extends Action.ActionUI {
         this.mask.drawRect(b.x, b.y, progress, b.height);
     }
     onClearGame() {
-        this.manager.removeChild(this.container);
+        this.action.removeChild(this.container);
         this.action.children.video.container.removeChild(this.bg);
     }
     update() {
@@ -362,7 +293,7 @@ class Childhood_Kelly_UI_Stage3 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
+                this.action.removeChild(this.container);
                 delete this.action.children.ui;
 
             }.bind(this)
@@ -372,7 +303,7 @@ class Childhood_Kelly_UI_Stage3 extends Action.ActionUI {
         this.button.update();
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -403,11 +334,11 @@ class Childhood_Kelly_Stage3_Button extends Action.ActionUI {
             this.sprite.scale.set(this.scale);
             this.container.addChild(this.sprite);
             this.setPosition(this.sprite, -0.3, 0.1);
-            setTimeout(this.wait.bind(this), 1.5);
+            setTimeout(this.wait.bind(this), 1500);
         }
     }
     onClearGame() {
-        this.manager.removeChild(this.container);
+        this.action.removeChild(this.container);
     }
     clickEvent() {
         if (this.action.isPlayGame) {
@@ -420,59 +351,5 @@ class Childhood_Kelly_Stage3_Button extends Action.ActionUI {
     wait() {
         this.sprite.texture = this.spriteSheet[1];
         this.setInteract(this.sprite);
-    }
-}
-class Childhood_Kelly_UI_End extends Action.ActionUI {
-    constructor(manager, action) {
-        super(manager, action);
-        this.name = "Childhood_Kelly_UI_End";
-        this.isNotStart = true;
-        this.draw = function () {
-            let textTitle = new PIXI.Text("任務完成", this.ts);
-            textTitle.anchor.set(0.5);
-            this.setPosition(textTitle, 0, -0.3);
-            let textDescribe = new PIXI.Text(
-                `謝謝你幫助狗狗完成在寄養家庭階段的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-                this.tsm);
-            textDescribe.anchor.set(0.5);
-            this.setPosition(textDescribe, 0, 0);
-
-            this.container.addChild(textTitle, textDescribe);
-            this.container.alpha = 0;
-        }
-    }
-    draw2() {
-        this.sprite.texture = PIXI.Texture.from("image/TGDAlogo.png");
-        this.sprite.anchor.set(0.5);
-        this.sprite.scale.set(1.5);
-        this.setPosition(this.sprite, -0.018, -0.012);
-
-        this.container.removeChildren();
-        let text1 = new PIXI.Text("感謝", this.tsm);
-        text1.anchor.set(0.5);
-        this.setPosition(text1, -0.156, 0);
-        let text2 = new PIXI.Text("協助拍攝", this.tsm);
-        text2.anchor.set(0.5);
-        this.setPosition(text2, 0.146, 0);
-        this.container.addChild(text1, text2, this.sprite);
-        this.container.alpha = 0;
-    }
-    end() {
-        this.action.children.sound.isEnd = true;
-        let tl = gsap.timeline();
-        tl.to(this.container, { duration: 1, alpha: 1 });
-        tl.to(this.container, {
-            duration: 1, alpha: 0, onComplete: function () {
-                this.draw2();
-            }.bind(this)
-        }, "+=2");
-        tl.to(this.container, { duration: 1, alpha: 1 });
-        tl.to(this.container, {
-            duration: 1, alpha: 0, onComplete: function () {
-                this.manager.removeChild(this.container);
-                delete this.action.children.ui;
-                this.manager.toOtherPage(Page.childhood);
-            }.bind(this)
-        }, "+=2");
     }
 }

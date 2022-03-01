@@ -412,7 +412,7 @@ export class Video extends linkObject {
         this.volumeButton.position.set(standard + space * 2, h);
         this.fullButton.position.set(-standard, h);
 
-        this.playButton.clickEvent = this.video.videoSprite.clickEvent = function () {
+        this.playButton.clickEvent = function () {
             if (this.video.videoCrol.paused) { this.play(); } else { this.pause(); }
         }.bind(this);
 

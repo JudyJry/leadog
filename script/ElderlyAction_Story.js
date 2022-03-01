@@ -78,17 +78,4 @@ class Elderly_Story_Video extends Action.ActionVideo {
         }
 
     }
-    onEnd() {
-        this.drawBg("white");
-        gsap.to(this.bg, {
-            duration: 3, alpha: 1, onComplete: function () {
-                this.action.children.ui = this.action.end;
-                this.action.children.ui.setup();
-                this.action.children.ui.end();
-                this.videoCrol.ontimeupdate = undefined;
-                this.pause();
-                this.videoCrol.currentTime = 0;
-            }.bind(this)
-        });
-    }
 }

@@ -167,6 +167,20 @@ export class ActionVideo extends ActionObject {
     pause() {
         this.videoCrol.pause();
     }
+    onEnd() {
+        this.drawBg("white");
+        gsap.to(this.bg, {
+            duration: 3, alpha: 1, onComplete: function () {
+                this.action.children.ui = this.action.end;
+                this.action.children.ui.setup();
+                this.action.children.ui.end();
+                this.videoCrol.ontimeupdate = undefined;
+                this.pause();
+                this.videoCrol.currentTime = 0;
+            }.bind(this)
+        });
+    }
+
 }
 export class ActionSound {
     constructor(manager, action, name, url, volume = 0.5) {
