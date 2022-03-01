@@ -51,6 +51,7 @@ class Tv extends Video {
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
         this.videoList = [function () { return new ElderlyAction_Hair(this.manager, this) }.bind(this)];
+        this.uiScale = 0.25;
     }
     resize() {
         this.w = this.manager.w;
@@ -61,10 +62,10 @@ class Tv extends Video {
                 this.frame.alpha = 1;
                 this.UItint("white");
                 this.page.container.scale.set(this.zoomIn * this.manager.canvasScale);
-                this.page.container.position.set(-this._x * this.zoomIn + 200, -this._y * this.zoomIn - 200);
+                this.page.container.position.set((-this._x + 83.5) * this.zoomIn, (-this._y - 73.5) * this.zoomIn);
             }
             else if (this.fullButton.turn) {
-                let fz = 3.75;
+                let fz = 3.8;
                 this.frame.alpha = 0;
                 this.UItint("brown");
                 this.page.container.scale.set(fz);
@@ -115,7 +116,7 @@ class Tv extends Video {
 
         this.video = this.videoList[this.random]();
         this.video.setup();
-        this.video.container.position.set(-83, 73);
+        this.video.container.position.set(-83, 72);
         this.drawUI();
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
@@ -124,11 +125,11 @@ class Tv extends Video {
     }
     drawUI() {
         this.ui = new PIXI.Container();
-        this.frame = createSprite("image/video/tv.png", 0.5, this.scale);
-        this.playButton = createSprite("image/video/elderly/play.png", 0.5, this.scale);
-        this.volumeButton = createSprite("image/video/elderly/volume.png", 0.5, this.scale);
-        this.nextButton = createSprite("image/video/elderly/next.png", 0.5, this.scale);
-        this.fullButton = createSprite("image/video/elderly/full.png", 0.5, this.scale);
+        this.frame = createSprite("image/video/tv.png", 0.5, 0.5);
+        this.playButton = createSprite("image/video/elderly/play.png", 0.5, this.uiScale);
+        this.volumeButton = createSprite("image/video/elderly/volume.png", 0.5, this.uiScale);
+        this.nextButton = createSprite("image/video/elderly/next.png", 0.5, this.uiScale);
+        this.fullButton = createSprite("image/video/elderly/full.png", 0.5, this.uiScale);
 
         let standard = -270;
         let h = 235;

@@ -299,6 +299,7 @@ export class Video extends linkObject {
         this.spriteHeight = 10;
         this.videoList = [];
         this.random = Math.floor(Math.random() * this.videoList.length);
+        this.uiScale = 0.25;
     }
     resize() {
         this.w = this.manager.w;
@@ -397,11 +398,11 @@ export class Video extends linkObject {
     }
     drawUI() {
         this.ui = new PIXI.Container();
-        this.frame = createSprite("image/video/video.png", 0.5, this.scale);
-        this.playButton = createSprite("image/video/play.png", 0.5, this.scale);
-        this.volumeButton = createSprite("image/video/volume.png", 0.5, this.scale);
-        this.nextButton = createSprite("image/video/next.png", 0.5, this.scale);
-        this.fullButton = createSprite("image/video/full.png", 0.5, this.scale);
+        this.frame = createSprite("image/video/video.png", 0.5, this.uiScale);
+        this.playButton = createSprite("image/video/play.png", 0.5, this.uiScale);
+        this.volumeButton = createSprite("image/video/volume.png", 0.5, this.uiScale);
+        this.nextButton = createSprite("image/video/next.png", 0.5, this.uiScale);
+        this.fullButton = createSprite("image/video/full.png", 0.5, this.uiScale);
 
         let standard = -385;
         let h = 260;

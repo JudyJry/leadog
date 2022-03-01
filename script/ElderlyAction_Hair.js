@@ -8,7 +8,7 @@ export class ElderlyAction_Hair extends Action.ActionPage {
         this.name = "ElderlyAction_Hair";
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.27;
+        this.videoScale = 0.26;
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "elderly_hair", "sound/elderly_hair.mp3"),
             "video": new Elderly_Hair_Video(this.manager, this, "video/elderly_hair.mp4"),
