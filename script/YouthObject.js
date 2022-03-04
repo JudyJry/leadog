@@ -31,7 +31,7 @@ class YouthVideo extends Video {
         this.x = 0.363;
         this.y = -0.037;
         this.url = "image/building/youth/video.png";
-        this.uiScale = 0.24;
+        this.uiScale = 0.25;
         this.videoList = [
             function () { return new YouthAction_Bus(this.manager, this) }.bind(this),
             function () { return new YouthAction_Traffic(this.manager, this) }.bind(this),
