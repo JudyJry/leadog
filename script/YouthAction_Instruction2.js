@@ -6,10 +6,9 @@ import { Page } from './Data';
 export default class YouthAction_Instruction2 extends Action.ActionPage {
     constructor(manager, obj) {
         super(manager, obj);
-        this.name = "YouthAction";
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoScale = 0.355;
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "youth_instruction2", "sound/youth_instruction2.wav"),
             "video": new Youth_Instruction2_Video(this.manager, this, "video/youth_instruction2.mp4"),

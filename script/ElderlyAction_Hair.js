@@ -5,7 +5,6 @@ import * as Action from "./Action";
 export class ElderlyAction_Hair extends Action.ActionPage {
     constructor(manager, obj) {
         super(manager, obj);
-        this.name = "ElderlyAction_Hair";
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.26;
@@ -63,19 +62,6 @@ class Elderly_Hair_Video extends Action.ActionVideo {
             this.count++;
         }
 
-    }
-    onEnd() {
-        this.drawBg("white");
-        gsap.to(this.bg, {
-            duration: 3, alpha: 1, onComplete: function () {
-                this.action.children.ui = this.action.end;
-                this.action.children.ui.setup();
-                this.action.children.ui.end();
-                this.videoCrol.ontimeupdate = undefined;
-                this.pause();
-                this.videoCrol.currentTime = 0;
-            }.bind(this)
-        });
     }
 }
 class Elderly_Hair_UI_Stage extends Action.ActionUI {

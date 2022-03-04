@@ -1,15 +1,13 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
-import { Page } from './Data';
 
 export default class YouthAction_Bus extends Action.ActionPage {
     constructor(manager, obj) {
         super(manager, obj);
-        this.name = "YouthAction";
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoScale = 0.355;
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "youth_bus", "sound/youth_bus.wav"),
             "video": new Youth_Bus_Video(this.manager, this, "video/youth_bus.mp4"),
@@ -50,7 +48,6 @@ class Youth_Bus_Video extends Action.ActionVideo {
             }
             this.count++;
         }
-
     }
 }
 class Youth_Bus_UI_Stage1 extends Action.ActionUI {
@@ -84,9 +81,9 @@ class Youth_Bus_UI_Stage1 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
-                this.manager.removeChild(this.action.children.line.container);
-                this.manager.removeChild(this.action.children.rope.container);
+                this.action.removeChild(this.container);
+                this.action.removeChild(this.action.children.line.container);
+                this.action.removeChild(this.action.children.rope.container);
                 this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
                 delete this.action.children.rope;
@@ -97,7 +94,7 @@ class Youth_Bus_UI_Stage1 extends Action.ActionUI {
     update() {
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -121,7 +118,7 @@ class Youth_Bus_Stage1_Line extends Action.ActionLine {
             this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
-            this.manager.app.stage.sortChildren();
+            this.action.container.sortChildren();
         }
     }
 }

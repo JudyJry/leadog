@@ -6,10 +6,9 @@ import { Page } from './Data';
 export default class YouthAction_Traffic extends Action.ActionPage {
     constructor(manager, obj) {
         super(manager, obj);
-        this.name = "YouthAction";
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoScale = 0.355;
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "youth_traffic", "sound/youth_traffic.wav"),
             "video": new Youth_Traffic_Video(this.manager, this, "video/youth_traffic.mp4"),
@@ -113,7 +112,7 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
+                this.action.removeChild(this.container);
                 delete this.action.children.ui;
             }.bind(this)
         });
@@ -121,7 +120,7 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
     update() {
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -163,18 +162,5 @@ class Youth_Traffic_Video2 extends Action.ActionVideo {
             }
             this.count++;
         }
-    }
-    onEnd() {
-        this.drawBg("white");
-        gsap.to(this.bg, {
-            duration: 1 + this.random, alpha: 1, onComplete: function () {
-                this.action.children.ui = new Youth_Traffic_UI_End(this.manager, this.action);
-                this.action.children.ui.setup();
-                this.action.children.ui.end();
-                this.videoCrol.ontimeupdate = undefined;
-                this.pause();
-                this.videoCrol.currentTime = 0;
-            }.bind(this)
-        });
     }
 }

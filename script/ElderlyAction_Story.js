@@ -5,7 +5,6 @@ import * as Action from "./Action";
 export class ElderlyAction_Story1 extends Action.ActionPage {
     constructor(manager, obj) {
         super(manager, obj);
-        this.name = "ElderlyAction_Story1";
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.44;

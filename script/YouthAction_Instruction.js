@@ -6,10 +6,9 @@ import { Page } from './Data';
 export default class YouthAction_Instruction extends Action.ActionPage {
     constructor(manager, obj) {
         super(manager, obj);
-        this.name = "YouthAction_Instruction";
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoScale = 0.355;
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "youth_instruction", "sound/youth_instruction.wav"),
             "video": new Youth_Instruction_Video(this.manager, this, "video/youth_instruction.mp4"),
@@ -108,8 +107,8 @@ class Youth_Instruction_UI_Stage1 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
-                this.manager.removeChild(this.action.children.line.container);
+                this.action.removeChild(this.container);
+                this.action.removeChild(this.action.children.line.container);
                 this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
                 delete this.action.children.ui;
@@ -119,7 +118,7 @@ class Youth_Instruction_UI_Stage1 extends Action.ActionUI {
     update() {
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -143,7 +142,7 @@ class Youth_Instruction_Stage1_Line extends Action.ActionLine {
             this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
-            this.manager.app.stage.sortChildren();
+            this.action.container.sortChildren();
         }
     }
 }
@@ -178,8 +177,8 @@ class Youth_Instruction_UI_Stage2 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
-                this.manager.removeChild(this.action.children.line.container);
+                this.action.removeChild(this.container);
+                this.action.removeChild(this.action.children.line.container);
                 this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
                 delete this.action.children.ui;
@@ -189,7 +188,7 @@ class Youth_Instruction_UI_Stage2 extends Action.ActionUI {
     update() {
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -213,7 +212,7 @@ class Youth_Instruction_Stage2_Line extends Action.ActionLine {
             this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
-            this.manager.app.stage.sortChildren();
+            this.action.container.sortChildren();
         }
     }
 }
@@ -248,8 +247,8 @@ class Youth_Instruction_UI_Stage3 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
-                this.manager.removeChild(this.action.children.line.container);
+                this.action.removeChild(this.container);
+                this.action.removeChild(this.action.children.line.container);
                 this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
                 delete this.action.children.ui;
@@ -259,7 +258,7 @@ class Youth_Instruction_UI_Stage3 extends Action.ActionUI {
     update() {
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -283,7 +282,7 @@ class Youth_Instruction_Stage3_Line extends Action.ActionLine {
             this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
-            this.manager.app.stage.sortChildren();
+            this.action.container.sortChildren();
         }
     }
 }
@@ -318,8 +317,8 @@ class Youth_Instruction_UI_Stage4 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
-                this.manager.removeChild(this.action.children.line.container);
+                this.action.removeChild(this.container);
+                this.action.removeChild(this.action.children.line.container);
                 this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
                 delete this.action.children.ui;
@@ -329,7 +328,7 @@ class Youth_Instruction_UI_Stage4 extends Action.ActionUI {
     update() {
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -353,7 +352,7 @@ class Youth_Instruction_Stage4_Line extends Action.ActionLine {
             this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
-            this.manager.app.stage.sortChildren();
+            this.action.container.sortChildren();
         }
     }
 }
@@ -388,8 +387,8 @@ class Youth_Instruction_UI_Stage5 extends Action.ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.manager.removeChild(this.container);
-                this.manager.removeChild(this.action.children.line.container);
+                this.action.removeChild(this.container);
+                this.action.removeChild(this.action.children.line.container);
                 this.action.children.line.hintGsap.kill();
                 delete this.action.children.line;
                 delete this.action.children.ui;
@@ -399,7 +398,7 @@ class Youth_Instruction_UI_Stage5 extends Action.ActionUI {
     update() {
         try {
             if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
+                this.action.removeChild(this.countdown.container);
                 this.countdown.sprite.destroy();
                 this.countdown.container.destroy();
                 this.countdown = undefined;
@@ -423,7 +422,7 @@ class Youth_Instruction_Stage5_Line extends Action.ActionLine {
             this.drawHint();
             this.container.addChild(this.sprite);
             this.container.position.set(-this.w / 2, -this.h / 2);
-            this.manager.app.stage.sortChildren();
+            this.action.container.sortChildren();
         }
     }
 }

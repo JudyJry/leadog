@@ -107,11 +107,21 @@ class Tv extends Video {
             this.blink.effect();
         }
     }
+    drawCancel() {
+        let ch = this.sprite.height / 2;
+        let cw = this.sprite.width / 2;
+        this.cancel = createSprite('image/cancel.svg', 0.5, 0.8);
+        this.cancel.position.set(cw - 150, -ch + 270);
+        this.cancel.clickEvent = this.cancelEvent.bind(this);
+        addPointerEvent(this.cancel);
+        this.container.addChild(this.cancel);
+        this.cancel.visible = false;
+    }
     clickEvent() {
         this.sprite.interactive = false;
         let tl = gsap.timeline();
         tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-        tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn + 200, y: -this._y * this.zoomIn - 200 }, 0);
+        tl.to(this.page.container, { duration: 0.5, x: (-this._x + 83.5) * this.zoomIn, y: (-this._y - 73.5) * this.zoomIn }, 0);
         this.page.children.player.move(this._x, this.sprite.width);
 
         this.video = this.videoList[this.random]();
@@ -139,17 +149,18 @@ class Tv extends Video {
         this.volumeButton.position.set(standard + space * 2, h);
         this.fullButton.position.set(-standard - 160, h);
 
-        this.playButton.clickEvent = this.video.videoSprite.clickEvent = function () {
+        this.playButton.clickEvent = function () {
             if (this.video.videoCrol.paused) { this.play(); } else { this.pause(); }
         }.bind(this);
 
         this.nextButton.clickEvent = function () {
-            if (this.random === 2) { this.random = 0 }
+            if (this.random === this.videoList.length - 1) { this.random = 0 }
             else { this.random += 1 }
             this.pause();
             this.container.removeChild(this.video.container);
             this.video = this.videoList[this.random]();
-            this.video.container.position.set(0, -7.4);
+            this.video.setup();
+            this.video.container.position.set(-83, 72);
             this.video.videoCrol.muted = this.volumeButton.turn;
         }.bind(this);
 
@@ -158,15 +169,16 @@ class Tv extends Video {
                 this.volumeButton.turn = false;
                 this.video.videoCrol.muted = false;
                 this.video.sound.volume = 0.5;
-                this.volumeButton.texture = PIXI.Texture.from("image/video/volume.png");
+                this.volumeButton.texture = PIXI.Texture.from("image/video/elderly/volume.png");
             }
             else {
                 this.volumeButton.turn = true;
                 this.video.videoCrol.muted = true;
                 this.video.sound.volume = 0;
-                this.volumeButton.texture = PIXI.Texture.from("image/video/volume_off.png");
+                this.volumeButton.texture = PIXI.Texture.from("image/video/elderly/volume_off.png");
             }
         }.bind(this);
+        this.volumeButton.turn = false;
 
         this.fullButton.clickEvent = function () {
             if (this.fullButton.turn) {
@@ -196,6 +208,7 @@ class Tv extends Video {
                 }
             }
         }.bind(this);
+        this.fullButton.turn = false;
 
         addPointerEvent(this.playButton);
         addPointerEvent(this.volumeButton);

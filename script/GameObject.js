@@ -5,12 +5,13 @@ import { FilterSet } from "./FilterSet.js";
 import { addPointerEvent, createSprite } from "./GameFunction.js";
 import { math } from "./math.js";
 import { Page } from "./Data.js";
+import Manager from "./Manager.js";
 
 
 export class PageObject {
     constructor(manager) {
         this.manager = manager;
-        this.name = "PageObject";
+        this.name = this.constructor.name;
         this.container = new PIXI.Container();
         this.children = {};
     }
@@ -46,7 +47,7 @@ export class PageObject {
 export class GameObject {
     constructor(manager) {
         this.manager = manager;
-        this.name = "GameObject"
+        this.name = this.constructor.name;
         this.container = new PIXI.Container();
         this.sprite = new PIXI.Sprite();
         this.scale = 1;
@@ -298,8 +299,14 @@ export class Video extends linkObject {
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
         this.videoList = [];
-        this.random = Math.floor(Math.random() * this.videoList.length);
         this.uiScale = 0.25;
+    }
+    setup() {
+        this.draw();
+        this.container.name = this.name;
+        this.random = Math.floor(Math.random() * this.videoList.length);
+        this.container.scale.set(this.manager.canvasScale);
+        this.manager.addChild(this.container);
     }
     resize() {
         this.w = this.manager.w;
@@ -417,11 +424,12 @@ export class Video extends linkObject {
         }.bind(this);
 
         this.nextButton.clickEvent = function () {
-            if (this.random === 2) { this.random = 0 }
+            if (this.random === this.videoList.length - 1) { this.random = 0 }
             else { this.random += 1 }
             this.pause();
             this.container.removeChild(this.video.container);
             this.video = this.videoList[this.random]();
+            this.video.setup();
             this.video.container.position.set(0, -7.4);
             this.video.videoCrol.muted = this.volumeButton.turn;
         }.bind(this);
@@ -440,6 +448,7 @@ export class Video extends linkObject {
                 this.volumeButton.texture = PIXI.Texture.from("image/video/volume_off.png");
             }
         }.bind(this);
+        this.volumeButton.turn = false;
 
         this.fullButton.clickEvent = function () {
             if (this.fullButton.turn) {
@@ -469,6 +478,7 @@ export class Video extends linkObject {
                 }
             }
         }.bind(this);
+        this.fullButton.turn = false;
 
         addPointerEvent(this.playButton);
         addPointerEvent(this.volumeButton);
@@ -488,5 +498,31 @@ export class Video extends linkObject {
         this.video.videoCrol.pause();
         this.video.sound.pause();
         this.playButton.texture = PIXI.Texture.from("image/video/play.png");
+    }
+}
+export class OtherObject extends GameObject {
+    /**
+     * @param {Manager} manager 
+     * @param {string} name
+     * @param {number} x 
+     * @param {number} y 
+     * @param {string} url 
+     */
+    constructor(manager, name, x, y, url) {
+        super(manager);
+        this.name = name;
+        this.container.zIndex = 20;
+        this.x = x;
+        this.y = y;
+        this.url = url;
+        this.draw = function () {
+            this._x = (this.x * this.w * 2);
+            this._y = (this.y * this.h * 2);
+            this.sprite.texture = PIXI.Texture.from(this.url);
+            this.sprite.anchor.set(0.5);
+            this.sprite.scale.set(this.scale);
+            this.container.addChild(this.sprite);
+            this.container.position.set(this._x, this._y);
+        }
     }
 }
