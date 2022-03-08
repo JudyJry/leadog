@@ -150,7 +150,7 @@ class Tv extends Video {
         this.fullButton.position.set(-standard - 160, h);
 
         this.playButton.clickEvent = function () {
-            if (this.video.videoCrol.paused) { this.play(); } else { this.pause(); }
+            if (this.video.videoCrol.paused && this.video.isStart) { this.play(); } else { this.pause(); }
         }.bind(this);
 
         this.nextButton.clickEvent = function () {
@@ -214,7 +214,6 @@ class Tv extends Video {
         addPointerEvent(this.volumeButton);
         addPointerEvent(this.nextButton);
         addPointerEvent(this.fullButton);
-        addPointerEvent(this.video.videoSprite);
 
         this.ui.addChild(this.playButton, this.volumeButton, this.nextButton, this.fullButton);
         this.container.addChild(this.frame, this.ui);

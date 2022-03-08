@@ -87,6 +87,9 @@ export class LogoVideo extends ActionObject {
             tl.from(this.sprite, { duration: 2, alpha: 1, onComplete: this.onEnd });
         }
     }
+    cancelEvent() {
+        gsap.killTweensOf(this.sprite);
+    }
 }
 export class ActionVideo extends ActionObject {
     constructor(manager, action, url) {

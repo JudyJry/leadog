@@ -47,13 +47,12 @@ class YouthVideo extends Video {
             if (!this.fullButton.turn) {
                 this.frame.alpha = 1;
                 this.page.container.scale.set(this.zoomIn * this.manager.canvasScale);
-                this.page.container.position.set((-this._x + 0) * this.zoomIn, (-this._y - 0) * this.zoomIn);
+                this.page.container.position.set((-this._x + 0) * this.zoomIn, (-this._y + 25) * this.zoomIn);
             }
             else if (this.fullButton.turn) {
-                let fz = 3.8;
-                this.frame.alpha = 0;
+                let fz = 2.85;
                 this.page.container.scale.set(fz);
-                this.page.container.position.set((-this._x + 0) * fz, (-this._y - 0) * fz);
+                this.page.container.position.set((-this._x + 0) * fz, (-this._y + 25) * fz);
             }
         }
     }
@@ -72,10 +71,10 @@ class YouthVideo extends Video {
                         gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
                     }
                     if (this.manager.mouse.y > this.h - 110) {
-                        gsap.to(this.ui, { duration: 1, y: -35 - (screen.height - this.h) });
+                        gsap.to(this.ui, { duration: 1, y: -45 });
                     }
                     else if (this.manager.mouse.y < this.h - 110) {
-                        gsap.to(this.ui, { duration: 1, y: 20 });
+                        gsap.to(this.ui, { duration: 1, y: 0 });
                     }
                 }
                 else {
@@ -124,7 +123,7 @@ class YouthVideo extends Video {
         this.fullButton.position.set(-standard - 20, h);
 
         this.playButton.clickEvent = function () {
-            if (this.video.videoCrol.paused) { this.play(); } else { this.pause(); }
+            if (this.video.videoCrol.paused && this.video.isStart) { this.play(); } else { this.pause(); }
         }.bind(this);
 
         this.nextButton.clickEvent = function () {
@@ -188,7 +187,6 @@ class YouthVideo extends Video {
         addPointerEvent(this.volumeButton);
         addPointerEvent(this.nextButton);
         addPointerEvent(this.fullButton);
-        addPointerEvent(this.video.videoSprite);
 
         this.ui.addChild(this.frame, this.playButton, this.volumeButton, this.nextButton, this.fullButton);
         this.container.addChild(this.ui);

@@ -118,7 +118,6 @@ export class linkObject extends GameObject {
         this.x = 0;
         this.y = 0;
         this.url = "image/building/know/billboard.png";
-        this.aurl = undefined;
         this.spriteHeight = 250;
         this.zoomIn = 2;
         this.fadeText = "點擊認識"
@@ -129,19 +128,10 @@ export class linkObject extends GameObject {
             this.sprite.texture = PIXI.Texture.from(this.url);
             this.sprite.anchor.set(0.5);
             this.sprite.scale.set(this.scale);
-            if (this.aurl) {
-                this.blink = FilterSet.blink_alpha();
-                this.alphaSprite = PIXI.Sprite.from(this.aurl);
-                this.alphaSprite.anchor.set(0.5);
-                this.alphaSprite.scale.set(this.scale);
-                this.alphaSprite.filters = [this.blink.filter];
-                this.blink.knockout = true;
-                this.container.addChild(this.alphaSprite);
-            }
-            else {
-                this.blink = FilterSet.blink();
-                this.sprite.filters = [this.blink.filter];
-            }
+
+            this.blink = FilterSet.blink();
+            this.sprite.filters = [this.blink.filter];
+
             this.text = new PIXI.Text(this.fadeText, this.ts);
             this.text.anchor.set(0.5);
             this.textHeight = this.spriteHeight + 10;
@@ -375,6 +365,7 @@ export class Video extends linkObject {
         this.isClick = true;
     }
     cancelEvent() {
+        this.video.children.logo.cancelEvent();
         let tl = gsap.timeline({ onComplete: function () { this.sprite.interactive = true; }.bind(this) });
         tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
         tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
@@ -420,7 +411,7 @@ export class Video extends linkObject {
         this.fullButton.position.set(-standard, h);
 
         this.playButton.clickEvent = function () {
-            if (this.video.videoCrol.paused) { this.play(); } else { this.pause(); }
+            if (this.video.videoCrol.paused && this.video.isStart) { this.play(); } else { this.pause(); }
         }.bind(this);
 
         this.nextButton.clickEvent = function () {
@@ -484,7 +475,6 @@ export class Video extends linkObject {
         addPointerEvent(this.volumeButton);
         addPointerEvent(this.nextButton);
         addPointerEvent(this.fullButton);
-        addPointerEvent(this.video.videoSprite);
 
         this.ui.addChild(this.frame, this.playButton, this.volumeButton, this.nextButton, this.fullButton);
         this.container.addChild(this.ui);
