@@ -116,7 +116,8 @@ export class ActionVideo extends ActionObject {
                 this.videoCrol.ontimeupdate = () => {
                     this.currentTime = this.videoCrol.currentTime;
                 };
-                this.drawBg();
+                this.drawBg("white");
+                this.bg.alpha = 1;
                 this.count = 0;
                 this.isEnd = false;
                 console.log("load " + this.name);
@@ -155,6 +156,7 @@ export class ActionVideo extends ActionObject {
     onPlayGame() {
         this.pause();
         this.isPlayGame = true;
+        this.drawBg();
         gsap.to(this.bg, { duration: 1, alpha: 0.5 });
     }
     onClearGame() {
@@ -288,7 +290,7 @@ export class ActionRope extends ActionObject {
     constructor(manager, action) {
         super(manager, action);
         this.name = "Rope";
-        this.offset = 0.05;
+        this.offset = 0.075;
         this.container.zIndex = 100;
         this.isFrist = true;
         this.w = this.manager.w;
@@ -322,13 +324,13 @@ export class ActionRope extends ActionObject {
             .drawCircle(0, 0, 5)
             .endFill()
         this.rope = new PIXI.SimpleRope(this.manager.app.renderer.generateTexture(this.texture), this.points);
-        const mask = new PIXI.Graphics();
-        mask.beginFill(0xFF0000);
-        mask.drawRect(0, 0, 1920, 1080);
-        mask.endFill();
-        mask.pivot.set(960, 540);
-        this.action.addChild(mask);
-        this.rope.mask = mask;
+        this.mask = new PIXI.Graphics();
+        this.mask.beginFill(0xFF0000);
+        this.mask.drawRect(0, 0, 1920, 1080);
+        this.mask.endFill();
+        this.mask.pivot.set(960, 540);
+        this.action.addChild(this.mask);
+        this.rope.mask = this.mask;
         this.container.addChild(this.rope);
         this.container.position.set(-this.w / 2, -this.h / 2);
     }
@@ -367,25 +369,28 @@ export class ActionRope extends ActionObject {
     }
     onRopeComplete(c = this.action.children) {
         if (!c) return;
-        let vv = c.line.getPoints();
+        let vv = c.line.getPoints().slice();
         let v = [vv.at(-1), vv[Math.ceil(vv.length / 2)], vv[0]];
-        let h = c.rope.history;
-        let s = this.action.container.getBounds();
+        let h = this.history;
+        let s = this.mask.getBounds();
+        //console.log(`x:${s.x},y:${s.y},w:${s.width},h:${s.height}`);
         let isPass = v.map((_, i, v) => {
+            let vx = Math.round((v[i].x / 1920) * 1000) / 1000;
+            let vy = Math.round((v[i].y / 1080) * 1000) / 1000;
+            //console.log(`---\novx:${v[i].x},ovy:${v[i].y},\nnvx:${vx},nvy:${vy}`);
             return h.map((_, j, h) => {
-                let hx = (h[j].x - s.x) / (s.x + s.width);
-                let hy = (h[j].y - s.y) / (s.y + s.height);
-                let vx = v[i].x / 1920;
-                let vy = v[i].y / 1080;
+                let hx = Math.round(((h[j].x - s.x) / s.width) * 1000) / 1000;
+                let hy = Math.round(((h[j].y - s.y) / s.height) * 1000) / 1000;
+                //console.log(`ohx:${h[j].x},ohy:${h[j].y},\nnhx:${hx},nhy:${hy}`);
                 return Math.abs(hx - vx) < this.offset && Math.abs(hy - vy) < this.offset;
             }).some(e => e);
         }).reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= v.length / 2 ? true : false;
         console.log(`RopeComplete:${isPass}`);
         if (isPass) {
             this.action.isPlayGame = false;
+            this.onClearGame();
             c.video.onClearGame();
             c.ui.onClearGame();
-            this.onClearGame();
         }
     }
     update() {
@@ -522,7 +527,10 @@ export class ActionStart extends ActionUI {
                 duration: 1, alpha: 0, onComplete: function () {
                     this.action.removeChild(this.container);
                     this.action.children.video.isStart = true;
-                    this.action.obj.play();
+                    this.action.children.video.play();
+                    this.action.removeChild(this.action.children.video.bg);
+                    this.action.children.video.drawBg();
+                    this.action.obj.playButton.texture = PIXI.Texture.from("image/video/pause.png");
                 }.bind(this)
             });
         }
@@ -586,16 +594,19 @@ export class ActionLinsStage extends ActionUI {
         this.titleUrl = "image/video/youth/bus/stage_1_title.png";
         this.hintUrl = "image/video/youth/bus/stage_1_hint.png";
         this.hintPos = [0.284, 0.397];
-        this.isLast = false;
         this.draw = function () {
             this.drawline();
             this.drawStage();
+            this.drawRope();
         }
+    }
+    drawRope() {
+        this.action.children.rope = new ActionRope(this.manager, this.action);
+        this.action.children.rope.setup();
     }
     drawline() {
         this.action.children.line = new ActionLine(this.manager, this.action, this.linePoint);
         this.action.children.line.setup();
-
     }
     drawStage() {
         this.countdown = new ActionCountDown(this.manager, this.action, this);
@@ -617,11 +628,9 @@ export class ActionLinsStage extends ActionUI {
             onComplete: function () {
                 this.action.removeChild(this.container);
                 this.action.removeChild(this.action.children.line.container);
+                this.action.removeChild(this.action.children.rope.container);
                 this.action.children.line.hintGsap.kill();
-                if (this.isLast) {
-                    this.action.removeChild(this.action.children.rope.container);
-                    delete this.action.children.rope;
-                }
+                delete this.action.children.rope;
                 delete this.action.children.line;
                 delete this.action.children.ui;
             }.bind(this)

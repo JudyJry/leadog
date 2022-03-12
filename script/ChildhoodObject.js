@@ -29,8 +29,8 @@ class ChildhoodVideo extends Video {
         this.y = -0.059;
         this.url = "image/building/childhood/video.png";
         this.videoList = [
-            function () { return new ChildhoodAction_Kelly(this.manager, this) }.bind(this),
-            //function () { return new ChildhoodAction_Dora(this.manager, this) }.bind(this),
+            //function () { return new ChildhoodAction_Kelly(this.manager, this) }.bind(this),
+            function () { return new ChildhoodAction_Dora(this.manager, this) }.bind(this),
         ];
     }
 }

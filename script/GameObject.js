@@ -371,6 +371,7 @@ export class Video extends linkObject {
         tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
         tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
         this.pause();
+        this.video.container.removeChildren();
         this.container.removeChild(this.video.container, this.ui);
 
         this.page.isZoomIn = false;

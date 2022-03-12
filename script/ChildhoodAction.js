@@ -11,7 +11,6 @@ export class ChildhoodAction_Kelly extends Action.ActionPage {
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "childhood_kelly", "sound/childhood_kelly.wav"),
             "video": new Childhood_Kelly_Video(this.manager, this, "video/childhood_kelly.mp4"),
-            "rope": new Action.ActionRope(this.manager, this),
             "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗在寄養家庭中習慣人類社會生活吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
@@ -72,7 +71,6 @@ class Childhood_Kelly_UI_Stage1 extends Action.ActionLinsStage {
         this.titleUrl = "image/video/childhood/Kelly/stage_1_title.png";
         this.hintUrl = "image/video/childhood/Kelly/stage_1_hint.png";
         this.hintPos = [-0.25, 0.05];
-        this.isLast = true;
     }
 }
 class Childhood_Kelly_UI_Stage2 extends Action.ActionButtonStage {
@@ -218,7 +216,6 @@ export class ChildhoodAction_Dora extends Action.ActionPage {
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "childhood_dora", "sound/childhood_dora.wav"),
             "video": new Childhood_Dora_Video(this.manager, this, "video/childhood_dora.mp4"),
-            "rope": new Action.ActionRope(this.manager, this),
             "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗在生活中習慣與人相處吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
@@ -279,7 +276,7 @@ class Childhood_Dora_UI_Stage1 extends Action.ActionLinsStage {
     constructor(manager, action) {
         super(manager, action);
         this.scale = 1;
-        this.linePoint = [1288, 741, 1348, 852, 1844, 1030];
+        this.linePoint = [1218, 669, 1330, 761, 1341, 899];
         this.titleUrl = "image/video/childhood/Dora/stage_1_title.png";
         this.hintUrl = "image/video/childhood/Dora/stage_1_hint.png";
         this.hintPos = [-0.25, 0.35];
@@ -299,7 +296,7 @@ class Childhood_Dora_UI_Stage3 extends Action.ActionLinsStage {
     constructor(manager, action) {
         super(manager, action);
         this.scale = 1;
-        this.linePoint = [763, 509, 673, 555, 619, 639];
+        this.linePoint = [665, 545, 561, 638, 497, 787];
         this.titleUrl = "image/video/childhood/Dora/stage_3_title.png";
         this.hintUrl = "image/video/childhood/Dora/stage_3_hint.png";
         this.hintPos = [-0.2, 0.38];
@@ -309,10 +306,9 @@ class Childhood_Dora_UI_Stage4 extends Action.ActionLinsStage {
     constructor(manager, action) {
         super(manager, action);
         this.scale = 1;
-        this.linePoint = [1002, 569, 1031, 642, 1049, 713];
+        this.linePoint = [1078, 643, 1116, 789, 1147, 925];
         this.titleUrl = "image/video/childhood/Dora/stage_4_title.png";
         this.hintUrl = "image/video/childhood/Dora/stage_4_hint.png";
         this.hintPos = [-0.32, 0];
-        this.isLast = true;
     }
 }

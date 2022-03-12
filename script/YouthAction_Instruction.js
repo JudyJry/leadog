@@ -12,7 +12,6 @@ export default class YouthAction_Instruction extends Action.ActionPage {
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, "youth_instruction", "sound/youth_instruction.wav"),
             "video": new Youth_Instruction_Video(this.manager, this, "video/youth_instruction.mp4"),
-            "rope": new Action.ActionRope(this.manager, this),
             "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗認識指令並成功做到吧！"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
@@ -129,6 +128,6 @@ class Youth_Instruction_UI_Stage5 extends Action.ActionLinsStage {
         this.titleUrl = "image/video/youth/instruction/stage_5_title.png";
         this.hintUrl = "image/video/youth/instruction/stage_5_hint.png";
         this.hintPos = [0.1, -0.3];
-        this.isLast = true;
+
     }
 }
