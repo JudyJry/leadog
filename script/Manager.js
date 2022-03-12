@@ -118,11 +118,11 @@ export default class Manager {
                 this.loadPage(new BornObject(this), loadList.born);
                 break;
             case Page.childhood:
-                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
+                this.app.renderer.backgroundColor = 0xFEF1E9;
                 this.loadPage(new ChildhoodObject(this), loadList.childhood);
                 break;
             case Page.youth:
-                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
+                this.app.renderer.backgroundColor = ColorSlip.lightBlue;
                 this.loadPage(new YouthObject(this), loadList.youth);
                 break;
             case Page.elderly:

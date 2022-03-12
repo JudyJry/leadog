@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
+import { createSprite } from './GameFunction';
 
 export class ElderlyAction_Hair extends Action.ActionPage {
     constructor(manager, obj) {
@@ -75,27 +76,22 @@ class Elderly_Hair_UI_Stage extends Action.ActionUI {
         this.draw = function () {
             this.countdown = new Action.ActionCountDown(manager, action, this);
             this.countdown.setup();
-            let title = PIXI.Sprite.from(`image/video/elderly/hair/title_${this.count}.png`);
-            let hint = PIXI.Sprite.from(`image/video/elderly/hair/hint_${this.count}.png`);
-            let button_1 = PIXI.Sprite.from("image/video/elderly/hair/button_1.png");
-            let button_2 = PIXI.Sprite.from("image/video/elderly/hair/button_2.png");
-            let button_3 = PIXI.Sprite.from("image/video/elderly/hair/button_3.png");
-            title.anchor.set(0.5);
-            title.scale.set(this.scale);
-            this.setPosition(title, 0.38, -0.42);
-            hint.anchor.set(0.5);
-            hint.scale.set(this.scale);
+            let title = createSprite(`image/video/elderly/hair/title_${this.count}.png`, [1, 0.5], this.scale);
+            let hint = createSprite(`image/video/elderly/hair/hint_${this.count}.png`, 0.5, this.scale);
+            let button_1 = createSprite("image/video/elderly/hair/button_1.png", 0.5, this.scale);
+            let button_2 = createSprite("image/video/elderly/hair/button_2.png", 0.5, this.scale);
+            let button_3 = createSprite("image/video/elderly/hair/button_3.png", 0.5, this.scale);
+
+            title.position.set((0.5 * this.w) - 150, (-0.5 * this.h) + 95);
+
             this.setPosition(hint, -0.284, -0.4);
-            button_1.anchor.set(0.5);
-            button_1.scale.set(this.scale);
+
             button_1.name = this.choose[0];
             this.setPosition(button_1, 0.4, -0.1);
-            button_2.anchor.set(0.5);
-            button_2.scale.set(this.scale);
+
             button_2.name = this.choose[1];
             this.setPosition(button_2, 0.1, 0.4);
-            button_3.anchor.set(0.5);
-            button_3.scale.set(this.scale);
+
             button_3.name = this.choose[2];
             this.setPosition(button_3, -0.35, -0.2);
 

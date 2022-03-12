@@ -50,75 +50,13 @@ class Youth_Bus_Video extends Action.ActionVideo {
         }
     }
 }
-class Youth_Bus_UI_Stage1 extends Action.ActionUI {
+class Youth_Bus_UI_Stage1 extends Action.ActionLinsStage {
     constructor(manager, action) {
         super(manager, action);
-        this.name = "Youth_Bus_UI_Stage1";
         this.scale = 1;
-        this.draw = function () {
-            this.countdown = new Action.ActionCountDown(manager, action, this);
-            this.action.children.line = new Youth_Bus_Stage1_Line(manager, action);
-            this.countdown.setup();
-            this.action.children.line.setup();
-
-            let title = PIXI.Sprite.from("image/video/youth/bus/stage_1_title.png");
-            let hint = PIXI.Sprite.from("image/video/youth/bus/stage_1_hint.png");
-            title.anchor.set(0.5);
-            title.scale.set(this.scale);
-            this.setPosition(title, 0.38, -0.42);
-            hint.anchor.set(0.5);
-            hint.scale.set(this.scale);
-            this.setPosition(hint, 0.284, 0.397);
-
-            this.container.addChild(title, hint);
-            this.container.alpha = 0;
-            gsap.to(this.container, { duration: 1, alpha: 1 });
-        }
-    }
-    onClearGame() {
-        let gj = new Action.ActionGoodjob(this.manager, this.action);
-        gj.setup();
-        gsap.to(this.container, {
-            duration: 1, alpha: 0,
-            onComplete: function () {
-                this.action.removeChild(this.container);
-                this.action.removeChild(this.action.children.line.container);
-                this.action.removeChild(this.action.children.rope.container);
-                this.action.children.line.hintGsap.kill();
-                delete this.action.children.line;
-                delete this.action.children.rope;
-                delete this.action.children.ui;
-            }.bind(this)
-        });
-    }
-    update() {
-        try {
-            if (Math.floor(this.countdown.times) > 5) {
-                this.action.removeChild(this.countdown.container);
-                this.countdown.sprite.destroy();
-                this.countdown.container.destroy();
-                this.countdown = undefined;
-            }
-            else {
-                this.countdown.update();
-            }
-        }
-        catch {
-            this.countdown = new Action.ActionCountDown(this.manager, this.action, this);
-            this.countdown.setup();
-        }
-    }
-}
-class Youth_Bus_Stage1_Line extends Action.ActionLine {
-    constructor(manager, action) {
-        super(manager, action);
-        this.name = "Youth_Bus_Stage1_Line"
-        this.draw = function () {
-            this.sprite.moveTo(1527, 601).bezierCurveTo(1527, 601, 1656, 533, 1792, 510);
-            this.drawHint();
-            this.container.addChild(this.sprite);
-            this.container.position.set(-this.w / 2, -this.h / 2);
-            this.action.container.sortChildren();
-        }
+        this.linePoint = [1527, 601, 1656, 533, 1792, 510];
+        this.titleUrl = "image/video/youth/bus/stage_1_title.png";
+        this.hintUrl = "image/video/youth/bus/stage_1_hint.png";
+        this.hintPos = [0.284, 0.397];
     }
 }

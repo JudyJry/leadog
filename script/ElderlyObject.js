@@ -61,7 +61,7 @@ class Tv extends Video {
             if (!this.fullButton.turn) {
                 this.frame.alpha = 1;
                 this.UItint("white");
-                this.page.container.scale.set(this.zoomIn * this.manager.canvasScale);
+                this.page.container.scale.set(this.zoomIn);
                 this.page.container.position.set((-this._x + 83.5) * this.zoomIn, (-this._y - 73.5) * this.zoomIn);
             }
             else if (this.fullButton.turn) {
@@ -106,16 +106,6 @@ class Tv extends Video {
         else {
             this.blink.effect();
         }
-    }
-    drawCancel() {
-        let ch = this.sprite.height / 2;
-        let cw = this.sprite.width / 2;
-        this.cancel = createSprite('image/cancel.svg', 0.5, 0.8);
-        this.cancel.position.set(cw - 150, -ch + 270);
-        this.cancel.clickEvent = this.cancelEvent.bind(this);
-        addPointerEvent(this.cancel);
-        this.container.addChild(this.cancel);
-        this.cancel.visible = false;
     }
     clickEvent() {
         this.sprite.interactive = false;

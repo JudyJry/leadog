@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
 import { Page } from './Data';
+import { createSprite } from './GameFunction';
 
 export default class YouthAction_Traffic extends Action.ActionPage {
     constructor(manager, obj) {
@@ -63,30 +64,19 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
             this.sound = new Action.ActionSound(this.manager, this, `youth_traffic_${this.random + 1}`, this.dirSound[this.random]);
             this.sound.play();
 
-            let title = PIXI.Sprite.from("image/video/youth/traffic/stage_1_title.png");
-            let hint = PIXI.Sprite.from("image/video/youth/traffic/stage_1_hint.png");
-            let choose_1 = PIXI.Sprite.from("image/video/youth/traffic/stage_1_choose_1.png");
-            let choose_2 = PIXI.Sprite.from("image/video/youth/traffic/stage_1_choose_2.png");
-            let button_1 = PIXI.Sprite.from("image/video/youth/traffic/stage_1_button_1.png");
-            let button_2 = PIXI.Sprite.from("image/video/youth/traffic/stage_1_button_2.png");
-            title.anchor.set(0.5);
-            title.scale.set(this.scale);
-            this.setPosition(title, 0.38, -0.42);
-            hint.anchor.set(0.5);
-            hint.scale.set(this.scale);
+            let title = createSprite("image/video/youth/traffic/stage_1_title.png", [1, 0.5], this.scale);
+            let hint = createSprite("image/video/youth/traffic/stage_1_hint.png", 0.5, this.scale);
+            let choose_1 = createSprite("image/video/youth/traffic/stage_1_choose_1.png", 0.5, this.scale);
+            let choose_2 = createSprite("image/video/youth/traffic/stage_1_choose_2.png", 0.5, this.scale);
+            let button_1 = createSprite("image/video/youth/traffic/stage_1_button_1.png", 0.5, this.scale);
+            let button_2 = createSprite("image/video/youth/traffic/stage_1_button_2.png", 0.5, this.scale);
+
+            title.position.set((0.5 * this.w) - 150, (-0.5 * this.h) + 95);
             this.setPosition(hint, 0, -0.3);
-            choose_1.anchor.set(0.5);
-            choose_1.scale.set(this.scale);
             this.setPosition(choose_1, 0.35, -0.1);
-            choose_2.anchor.set(0.5);
-            choose_2.scale.set(this.scale);
             this.setPosition(choose_2, -0.35, -0.1);
-            button_1.anchor.set(0.5);
-            button_1.scale.set(this.scale);
             button_1.name = this.dir[0];
             this.setPosition(button_1, 0.35, 0.1);
-            button_2.anchor.set(0.5);
-            button_2.scale.set(this.scale);
             button_2.name = this.dir[1];
             this.setPosition(button_2, -0.35, 0.1);
 

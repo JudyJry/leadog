@@ -59,12 +59,19 @@ class ActionObject extends GameObject {
         super(manager);
         this.action = action;
         this.name = "ActionObject";
+        this.w = 1920;
+        this.h = 1080;
     }
     setup() {
         this.draw();
         this.container.name = this.name;
         this.container.scale.set(this.manager.canvasScale);
         this.action.addChild(this.container);
+    }
+    resize() {
+        this.container.removeChildren();
+        this.draw();
+        this.container.scale.set(this.manager.canvasScale);
     }
 }
 export class LogoVideo extends ActionObject {
@@ -213,7 +220,7 @@ export class ActionSound {
     }
 }
 export class ActionLine extends ActionObject {
-    constructor(manager, action) {
+    constructor(manager, action, linePoint) {
         super(manager, action);
         this.name = "Line";
         this.isFrist = true;
@@ -224,8 +231,19 @@ export class ActionLine extends ActionObject {
             join: PIXI.LINE_JOIN.ROUND
         };
         this.sprite = new PIXI.Graphics().lineStyle(this.lineStyle);
+        this.linePoint = linePoint;
         this.container.zIndex = 10;
         this.container.alpha = 1;
+        this.draw = function () {
+            this.drawLine();
+            this.drawHint();
+            this.container.addChild(this.sprite);
+            this.container.position.set(-this.w / 2, -this.h / 2);
+            this.action.container.sortChildren();
+        }
+    }
+    drawLine(p = this.linePoint) {
+        this.sprite.moveTo(p[0], p[1]).bezierCurveTo(p[0], p[1], p[2], p[3], p[4], p[5]);
     }
     drawHint() {
         this.hint = createSprite("image/video/cursorHint.png", 0.5, 0.3);
@@ -267,12 +285,27 @@ export class ActionRope extends ActionObject {
     constructor(manager, action) {
         super(manager, action);
         this.name = "Rope";
-        this.offset = 100;
+        this.offset = 150;
         this.container.zIndex = 100;
         this.isFrist = true;
+        this.w = this.manager.w;
+        this.h = this.manager.h;
         this.draw = function () {
             this.drawRope();
         }
+    }
+    setup() {
+        this.draw();
+        this.container.name = this.name;
+        this.container.scale.set(this.manager.canvasScale);
+        this.manager.app.stage.addChild(this.container);
+    }
+    resize() {
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.removeChildren();
+        this.draw();
+        this.container.scale.set(this.manager.canvasScale);
     }
     drawRope() {
         this.points = [];
@@ -286,7 +319,13 @@ export class ActionRope extends ActionObject {
             .drawCircle(0, 0, 5)
             .endFill()
         this.rope = new PIXI.SimpleRope(this.manager.app.renderer.generateTexture(this.texture), this.points);
-        //this.rope.blendmode = PIXI.BLEND_MODES.ADD;
+        const mask = new PIXI.Graphics();
+        mask.beginFill(0xFF0000);
+        mask.drawRect(0, 0, 1920, 1080);
+        mask.endFill();
+        mask.pivot.set(960, 540);
+        this.action.addChild(mask);
+        this.rope.mask = mask;
         this.container.addChild(this.rope);
         this.container.position.set(-this.w / 2, -this.h / 2);
     }
@@ -295,8 +334,8 @@ export class ActionRope extends ActionObject {
             if (this.isFrist) {
                 this.isFrist = false;
             }
-            console.log(`lineTo:${this.manager.mouse.x},${this.manager.mouse.y}`);
             this.history.unshift({ x: this.manager.mouse.x, y: this.manager.mouse.y });
+            console.log(`lineTo:${this.history[0].x},${this.history[0].y}`);
             for (let i = 0; i < this.ropeSize; i++) {
                 try {
                     this.points[i].x = this.history[i].x;
@@ -325,13 +364,17 @@ export class ActionRope extends ActionObject {
     }
     onRopeComplete(c = this.action.children) {
         if (!c) return;
-        let v = c.line.getPoints().slice().reverse();
-        //let h = [...new Set(c.rope.history.map(e => JSON.stringify(e)))].map(e => JSON.parse(e));
+        let vv = c.line.getPoints();
+        let v = [vv.at(-1), vv[Math.ceil(vv.length / 2)], vv[0]];
         let h = c.rope.history;
-        let mul = Math.floor(h.length / v.length) === 0 ? 1 : Math.floor(h.length / v.length);
+        let s = this.action.container.getBounds();
         let isPass = v.map((_, i, v) => {
             return h.map((_, j, h) => {
-                if (j < (i + 1) * mul && j >= i * mul) { return Math.abs(h[j].x - v[i].x) < this.offset && Math.abs(h[j].y - v[i].y) < this.offset; }
+                let hx = (h[j].x - s.x) / (s.x + s.width);
+                let hy = (h[j].y - s.y) / (s.y + s.height);
+                let vx = v[i].x / 1920;
+                let vy = v[i].y / 1080;
+                return Math.abs(hx - vx) < this.offset && Math.abs(hy - vy) < this.offset;
             }).some(e => e);
         }).reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= v.length / 2 ? true : false;
         console.log(`RopeComplete:${isPass}`);
@@ -397,9 +440,9 @@ export class ActionCountDown extends ActionObject {
             PIXI.Texture.from("image/video/count2.png"),
             PIXI.Texture.from("image/video/count1.png"),
         ]
-        this.draw = function (x = 0.45, y = -0.42) {
-            let _x = (x * this.w);
-            let _y = (y * this.h);
+        this.draw = function () {
+            let _x = (0.5 * this.w) - 100;
+            let _y = (-0.5 * this.h) + 100;
             this.sprite.texture = this.textureList[0];
             this.sprite.anchor.set(0.5);
             this.sprite.scale.set(this.scale);
@@ -420,9 +463,9 @@ export class ActionGoodjob extends ActionObject {
         super(manager, action);
         this.name = "ActionGoodjob";
         this.scale = 0.2;
-        this.draw = function (x = -0.3, y = 0.35) {
-            let _x = (x * this.w);
-            let _y = (y * this.h);
+        this.draw = function () {
+            let _x = (-0.5 * this.w) + 300;
+            let _y = (0.5 * this.h) - 150;
             this.sprite = createSprite("image/video/Goodjob.png", 0.5, this.scale);
             this.container.addChild(this.sprite);
             this.container.position.set(_x, _y);
@@ -511,6 +554,8 @@ export class ActionEnd extends ActionUI {
         this.container.alpha = 0;
     }
     end() {
+        if (this.action.obj.random === this.action.obj.videoList.length - 1) { this.action.obj.random = 0 }
+        else { this.action.obj.random += 1 }
         this.action.children.sound.isEnd = true;
         let tl = gsap.timeline();
         tl.to(this.container, { duration: 1, alpha: 1 });
@@ -528,5 +573,124 @@ export class ActionEnd extends ActionUI {
                 this.manager.uiSystem.container.position.set(0);
             }.bind(this)
         }, "+=2");
+    }
+}
+export class ActionLinsStage extends ActionUI {
+    constructor(manager, action) {
+        super(manager, action);
+        this.scale = 1;
+        this.linePoint = undefined;
+        this.titleUrl = "image/video/youth/bus/stage_1_title.png";
+        this.hintUrl = "image/video/youth/bus/stage_1_hint.png";
+        this.hintPos = [0.284, 0.397];
+        this.draw = function () {
+            this.drawline();
+            this.drawStage();
+        }
+    }
+    drawline() {
+        this.action.children.line = new ActionLine(this.manager, this.action, this.linePoint);
+        this.action.children.line.setup();
+
+    }
+    drawStage() {
+        this.countdown = new ActionCountDown(this.manager, this.action, this);
+        this.countdown.setup();
+        let title = createSprite(this.titleUrl, [1, 0.5], this.scale);
+        let hint = createSprite(this.hintUrl, 0.5, this.scale);
+        title.position.set((0.5 * this.w) - 150, (-0.5 * this.h) + 95);
+        this.setPosition(hint, this.hintPos[0], this.hintPos[1]);
+
+        this.container.addChild(title, hint);
+        this.container.alpha = 0;
+        gsap.to(this.container, { duration: 1, alpha: 1 });
+    }
+    onClearGame() {
+        let gj = new ActionGoodjob(this.manager, this.action);
+        gj.setup();
+        gsap.to(this.container, {
+            duration: 1, alpha: 0,
+            onComplete: function () {
+                this.action.removeChild(this.container);
+                this.action.removeChild(this.action.children.line.container);
+                this.action.removeChild(this.action.children.rope.container);
+                this.action.children.line.hintGsap.kill();
+                delete this.action.children.line;
+                delete this.action.children.rope;
+                delete this.action.children.ui;
+            }.bind(this)
+        });
+    }
+    update() {
+        try {
+            if (Math.floor(this.countdown.times) > 5) {
+                this.action.removeChild(this.countdown.container);
+                this.countdown.sprite.destroy();
+                this.countdown.container.destroy();
+                this.countdown = undefined;
+            }
+            else {
+                this.countdown.update();
+            }
+        }
+        catch {
+            this.countdown = new ActionCountDown(this.manager, this.action, this);
+            this.countdown.setup();
+        }
+    }
+}
+export class ActionButtonStage extends ActionUI {
+    constructor(manager, action) {
+        super(manager, action);
+        this.scale = 1;
+        this.titleUrl = "image/video/youth/bus/stage_1_title.png";
+        this.hintUrl = "image/video/youth/bus/stage_1_hint.png";
+        this.hintPos = [0.284, 0.397];
+        this.draw = function () {
+            this.drawStage();
+        }
+    }
+    drawStage() {
+        this.countdown = new ActionCountDown(this.manager, this.action, this);
+        this.countdown.setup();
+        let title = createSprite(this.titleUrl, [1, 0.5], this.scale);
+        let hint = createSprite(this.hintUrl, 0.5, this.scale);
+        title.position.set((0.5 * this.w) - 150, (-0.5 * this.h) + 95);
+        this.setPosition(hint, this.hintPos[0], this.hintPos[1]);
+
+        this.container.addChild(title, hint);
+        this.container.alpha = 0;
+        gsap.to(this.container, { duration: 1, alpha: 1 });
+    }
+
+    onClearGame() {
+        let gj = new ActionGoodjob(this.manager, this.action);
+        gj.setup();
+        gsap.to(this.container, {
+            duration: 1, alpha: 0,
+            onComplete: function () {
+                this.action.removeChild(this.container);
+                delete this.action.children.ui;
+
+            }.bind(this)
+        });
+    }
+    update() {
+        this.button.update();
+        try {
+            if (Math.floor(this.countdown.times) > 5) {
+                this.action.removeChild(this.countdown.container);
+                this.countdown.sprite.destroy();
+                this.countdown.container.destroy();
+                this.countdown = undefined;
+            }
+            else {
+                this.countdown.update();
+            }
+        }
+        catch {
+            this.countdown = new ActionCountDown(this.manager, this.action, this);
+            this.countdown.setup();
+        }
     }
 }

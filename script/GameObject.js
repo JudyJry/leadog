@@ -304,7 +304,7 @@ export class Video extends linkObject {
         this.container.scale.set(this.manager.canvasScale);
         if (this.isClick && this.fullButton) {
             if (!this.fullButton.turn) {
-                this.page.container.scale.set(this.zoomIn * this.manager.canvasScale);
+                this.page.container.scale.set(this.zoomIn);
                 this.page.container.position.set(-this._x * this.zoomIn, -this._y * this.zoomIn);
             }
             else if (this.fullButton.turn) {
@@ -393,6 +393,16 @@ export class Video extends linkObject {
                 document.msExitFullscreen();
             }
         }
+    }
+    drawCancel() {
+        let _x = (this.w * 0.5) - 60;
+        let _y = (this.h * -0.5) + 60;
+        this.cancel = createSprite('image/cancel.svg', 0.5);
+        this.cancel.position.set(_x, _y);
+        this.cancel.clickEvent = this.cancelEvent.bind(this);
+        addPointerEvent(this.cancel);
+        this.manager.app.stage.addChildAt(this.cancel, 1);
+        this.cancel.visible = false;
     }
     drawUI() {
         this.ui = new PIXI.Container();

@@ -59,30 +59,15 @@ class Youth_Instruction2_Video extends Action.ActionVideo {
 
     }
 }
-class Youth_Instruction2_UI_Stage1 extends Action.ActionUI {
+class Youth_Instruction2_UI_Stage1 extends Action.ActionLinsStage {
     constructor(manager, action) {
         super(manager, action);
         this.name = "Youth_Instruction2_UI_Stage1";
         this.scale = 1;
-        this.draw = function () {
-            this.countdown = new Action.ActionCountDown(manager, action, this);
-            this.action.children.line = new Youth_Instruction2_Stage1_Line(manager, action);
-            this.countdown.setup();
-            this.action.children.line.setup();
-
-            let title = PIXI.Sprite.from("image/video/youth/instruction2/stage_1_title.png");
-            let hint = PIXI.Sprite.from("image/video/youth/instruction2/stage_1_hint.png");
-            title.anchor.set(0.5);
-            title.scale.set(this.scale);
-            this.setPosition(title, 0.38, -0.42);
-            hint.anchor.set(0.5);
-            hint.scale.set(this.scale);
-            this.setPosition(hint, -0.3, 0);
-
-            this.container.addChild(title, hint);
-            this.container.alpha = 0;
-            gsap.to(this.container, { duration: 1, alpha: 1 });
-        }
+        this.linePoint = [886, 442, 743, 527, 1057, 571];
+        this.titleUrl = "image/video/youth/instruction2/stage_1_title.png";
+        this.hintUrl = "image/video/youth/instruction2/stage_1_hint.png";
+        this.hintPos = [-0.3, 0];
     }
     onClearGame() {
         let gj = new Action.ActionGoodjob(this.manager, this.action);
@@ -98,61 +83,16 @@ class Youth_Instruction2_UI_Stage1 extends Action.ActionUI {
             }.bind(this)
         });
     }
-    update() {
-        try {
-            if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
-                this.countdown.sprite.destroy();
-                this.countdown.container.destroy();
-                this.countdown = undefined;
-            }
-            else {
-                this.countdown.update();
-            }
-        }
-        catch {
-            this.countdown = new Action.ActionCountDown(this.manager, this.action, this);
-            this.countdown.setup();
-        }
-    }
 }
-class Youth_Instruction2_Stage1_Line extends Action.ActionLine {
-    constructor(manager, action) {
-        super(manager, action);
-        this.name = "Youth_Instruction2_Stage1_Line"
-        this.draw = function () {
-            this.sprite.moveTo(886, 442).bezierCurveTo(886, 442, 743, 527, 1057, 571);
-            this.drawHint();
-            this.container.addChild(this.sprite);
-            this.container.position.set(-this.w / 2, -this.h / 2);
-            this.manager.app.stage.sortChildren();
-        }
-    }
-}
-class Youth_Instruction2_UI_Stage2 extends Action.ActionUI {
+class Youth_Instruction2_UI_Stage2 extends Action.ActionLinsStage {
     constructor(manager, action) {
         super(manager, action);
         this.name = "Youth_Instruction2_UI_Stage2";
         this.scale = 1;
-        this.draw = function () {
-            this.countdown = new Action.ActionCountDown(manager, action, this);
-            this.action.children.line = new Youth_Instruction2_Stage2_Line(manager, action);
-            this.countdown.setup();
-            this.action.children.line.setup();
-
-            let title = PIXI.Sprite.from("image/video/youth/instruction2/stage_2_title.png");
-            let hint = PIXI.Sprite.from("image/video/youth/instruction2/stage_2_hint.png");
-            title.anchor.set(0.5);
-            title.scale.set(this.scale);
-            this.setPosition(title, 0.34, -0.42);
-            hint.anchor.set(0.5);
-            hint.scale.set(this.scale);
-            this.setPosition(hint, 0.3, 0.35);
-
-            this.container.addChild(title, hint);
-            this.container.alpha = 0;
-            gsap.to(this.container, { duration: 1, alpha: 1 });
-        }
+        this.linePoint = [671, 619, 444, 535, 344, 718];
+        this.titleUrl = "image/video/youth/instruction2/stage_2_title.png";
+        this.hintUrl = "image/video/youth/instruction2/stage_2_hint.png";
+        this.hintPos = [0.3, 0.35];
     }
     onClearGame() {
         let gj = new Action.ActionGoodjob(this.manager, this.action);
@@ -169,35 +109,5 @@ class Youth_Instruction2_UI_Stage2 extends Action.ActionUI {
                 delete this.action.children.ui;
             }.bind(this)
         });
-    }
-    update() {
-        try {
-            if (Math.floor(this.countdown.times) > 5) {
-                this.manager.removeChild(this.countdown.container);
-                this.countdown.sprite.destroy();
-                this.countdown.container.destroy();
-                this.countdown = undefined;
-            }
-            else {
-                this.countdown.update();
-            }
-        }
-        catch {
-            this.countdown = new Action.ActionCountDown(this.manager, this.action, this);
-            this.countdown.setup();
-        }
-    }
-}
-class Youth_Instruction2_Stage2_Line extends Action.ActionLine {
-    constructor(manager, action) {
-        super(manager, action);
-        this.name = "Youth_Instruction2_Stage2_Line"
-        this.draw = function () {
-            this.sprite.moveTo(671, 619).bezierCurveTo(671, 619, 444, 535, 344, 718);
-            this.drawHint();
-            this.container.addChild(this.sprite);
-            this.container.position.set(-this.w / 2, -this.h / 2);
-            this.manager.app.stage.sortChildren();
-        }
     }
 }

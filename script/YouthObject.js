@@ -31,7 +31,8 @@ class YouthVideo extends Video {
         this.x = 0.363;
         this.y = -0.037;
         this.url = "image/building/youth/video.png";
-        this.uiScale = 0.25;
+        this.zoomIn = 1.8;
+        this.uiScale = 0.2;
         this.videoList = [
             function () { return new YouthAction_Bus(this.manager, this) }.bind(this),
             function () { return new YouthAction_Traffic(this.manager, this) }.bind(this),
@@ -45,8 +46,7 @@ class YouthVideo extends Video {
         this.container.scale.set(this.manager.canvasScale);
         if (this.isClick && this.fullButton) {
             if (!this.fullButton.turn) {
-                this.frame.alpha = 1;
-                this.page.container.scale.set(this.zoomIn * this.manager.canvasScale);
+                this.page.container.scale.set(this.zoomIn);
                 this.page.container.position.set((-this._x + 0) * this.zoomIn, (-this._y + 25) * this.zoomIn);
             }
             else if (this.fullButton.turn) {
@@ -114,13 +114,13 @@ class YouthVideo extends Video {
         this.nextButton = createSprite("image/video/next.png", 0.5, this.uiScale);
         this.fullButton = createSprite("image/video/full.png", 0.5, this.uiScale);
 
-        let standard = -320;
+        let standard = -300;
         let h = 186;
-        let space = 40;
+        let space = 35;
         this.playButton.position.set(standard, h);
         this.nextButton.position.set(standard + space * 1, h);
         this.volumeButton.position.set(standard + space * 2, h);
-        this.fullButton.position.set(-standard - 20, h);
+        this.fullButton.position.set(-standard, h);
 
         this.playButton.clickEvent = function () {
             if (this.video.videoCrol.paused && this.video.isStart) { this.play(); } else { this.pause(); }
