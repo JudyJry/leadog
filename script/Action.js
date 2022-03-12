@@ -288,7 +288,7 @@ export class ActionRope extends ActionObject {
     constructor(manager, action) {
         super(manager, action);
         this.name = "Rope";
-        this.offset = 150;
+        this.offset = 0.05;
         this.container.zIndex = 100;
         this.isFrist = true;
         this.w = this.manager.w;
@@ -586,6 +586,7 @@ export class ActionLinsStage extends ActionUI {
         this.titleUrl = "image/video/youth/bus/stage_1_title.png";
         this.hintUrl = "image/video/youth/bus/stage_1_hint.png";
         this.hintPos = [0.284, 0.397];
+        this.isLast = false;
         this.draw = function () {
             this.drawline();
             this.drawStage();
@@ -616,10 +617,12 @@ export class ActionLinsStage extends ActionUI {
             onComplete: function () {
                 this.action.removeChild(this.container);
                 this.action.removeChild(this.action.children.line.container);
-                this.action.removeChild(this.action.children.rope.container);
                 this.action.children.line.hintGsap.kill();
+                if (this.isLast) {
+                    this.action.removeChild(this.action.children.rope.container);
+                    delete this.action.children.rope;
+                }
                 delete this.action.children.line;
-                delete this.action.children.rope;
                 delete this.action.children.ui;
             }.bind(this)
         });

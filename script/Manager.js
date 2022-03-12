@@ -114,7 +114,7 @@ export default class Manager {
                 this.loadPage(new HomeObject(this), loadList.home);
                 break;
             case Page.born:
-                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
+                this.app.renderer.backgroundColor = 0xF9EBCF;
                 this.loadPage(new BornObject(this), loadList.born);
                 break;
             case Page.childhood:
@@ -126,11 +126,11 @@ export default class Manager {
                 this.loadPage(new YouthObject(this), loadList.youth);
                 break;
             case Page.elderly:
-                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
+                this.app.renderer.backgroundColor = 0xFBF5EE;
                 this.loadPage(new ElderlyObject(this), loadList.elderly);
                 break;
             case Page.company:
-                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
+                this.app.renderer.backgroundColor = 0xFBF5EE;
                 this.loadPage(new CompanyObject(this), loadList.company);
                 break;
             case Page.market:
@@ -138,7 +138,7 @@ export default class Manager {
                 this.loadPage(new MarketObject(this), loadList.market);
                 break;
             case Page.know:
-                this.app.renderer.backgroundColor = ColorSlip.lightYellow;
+                this.app.renderer.backgroundColor = 0xFFFCF4;
                 this.loadPage(new KnowObject(this), loadList.know);
                 break;
         }

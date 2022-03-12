@@ -58,5 +58,6 @@ class Youth_Bus_UI_Stage1 extends Action.ActionLinsStage {
         this.titleUrl = "image/video/youth/bus/stage_1_title.png";
         this.hintUrl = "image/video/youth/bus/stage_1_hint.png";
         this.hintPos = [0.284, 0.397];
+        this.isLast = true;
     }
 }

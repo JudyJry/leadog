@@ -69,20 +69,6 @@ class Youth_Instruction2_UI_Stage1 extends Action.ActionLinsStage {
         this.hintUrl = "image/video/youth/instruction2/stage_1_hint.png";
         this.hintPos = [-0.3, 0];
     }
-    onClearGame() {
-        let gj = new Action.ActionGoodjob(this.manager, this.action);
-        gj.setup();
-        gsap.to(this.container, {
-            duration: 1, alpha: 0,
-            onComplete: function () {
-                this.manager.removeChild(this.container);
-                this.manager.removeChild(this.action.children.line.container);
-                this.action.children.line.hintGsap.kill();
-                delete this.action.children.line;
-                delete this.action.children.ui;
-            }.bind(this)
-        });
-    }
 }
 class Youth_Instruction2_UI_Stage2 extends Action.ActionLinsStage {
     constructor(manager, action) {
@@ -93,21 +79,6 @@ class Youth_Instruction2_UI_Stage2 extends Action.ActionLinsStage {
         this.titleUrl = "image/video/youth/instruction2/stage_2_title.png";
         this.hintUrl = "image/video/youth/instruction2/stage_2_hint.png";
         this.hintPos = [0.3, 0.35];
-    }
-    onClearGame() {
-        let gj = new Action.ActionGoodjob(this.manager, this.action);
-        gj.setup();
-        gsap.to(this.container, {
-            duration: 1, alpha: 0,
-            onComplete: function () {
-                this.manager.removeChild(this.container);
-                this.manager.removeChild(this.action.children.line.container);
-                this.manager.removeChild(this.action.children.rope.container);
-                this.action.children.line.hintGsap.kill();
-                delete this.action.children.line;
-                delete this.action.children.rope;
-                delete this.action.children.ui;
-            }.bind(this)
-        });
+        this.isLast = true;
     }
 }

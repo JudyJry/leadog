@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { PageObject, linkObject, Background, Player, Door, Video } from './GameObject.js';
-import ChildhoodAction_Kelly from './ChildhoodAction.js';
+import { ChildhoodAction_Dora, ChildhoodAction_Kelly } from './ChildhoodAction.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -28,7 +28,10 @@ class ChildhoodVideo extends Video {
         this.x = 0.372;
         this.y = -0.059;
         this.url = "image/building/childhood/video.png";
-        this.videoList = [function () { return new ChildhoodAction_Kelly(this.manager, this) }.bind(this)];
+        this.videoList = [
+            function () { return new ChildhoodAction_Kelly(this.manager, this) }.bind(this),
+            //function () { return new ChildhoodAction_Dora(this.manager, this) }.bind(this),
+        ];
     }
 }
 class Book extends linkObject {

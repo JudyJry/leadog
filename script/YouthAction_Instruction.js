@@ -86,20 +86,6 @@ class Youth_Instruction_UI_Stage1 extends Action.ActionLinsStage {
         this.hintUrl = "image/video/youth/instruction/stage_1_hint.png";
         this.hintPos = [-0.29, 0.25];
     }
-    onClearGame() {
-        let gj = new Action.ActionGoodjob(this.manager, this.action);
-        gj.setup();
-        gsap.to(this.container, {
-            duration: 1, alpha: 0,
-            onComplete: function () {
-                this.action.removeChild(this.container);
-                this.action.removeChild(this.action.children.line.container);
-                this.action.children.line.hintGsap.kill();
-                delete this.action.children.line;
-                delete this.action.children.ui;
-            }.bind(this)
-        });
-    }
 }
 class Youth_Instruction_UI_Stage2 extends Action.ActionLinsStage {
     constructor(manager, action) {
@@ -110,20 +96,6 @@ class Youth_Instruction_UI_Stage2 extends Action.ActionLinsStage {
         this.titleUrl = "image/video/youth/instruction/stage_2_title.png";
         this.hintUrl = "image/video/youth/instruction/stage_2_hint.png";
         this.hintPos = [-0.25, 0];
-    }
-    onClearGame() {
-        let gj = new Action.ActionGoodjob(this.manager, this.action);
-        gj.setup();
-        gsap.to(this.container, {
-            duration: 1, alpha: 0,
-            onComplete: function () {
-                this.action.removeChild(this.container);
-                this.action.removeChild(this.action.children.line.container);
-                this.action.children.line.hintGsap.kill();
-                delete this.action.children.line;
-                delete this.action.children.ui;
-            }.bind(this)
-        });
     }
 }
 class Youth_Instruction_UI_Stage3 extends Action.ActionLinsStage {
@@ -136,20 +108,6 @@ class Youth_Instruction_UI_Stage3 extends Action.ActionLinsStage {
         this.hintUrl = "image/video/youth/instruction/stage_3_hint.png";
         this.hintPos = [0.29, 0.29];
     }
-    onClearGame() {
-        let gj = new Action.ActionGoodjob(this.manager, this.action);
-        gj.setup();
-        gsap.to(this.container, {
-            duration: 1, alpha: 0,
-            onComplete: function () {
-                this.action.removeChild(this.container);
-                this.action.removeChild(this.action.children.line.container);
-                this.action.children.line.hintGsap.kill();
-                delete this.action.children.line;
-                delete this.action.children.ui;
-            }.bind(this)
-        });
-    }
 }
 class Youth_Instruction_UI_Stage4 extends Action.ActionLinsStage {
     constructor(manager, action) {
@@ -161,20 +119,6 @@ class Youth_Instruction_UI_Stage4 extends Action.ActionLinsStage {
         this.hintUrl = "image/video/youth/instruction/stage_4_hint.png";
         this.hintPos = [0.284, -0.18];
     }
-    onClearGame() {
-        let gj = new Action.ActionGoodjob(this.manager, this.action);
-        gj.setup();
-        gsap.to(this.container, {
-            duration: 1, alpha: 0,
-            onComplete: function () {
-                this.action.removeChild(this.container);
-                this.action.removeChild(this.action.children.line.container);
-                this.action.children.line.hintGsap.kill();
-                delete this.action.children.line;
-                delete this.action.children.ui;
-            }.bind(this)
-        });
-    }
 }
 class Youth_Instruction_UI_Stage5 extends Action.ActionLinsStage {
     constructor(manager, action) {
@@ -185,19 +129,6 @@ class Youth_Instruction_UI_Stage5 extends Action.ActionLinsStage {
         this.titleUrl = "image/video/youth/instruction/stage_5_title.png";
         this.hintUrl = "image/video/youth/instruction/stage_5_hint.png";
         this.hintPos = [0.1, -0.3];
-    }
-    onClearGame() {
-        let gj = new Action.ActionGoodjob(this.manager, this.action);
-        gj.setup();
-        gsap.to(this.container, {
-            duration: 1, alpha: 0,
-            onComplete: function () {
-                this.action.removeChild(this.container);
-                this.action.removeChild(this.action.children.line.container);
-                this.action.children.line.hintGsap.kill();
-                delete this.action.children.line;
-                delete this.action.children.ui;
-            }.bind(this)
-        });
+        this.isLast = true;
     }
 }

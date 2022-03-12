@@ -2,10 +2,9 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
 
-export default class ChildhoodAction_Kelly extends Action.ActionPage {
+export class ChildhoodAction_Kelly extends Action.ActionPage {
     constructor(manager, obj) {
         super(manager, obj);
-        this.name = "ChildhoodAction_Kelly";
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.44;
@@ -73,6 +72,7 @@ class Childhood_Kelly_UI_Stage1 extends Action.ActionLinsStage {
         this.titleUrl = "image/video/childhood/Kelly/stage_1_title.png";
         this.hintUrl = "image/video/childhood/Kelly/stage_1_hint.png";
         this.hintPos = [-0.25, 0.05];
+        this.isLast = true;
     }
 }
 class Childhood_Kelly_UI_Stage2 extends Action.ActionButtonStage {
@@ -206,5 +206,113 @@ class Childhood_Kelly_Stage3_Button extends Action.ActionUI {
     wait() {
         this.sprite.texture = this.spriteSheet[1];
         this.setInteract(this.sprite);
+    }
+}
+
+export class ChildhoodAction_Dora extends Action.ActionPage {
+    constructor(manager, obj) {
+        super(manager, obj);
+        this.offset = 50;
+        this.isPlayGame = false;
+        this.videoScale = 0.44;
+        this.children = {
+            "sound": new Action.ActionSound(this.manager, this, "childhood_dora", "sound/childhood_dora.wav"),
+            "video": new Childhood_Dora_Video(this.manager, this, "video/childhood_dora.mp4"),
+            "rope": new Action.ActionRope(this.manager, this),
+            "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗在生活中習慣與人相處吧！"),
+            "logo": new Action.LogoVideo(this.manager, this)
+        }
+        this.end = new Action.ActionEnd(this.manager, this,
+            `謝謝你幫助狗狗完成在寄養家庭階段的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+    }
+}
+class Childhood_Dora_Video extends Action.ActionVideo {
+    constructor(manager, action, url) {
+        super(manager, action, url);
+        this.pauseTime = [0, 4.1, 36.8, 54.8, 85.532, 94];
+        this.isEnd = true;
+        this.count = 0;
+    }
+    update() {
+        if (this.currentTime > this.pauseTime[this.count]) {
+            switch (this.count) {
+                case 0:
+                    this.container.alpha = 1;
+                    break;
+                case 1:
+                    this.action.isPlayGame = true;
+                    this.onPlayGame();
+                    this.action.children.ui = new Childhood_Dora_UI_Stage1(this.manager, this.action);
+                    this.action.children.ui.setup();
+                    break;
+                case 2:
+                    this.action.isPlayGame = true;
+                    this.onPlayGame();
+                    this.action.children.ui = new Childhood_Dora_UI_Stage2(this.manager, this.action);
+                    this.action.children.ui.setup();
+                    break;
+                case 3:
+                    this.action.isPlayGame = true;
+                    this.onPlayGame();
+                    this.action.children.ui = new Childhood_Dora_UI_Stage3(this.manager, this.action);
+                    this.action.children.ui.setup();
+                    break;
+                case 4:
+                    this.action.isPlayGame = true;
+                    this.onPlayGame();
+                    this.action.children.ui = new Childhood_Dora_UI_Stage4(this.manager, this.action);
+                    this.action.children.ui.setup();
+                    break;
+                case 5:
+                    if (!this.isEnd) {
+                        this.isEnd = true;
+                        this.onEnd();
+                    }
+                    break;
+            }
+            this.count++;
+        }
+
+    }
+}
+class Childhood_Dora_UI_Stage1 extends Action.ActionLinsStage {
+    constructor(manager, action) {
+        super(manager, action);
+        this.scale = 1;
+        this.linePoint = [1288, 741, 1348, 852, 1844, 1030];
+        this.titleUrl = "image/video/childhood/Dora/stage_1_title.png";
+        this.hintUrl = "image/video/childhood/Dora/stage_1_hint.png";
+        this.hintPos = [-0.25, 0.35];
+    }
+}
+class Childhood_Dora_UI_Stage2 extends Action.ActionLinsStage {
+    constructor(manager, action) {
+        super(manager, action);
+        this.scale = 1;
+        this.linePoint = [487, 886, 555, 763, 635, 695];
+        this.titleUrl = "image/video/childhood/Dora/stage_2_title.png";
+        this.hintUrl = "image/video/childhood/Dora/stage_2_hint.png";
+        this.hintPos = [0.25, 0.35];
+    }
+}
+class Childhood_Dora_UI_Stage3 extends Action.ActionLinsStage {
+    constructor(manager, action) {
+        super(manager, action);
+        this.scale = 1;
+        this.linePoint = [763, 509, 673, 555, 619, 639];
+        this.titleUrl = "image/video/childhood/Dora/stage_3_title.png";
+        this.hintUrl = "image/video/childhood/Dora/stage_3_hint.png";
+        this.hintPos = [-0.2, 0.38];
+    }
+}
+class Childhood_Dora_UI_Stage4 extends Action.ActionLinsStage {
+    constructor(manager, action) {
+        super(manager, action);
+        this.scale = 1;
+        this.linePoint = [1002, 569, 1031, 642, 1049, 713];
+        this.titleUrl = "image/video/childhood/Dora/stage_4_title.png";
+        this.hintUrl = "image/video/childhood/Dora/stage_4_hint.png";
+        this.hintPos = [-0.32, 0];
+        this.isLast = true;
     }
 }
