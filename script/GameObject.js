@@ -290,6 +290,7 @@ export class Video extends linkObject {
         this.spriteHeight = 10;
         this.videoList = [];
         this.uiScale = 0.25;
+        this.uiHitArea = 85;
     }
     setup() {
         this.draw();
@@ -421,7 +422,9 @@ export class Video extends linkObject {
         this.fullButton.position.set(-standard, h);
 
         this.playButton.clickEvent = function () {
-            if (this.video.videoCrol.paused && this.video.isStart) { this.play(); } else { this.pause(); }
+            if (this.video.children.video.isStart && !this.video.children.video.isPlayGame) {
+                if (this.video.videoCrol.paused) { this.play(); } else { this.pause(); }
+            }
         }.bind(this);
 
         this.nextButton.clickEvent = function () {
@@ -481,6 +484,10 @@ export class Video extends linkObject {
         }.bind(this);
         this.fullButton.turn = false;
 
+        this.playButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
+        this.volumeButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
+        this.nextButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
+        this.fullButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
         addPointerEvent(this.playButton);
         addPointerEvent(this.volumeButton);
         addPointerEvent(this.nextButton);

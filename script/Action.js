@@ -104,6 +104,7 @@ export class ActionVideo extends ActionObject {
         this.name = "Video";
         this.bg = new PIXI.Graphics();
         this.scale = 1;
+        this.isPlayGame = false;
         this.draw = function () {
             let promise = new Promise(function (resolve, _) {
                 this.loadVideo(url);
@@ -153,9 +154,11 @@ export class ActionVideo extends ActionObject {
     }
     onPlayGame() {
         this.pause();
+        this.isPlayGame = true;
         gsap.to(this.bg, { duration: 1, alpha: 0.5 });
     }
     onClearGame() {
+        this.isPlayGame = false;
         gsap.to(this.bg, { duration: 1, alpha: 0, onComplete: function () { this.play(); }.bind(this) });
     }
     test() {
@@ -519,7 +522,7 @@ export class ActionStart extends ActionUI {
                 duration: 1, alpha: 0, onComplete: function () {
                     this.action.removeChild(this.container);
                     this.action.children.video.isStart = true;
-                    this.action.children.video.play();
+                    this.action.obj.play();
                 }.bind(this)
             });
         }

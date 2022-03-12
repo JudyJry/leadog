@@ -52,6 +52,7 @@ class Tv extends Video {
         this.spriteHeight = 10;
         this.videoList = [function () { return new ElderlyAction_Hair(this.manager, this) }.bind(this)];
         this.uiScale = 0.25;
+        this.uiHitArea = 79;
     }
     resize() {
         this.w = this.manager.w;
@@ -140,7 +141,9 @@ class Tv extends Video {
         this.fullButton.position.set(-standard - 160, h);
 
         this.playButton.clickEvent = function () {
-            if (this.video.videoCrol.paused && this.video.isStart) { this.play(); } else { this.pause(); }
+            if (this.video.children.video.isStart && !this.video.children.video.isPlayGame) {
+                if (this.video.videoCrol.paused) { this.play(); } else { this.pause(); }
+            }
         }.bind(this);
 
         this.nextButton.clickEvent = function () {
@@ -199,7 +202,10 @@ class Tv extends Video {
             }
         }.bind(this);
         this.fullButton.turn = false;
-
+        this.playButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
+        this.volumeButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
+        this.nextButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
+        this.fullButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
         addPointerEvent(this.playButton);
         addPointerEvent(this.volumeButton);
         addPointerEvent(this.nextButton);
