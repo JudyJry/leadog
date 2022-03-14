@@ -293,8 +293,8 @@ export class ActionRope extends ActionObject {
         this.offset = 0.075;
         this.container.zIndex = 100;
         this.isFrist = true;
-        this.w = this.manager.w;
-        this.h = this.manager.h;
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
         this.draw = function () {
             this.drawRope();
         }
@@ -306,8 +306,8 @@ export class ActionRope extends ActionObject {
         this.manager.app.stage.addChild(this.container);
     }
     resize() {
-        this.w = this.manager.w;
-        this.h = this.manager.h;
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
         this.container.removeChildren();
         this.draw();
         this.container.scale.set(this.manager.canvasScale);
@@ -370,8 +370,8 @@ export class ActionRope extends ActionObject {
     onRopeComplete(c = this.action.children) {
         if (!c) return;
         let vv = c.line.getPoints().slice();
-        let v = [vv.at(-1), vv[Math.ceil(vv.length / 2)], vv[0]];
-        let h = this.history;
+        let v = [vv.at(-1), vv[0]];
+        let h = [this.history[0], this.history.at(-1)];
         let s = this.mask.getBounds();
         //console.log(`x:${s.x},y:${s.y},w:${s.width},h:${s.height}`);
         let isPass = v.map((_, i, v) => {
@@ -384,7 +384,7 @@ export class ActionRope extends ActionObject {
                 //console.log(`ohx:${h[j].x},ohy:${h[j].y},\nnhx:${hx},nhy:${hy}`);
                 return Math.abs(hx - vx) < this.offset && Math.abs(hy - vy) < this.offset;
             }).some(e => e);
-        }).reduce((sum, e) => { if (e === true) return sum + 1; else return sum }) >= v.length / 2 ? true : false;
+        }).some(e => e);
         console.log(`RopeComplete:${isPass}`);
         if (isPass) {
             this.action.isPlayGame = false;

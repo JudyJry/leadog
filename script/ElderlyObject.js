@@ -89,7 +89,7 @@ class Tv extends Video {
                         gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
                     }
                     if (this.manager.mouse.y > this.h - 110) {
-                        gsap.to(this.ui, { duration: 1, y: -35 - (screen.height - this.h) });
+                        gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 133) / 3.8) });
                     }
                     else if (this.manager.mouse.y < this.h - 110) {
                         gsap.to(this.ui, { duration: 1, y: 20 });

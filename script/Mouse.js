@@ -15,17 +15,26 @@ export default class Mouse {
         this.y = this.position.y;
         this.isPressed = false;
         this.pressed = () => { };
-        this.mousePos = function () {
+        this.getMousePos = function () {
             this.position = this.manager.app.renderer.plugins.interaction.mouse.global;
             this.x = this.position.x;
             this.y = this.position.y;
+            return { x: this.x, y: this.y };
         };
         onpointerdown = onpointerup = (e) => {
             this.isPressed = e.type == 'pointerdown';
+            if (this.isPressed) {
+                gsap.killTweensOf(this.sprite.scale);
+                gsap.to(this.sprite.scale, { duration: 0.2, x: this.scale - 0.05, y: this.scale - 0.05 });
+            }
+            else {
+                gsap.killTweensOf(this.sprite.scale);
+                gsap.to(this.sprite.scale, { duration: 0.5, x: this.scale, y: this.scale });
+            }
             this.pressed(this.isPressed);
         }
-        this.w = this.manager.w;
-        this.h = this.manager.h;
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
         this.scale = 0.3;
     }
     setup() {
@@ -40,18 +49,12 @@ export default class Mouse {
         this.manager.app.stage.addChild(this.cursor);
     }
     resize() {
-        this.w = this.manager.w;
-        this.h = this.manager.h;
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
         this.cursor.position.set(-this.w / 2, -this.h / 2);
     }
     update() {
-        this.mousePos();
+        this.getMousePos();
         this.sprite.position.set(this.x, this.y);
-        if (this.isPressed) {
-            gsap.to(this.sprite.scale, { duration: 0.2, x: this.scale - 0.05, y: this.scale - 0.05 });
-        }
-        else {
-            gsap.to(this.sprite.scale, { duration: 0.5, x: this.scale, y: this.scale });
-        }
     }
 }

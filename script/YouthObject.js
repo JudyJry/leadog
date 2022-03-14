@@ -72,7 +72,7 @@ class YouthVideo extends Video {
                         gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
                     }
                     if (this.manager.mouse.y > this.h - 110) {
-                        gsap.to(this.ui, { duration: 1, y: -45 });
+                        gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 128) / 2.85) });
                     }
                     else if (this.manager.mouse.y < this.h - 110) {
                         gsap.to(this.ui, { duration: 1, y: 0 });
