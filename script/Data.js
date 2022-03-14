@@ -1,8 +1,7 @@
 const objType = Object.freeze({
     "building": 1,
-    "character": 2,
-    "animation": 3,
-    "other": 4
+    "animation": 2,
+    "other": 3
 });
 
 const Page = Object.freeze({

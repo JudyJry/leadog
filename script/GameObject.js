@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import gsap from "gsap";
 import { TextStyle } from "./TextStyle.js";
 import { FilterSet } from "./FilterSet.js";
-import { addPointerEvent, createSprite } from "./GameFunction.js";
+import { addPointerEvent, createSprite, createText } from "./GameFunction.js";
 import { math } from "./math.js";
 import { Page } from "./Data.js";
 import Manager from "./Manager.js";
@@ -176,8 +176,8 @@ export class linkObject extends GameObject {
         }
     }
     clickEvent() {
+        this.blink.outerStrength = 0;
         this.sprite.interactive = false;
-        this.sprite.filters = [];
         let tl = gsap.timeline();
         tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
         tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
@@ -187,7 +187,7 @@ export class linkObject extends GameObject {
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
     }
-    drawCancel() {
+    /* drawCancel() {
         let ch = this.sprite.height / 2;
         let cw = this.sprite.width / 2;
         this.cancel = createSprite('image/cancel.svg', 0.5, this.scale);
@@ -196,9 +196,18 @@ export class linkObject extends GameObject {
         addPointerEvent(this.cancel);
         this.container.addChild(this.cancel);
         this.cancel.visible = false;
+    } */
+    drawCancel() {
+        let _x = (this.w * 0.5) - 60;
+        let _y = (this.h * -0.5) + 60;
+        this.cancel = createSprite('image/cancel.svg', 0.5);
+        this.cancel.position.set(_x, _y);
+        this.cancel.clickEvent = this.cancelEvent.bind(this);
+        addPointerEvent(this.cancel);
+        this.manager.app.stage.addChildAt(this.cancel, 1);
+        this.cancel.visible = false;
     }
     cancelEvent() {
-        this.sprite.filters = [this.blink.filter];
         let tl = gsap.timeline({
             onComplete: function () {
                 this.sprite.interactive = true;

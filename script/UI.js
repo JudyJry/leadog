@@ -278,3 +278,67 @@ class Cancel extends UI {
         }
     }
 }
+
+let defaultDialogOptions = {
+    context: "",
+    submit: false,
+    submitUrl: "image/submit.png",
+    cancel: () => { },
+    cancelUrl: "image/exit.png",
+}
+export class Dialog {
+    constructor(manager, options = defaultDialogOptions) {
+        this.manager = manager;
+        this.options = Object.assign({}, defaultDialogOptions, options);
+        this.textStyle = TextStyle.Dialog;
+        this.container = new PIXI.Container();
+        this.dialog = createSprite("image/dialog.png");
+        this.context = createText(this.options.context, this.textStyle);
+        this.submit = this.options.submit ? this.drawSubmit() : false;
+        this.cancel = this.options.cancel ? this.drawCancel() : false;
+        this.buttonHeight = 30;
+        this.buttonSpace = 100;
+        this.draw();
+    }
+    overEvent(e) {
+        if (e.isPointerOver) {
+            gsap.killTweensOf(e);
+            gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
+        }
+        else {
+            gsap.killTweensOf(e);
+            gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
+        }
+    }
+    drawSubmit() {
+        let s = createSprite(this.options.submitUrl);
+        s.overEvent = this.overEvent;
+        s.clickEvent = this.options.submit;
+        addPointerEvent(s);
+        return s;
+    }
+    drawCancel() {
+        let s = createSprite(this.options.cancelUrl);
+        s.overEvent = this.overEvent;
+        s.clickEvent = this.options.cancel;
+        addPointerEvent(s);
+        return s;
+    }
+    draw() {
+        this.dialog.position.set(0, -30);
+        this.container.addChild(this.dialog, this.context);
+        if (this.submit && this.cancel) {
+            this.submit.position.set(-this.buttonSpace, this.buttonHeight);
+            this.cancel.position.set(this.buttonSpace, this.buttonHeight);
+            this.container.addChild(this.submit, this.cancel);
+        }
+        else if (this.submit) {
+            this.submit.position.set(0, this.buttonHeight);
+            this.container.addChild(this.submit);
+        }
+        else if (this.cancel) {
+            this.cancel.position.set(0, this.buttonHeight);
+            this.container.addChild(this.cancel);
+        }
+    }
+}

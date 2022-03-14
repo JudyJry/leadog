@@ -40,6 +40,12 @@ export default class Manager {
         this.activeObj = new HomeObject(this);
 
         this.isMute = false;
+
+        this.userData = {
+            childhood: {
+                puzzle_complete: false,
+            }
+        }
     }
     setup() {
         this.uiSystem.setup();
@@ -171,6 +177,9 @@ const loadList = {
         "image/ui_2.svg",
         //page-ui
         "image/cancel.svg",
+        "image/dialog.png",
+        "image/submit.png",
+        "image/exit.png",
         "image/arrow_right.svg",
         "image/arrow_left.svg",
         //video-ui

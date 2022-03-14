@@ -39,7 +39,7 @@ class Building extends GameObject {
         super(manager);
         this.name = "Building"
         this.page = page;
-        this.filter = FilterSet.link();
+        this.filter = FilterSet.blink();
         this.container.zIndex = 20;
         this.scale = 1;
         this.spriteHeight = 100;
@@ -47,17 +47,16 @@ class Building extends GameObject {
         this.zoomIn = 3;
         this.w = 1920;
         this.ts = TextStyle.link;
+        this.building = [];
+        this.animation = [];
         this.draw = function () {
             homePageData.forEach(function (data, i) {
                 switch (data.type) {
                     case objType.building:
-                        this.drawBuilding(i, data.name, data.url, data.x, data.y);
-                        break;
-                    case objType.character:
-                        this.drawCharacter(i, data.name, data.url, data.x, data.y);
+                        this.building.push(this.drawBuilding(i, data.name, data.url, data.x, data.y));
                         break;
                     case objType.animation:
-                        this.drawAnimation(i, data.name, data.url, data.x, data.y);
+                        this.animation.push(this.drawAnimation(i, data.name, data.url, data.x, data.y));
                         break;
                     case objType.other:
                         this.drawOther(i, data.name, data.url, data.x, data.y);
@@ -75,8 +74,21 @@ class Building extends GameObject {
         c.isEntering = false;
         c.anchor.set(0.5);
         c.scale.set(this.scale);
+        c.blink = FilterSet.blink();
+        c.filters = [c.blink.filter];
         c.clickEvent = this.buildingClickEvent.bind(this);
         c.overEvent = this.buildingOverEvent.bind(this);
+        c.update = function () {
+            if (c.isPointerOver) {
+                c.blink.outerStrength = 5;
+            }
+            else if (c.isEntering) {
+                c.blink.outerStrength = 0;
+            }
+            else {
+                c.blink.effect();
+            }
+        }.bind(this)
         gf.addPointerEvent(c);
 
         c.text = new PIXI.Text(c.name, this.ts);
@@ -89,28 +101,16 @@ class Building extends GameObject {
         c.position.set(_x, _y);
         this.container.addChild(c);
         this.manager.addChild(c.text);
-    }
-    drawCharacter(i, n, url, x, y) {
-        let _x = (x * this.w);
-        let _y = (y * this.h);
-        let c = PIXI.Sprite.from(url);
-        c.name = n;
-        c.dataIndex = i;
-        c.anchor.set(0.5);
-        c.scale.set(this.scale);
-        c.position.set(_x, _y);
-        this.container.addChild(c);
+        return c;
     }
     drawAnimation(i, n, url, x, y) {
         let _x = (x * this.w);
         let _y = (y * this.h);
-        let c = PIXI.Sprite.from(url);
+        let c = new TestGif(this.manager, url, _x, _y);
         c.name = n;
         c.dataIndex = i;
-        c.anchor.set(0.5);
-        c.scale.set(this.scale);
-        c.position.set(_x, _y);
-        this.container.addChild(c);
+        this.container.addChild(c.anim);
+        return c;
     }
     drawOther(i, n, url, x, y) {
         let _x = (x * this.w);
@@ -142,41 +142,39 @@ class Building extends GameObject {
         if (e.isPointerOver) {
             gsap.killTweensOf(e.text);
             gsap.killTweensOf(e.scale);
-            e.filters = [this.filter];
             gsap.to(e.text, { duration: 1, y: e.text.originHeight - this.space, alpha: 1 });
             gsap.to(e.scale, { duration: 1, x: this.scale + 0.01, y: this.scale + 0.01 });
         }
         else {
-            e.filters = [];
             gsap.killTweensOf(e.text);
             gsap.killTweensOf(e.scale);
             gsap.to(e.text, { duration: 0.5, y: e.text.originHeight, alpha: 0 });
             gsap.to(e.scale, { duration: 1, x: this.scale, y: this.scale });
         }
     }
-    update() { }
+    update() {
+        this.building.forEach(e => { e.update(); });
+
+    }
 }
 
 class TestGif {
-    constructor(manager, src) {
+    constructor(manager, src, x, y) {
         this.manager = manager;
         this.anim = undefined;
         try { this.manager.app.loader.add(src); }
         catch { }
         this.manager.app.loader.load((_) => {
             this.playAnimation(src);
-            console.log(this.anim);
         });
-        this.x = this.manager.w * 0.4;
-        this.y = this.manager.h * 0.4;
-        this.speed = 5;
-        this.scale = -0.5;
+        this.scale = 1;
+        this.x = x;
+        this.y = y;
     }
     playAnimation(src) {
         this.clearAnimation();
         this.anim = this.manager.app.loader.resources[src].animation;
-        this.manager.app.stage.addChild(this.anim);
-        this.anim.scale.set(this.scale, 0.5);
+        this.anim.scale.set(this.scale);
         this.anim.anchor.set(0.5);
         this.anim.position.set(this.x, this.y);
         this.anim.onLoop = () => console.log('Looped!');
@@ -187,13 +185,7 @@ class TestGif {
         if (this.anim) {
             this.anim.stop();
             this.anim.currentFrame = 0;
-            this.manager.app.stage.removeChild(this.anim);
             this.anim = null;
         }
-    }
-    move(x, y) {
-        this.x += x;
-        this.y += y;
-        this.anim.position.set(this.x, this.y);
     }
 }

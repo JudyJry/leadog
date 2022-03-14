@@ -19,6 +19,13 @@ const TextStyle = {
         fontSize: 18,
         fill: ColorSlip.darkOrange,
     }),
+    Dialog: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 24,
+        fill: ColorSlip.white,
+        stroke: ColorSlip.lightGreen,
+        strokeThickness: 3
+    }),
     Act: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
         fontSize: 54,

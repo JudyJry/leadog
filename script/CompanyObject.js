@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, Door, Video } from './GameObject.js';
-import { Page } from './Data.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
