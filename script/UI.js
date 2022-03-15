@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { TextStyle } from './TextStyle.js';
-import { addPointerEvent, createSprite } from './GameFunction.js';
+import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { uiData } from './Data.js';
 
 gsap.registerPlugin(PixiPlugin);
@@ -296,8 +296,8 @@ export class Dialog {
         this.context = createText(this.options.context, this.textStyle);
         this.submit = this.options.submit ? this.drawSubmit() : false;
         this.cancel = this.options.cancel ? this.drawCancel() : false;
-        this.buttonHeight = 30;
-        this.buttonSpace = 100;
+        this.buttonHeight = 60;
+        this.buttonSpace = 90;
         this.draw();
     }
     overEvent(e) {
@@ -325,7 +325,7 @@ export class Dialog {
         return s;
     }
     draw() {
-        this.dialog.position.set(0, -30);
+        this.context.position.set(0, -50);
         this.container.addChild(this.dialog, this.context);
         if (this.submit && this.cancel) {
             this.submit.position.set(-this.buttonSpace, this.buttonHeight);
@@ -340,5 +340,25 @@ export class Dialog {
             this.cancel.position.set(0, this.buttonHeight);
             this.container.addChild(this.cancel);
         }
+        //this.container.alpha = 0;
+        //this.container.scale.set(0);
+        this.manager.app.stage.addChildAt(this.container, 1);
+        let tl = gsap.timeline();
+        tl.from(this.container.scale, { duration: 0.5, x: 0, y: 0, ease: "back.out(1.2)" });
+        tl.from(this.container, { duration: 1, alpha: 0 }, 0);
+    }
+    remove() {
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.manager.app.stage.removeChild(this.container);
+                this.container.destroy({ children: true });
+                this.destroy();
+            }.bind(this)
+        });
+        tl.to(this.container.scale, { duration: 0.5, x: 0, y: 0, ease: "back.in(1.2)" });
+        tl.to(this.container, { duration: 1, alpha: 0 }, 0);
+    }
+    destroy() {
+        for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
 }

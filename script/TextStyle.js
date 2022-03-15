@@ -7,6 +7,7 @@ const TextStyle = {
         fontSize: 30,
         fill: ColorSlip.darkOrange,
         stroke: ColorSlip.white,
+        lineJoin: "round",
         strokeThickness: 5
     }),
     UI: new PIXI.TextStyle({
@@ -24,7 +25,20 @@ const TextStyle = {
         fontSize: 24,
         fill: ColorSlip.white,
         stroke: ColorSlip.lightGreen,
-        strokeThickness: 3
+        lineJoin: "round",
+        strokeThickness: 3,
+        leading: 20,
+        align: "center"
+    }),
+    Hint: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 24,
+        fill: ColorSlip.white,
+        stroke: ColorSlip.lightGreen,
+        lineJoin: "round",
+        strokeThickness: 3,
+        leading: 20,
+        align: "left"
     }),
     Act: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",

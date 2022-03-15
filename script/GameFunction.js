@@ -64,6 +64,9 @@ export function createText(string, style, anchor = 0.5, scale = 1) {
 export function addPointerEvent(e) {
     e.interactive = true;
     e.buttonMode = true;
+    if (e._events.pointertap || e._events.pointerover || e._events.pointerout) {
+        e.removeAllListeners();
+    }
     e.on("pointertap", onTap);
     if (e.overEvent) {
         e.on("pointerover", onOverE);

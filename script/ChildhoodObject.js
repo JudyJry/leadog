@@ -3,6 +3,9 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { PageObject, linkObject, Background, Player, Door, Video } from './GameObject.js';
 import { ChildhoodAction_Dora, ChildhoodAction_Kelly } from './ChildhoodAction.js';
+import { Dialog } from './UI.js';
+import { addPointerEvent, createSprite, createText } from './GameFunction.js';
+import { TextStyle } from './TextStyle.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -65,22 +68,152 @@ class Puzzle extends linkObject {
             "拉不拉多的尾巴為短毛無裝飾毛。",
             "黃金拉拉個性平易近人、服從性高，面對危險能更加的敏銳！",
         ]
+        this.random = Math.floor(Math.random() * this.hintList.length);
+    }
+    resize() {
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.removeChildren();
+        this.draw();
+        if (this.isClick) {
+            let tl = gsap.timeline();
+            tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
+            tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: (-this._y + 90) * this.zoomIn }, 0);
+            this.hintBar = this.drawHintBar();
+            this.pieceBar = this.drawPieceBar();
+        }
+        this.container.scale.set(this.manager.canvasScale);
     }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
-        let tl = gsap.timeline({ onComplete: gameStart.bind(this) });
+        let tl = gsap.timeline();
         tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
         tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: (-this._y + 90) * this.zoomIn }, 0);
         this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
         this.isClick = true;
-        if (!this.cancel) { this.drawCancel(); }
-        this.cancel.visible = true;
-
+        gameStart.call(this);
         function gameStart() {
-
+            const t = this;
+            const m = this.manager;
+            let d = new Dialog(m, {
+                context: `台灣的導盲犬為哪種狗狗呢？\n讓我們一起認識他們吧！`,
+                cancel: () => { d.remove(); t.cancelEvent(); },
+                submit: () => {
+                    d.remove();
+                    let d2 = new Dialog(m, {
+                        context: `請先觀察相框中狗狗的特徵\n結合下方拼圖拼到上方的相框中`,
+                        cancel: () => { d2.remove(); t.cancelEvent(); },
+                        submit: () => {
+                            d2.remove();
+                            t.hintBar = t.drawHintBar();
+                            t.pieceBar = t.drawPieceBar();
+                        }
+                    })
+                }
+            })
         }
+
+    }
+    drawHintBar() {
+        let c = new PIXI.Container();
+        let bar = createSprite("image/building/childhood/hintBar.png");
+        c.exitButton = createSprite("image/building/childhood/exit.png", 0.5, 0.25);
+        c.exitButton.position.set(425, -3);
+        c.exitButton.overEvent = e => {
+            if (e.isPointerOver) {
+                gsap.killTweensOf(e);
+                gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
+            }
+            else {
+                gsap.killTweensOf(e);
+                gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
+            }
+        }
+        c.exitButton.clickEvent = this.cancelEvent.bind(this);
+        addPointerEvent(c.exitButton);
+        c.text = createText(this.hintList[this.random], TextStyle.Hint, [0, 0.5]);
+        c.text.position.set(-450, -5);
+        c.position.set(-20, -375);
+        c.addChild(bar, c.exitButton, c.text);
+        this.container.addChild(c);
+        return c;
+    }
+    drawPieceBar() {
+        let c = new PIXI.Container();
+        drawPieceBarBackground.call(this);
+        drawPieces.call(this, "image/building/childhood/piece_sprites.json");
+        this.container.addChild(c);
+        return c;
+        function drawPieceBarBackground() {
+            let bar = createSprite("image/building/childhood/pieceBar.png");
+            let pieces = createSprite("image/building/childhood/piece.png");
+            let pieceText = createSprite("image/building/childhood/piece.png");
+            let mask = new PIXI.Graphics()
+                .beginFill(0xff0000)
+                .drawRect(0, 0, 976, 22)
+                .endFill()
+            mask.pivot.set(488, 11);
+            mask.position.set(0, -40);
+            pieceText.mask = mask;
+            pieces.alpha = 0.5;
+            c.position.set(-19, 150);
+            c.addChild(bar, pieces, pieceText, mask);
+        }
+        function drawPieces(src) {
+            let sheet = this.manager.app.loader.resources[src].spritesheet;
+            let pos = [
+                [-430, 7],
+                [-325, 7],
+                [-215, 7],
+                [-109, 17],
+                [0, 10],
+                [108, 7],
+                [215, 10],
+                [325, 7],
+                [435, 14],
+            ]
+            c.piece = [];
+            for (let i = 0; i < Object.keys(sheet.textures).length; i++) {
+                c.piece.push(new PIXI.Sprite(sheet.textures[`piece_${i}.png`]));
+                c.piece[i].anchor.set(0.5);
+                c.piece[i].scale.set(1);
+                c.piece[i].position.set(pos[i][0], pos[i][1]);
+                c.addChild(c.piece[i]);
+            }
+            console.log(sheet);
+        }
+    }
+    onPlayGame() {
+
+    }
+    cancelEvent() {
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.sprite.interactive = true;
+            }.bind(this)
+        });
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.isClick = false;
+        this.page.isZoomIn = false;
+        this.container.removeChild(this.hintBar, this.pieceBar);
+    }
+    update() {
+        if (this.page.isZoomIn) {
+            this.blink.outerStrength = 0;
+            this.text.position.y = -this.spriteHeight;
+            this.text.alpha = 0;
+            if (this.isClick) { this.onPlayGame(); }
+        }
+        else if (this.sprite.isPointerOver) {
+            this.blink.outerStrength = 5;
+        }
+        else {
+            this.blink.effect();
+        }
+
     }
 }
 

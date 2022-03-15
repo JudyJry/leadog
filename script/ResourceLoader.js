@@ -10,7 +10,6 @@ export default class ResourceLoader {
         this.page = $(`<div id="loadingPage"><p>Loading...<br><span id="progress">0%<span></p></div>`);
         this.pageText = $(this.page).children("p");
         this.progress = $(this.pageText).children("#progress");
-
     }
     setProgress(progress) {
         this.progress.html(`${Math.floor(progress)}%`);
@@ -73,9 +72,5 @@ export default class ResourceLoader {
             onComplete: function () { $("#loadingPage").remove(); }
         });
         //console.log("All files loaded");
-    }
-    load(list, onComplete) {
-        this.loader.add(list);
-        this.loader.load(onComplete);
     }
 }

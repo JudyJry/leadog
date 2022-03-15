@@ -234,6 +234,7 @@ const loadList = {
         "image/building/childhood/book.png",
         "image/building/childhood/puzzle.png",
         "image/building/childhood/video.png",
+        "image/building/childhood/piece_sprites.json",
     ],
     "youth": [
         "image/building/youth/bg.png",
