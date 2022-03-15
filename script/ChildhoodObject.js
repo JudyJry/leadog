@@ -4,8 +4,9 @@ import { PixiPlugin } from "gsap/PixiPlugin";
 import { PageObject, linkObject, Background, Player, Door, Video } from './GameObject.js';
 import { ChildhoodAction_Dora, ChildhoodAction_Kelly } from './ChildhoodAction.js';
 import { Dialog } from './UI.js';
-import { addPointerEvent, createSprite, createText } from './GameFunction.js';
+import { addPointerEvent, createSprite, createText, rectCollision } from './GameFunction.js';
 import { TextStyle } from './TextStyle.js';
+import { FilterSet } from './FilterSet.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -55,7 +56,8 @@ class Puzzle extends linkObject {
         this.isComplete = this.page.userData.puzzle_complete;
         this.x = -0.083;
         this.y = -0.046;
-        this.url = this.isComplete ? "image/building/childhood/puzzle_complete.png" : "image/building/childhood/puzzle.png";
+        this.textureUrl = ["image/building/childhood/puzzle.png", "image/building/childhood/puzzle_complete.png"];
+        this.url = this.isComplete ? this.textureUrl[1] : this.textureUrl[0];
         this.zoomIn = 1.4;
         this.hintList = [
             "黃金獵犬個性聰明、有主見在教導指令時可以快速學會！",
@@ -69,18 +71,22 @@ class Puzzle extends linkObject {
             "黃金拉拉個性平易近人、服從性高，面對危險能更加的敏銳！",
         ]
         this.random = Math.floor(Math.random() * this.hintList.length);
+        this.isAnswer = new Array(this.hintList.length).fill(false);
     }
     resize() {
         this.w = this.manager.w;
         this.h = this.manager.h;
         this.container.removeChildren();
+        this.url = this.isComplete ? this.textureUrl[1] : this.textureUrl[0];
         this.draw();
         if (this.isClick) {
+            this.sprite.interactive = false;
             let tl = gsap.timeline();
             tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
             tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: (-this._y + 90) * this.zoomIn }, 0);
             this.hintBar = this.drawHintBar();
             this.pieceBar = this.drawPieceBar();
+            this.answer = this.drawPieceAnswer();
         }
         this.container.scale.set(this.manager.canvasScale);
     }
@@ -107,6 +113,11 @@ class Puzzle extends linkObject {
                         cancel: () => { d2.remove(); t.cancelEvent(); },
                         submit: () => {
                             d2.remove();
+                            if (t.isComplete) {
+                                t.sprite.texture = PIXI.Texture.from(t.textureUrl[0]);
+                                t.isAnswer = new Array(t.hintList.length).fill(false);
+                                t.isComplete = false;
+                            }
                             t.hintBar = t.drawHintBar();
                             t.pieceBar = t.drawPieceBar();
                             t.answer = t.drawPieceAnswer();
@@ -115,7 +126,6 @@ class Puzzle extends linkObject {
                 }
             })
         }
-
     }
     drawHintBar() {
         let c = new PIXI.Container();
@@ -142,9 +152,21 @@ class Puzzle extends linkObject {
         return c;
     }
     drawPieceBar() {
+        const t = this;
+        const pos = [
+            [-430, 7],
+            [-325, 7],
+            [-215, 7],
+            [-109, 17],
+            [0, 10],
+            [108, 7],
+            [215, 10],
+            [325, 7],
+            [435, 14],
+        ]
         let c = new PIXI.Container();
-        drawPieceBarBackground.call(this);
-        drawPieces.call(this, "image/building/childhood/piece_sprites.json");
+        drawPieceBarBackground.call(t);
+        drawPieces.call(t, "image/building/childhood/piece_sprites.json");
         this.container.addChild(c);
         return c;
         function drawPieceBarBackground() {
@@ -164,31 +186,68 @@ class Puzzle extends linkObject {
         }
         function drawPieces(src) {
             let sheet = this.manager.app.loader.resources[src].spritesheet;
-            let pos = [
-                [-430, 7],
-                [-325, 7],
-                [-215, 7],
-                [-109, 17],
-                [0, 10],
-                [108, 7],
-                [215, 10],
-                [325, 7],
-                [435, 14],
-            ]
+
             c.piece = [];
             for (let i = 0; i < Object.keys(sheet.textures).length; i++) {
                 c.piece.push(new PIXI.Sprite(sheet.textures[`piece_${i}.png`]));
+                c.piece[i].index = i;
                 c.piece[i].anchor.set(0.5);
                 c.piece[i].scale.set(1);
                 c.piece[i].position.set(pos[i][0], pos[i][1]);
-                c.addChild(c.piece[i]);
+                if (t.isAnswer[i] != true) {
+                    addPieceEvent(c.piece[i]);
+                    c.addChild(c.piece[i]);
+                }
             }
+        }
+        function addPieceEvent(e) {
+            let f = FilterSet.link();
+            e.interactive = true;
+            e.buttonMode = true;
+            e.on("pointerover", () => { e.isPointerOver = true; e.filters = [f]; });
+            e.on("pointerout", () => { e.isPointerOver = false; e.filters = []; });
+            e.on("pointerdown", (event) => {
+                e.scale.set(t.zoomIn);
+                c.removeChild(e);
+                t.manager.app.stage.addChild(e);
+                e.isDragging = true;
+                e.position.x = event.data.global.x - (t.w / 2);
+                e.position.y = event.data.global.y - (t.h / 2);
+            });
+            e.on("pointermove", (event) => {
+                if (e.isDragging) {
+                    e.position.x = event.data.global.x - (t.w / 2);
+                    e.position.y = event.data.global.y - (t.h / 2);
+                }
+            });
+            e.on("pointerup", (event) => {
+                let collision = rectCollision(e, t.answer.piece[e.index]);
+                console.log(collision);
+                if (collision) {
+                    t.manager.app.stage.removeChild(e);
+                    t.answer.piece[e.index].alpha = 1;
+                    e.interactive = false;
+                    t.isAnswer[e.index] = true;
+                    t.random++;
+                    if (t.random >= t.hintList.length) { t.random = 0; }
+                    t.hintBar.text.text = t.hintList[t.random];
+                }
+                else {
+                    e.scale.set(t.scale);
+                    t.manager.app.stage.removeChild(e);
+                    c.addChild(e);
+                    e.position.x = pos[e.index][0];
+                    e.position.y = pos[e.index][1];
+                    e.isDragging = false;
+                }
+            });
         }
     }
     drawPieceAnswer() {
+        const t = this;
         let c = new PIXI.Container();
         drawPieces.call(this, "image/building/childhood/piece_sprites.json");
-        c.position.set(-19, -99)
+        c.position.set(-19, -99);
         this.container.addChild(c);
         return c;
         function drawPieces(src) {
@@ -207,16 +266,31 @@ class Puzzle extends linkObject {
             c.piece = [];
             for (let i = 0; i < Object.keys(sheet.textures).length; i++) {
                 c.piece.push(new PIXI.Sprite(sheet.textures[`piece_${i}.png`]));
+                c.piece[i].index = i;
                 c.piece[i].anchor.set(0.5);
                 c.piece[i].scale.set(1);
                 c.piece[i].position.set(pos[i][0], pos[i][1]);
-                c.piece[i].alpha = 0.5;
+                c.piece[i].alpha = t.isAnswer[i] == true ? 1 : 0;
                 c.addChild(c.piece[i]);
             }
         }
     }
     onPlayGame() {
-
+        if (this.isAnswer.every(e => e) && !this.isComplete) {
+            this.onComplete();
+        }
+    }
+    onComplete() {
+        this.isComplete = this.page.userData.puzzle_complete = true;
+        let d = new Dialog(this.manager, {
+            context: `恭喜你解完所有狗狗拼圖，\n現在讓我們繼續認識導盲犬吧！`,
+            cancel: () => {
+                d.remove();
+                this.cancelEvent();
+                this.url = this.textureUrl[1];
+                this.sprite.texture = PIXI.Texture.from(this.url);
+            }
+        })
     }
     cancelEvent() {
         let tl = gsap.timeline({
@@ -228,7 +302,7 @@ class Puzzle extends linkObject {
         tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
         this.isClick = false;
         this.page.isZoomIn = false;
-        this.container.removeChild(this.hintBar, this.pieceBar);
+        this.container.removeChild(this.hintBar, this.pieceBar, this.answer);
     }
     update() {
         if (this.page.isZoomIn) {

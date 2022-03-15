@@ -163,6 +163,7 @@ export class linkObject extends GameObject {
         this.h = this.manager.h;
         this.container.removeChildren();
         this.draw();
+        if (this.isClick) { this.sprite.interactive = false; }
         this.container.scale.set(this.manager.canvasScale);
     }
     overEvent(e) {
