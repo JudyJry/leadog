@@ -109,6 +109,7 @@ class Puzzle extends linkObject {
                             d2.remove();
                             t.hintBar = t.drawHintBar();
                             t.pieceBar = t.drawPieceBar();
+                            t.answer = t.drawPieceAnswer();
                         }
                     })
                 }
@@ -182,7 +183,36 @@ class Puzzle extends linkObject {
                 c.piece[i].position.set(pos[i][0], pos[i][1]);
                 c.addChild(c.piece[i]);
             }
-            console.log(sheet);
+        }
+    }
+    drawPieceAnswer() {
+        let c = new PIXI.Container();
+        drawPieces.call(this, "image/building/childhood/piece_sprites.json");
+        c.position.set(-19, -99)
+        this.container.addChild(c);
+        return c;
+        function drawPieces(src) {
+            let sheet = this.manager.app.loader.resources[src].spritesheet;
+            let pos = [
+                [-372, -104],
+                [-20, -104],
+                [354, -105],
+                [56, 39],
+                [0, 0],
+                [22, -104],
+                [-350, -6],
+                [-332, -104],
+                [-413, 40],
+            ]
+            c.piece = [];
+            for (let i = 0; i < Object.keys(sheet.textures).length; i++) {
+                c.piece.push(new PIXI.Sprite(sheet.textures[`piece_${i}.png`]));
+                c.piece[i].anchor.set(0.5);
+                c.piece[i].scale.set(1);
+                c.piece[i].position.set(pos[i][0], pos[i][1]);
+                c.piece[i].alpha = 0.5;
+                c.addChild(c.piece[i]);
+            }
         }
     }
     onPlayGame() {
