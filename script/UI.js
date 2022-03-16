@@ -4,6 +4,7 @@ import { PixiPlugin } from "gsap/PixiPlugin";
 import { TextStyle } from './TextStyle.js';
 import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { uiData } from './Data.js';
+import { ColorSlip } from './ColorSlip.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -301,26 +302,25 @@ class Cancel extends UI {
     }
 }
 
-let defaultDialogOptions = {
+const defaultDialogOptions = {
     context: "",
     submit: false,
     submitText: "確認",
+    submitColor: ColorSlip.button_submit,
     cancel: () => { },
     cancelText: "關閉",
+    cancelColor: ColorSlip.button_cancel,
 }
 export class Dialog {
     constructor(manager, options = defaultDialogOptions) {
         this.manager = manager;
         this.options = Object.assign({}, defaultDialogOptions, options);
         this.textStyle = TextStyle.Dialog;
-        this.buttonTextStyle = TextStyle.Dialog_Button;
         this.container = new PIXI.Container();
         this.dialog = createSprite("image/dialog.png");
-        this.buttonTexture = PIXI.Texture.from("image/dialog_button.png");
         this.context = createText(this.options.context, this.textStyle);
-        this.submitColor = 0xC6D86B;
-        this.cancelColor = 0xF09683;
-        this.backColor = 0xF7C38A;
+        this.submitColor = this.options.submitColor;
+        this.cancelColor = this.options.cancelColor;
         this.submit = this.options.submit ? this.drawSubmit() : false;
         this.cancel = this.options.cancel ? this.drawCancel() : false;
         this.buttonHeight = 60;
@@ -344,28 +344,14 @@ export class Dialog {
         }
     }
     drawSubmit() {
-        let c = new PIXI.Container();
-        let b = createSprite(this.buttonTexture);
-        c.sprite = createSprite(this.buttonTexture);
-        c.text = createText(this.options.submitText, this.buttonTextStyle);
-        c.sprite.tint = this.submitColor;
-        b.tint = this.backColor;
-        b.position.y = 10;
-        c.addChild(b, c.sprite, c.text);
+        let c = drawButton(this.options.submitText, this.submitColor);
         c.overEvent = this.overEvent;
         c.clickEvent = this.options.submit;
         addPointerEvent(c);
         return c;
     }
     drawCancel() {
-        let c = new PIXI.Container();
-        let b = createSprite(this.buttonTexture);
-        c.sprite = createSprite(this.buttonTexture);
-        c.text = createText(this.options.cancelText, this.buttonTextStyle);
-        c.sprite.tint = this.cancelColor;
-        b.tint = this.backColor;
-        b.position.y = 10;
-        c.addChild(b, c.sprite, c.text);
+        let c = drawButton(this.options.cancelText, this.cancelColor);
         c.overEvent = this.overEvent;
         c.clickEvent = this.options.cancel;
         addPointerEvent(c);
@@ -410,4 +396,17 @@ export class Dialog {
     destroy() {
         for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
+}
+function drawButton(text, color) {
+    const texture = PIXI.Texture.from("image/dialog_button.png");
+    const ts = TextStyle.Dialog_Button;
+    let c = new PIXI.Container();
+    let b = createSprite(texture);
+    c.sprite = createSprite(texture);
+    c.text = createText(text, ts);
+    c.sprite.tint = color;
+    b.tint = ColorSlip.button_back;
+    b.position.y = 10;
+    c.addChild(b, c.sprite, c.text);
+    return c;
 }

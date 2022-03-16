@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
+import { videoData } from './Data';
 
 export default class YouthAction_Bus extends Action.ActionPage {
     constructor(manager, obj) {
@@ -8,14 +9,15 @@ export default class YouthAction_Bus extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.355;
+        this.videoData = videoData.youth[0];
+        this.videoTextures = this.manager.resources["image/video/youth/sprites.json"].spritesheet.textures;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "youth_bus", "sound/youth_bus.wav"),
-            "video": new Youth_Bus_Video(this.manager, this, "video/youth_bus.mp4"),
-            "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗與訓練師習慣人類生活步調吧！"),
+            "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
+            "video": new Youth_Bus_Video(this.manager, this, this.videoData.url),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this,
-            `謝謝你幫助狗狗完成與訓練師生活的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
     }
 }
 class Youth_Bus_Video extends Action.ActionVideo {
@@ -54,8 +56,8 @@ class Youth_Bus_UI_Stage1 extends Action.ActionLinsStage {
         super(manager, action);
         this.scale = 1;
         this.linePoint = [1527, 601, 1656, 533, 1792, 510];
-        this.titleUrl = "image/video/youth/bus/stage_1_title.png";
-        this.hintUrl = "image/video/youth/bus/stage_1_hint.png";
+        this.titleUrl = this.action.videoTextures["bus_1_title.png"];
+        this.hintUrl = this.action.videoTextures["bus_1_hint.png"];
         this.hintPos = [0.284, 0.397];
 
     }

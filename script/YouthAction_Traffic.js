@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
-import { Page } from './Data';
 import { createSprite } from './GameFunction';
+import { videoData } from './Data';
 
 export default class YouthAction_Traffic extends Action.ActionPage {
     constructor(manager, obj) {
@@ -10,14 +10,15 @@ export default class YouthAction_Traffic extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.355;
+        this.videoData = videoData.youth[3];
+        this.videoTextures = this.manager.resources["image/video/youth/sprites.json"].spritesheet.textures;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "youth_traffic", "sound/youth_traffic.wav"),
-            "video": new Youth_Traffic_Video(this.manager, this, "video/youth_traffic.mp4"),
-            "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗帶領訓練師平安度過挑戰吧！"),
+            "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
+            "video": new Youth_Traffic_Video(this.manager, this, this.videoData.url),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this,
-            `謝謝你幫助狗狗完成與訓練師生活的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
     }
 }
 class Youth_Traffic_Video extends Action.ActionVideo {
@@ -64,12 +65,12 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
             this.sound = new Action.ActionSound(this.manager, this, `youth_traffic_${this.random + 1}`, this.dirSound[this.random]);
             this.sound.play();
 
-            let title = createSprite("image/video/youth/traffic/stage_1_title.png", [1, 0.5], this.scale);
-            let hint = createSprite("image/video/youth/traffic/stage_1_hint.png", 0.5, this.scale);
-            let choose_1 = createSprite("image/video/youth/traffic/stage_1_choose_1.png", 0.5, this.scale);
-            let choose_2 = createSprite("image/video/youth/traffic/stage_1_choose_2.png", 0.5, this.scale);
-            let button_1 = createSprite("image/video/youth/traffic/stage_1_button_1.png", 0.5, this.scale);
-            let button_2 = createSprite("image/video/youth/traffic/stage_1_button_2.png", 0.5, this.scale);
+            let title = createSprite(this.action.videoTextures["traffic_1_title.png"], [1, 0.5], this.scale);
+            let hint = createSprite(this.action.videoTextures["traffic_1_hint.png"], 0.5, this.scale);
+            let choose_1 = createSprite(this.action.videoTextures["traffic_1_choose_1.png"], 0.5, this.scale);
+            let choose_2 = createSprite(this.action.videoTextures["traffic_1_choose_2.png"], 0.5, this.scale);
+            let button_1 = createSprite(this.action.videoTextures["traffic_1_button_1.png"], 0.5, this.scale);
+            let button_2 = createSprite(this.action.videoTextures["traffic_1_button_2.png"], 0.5, this.scale);
 
             title.position.set((0.5 * this.w) - 150, (-0.5 * this.h) + 95);
             this.setPosition(hint, 0, -0.3);

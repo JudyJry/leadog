@@ -41,7 +41,7 @@ export default class Mouse {
         this.manager.app.renderer.plugins.interaction.cursorStyles.pointer = "none";
         this.cursor = new PIXI.Container();
         this.cursor.zIndex = 200;
-        this.sprite = PIXI.Sprite.from("image/video/cursor.png");
+        this.sprite = PIXI.Sprite.from("image/cursor.png");
         this.sprite.anchor.set(0.5);
         this.sprite.scale.set(this.scale);
         this.cursor.addChild(this.sprite);

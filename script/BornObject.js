@@ -1,10 +1,8 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { linkObject, PageObject, Background, Player, Video } from './GameObject.js';
+import { linkObject, PageObject, Background, Player, Video, Door } from './GameObject.js';
 import { BornAction_Story1, BornAction_Story2 } from './BornAction_Story.js';
-import { FilterSet } from './FilterSet.js';
-import { addPointerEvent, createSprite } from './GameFunction.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -15,8 +13,9 @@ export default class BornObject extends PageObject {
         this.name = "BornObject";
         this.children = {
             "background": new Background(this.manager, this, "image/building/born/bg.png"),
+            "door": new Door(this.manager, this, -0.425, -0.026, "image/building/born/door.png"),
             "video": new BornVideo(this.manager, this),
-            "clan": new Clan(this.manager, this),
+            "mirror": new Mirror(this.manager, this),
             "map": new Map(this.manager, this),
             "player": new Player(this.manager, this)
         };
@@ -26,8 +25,8 @@ class BornVideo extends Video {
     constructor(manager, page) {
         super(manager, page);
         this.name = "Video";
-        this.x = -0.291;
-        this.y = -0.046;
+        this.x = -0.232;
+        this.y = -0.055;
         this.url = "image/building/born/video.png";
         this.zoomIn = 1.6;
         this.videoList = [
@@ -36,49 +35,21 @@ class BornVideo extends Video {
         ];
     }
 }
-class Clan extends linkObject {
+class Mirror extends linkObject {
     constructor(manager, page) {
         super(manager, page);
-        this.name = "Clan";
-        this.x = 0.162;
-        this.y = 0.205;
-        this.url = "image/building/born/clan.png";
-        this.turl = "image/building/born/clan_tree.png";
-        this.zoomIn = 2;
-        this.spriteHeight = 120;
-        this.draw = function () {
-            this._x = (this.x * this.w * 2);
-            this._y = (this.y * this.h * 2);
-            this.sprite.texture = PIXI.Texture.from(this.url);
-            this.sprite.anchor.set(0.5);
-            this.sprite.scale.set(this.scale);
-            this.tree = PIXI.Sprite.from(this.turl);
-            this.tree.anchor.set(0.5, 1);
-            this.tree.scale.set(this.scale);
-            this.tree.alpha = 0.5;
-            this.tree.position.set(-10, -50);
-
-            this.blink = FilterSet.blink();
-            this.sprite.filters = [this.blink.filter];
-
-            this.text = new PIXI.Text(this.fadeText, this.ts);
-            this.text.anchor.set(0.5);
-            this.textHeight = this.spriteHeight + 10;
-
-            this.container.addChild(this.tree, this.sprite, this.text);
-
-            this.sprite.clickEvent = this.clickEvent.bind(this);
-            addPointerEvent(this.sprite);
-            this.container.position.set(this._x, this._y);
-        }
+        this.x = 0.296;
+        this.y = -0.048;
+        this.url = "image/building/born/mirror.png";
+        this.zoomIn = 1.5;
     }
 }
 class Map extends linkObject {
     constructor(manager, page) {
         super(manager, page);
         this.name = "Map";
-        this.x = 0.424;
-        this.y = -0.082;
+        this.x = 0.133;
+        this.y = -0.071;
         this.url = "image/building/born/map.png";
         this.zoomIn = 1.5;
     }

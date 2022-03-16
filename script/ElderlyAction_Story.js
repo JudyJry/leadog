@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
+import { videoData } from './Data';
 
 export class ElderlyAction_Story1 extends Action.ActionPage {
     constructor(manager, obj) {
@@ -8,48 +9,40 @@ export class ElderlyAction_Story1 extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.44;
+        this.videoData = videoData.elderly[0];
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_story1", "sound/elderly_story1.wav"),
-            "video": new Elderly_Story_Video(this.manager, this, "video/elderly_story1.mp4", 178),
-            "ui": new Action.ActionStart(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
+            "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
+            "video": new Elderly_Story_Video(this.manager, this, this.videoData.url, this.videoData.endTime),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this,
-            `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
     }
 }
-export class ElderlyAction_Story2 extends Action.ActionPage {
+export class ElderlyAction_Story2 extends ElderlyAction_Story1 {
     constructor(manager, obj) {
         super(manager, obj);
-        this.name = "ElderlyAction_Story2";
-        this.offset = 50;
-        this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoData = videoData.elderly[1];
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_story2", "sound/elderly_story2.mp3"),
-            "video": new Elderly_Story_Video(this.manager, this, "video/elderly_story2.mp4", 137),
-            "ui": new Action.ActionStart(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
+            "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
+            "video": new Elderly_Story_Video(this.manager, this, this.videoData.url, this.videoData.endTime),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this,
-            `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
     }
 }
-export class ElderlyAction_Story3 extends Action.ActionPage {
+export class ElderlyAction_Story3 extends ElderlyAction_Story1 {
     constructor(manager, obj) {
         super(manager, obj);
-        this.name = "ElderlyAction_Story3";
-        this.offset = 50;
-        this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoData = videoData.elderly[2];
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_story3", "sound/elderly_story3.wav"),
-            "video": new Elderly_Story_Video(this.manager, this, "video/elderly_story3.mp4", 116),
-            "ui": new Action.ActionStart(this.manager, this, "一起看看狗狗與收養家庭的故事吧！"),
+            "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
+            "video": new Elderly_Story_Video(this.manager, this, this.videoData.url, this.videoData.endTime),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this,
-            `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
     }
 }
 class Elderly_Story_Video extends Action.ActionVideo {

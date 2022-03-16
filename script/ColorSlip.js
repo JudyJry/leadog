@@ -7,6 +7,9 @@ const ColorSlip = {
     lightBlue: 0xcae3ec,
     lightYellow: 0xf6ebcf,
     lightGreen: 0xcbd872,
-    brown: 0xC2A178
+    brown: 0xC2A178,
+    button_submit: 0xC6D86B,
+    button_cancel: 0xF09683,
+    button_back: 0xF7C38A,
 }
 export { ColorSlip };

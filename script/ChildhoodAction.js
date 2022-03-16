@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
 import { createSprite } from './GameFunction';
+import { videoData } from './Data';
 
 export class ChildhoodAction_Kelly extends Action.ActionPage {
     constructor(manager, obj) {
@@ -9,14 +10,15 @@ export class ChildhoodAction_Kelly extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.44;
+        this.videoData = videoData.childhood[0];
+        this.videoTextures = this.manager.resources["image/video/childhood/sprites.json"].spritesheet.textures;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "childhood_kelly", "sound/childhood_kelly.wav"),
-            "video": new Childhood_Kelly_Video(this.manager, this, "video/childhood_kelly.mp4"),
-            "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗在寄養家庭中習慣人類社會生活吧！"),
+            "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
+            "video": new Childhood_Kelly_Video(this.manager, this, this.videoData.url),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this,
-            `謝謝你幫助狗狗完成在寄養家庭階段的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
     }
 }
 class Childhood_Kelly_Video extends Action.ActionVideo {
@@ -69,8 +71,8 @@ class Childhood_Kelly_UI_Stage1 extends Action.ActionLinsStage {
         this.name = "Childhood_Kelly_UI_Stage1";
         this.scale = 1;
         this.linePoint = [1109, 365, 1196, 446, 1217, 552];
-        this.titleUrl = "image/video/childhood/Kelly/stage_1_title.png";
-        this.hintUrl = "image/video/childhood/Kelly/stage_1_hint.png";
+        this.titleUrl = this.action.videoTextures["kelly_1_title.png"];
+        this.hintUrl = this.action.videoTextures["kelly_1_hint.png"];
         this.hintPos = [-0.25, 0.05];
     }
 }
@@ -79,8 +81,8 @@ class Childhood_Kelly_UI_Stage2 extends Action.ActionButtonStage {
         super(manager, action);
         this.name = "Childhood_Kelly_UI_Stage2";
         this.scale = 1;
-        this.titleUrl = "image/video/childhood/Kelly/stage_2_title.png";
-        this.hintUrl = "image/video/childhood/Kelly/stage_2_hint.png";
+        this.titleUrl = this.action.videoTextures["kelly_2_title.png"];
+        this.hintUrl = this.action.videoTextures["kelly_2_hint.png"];
         this.hintPos = [-0.25, -0.1];
         this.draw = function () {
             this.button = new Childhood_Kelly_Stage2_Button(manager, action, this);
@@ -106,7 +108,7 @@ class Childhood_Kelly_Stage2_Button extends Action.ActionUI {
             this.mask = new PIXI.Graphics();
             this.fullbar.mask = this.mask;
 
-            this.bg = createSprite("image/video/childhood/Kelly/stage_2_img.jpg");
+            this.bg = createSprite("image/video/childhood/Kelly_2_img.jpg");
             this.bg.alpha = 0;
             this.action.children.video.container.addChildAt(this.bg, 1);
 
@@ -156,8 +158,8 @@ class Childhood_Kelly_UI_Stage3 extends Action.ActionButtonStage {
         super(manager, action);
         this.name = "Childhood_Kelly_UI_Stage3";
         this.scale = 1;
-        this.titleUrl = "image/video/childhood/Kelly/stage_3_title.png";
-        this.hintUrl = "image/video/childhood/Kelly/stage_3_hint.png";
+        this.titleUrl = this.action.videoTextures["kelly_3_title.png"];
+        this.hintUrl = this.action.videoTextures["kelly_3_hint.png"];
         this.hintPos = [0.27, -0.2];
         this.draw = function () {
             this.button = new Childhood_Kelly_Stage3_Button(manager, action, this);
@@ -209,14 +211,15 @@ export class ChildhoodAction_Dora extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.44;
+        this.videoData = videoData.childhood[1];
+        this.videoTextures = this.manager.resources["image/video/childhood/sprites.json"].spritesheet.textures;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "childhood_dora", "sound/childhood_dora.wav"),
-            "video": new Childhood_Dora_Video(this.manager, this, "video/childhood_dora.mp4"),
-            "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗在生活中習慣與人相處吧！"),
+            "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
+            "video": new Childhood_Dora_Video(this.manager, this, this.videoData.url),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this,
-            `謝謝你幫助狗狗完成在寄養家庭階段的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
     }
 }
 class Childhood_Dora_Video extends Action.ActionVideo {
@@ -273,8 +276,8 @@ class Childhood_Dora_UI_Stage1 extends Action.ActionLinsStage {
         super(manager, action);
         this.scale = 1;
         this.linePoint = [1218, 669, 1330, 761, 1341, 899];
-        this.titleUrl = "image/video/childhood/Dora/stage_1_title.png";
-        this.hintUrl = "image/video/childhood/Dora/stage_1_hint.png";
+        this.titleUrl = this.action.videoTextures["dora_1_title.png"];
+        this.hintUrl = this.action.videoTextures["dora_1_hint.png"];
         this.hintPos = [-0.25, 0.35];
     }
 }
@@ -283,8 +286,8 @@ class Childhood_Dora_UI_Stage2 extends Action.ActionLinsStage {
         super(manager, action);
         this.scale = 1;
         this.linePoint = [487, 886, 555, 763, 635, 695];
-        this.titleUrl = "image/video/childhood/Dora/stage_2_title.png";
-        this.hintUrl = "image/video/childhood/Dora/stage_2_hint.png";
+        this.titleUrl = this.action.videoTextures["dora_2_title.png"];
+        this.hintUrl = this.action.videoTextures["dora_2_hint.png"];
         this.hintPos = [0.25, 0.35];
     }
 }
@@ -293,8 +296,8 @@ class Childhood_Dora_UI_Stage3 extends Action.ActionLinsStage {
         super(manager, action);
         this.scale = 1;
         this.linePoint = [665, 545, 561, 638, 497, 787];
-        this.titleUrl = "image/video/childhood/Dora/stage_3_title.png";
-        this.hintUrl = "image/video/childhood/Dora/stage_3_hint.png";
+        this.titleUrl = this.action.videoTextures["dora_3_title.png"];
+        this.hintUrl = this.action.videoTextures["dora_3_hint.png"];
         this.hintPos = [-0.2, 0.38];
     }
 }
@@ -303,8 +306,8 @@ class Childhood_Dora_UI_Stage4 extends Action.ActionLinsStage {
         super(manager, action);
         this.scale = 1;
         this.linePoint = [1078, 643, 1116, 789, 1147, 925];
-        this.titleUrl = "image/video/childhood/Dora/stage_4_title.png";
-        this.hintUrl = "image/video/childhood/Dora/stage_4_hint.png";
+        this.titleUrl = this.action.videoTextures["dora_4_title.png"];
+        this.hintUrl = this.action.videoTextures["dora_4_hint.png"];
         this.hintPos = [-0.32, 0];
     }
 }

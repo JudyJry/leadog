@@ -599,8 +599,8 @@ export class ActionLinsStage extends ActionUI {
         super(manager, action);
         this.scale = 1;
         this.linePoint = undefined;
-        this.titleUrl = "image/video/youth/bus/stage_1_title.png";
-        this.hintUrl = "image/video/youth/bus/stage_1_hint.png";
+        this.titleUrl = undefined;
+        this.hintUrl = undefined;
         this.hintPos = [0.284, 0.397];
         this.draw = function () {
             this.drawline();

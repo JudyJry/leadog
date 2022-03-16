@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
 import { createSprite } from './GameFunction';
+import { videoData } from './Data';
 
 export class ElderlyAction_Hair extends Action.ActionPage {
     constructor(manager, obj) {
@@ -9,14 +10,14 @@ export class ElderlyAction_Hair extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.26;
+        this.videoData = videoData.elderly[0];
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "elderly_hair", "sound/elderly_hair.mp3"),
-            "video": new Elderly_Hair_Video(this.manager, this, "video/elderly_hair.mp4"),
-            "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗整理毛髮吧！"),
+            "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
+            "video": new Elderly_Hair_Video(this.manager, this, this.videoData.url),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this,
-            `謝謝你幫助狗狗整理毛髮\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
     }
 }
 class Elderly_Hair_Video extends Action.ActionVideo {

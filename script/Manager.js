@@ -201,8 +201,8 @@ const loadList = {
     ],
     "born": [
         "image/building/born/bg.png",
-        "image/building/born/clan.png",
-        "image/building/born/clan_tree.png",
+        "image/building/born/door.png",
+        "image/building/born/mirror.png",
         "image/building/born/map.png",
         "image/building/born/video.png",
     ],
@@ -213,10 +213,12 @@ const loadList = {
         "image/building/childhood/puzzle.png",
         "image/building/childhood/video.png",
         "image/building/childhood/piece_sprites.json",
+        "image/video/childhood/sprites.json",
     ],
     "youth": [
         "image/building/youth/bg.png",
         "image/building/youth/video.png",
+        "image/video/youth/sprites.json",
     ],
     "elderly": [
         "image/building/elderly/bg.png",

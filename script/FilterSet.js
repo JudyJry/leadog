@@ -2,7 +2,7 @@ import { GlowFilter } from 'pixi-filters';
 import { ColorSlip } from './ColorSlip';
 
 
-let BlinkGlowFilterOptions = {
+const BlinkGlowFilterOptions = {
     distance: 10,
     outerStrength: 5,
     innerStrength: 0.1,

@@ -131,8 +131,8 @@ class YouthVideo extends Video {
         }.bind(this);
 
         this.nextButton.clickEvent = function () {
-            if (this.random === this.videoList.length - 1) { this.random = 0 }
-            else { this.random += 1 }
+            this.random++;
+            if (this.random >= this.videoList.length) { this.random = 0 }
             this.pause();
             this.container.removeChild(this.video.container);
             this.video = this.videoList[this.random]();

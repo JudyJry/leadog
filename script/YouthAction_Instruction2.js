@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
-import { Page } from './Data';
+import { videoData } from './Data';
 
 export default class YouthAction_Instruction2 extends Action.ActionPage {
     constructor(manager, obj) {
@@ -9,14 +9,15 @@ export default class YouthAction_Instruction2 extends Action.ActionPage {
         this.offset = 50;
         this.isPlayGame = false;
         this.videoScale = 0.355;
+        this.videoData = videoData.youth[2];
+        this.videoTextures = this.manager.resources["image/video/youth/sprites.json"].spritesheet.textures;
         this.children = {
-            "sound": new Action.ActionSound(this.manager, this, "youth_instruction2", "sound/youth_instruction2.wav"),
-            "video": new Youth_Instruction2_Video(this.manager, this, "video/youth_instruction2.mp4"),
-            "ui": new Action.ActionStart(this.manager, this, "一起幫助狗狗與訓練師習慣人類生活步調吧！"),
+            "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
+            "video": new Youth_Instruction2_Video(this.manager, this, this.videoData.url),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this,
-            `謝謝你幫助狗狗完成與訓練師生活的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`)
+        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
     }
 }
 class Youth_Instruction2_Video extends Action.ActionVideo {
@@ -64,8 +65,8 @@ class Youth_Instruction2_UI_Stage1 extends Action.ActionLinsStage {
         this.name = "Youth_Instruction2_UI_Stage1";
         this.scale = 1;
         this.linePoint = [886, 442, 743, 527, 1057, 571];
-        this.titleUrl = "image/video/youth/instruction2/stage_1_title.png";
-        this.hintUrl = "image/video/youth/instruction2/stage_1_hint.png";
+        this.titleUrl = this.action.videoTextures["instruction2_1_title.png"];
+        this.hintUrl = this.action.videoTextures["instruction2_1_hint.png"];
         this.hintPos = [-0.3, 0];
     }
 }
@@ -75,8 +76,8 @@ class Youth_Instruction2_UI_Stage2 extends Action.ActionLinsStage {
         this.name = "Youth_Instruction2_UI_Stage2";
         this.scale = 1;
         this.linePoint = [671, 619, 444, 535, 344, 718];
-        this.titleUrl = "image/video/youth/instruction2/stage_2_title.png";
-        this.hintUrl = "image/video/youth/instruction2/stage_2_hint.png";
+        this.titleUrl = this.action.videoTextures["instruction2_2_title.png"];
+        this.hintUrl = this.action.videoTextures["instruction2_2_hint.png"];
         this.hintPos = [0.3, 0.35];
 
     }
