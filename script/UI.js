@@ -297,7 +297,7 @@ export class Dialog {
         this.submit = this.options.submit ? this.drawSubmit() : false;
         this.cancel = this.options.cancel ? this.drawCancel() : false;
         this.buttonHeight = 60;
-        this.buttonSpace = 90;
+        this.buttonSpace = 88;
         this.draw();
     }
     overEvent(e) {
@@ -328,16 +328,16 @@ export class Dialog {
         this.context.position.set(0, -50);
         this.container.addChild(this.dialog, this.context);
         if (this.submit && this.cancel) {
-            this.submit.position.set(-this.buttonSpace, this.buttonHeight);
-            this.cancel.position.set(this.buttonSpace, this.buttonHeight);
+            this.submit.position.set(-this.buttonSpace - 5, this.buttonHeight);
+            this.cancel.position.set(this.buttonSpace - 5, this.buttonHeight);
             this.container.addChild(this.submit, this.cancel);
         }
         else if (this.submit) {
-            this.submit.position.set(0, this.buttonHeight);
+            this.submit.position.set(-5, this.buttonHeight);
             this.container.addChild(this.submit);
         }
         else if (this.cancel) {
-            this.cancel.position.set(0, this.buttonHeight);
+            this.cancel.position.set(-5, this.buttonHeight);
             this.container.addChild(this.cancel);
         }
         //this.container.alpha = 0;

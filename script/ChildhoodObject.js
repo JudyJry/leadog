@@ -99,7 +99,13 @@ class Puzzle extends linkObject {
         this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
         this.isClick = true;
-        gameStart.call(this);
+        if (!this.isComplete) {
+            gameStart.call(this);
+        }
+        else {
+            this.drawCancel();
+            this.cancel.visible = true;
+        }
         function gameStart() {
             const t = this;
             const m = this.manager;
@@ -194,6 +200,7 @@ class Puzzle extends linkObject {
                 c.piece[i].anchor.set(0.5);
                 c.piece[i].scale.set(1);
                 c.piece[i].position.set(pos[i][0], pos[i][1]);
+                c.piece[i].hitArea = new PIXI.Rectangle(-50, -50, 100, 100);
                 if (t.isAnswer[i] != true) {
                     addPieceEvent(c.piece[i]);
                     c.addChild(c.piece[i]);
@@ -302,6 +309,7 @@ class Puzzle extends linkObject {
         tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
         this.isClick = false;
         this.page.isZoomIn = false;
+        if (this.cancel) { this.cancel.visible = false; }
         this.container.removeChild(this.hintBar, this.pieceBar, this.answer);
     }
     update() {

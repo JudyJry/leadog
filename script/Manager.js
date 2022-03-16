@@ -43,7 +43,7 @@ export default class Manager {
 
         this.userData = {
             childhood: {
-                puzzle_complete: false,
+                puzzle_complete: true,
             }
         }
     }
