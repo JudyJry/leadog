@@ -111,11 +111,15 @@ class Puzzle extends linkObject {
             const m = this.manager;
             let d = new Dialog(m, {
                 context: `台灣的導盲犬為哪種狗狗呢？\n讓我們一起認識他們吧！`,
+                submitText: "開始遊戲",
+                cancelText: "結束遊戲",
                 cancel: () => { d.remove(); t.cancelEvent(); },
                 submit: () => {
                     d.remove();
                     let d2 = new Dialog(m, {
                         context: `請先觀察相框中狗狗的特徵\n結合下方拼圖拼到上方的相框中`,
+                        submitText: "開始遊戲",
+                        cancelText: "結束遊戲",
                         cancel: () => { d2.remove(); t.cancelEvent(); },
                         submit: () => {
                             d2.remove();

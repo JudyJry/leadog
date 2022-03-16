@@ -87,7 +87,11 @@ export class UI {
         }
     }
     clickEvent() {
-        alert("click " + this.name);
+        let d = new Dialog(this.manager, {
+            context: `這是一個${this.name}框框`,
+            cancelUrl: "image/dialog_exit.png",
+            cancel: () => d.remove()
+        })
     }
     setup() {
         this.draw();
@@ -143,9 +147,21 @@ class User extends UI {
         this.indexBg.scale.set(this.scale);
         this.index.addChild(this.indexBg);
         drawItem(this, 0, "image/buy.svg",
-            function () { }.bind(this));
+            function () {
+                let d = new Dialog(this.manager, {
+                    context: "這是一個購物框框",
+                    cancelUrl: "image/dialog_exit.png",
+                    cancel: () => d.remove()
+                })
+            }.bind(this));
         drawItem(this, 1, "image/info.svg",
-            function () { }.bind(this));
+            function () {
+                let d = new Dialog(this.manager, {
+                    context: "這是一個資訊框框",
+                    cancelUrl: "image/dialog_exit.png",
+                    cancel: () => d.remove()
+                })
+            }.bind(this));
 
         function drawItem(self, index, path, clickEvent) {
             let i = PIXI.Sprite.from(path);
@@ -187,7 +203,13 @@ class Menu extends UI {
         this.indexBg.scale.set(this.scale);
         this.index.addChild(this.indexBg);
         drawItem(this, 0, "image/question.svg",
-            function () { }.bind(this));
+            function () {
+                let d = new Dialog(this.manager, {
+                    context: "這是一個問題框框",
+                    cancelUrl: "image/dialog_exit.png",
+                    cancel: () => d.remove()
+                })
+            }.bind(this));
         this.sound = drawItem(this, 1, "image/soundon.svg",
             function () {
                 let e = this.sound;
@@ -282,18 +304,23 @@ class Cancel extends UI {
 let defaultDialogOptions = {
     context: "",
     submit: false,
-    submitUrl: "image/submit.png",
+    submitText: "確認",
     cancel: () => { },
-    cancelUrl: "image/exit.png",
+    cancelText: "關閉",
 }
 export class Dialog {
     constructor(manager, options = defaultDialogOptions) {
         this.manager = manager;
         this.options = Object.assign({}, defaultDialogOptions, options);
         this.textStyle = TextStyle.Dialog;
+        this.buttonTextStyle = TextStyle.Dialog_Button;
         this.container = new PIXI.Container();
         this.dialog = createSprite("image/dialog.png");
+        this.buttonTexture = PIXI.Texture.from("image/dialog_button.png");
         this.context = createText(this.options.context, this.textStyle);
+        this.submitColor = 0xC6D86B;
+        this.cancelColor = 0xF09683;
+        this.backColor = 0xF7C38A;
         this.submit = this.options.submit ? this.drawSubmit() : false;
         this.cancel = this.options.cancel ? this.drawCancel() : false;
         this.buttonHeight = 60;
@@ -302,27 +329,47 @@ export class Dialog {
     }
     overEvent(e) {
         if (e.isPointerOver) {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
+            gsap.killTweensOf(e.sprite);
+            gsap.killTweensOf(e.text);
+            gsap.timeline()
+                .to(e.sprite, { duration: 0.25, y: 4 })
+                .to(e.text, { duration: 0.25, y: 4 }, 0);
         }
         else {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
+            gsap.killTweensOf(e.sprite);
+            gsap.killTweensOf(e.text);
+            gsap.timeline()
+                .to(e.sprite, { duration: 0.25, y: 0 })
+                .to(e.text, { duration: 0.25, y: 0 }, 0);
         }
     }
     drawSubmit() {
-        let s = createSprite(this.options.submitUrl);
-        s.overEvent = this.overEvent;
-        s.clickEvent = this.options.submit;
-        addPointerEvent(s);
-        return s;
+        let c = new PIXI.Container();
+        let b = createSprite(this.buttonTexture);
+        c.sprite = createSprite(this.buttonTexture);
+        c.text = createText(this.options.submitText, this.buttonTextStyle);
+        c.sprite.tint = this.submitColor;
+        b.tint = this.backColor;
+        b.position.y = 10;
+        c.addChild(b, c.sprite, c.text);
+        c.overEvent = this.overEvent;
+        c.clickEvent = this.options.submit;
+        addPointerEvent(c);
+        return c;
     }
     drawCancel() {
-        let s = createSprite(this.options.cancelUrl);
-        s.overEvent = this.overEvent;
-        s.clickEvent = this.options.cancel;
-        addPointerEvent(s);
-        return s;
+        let c = new PIXI.Container();
+        let b = createSprite(this.buttonTexture);
+        c.sprite = createSprite(this.buttonTexture);
+        c.text = createText(this.options.cancelText, this.buttonTextStyle);
+        c.sprite.tint = this.cancelColor;
+        b.tint = this.backColor;
+        b.position.y = 10;
+        c.addChild(b, c.sprite, c.text);
+        c.overEvent = this.overEvent;
+        c.clickEvent = this.options.cancel;
+        addPointerEvent(c);
+        return c;
     }
     draw() {
         this.context.position.set(0, -50);
@@ -344,10 +391,12 @@ export class Dialog {
         //this.container.scale.set(0);
         this.manager.app.stage.addChildAt(this.container, 1);
         let tl = gsap.timeline();
-        tl.from(this.container.scale, { duration: 0.5, x: 0, y: 0, ease: "back.out(1.2)" });
-        tl.from(this.container, { duration: 1, alpha: 0 }, 0);
+        tl.from(this.container.scale, { duration: 0.5, x: 0.7, y: 0.7, ease: "back.out(1.5)" });
+        tl.from(this.container, { duration: 0.5, alpha: 0 }, 0);
     }
     remove() {
+        if (this.submit) { this.submit.interactive = false; }
+        if (this.cancel) { this.cancel.interactive = false; }
         let tl = gsap.timeline({
             onComplete: function () {
                 this.manager.app.stage.removeChild(this.container);
@@ -355,8 +404,8 @@ export class Dialog {
                 this.destroy();
             }.bind(this)
         });
-        tl.to(this.container.scale, { duration: 0.5, x: 0, y: 0, ease: "back.in(1.2)" });
-        tl.to(this.container, { duration: 1, alpha: 0 }, 0);
+        tl.to(this.container.scale, { duration: 0.5, x: 0.7, y: 0.7, ease: "back.in(1.5)" });
+        tl.to(this.container, { duration: 0.5, alpha: 0 }, 0);
     }
     destroy() {
         for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];

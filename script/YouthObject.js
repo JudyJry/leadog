@@ -109,11 +109,12 @@ class YouthVideo extends Video {
     }
     drawUI() {
         this.ui = new PIXI.Container();
+        const textures = this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures;
         this.frame = createSprite("image/video/youth/video.png", 0.5, 0.25);
-        this.playButton = createSprite("image/video/play.png", 0.5, this.uiScale);
-        this.volumeButton = createSprite("image/video/volume.png", 0.5, this.uiScale);
-        this.nextButton = createSprite("image/video/next.png", 0.5, this.uiScale);
-        this.fullButton = createSprite("image/video/full.png", 0.5, this.uiScale);
+        this.playButton = createSprite(textures["play.png"], 0.5, this.uiScale);
+        this.volumeButton = createSprite(textures["volume.png"], 0.5, this.uiScale);
+        this.nextButton = createSprite(textures["next.png"], 0.5, this.uiScale);
+        this.fullButton = createSprite(textures["full.png"], 0.5, this.uiScale);
 
         let standard = -300;
         let h = 186;
@@ -145,13 +146,13 @@ class YouthVideo extends Video {
                 this.volumeButton.turn = false;
                 this.video.videoCrol.muted = false;
                 this.video.sound.volume = 0.5;
-                this.volumeButton.texture = PIXI.Texture.from("image/video/volume.png");
+                this.volumeButton.texture = textures["volume.png"];
             }
             else {
                 this.volumeButton.turn = true;
                 this.video.videoCrol.muted = true;
                 this.video.sound.volume = 0;
-                this.volumeButton.texture = PIXI.Texture.from("image/video/volume_off.png");
+                this.volumeButton.texture = textures["volume_off.png"];
             }
         }.bind(this);
         this.volumeButton.turn = false;

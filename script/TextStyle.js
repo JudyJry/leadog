@@ -30,6 +30,11 @@ const TextStyle = {
         leading: 20,
         align: "center"
     }),
+    Dialog_Button: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 24,
+        fill: ColorSlip.white
+    }),
     Hint: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
         fontSize: 24,

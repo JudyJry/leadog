@@ -44,7 +44,7 @@ export default class Manager {
 
         this.userData = {
             childhood: {
-                puzzle_complete: true,
+                puzzle_complete: false,
             }
         }
     }
@@ -179,8 +179,7 @@ const loadList = {
         //page-ui
         "image/cancel.svg",
         "image/dialog.png",
-        "image/submit.png",
-        "image/exit.png",
+        "image/dialog_button.png",
         "image/arrow_right.svg",
         "image/arrow_left.svg",
         //video-ui
