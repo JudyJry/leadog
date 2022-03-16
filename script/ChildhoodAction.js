@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import * as Action from "./Action";
+import { createSprite } from './GameFunction';
 
 export class ChildhoodAction_Kelly extends Action.ActionPage {
     constructor(manager, obj) {
@@ -95,25 +96,19 @@ class Childhood_Kelly_Stage2_Button extends Action.ActionUI {
         this.name = "Childhood_Kelly_Stage2_Button";
         this.count = 0;
         this.draw = function () {
-            this.sprite.texture = PIXI.Texture.from("image/video/space.png");
+            const textures = this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures;
+            this.sprite.texture = textures["space.png"];
             this.sprite.anchor.set(0.5);
             this.sprite.scale.set(this.scale);
 
-            this.bar = PIXI.Sprite.from("image/video/bar.png");
-            this.bar.anchor.set(0.5);
-            this.bar.scale.set(0.7);
-
-            this.fullbar = PIXI.Sprite.from("image/video/bar_full.png");
-            this.fullbar.anchor.set(0.5);
-            this.fullbar.scale.set(0.7);
+            this.bar = createSprite(textures["bar.png"], 0.5, 0.7);
+            this.fullbar = createSprite(textures["bar_full.png"], 0.5, 0.7);
             this.mask = new PIXI.Graphics();
             this.fullbar.mask = this.mask;
 
-            this.bg = PIXI.Sprite.from("image/video/childhood/Kelly/stage_2_img.jpg");
-            this.bg.anchor.set(0.5);
+            this.bg = createSprite("image/video/childhood/Kelly/stage_2_img.jpg");
             this.bg.alpha = 0;
             this.action.children.video.container.addChildAt(this.bg, 1);
-
 
             this.container.addChild(this.bar, this.fullbar, this.sprite);
             this.setPosition(this.sprite, 0, 0.32);
@@ -178,9 +173,10 @@ class Childhood_Kelly_Stage3_Button extends Action.ActionUI {
         this.name = "Childhood_Kelly_Stage3_Button";
         this.times = 0;
         this.draw = function () {
+            const textures = this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures;
             this.spriteSheet = [
-                PIXI.Texture.from("image/video/wait.png"),
-                PIXI.Texture.from("image/video/ok.png")
+                textures["wait.png"],
+                textures["ok.png"]
             ];
             this.sprite.texture = this.spriteSheet[0];
             this.sprite.anchor.set(0.5);

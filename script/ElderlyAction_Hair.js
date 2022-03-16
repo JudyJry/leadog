@@ -76,11 +76,12 @@ class Elderly_Hair_UI_Stage extends Action.ActionUI {
         this.draw = function () {
             this.countdown = new Action.ActionCountDown(manager, action, this);
             this.countdown.setup();
-            let title = createSprite(`image/video/elderly/hair/title_${this.count}.png`, [1, 0.5], this.scale);
-            let hint = createSprite(`image/video/elderly/hair/hint_${this.count}.png`, 0.5, this.scale);
-            let button_1 = createSprite("image/video/elderly/hair/button_1.png", 0.5, this.scale);
-            let button_2 = createSprite("image/video/elderly/hair/button_2.png", 0.5, this.scale);
-            let button_3 = createSprite("image/video/elderly/hair/button_3.png", 0.5, this.scale);
+            const textures = this.manager.resources["image/video/elderly/elderly_video_sprites.json"].spritesheet.textures;
+            let title = createSprite(textures[`title_${this.count}.png`], [1, 0.5], this.scale);
+            let hint = createSprite(textures[`hint_${this.count}.png`], 0.5, this.scale);
+            let button_1 = createSprite(textures["button_1.png"], 0.5, this.scale);
+            let button_2 = createSprite(textures["button_2.png"], 0.5, this.scale);
+            let button_3 = createSprite(textures["button_3.png"], 0.5, this.scale);
 
             title.position.set((0.5 * this.w) - 150, (-0.5 * this.h) + 95);
 

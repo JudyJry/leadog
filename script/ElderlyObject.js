@@ -126,11 +126,12 @@ class Tv extends Video {
     }
     drawUI() {
         this.ui = new PIXI.Container();
+        const textures = this.manager.resources["image/video/elderly/elderly_video_sprites.json"].spritesheet.textures;
         this.frame = createSprite("image/video/tv.png", 0.5, 0.5);
-        this.playButton = createSprite("image/video/elderly/play.png", 0.5, this.uiScale);
-        this.volumeButton = createSprite("image/video/elderly/volume.png", 0.5, this.uiScale);
-        this.nextButton = createSprite("image/video/elderly/next.png", 0.5, this.uiScale);
-        this.fullButton = createSprite("image/video/elderly/full.png", 0.5, this.uiScale);
+        this.playButton = createSprite(textures["play.png"], 0.5, this.uiScale);
+        this.volumeButton = createSprite(textures["volume.png"], 0.5, this.uiScale);
+        this.nextButton = createSprite(textures["next.png"], 0.5, this.uiScale);
+        this.fullButton = createSprite(textures["full.png"], 0.5, this.uiScale);
 
         let standard = -270;
         let h = 235;
@@ -162,13 +163,13 @@ class Tv extends Video {
                 this.volumeButton.turn = false;
                 this.video.videoCrol.muted = false;
                 this.video.sound.volume = 0.5;
-                this.volumeButton.texture = PIXI.Texture.from("image/video/elderly/volume.png");
+                this.volumeButton.texture = textures["volume.png"];
             }
             else {
                 this.volumeButton.turn = true;
                 this.video.videoCrol.muted = true;
                 this.video.sound.volume = 0;
-                this.volumeButton.texture = PIXI.Texture.from("image/video/elderly/volume_off.png");
+                this.volumeButton.texture = textures["volume_off.png"];
             }
         }.bind(this);
         this.volumeButton.turn = false;
@@ -223,12 +224,16 @@ class Tv extends Video {
     play() {
         this.video.videoCrol.play();
         this.video.sound.play();
-        this.playButton.texture = PIXI.Texture.from("image/video/elderly/pause.png");
+        this.playButton.texture =
+            this.manager.resources["image/video/elderly/elderly_video_sprites.json"]
+                .spritesheet.textures["pause.png"];
     }
     pause() {
         this.video.videoCrol.pause();
         this.video.sound.pause();
-        this.playButton.texture = PIXI.Texture.from("image/video/elderly/play.png");
+        this.playButton.texture =
+            this.manager.resources["image/video/elderly/elderly_video_sprites.json"]
+                .spritesheet.textures["play.png"];
     }
 }
 class Map extends linkObject {

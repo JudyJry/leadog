@@ -32,6 +32,7 @@ export default class Manager {
         this.app.stage.y = this.app.renderer.height * this.anchor;
         this.loader = new ResourceLoader(this.app);
         this.loader.loadTexture(loadList.ui.concat(loadList.home));
+        this.resources = this.app.loader.resources;
 
         this.keyboard = new Keyboard();
         this.mouse = new Mouse(this);
@@ -184,30 +185,8 @@ const loadList = {
         "image/arrow_left.svg",
         //video-ui
         "image/video/video.png",
-        "image/video/play.png",
-        "image/video/pause.png",
-        "image/video/next.png",
-        "image/video/volume.png",
-        "image/video/volume_off.png",
-        "image/video/full.png",
-        //actionpage
         "image/TGDAlogo.png",
-        "image/video/count5.png",
-        "image/video/count4.png",
-        "image/video/count3.png",
-        "image/video/count2.png",
-        "image/video/count1.png",
-        "image/video/yes.png",
-        "image/video/no.png",
-        "image/video/know.png",
-        "image/video/bar.png",
-        "image/video/bar_full.png",
-        "image/video/space.png",
-        "image/video/wait.png",
-        "image/video/ok.png",
-        "image/video/cursor.png",
-        "image/video/cursorHint.png",
-        "image/video/Goodjob.png",
+        "image/video/actionUI_sprites.json"
     ],
     "home": [
         "image/homepage/map.png",
@@ -243,6 +222,7 @@ const loadList = {
     "elderly": [
         "image/building/elderly/bg.png",
         "image/building/elderly/video.png",
+        "image/video/elderly/elderly_video_sprites.json",
     ],
     "know": [
         "image/building/know/bg.png",

@@ -251,7 +251,9 @@ export class ActionLine extends ActionObject {
         this.sprite.moveTo(p[0], p[1]).bezierCurveTo(p[0], p[1], p[2], p[3], p[4], p[5]);
     }
     drawHint() {
-        this.hint = createSprite("image/video/cursorHint.png", 0.5, 0.3);
+        this.hint = createSprite(
+            this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures["cursorHint.png"]
+            , 0.5, 0.3);
         this.container.addChild(this.hint);
     }
     hintAnim() {
@@ -441,12 +443,13 @@ export class ActionCountDown extends ActionObject {
         this.name = "ActionCountDown";
         this.scale = 0.25;
         this.times = 0;
+        const textures = this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures;
         this.textureList = [
-            PIXI.Texture.from("image/video/count5.png"),
-            PIXI.Texture.from("image/video/count4.png"),
-            PIXI.Texture.from("image/video/count3.png"),
-            PIXI.Texture.from("image/video/count2.png"),
-            PIXI.Texture.from("image/video/count1.png"),
+            textures["count5.png"],
+            textures["count4.png"],
+            textures["count3.png"],
+            textures["count2.png"],
+            textures["count1.png"],
         ]
         this.draw = function () {
             let _x = (0.5 * this.w) - 100;
@@ -474,7 +477,9 @@ export class ActionGoodjob extends ActionObject {
         this.draw = function () {
             let _x = (-0.5 * this.w) + 300;
             let _y = (0.5 * this.h) - 150;
-            this.sprite = createSprite("image/video/Goodjob.png", 0.5, this.scale);
+            this.sprite = createSprite(
+                this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures["Goodjob.png"],
+                0.5, this.scale);
             this.container.addChild(this.sprite);
             this.container.position.set(_x, _y);
         }
@@ -500,7 +505,9 @@ export class ActionStart extends ActionUI {
         this.name = "ActionStart";
         this.isNotStart = true;
         this.draw = function () {
-            this.sprite = createSprite("image/video/know.png", 0.5, this.scale);
+            this.sprite = createSprite(
+                this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures["know.png"]
+                , 0.5, this.scale);
             this.setPosition(this.sprite, 0, 0.3);
             this.sprite.alpha = 0;
 
@@ -530,7 +537,8 @@ export class ActionStart extends ActionUI {
                     this.action.children.video.play();
                     this.action.removeChild(this.action.children.video.bg);
                     this.action.children.video.drawBg();
-                    this.action.obj.playButton.texture = PIXI.Texture.from("image/video/pause.png");
+                    this.action.obj.playButton.texture =
+                        this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures["pause.png"];
                 }.bind(this)
             });
         }
