@@ -163,7 +163,12 @@ export class linkObject extends GameObject {
         this.h = this.manager.h;
         this.container.removeChildren();
         this.draw();
-        if (this.isClick) { this.sprite.interactive = false; }
+        if (this.isClick) {
+            this.sprite.interactive = false;
+            let tl = gsap.timeline();
+            tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
+            tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
+        }
         this.container.scale.set(this.manager.canvasScale);
     }
     overEvent(e) {

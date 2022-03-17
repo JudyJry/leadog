@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { linkObject, PageObject, Background, Player, Video, OtherObject } from './GameObject.js';
+import { linkObject, PageObject, Background, Player, Video, OtherObject, Door } from './GameObject.js';
 import YouthAction_Bus from './YouthAction_bus.js';
 import YouthAction_Instruction from './YouthAction_Instruction.js';
 import YouthAction_Traffic from './YouthAction_Traffic.js';
@@ -17,9 +17,11 @@ export default class YouthObject extends PageObject {
         this.name = "YouthObject";
         this.children = {
             "background": new Background(this.manager, this, "image/building/youth/bg.png"),
+            "door": new Door(this.manager, this, -0.064, 0.117, "image/building/youth/door.png"),
             "video": new YouthVideo(this.manager, this),
             "graduate": new Graduate(this.manager, this),
             "grass": new OtherObject(this.manager, "grass", 0.028, 0.054, "image/building/youth/grass.png"),
+            "mirror": new Mirror(this.manager, this),
             "player": new Player(this.manager, this)
         };
     }
@@ -203,9 +205,43 @@ class Graduate extends linkObject {
     constructor(manager, page) {
         super(manager, page);
         this.name = "Graduate";
-        this.x = -0.241;
-        this.y = -0.077;
+        this.x = -0.294;
+        this.y = -0.118;
         this.url = "image/building/youth/graduate.png";
+        this.zoomIn = 1.3;
+    }
+    resize() {
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.removeChildren();
+        this.draw();
+        if (this.isClick) {
+            this.sprite.interactive = false;
+            let tl = gsap.timeline();
+            tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
+            tl.to(this.page.container, { duration: 0.5, x: (-this._x + 35) * this.zoomIn, y: (-this._y - 100) * this.zoomIn }, 0);
+        }
+        this.container.scale.set(this.manager.canvasScale);
+    }
+    clickEvent() {
+        this.blink.outerStrength = 0;
+        this.sprite.interactive = false;
+        let tl = gsap.timeline();
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
+        tl.to(this.page.container, { duration: 0.5, x: (-this._x + 35) * this.zoomIn, y: (-this._y - 100) * this.zoomIn }, 0);
+        this.page.children.player.move(this._x, this.sprite.width);
+        this.page.isZoomIn = true;
+        this.isClick = true;
+        this.drawCancel();
+        this.cancel.visible = true;
+    }
+}
+class Mirror extends linkObject {
+    constructor(manager, page) {
+        super(manager, page);
+        this.x = 0.108;
+        this.y = -0.026;
+        this.url = "image/building/youth/mirror.png";
         this.zoomIn = 1.5;
     }
 }
