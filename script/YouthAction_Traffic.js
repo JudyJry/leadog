@@ -57,12 +57,14 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
         this.name = "Youth_Traffic_UI_Stage1";
         this.scale = 1;
         this.dir = ["東西向", "南北向"];
-        this.dirSound = ["sound/youth_traffic_1.mp3", "sound/youth_traffic_2.mp3"];
         this.random = Math.floor(Math.random() * 2);
         this.draw = function () {
             this.countdown = new Action.ActionCountDown(this.manager, this.action, this);
             this.countdown.setup();
-            this.sound = new Action.ActionSound(this.manager, this, `youth_traffic_${this.random + 1}`, this.dirSound[this.random]);
+            this.sound = new Action.ActionSound(
+                this.manager, this,
+                `youth_traffic_${this.random + 1}`,
+                `sound/youth_traffic_${this.random + 1}.mp3`);
             this.sound.play();
 
             let title = createSprite(this.action.videoTextures["traffic_1_title.png"], [1, 0.5], this.scale);

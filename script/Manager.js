@@ -222,6 +222,13 @@ const loadList = {
         "image/building/youth/mirror.png",
         "image/building/youth/graduate.png",
         "image/video/youth/sprites.json",
+        "video/youth_bus.mp4",
+        "video/youth_instruction.mp4",
+        "video/youth_instruction2.mp4",
+        "video/youth_traffic.mp4",
+        "video/youth_traffic.mp4",
+        "video/youth_traffic_1.mp4",
+        "video/youth_traffic_2.mp4"
     ],
     "elderly": [
         "image/building/elderly/bg.png",
