@@ -46,7 +46,7 @@ class Tv extends Video {
         this.y = -0.049;
         this.url = "image/building/elderly/tv.png";
         this.zoomIn = 2.6;
-        this.zoomInPos = [83.5, -73.5]
+        this.zoomInPos = [83.4, -73.35]
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
         this.videoList = [function () { return new ElderlyAction_Hair(this.manager, this) }.bind(this)];
@@ -66,7 +66,7 @@ class Tv extends Video {
             this.page.container.position.set((-this._x + this.zoomInPos[0]) * this.zoomIn, (-this._y + this.zoomInPos[1]) * this.zoomIn);
         }
         else if (this.fullButton.turn) {
-            let fz = 3.85;
+            let fz = 3.92;
             this.frame.alpha = 0;
             this.UItint("brown");
             this.page.container.scale.set(fz);
@@ -83,10 +83,10 @@ class Tv extends Video {
                 gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
             }
             if (this.manager.mouse.y > this.h - 110) {
-                gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 133) / 3.8) });
+                gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 160) / 3.92) });
             }
             else if (this.manager.mouse.y < this.h - 110) {
-                gsap.to(this.ui, { duration: 1, y: 20 });
+                gsap.to(this.ui, { duration: 1, y: 0 });
             }
         }
         else {
@@ -100,7 +100,7 @@ class Tv extends Video {
         this.page.children.player.move(this._x, this.sprite.width);
         this.video = this.videoList[this.random]();
         this.video.setup();
-        this.video.container.position.set(-83, 72);
+        this.video.container.position.set(-83, 73);
         this.drawUI();
         this.fullButton.position.set(-this.uiOptions.standard - 160, this.uiOptions.height);
         if (!this.cancel) { this.drawCancel(); }

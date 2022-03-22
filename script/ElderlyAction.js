@@ -77,7 +77,7 @@ export class ElderlyAction_Hair extends Action.ActionPage {
         super(manager, obj);
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.26;
+        this.videoScale = 0.255;
         this.videoData = videoData.elderly[3];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
@@ -86,6 +86,22 @@ export class ElderlyAction_Hair extends Action.ActionPage {
             "logo": new Action.LogoVideo(this.manager, this)
         }
         this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
+    }
+    clickEvent() {
+        if (this.isNotStart) {
+            this.isNotStart = false;
+            gsap.to(this.container, {
+                duration: 1, alpha: 0, onComplete: function () {
+                    this.action.removeChild(this.container);
+                    this.action.children.video.isStart = true;
+                    this.action.children.video.play();
+                    this.action.removeChild(this.action.children.video.bg);
+                    this.action.children.video.drawBg();
+                    this.action.obj.playButton.texture =
+                        this.manager.resources["image/video/elderly/elderly_video_sprites.json"].spritesheet.textures["pause.png"];
+                }.bind(this)
+            });
+        }
     }
 }
 class Elderly_Hair_Video extends Action.ActionVideo {
