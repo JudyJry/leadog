@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, Video, Door } from './GameObject.js';
-import { BornAction_Story1, BornAction_Story2 } from './BornAction_Story.js';
+import { BornAction_Story1, BornAction_Story2 } from './BornAction.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);

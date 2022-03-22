@@ -59,6 +59,7 @@ class Puzzle extends linkObject {
         this.textureUrl = ["image/building/childhood/puzzle.png", "image/building/childhood/puzzle_complete.png"];
         this.url = this.isComplete ? this.textureUrl[1] : this.textureUrl[0];
         this.zoomIn = 1.4;
+        this.zoomInPos = [0, 40];
         this.hintList = [
             "黃金獵犬個性聰明、有主見在教導指令時可以快速學會！",
             "黃金獵犬的臉比較短、且耳朵也比較短。",
@@ -72,70 +73,6 @@ class Puzzle extends linkObject {
         ]
         this.random = Math.floor(Math.random() * this.hintList.length);
         this.isAnswer = new Array(this.hintList.length).fill(false);
-    }
-    resize() {
-        this.w = this.manager.w;
-        this.h = this.manager.h;
-        this.container.removeChildren();
-        this.url = this.isComplete ? this.textureUrl[1] : this.textureUrl[0];
-        this.draw();
-        if (this.isClick) {
-            this.sprite.interactive = false;
-            let tl = gsap.timeline();
-            tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-            tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: (-this._y + 40) * this.zoomIn }, 0);
-            this.hintBar = this.drawHintBar();
-            this.pieceBar = this.drawPieceBar();
-            this.answer = this.drawPieceAnswer();
-        }
-        this.container.scale.set(this.manager.canvasScale);
-    }
-    clickEvent() {
-        this.blink.outerStrength = 0;
-        this.sprite.interactive = false;
-        let tl = gsap.timeline();
-        tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-        tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: (-this._y + 40) * this.zoomIn }, 0);
-        this.page.children.player.move(this._x, this.sprite.width);
-        this.page.isZoomIn = true;
-        this.isClick = true;
-        if (!this.isComplete) {
-            gameStart.call(this);
-        }
-        else {
-            this.drawCancel();
-            this.cancel.visible = true;
-        }
-        function gameStart() {
-            const t = this;
-            const m = this.manager;
-            let d = new Dialog(m, {
-                context: `台灣的導盲犬為哪種狗狗呢？\n讓我們一起認識他們吧！`,
-                submitText: "開始遊戲",
-                cancelText: "結束遊戲",
-                cancel: () => { d.remove(); t.cancelEvent(); },
-                submit: () => {
-                    d.remove();
-                    let d2 = new Dialog(m, {
-                        context: `請先觀察相框中狗狗的特徵\n結合下方拼圖拼到上方的相框中`,
-                        submitText: "開始遊戲",
-                        cancelText: "結束遊戲",
-                        cancel: () => { d2.remove(); t.cancelEvent(); },
-                        submit: () => {
-                            d2.remove();
-                            if (t.isComplete) {
-                                t.sprite.texture = PIXI.Texture.from(t.textureUrl[0]);
-                                t.isAnswer = new Array(t.hintList.length).fill(false);
-                                t.isComplete = false;
-                            }
-                            t.hintBar = t.drawHintBar();
-                            t.pieceBar = t.drawPieceBar();
-                            t.answer = t.drawPieceAnswer();
-                        }
-                    })
-                }
-            })
-        }
     }
     drawHintBar() {
         let c = new PIXI.Container();
@@ -286,7 +223,57 @@ class Puzzle extends linkObject {
             }
         }
     }
-    onPlayGame() {
+    clickEvent() {
+        this.blink.outerStrength = 0;
+        this.sprite.interactive = false;
+        this.zoom();
+        this.page.children.player.move(this._x, this.sprite.width);
+        this.page.isZoomIn = true;
+        this.isClick = true;
+        if (!this.isComplete) {
+            gameStart.call(this);
+        }
+        else {
+            this.drawCancel();
+            this.cancel.visible = true;
+        }
+        function gameStart() {
+            const t = this;
+            const m = this.manager;
+            let d = new Dialog(m, {
+                context: `台灣的導盲犬為哪種狗狗呢？\n讓我們一起認識他們吧！`,
+                submitText: "開始遊戲",
+                cancelText: "結束遊戲",
+                cancel: () => { d.remove(); t.cancelEvent(); },
+                submit: () => {
+                    d.remove();
+                    let d2 = new Dialog(m, {
+                        context: `請先觀察相框中狗狗的特徵\n結合下方拼圖拼到上方的相框中`,
+                        submitText: "開始遊戲",
+                        cancelText: "結束遊戲",
+                        cancel: () => { d2.remove(); t.cancelEvent(); },
+                        submit: () => {
+                            d2.remove();
+                            if (t.isComplete) {
+                                t.sprite.texture = PIXI.Texture.from(t.textureUrl[0]);
+                                t.isAnswer = new Array(t.hintList.length).fill(false);
+                                t.isComplete = false;
+                            }
+                            t.hintBar = t.drawHintBar();
+                            t.pieceBar = t.drawPieceBar();
+                            t.answer = t.drawPieceAnswer();
+                        }
+                    })
+                }
+            })
+        }
+    }
+    onClickResize() {
+        this.hintBar = this.drawHintBar();
+        this.pieceBar = this.drawPieceBar();
+        this.answer = this.drawPieceAnswer();
+    }
+    onClickUpdate() {
         if (this.isAnswer.every(e => e) && !this.isComplete) {
             this.onComplete();
         }
@@ -320,21 +307,6 @@ class Puzzle extends linkObject {
         this.page.isZoomIn = false;
         if (this.cancel) { this.cancel.visible = false; }
         this.container.removeChild(this.hintBar, this.pieceBar, this.answer);
-    }
-    update() {
-        if (this.page.isZoomIn) {
-            this.blink.outerStrength = 0;
-            this.text.position.y = -this.spriteHeight;
-            this.text.alpha = 0;
-            if (this.isClick) { this.onPlayGame(); }
-        }
-        else if (this.sprite.isPointerOver) {
-            this.blink.outerStrength = 5;
-        }
-        else {
-            this.blink.effect();
-        }
-
     }
 }
 

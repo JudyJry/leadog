@@ -120,6 +120,7 @@ export class linkObject extends GameObject {
         this.url = "image/building/know/billboard.png";
         this.spriteHeight = 250;
         this.zoomIn = 2;
+        this.zoomInPos = [0, 0];
         this.fadeText = "點擊認識"
         this.isClick = false;
         this.draw = function () {
@@ -145,11 +146,21 @@ export class linkObject extends GameObject {
             this.container.position.set(this._x, this._y);
         }
     }
+    zoom() {
+        gsap.timeline()
+            .to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn })
+            .to(this.page.container, {
+                duration: 0.5,
+                x: (-this._x + this.zoomInPos[0]) * this.zoomIn,
+                y: (-this._y + this.zoomInPos[1]) * this.zoomIn
+            }, 0)
+    }
     update() {
         if (this.page.isZoomIn) {
             this.blink.outerStrength = 0;
             this.text.position.y = -this.spriteHeight;
             this.text.alpha = 0;
+            if (this.isClick) { this.onClickUpdate(); }
         }
         else if (this.sprite.isPointerOver) {
             this.blink.outerStrength = 5;
@@ -165,12 +176,13 @@ export class linkObject extends GameObject {
         this.draw();
         if (this.isClick) {
             this.sprite.interactive = false;
-            let tl = gsap.timeline();
-            tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-            tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
+            this.zoom();
+            this.onClickResize();
         }
         this.container.scale.set(this.manager.canvasScale);
     }
+    onClickResize() { }
+    onClickUpdate() { }
     overEvent(e) {
         if (e.isPointerOver) {
             gsap.killTweensOf(this.text);
@@ -184,9 +196,7 @@ export class linkObject extends GameObject {
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
-        let tl = gsap.timeline();
-        tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-        tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
+        this.zoom();
         this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
         this.isClick = true;
@@ -304,8 +314,13 @@ export class Video extends linkObject {
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
         this.videoList = [];
-        this.uiScale = 0.25;
-        this.uiHitArea = 85;
+        this.uiOptions = {
+            texturesUrl: "image/video/actionUI_sprites.json",
+            frameUrl: "image/video/video.png",
+            frameScale: 0.25,
+            uiHitArea: 85, uiScale: 0.25,
+            standard: -385, height: 260, space: 45
+        }
     }
     setup() {
         this.draw();
@@ -318,57 +333,43 @@ export class Video extends linkObject {
         this.w = this.manager.w;
         this.h = this.manager.h;
         this.container.scale.set(this.manager.canvasScale);
-        if (this.isClick && this.fullButton) {
-            if (!this.fullButton.turn) {
-                this.page.container.scale.set(this.zoomIn);
-                this.page.container.position.set(-this._x * this.zoomIn, -this._y * this.zoomIn);
-            }
-            else if (this.fullButton.turn) {
-                let fz = 2.3;
-                this.page.container.scale.set(fz);
-                this.page.container.position.set(-this._x * fz, (-this._y * fz) + 7.5);
-            }
+        if (this.isClick && this.fullButton) { this.onClickResize(); }
+    }
+    onClickResize() {
+        if (!this.fullButton.turn) {
+            this.page.container.scale.set(this.zoomIn);
+            this.page.container.position.set((-this._x + this.zoomInPos[0]) * this.zoomIn, (-this._y + this.zoomInPos[1]) * this.zoomIn);
+        }
+        else if (this.fullButton.turn) {
+            let fz = 2.3;
+            this.page.container.scale.set(fz);
+            this.page.container.position.set((-this._x + this.zoomInPos[0]) * fz, ((-this._y + this.zoomInPos[1]) * fz) + 7.5);
         }
     }
-    update() {
-        if (this.page.isZoomIn) {
-            this.blink.outerStrength = 0;
-            this.text.position.y = -this.spriteHeight;
-            this.text.alpha = 0;
-            if (this.isClick) {
-                this.video.update();
-                if (this.fullButton.turn) {
-                    if (this.manager.mouse.x < 250) {
-                        gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
-                    }
-                    else if (this.manager.mouse.x > 500) {
-                        gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
-                    }
-                    if (this.manager.mouse.y > this.h - 110) {
-                        gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 126) / 2.3) });
-                    }
-                    else if (this.manager.mouse.y < this.h - 110) {
-                        gsap.to(this.ui, { duration: 1, y: 0 });
-                    }
-                }
-                else {
-                    this.manager.uiSystem.container.position.x = 0;
-                    this.ui.position.set(0);
-                }
+    onClickUpdate() {
+        this.video.update();
+        if (this.fullButton.turn) {
+            if (this.manager.mouse.x < 250) {
+                gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
+            }
+            else if (this.manager.mouse.x > 500) {
+                gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
+            }
+            if (this.manager.mouse.y > this.h - 110) {
+                gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 126) / 2.3) });
+            }
+            else if (this.manager.mouse.y < this.h - 110) {
+                gsap.to(this.ui, { duration: 1, y: 0 });
             }
         }
-        else if (this.sprite.isPointerOver) {
-            this.blink.outerStrength = 5;
-        }
         else {
-            this.blink.effect();
+            this.manager.uiSystem.container.position.x = 0;
+            this.ui.position.set(0);
         }
     }
     clickEvent() {
         this.sprite.interactive = false;
-        let tl = gsap.timeline();
-        tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-        tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: -this._y * this.zoomIn }, 0);
+        this.zoom();
         this.page.children.player.move(this._x, this.sprite.width);
 
         this.video = this.videoList[this.random]();
@@ -423,20 +424,21 @@ export class Video extends linkObject {
     }
     drawUI() {
         this.ui = new PIXI.Container();
-        const textures = this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures;
-        this.frame = createSprite("image/video/video.png", 0.5, this.uiScale);
-        this.playButton = createSprite(textures["play.png"], 0.5, this.uiScale);
-        this.volumeButton = createSprite(textures["volume.png"], 0.5, this.uiScale);
-        this.nextButton = createSprite(textures["next.png"], 0.5, this.uiScale);
-        this.fullButton = createSprite(textures["full.png"], 0.5, this.uiScale);
+        const textures = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures;
+        const uiScale = this.uiOptions.uiScale;
+        this.frame = createSprite(this.uiOptions.frameUrl, 0.5, this.uiOptions.frameScale);
+        this.playButton = createSprite(textures["play.png"], 0.5, uiScale);
+        this.volumeButton = createSprite(textures["volume.png"], 0.5, uiScale);
+        this.nextButton = createSprite(textures["next.png"], 0.5, uiScale);
+        this.fullButton = createSprite(textures["full.png"], 0.5, uiScale);
 
-        let standard = -385;
-        let h = 260;
-        let space = 45;
-        this.playButton.position.set(standard, h);
-        this.nextButton.position.set(standard + space * 1, h);
-        this.volumeButton.position.set(standard + space * 2, h);
-        this.fullButton.position.set(-standard, h);
+        const stan = this.uiOptions.standard;
+        const h = this.uiOptions.height;
+        const space = this.uiOptions.space;
+        this.playButton.position.set(stan, h);
+        this.nextButton.position.set(stan + space * 1, h);
+        this.volumeButton.position.set(stan + space * 2, h);
+        this.fullButton.position.set(-stan, h);
 
         this.playButton.clickEvent = function () {
             if (this.video.children.video.isStart && !this.video.children.video.isPlayGame) {
@@ -501,10 +503,11 @@ export class Video extends linkObject {
         }.bind(this);
         this.fullButton.turn = false;
 
-        this.playButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
-        this.volumeButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
-        this.nextButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
-        this.fullButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
+        const uiHitArea = this.uiOptions.uiHitArea;
+        this.playButton.hitArea = new PIXI.Rectangle(-uiHitArea, -uiHitArea, uiHitArea * 2, uiHitArea * 2);
+        this.volumeButton.hitArea = new PIXI.Rectangle(-uiHitArea, -uiHitArea, uiHitArea * 2, uiHitArea * 2);
+        this.nextButton.hitArea = new PIXI.Rectangle(-uiHitArea, -uiHitArea, uiHitArea * 2, uiHitArea * 2);
+        this.fullButton.hitArea = new PIXI.Rectangle(-uiHitArea, -uiHitArea, uiHitArea * 2, uiHitArea * 2);
         addPointerEvent(this.playButton);
         addPointerEvent(this.volumeButton);
         addPointerEvent(this.nextButton);

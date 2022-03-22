@@ -34,8 +34,14 @@ class YouthVideo extends Video {
         this.y = -0.037;
         this.url = "image/building/youth/video.png";
         this.zoomIn = 1.8;
-        this.uiScale = 0.2;
-        this.uiHitArea = 65;
+        this.zoomInPos = [0, 25];
+        this.uiOptions = {
+            texturesUrl: "image/video/actionUI_sprites.json",
+            frameUrl: "image/video/youth/video.png",
+            frameScale: 0.25,
+            uiHitArea: 65, uiScale: 0.2,
+            standard: -300, height: 186, space: 35
+        }
         this.videoList = [
             function () { return new YouthAction_Bus(this.manager, this) }.bind(this),
             function () { return new YouthAction_Traffic(this.manager, this) }.bind(this),
@@ -43,63 +49,42 @@ class YouthVideo extends Video {
             function () { return new YouthAction_Instruction2(this.manager, this) }.bind(this)
         ]
     }
-    resize() {
-        this.w = this.manager.w;
-        this.h = this.manager.h;
-        this.container.scale.set(this.manager.canvasScale);
-        if (this.isClick && this.fullButton) {
-            if (!this.fullButton.turn) {
-                this.page.container.scale.set(this.zoomIn);
-                this.page.container.position.set((-this._x + 0) * this.zoomIn, (-this._y + 25) * this.zoomIn);
-            }
-            else if (this.fullButton.turn) {
-                let fz = 2.85;
-                this.page.container.scale.set(fz);
-                this.page.container.position.set((-this._x + 0) * fz, (-this._y + 25) * fz);
-            }
+    onClickResize() {
+        if (!this.fullButton.turn) {
+            this.page.container.scale.set(this.zoomIn);
+            this.page.container.position.set((-this._x + this.zoomInPos[0]) * this.zoomIn, (-this._y + this.zoomInPos[1]) * this.zoomIn);
+        }
+        else if (this.fullButton.turn) {
+            let fz = 2.85;
+            this.page.container.scale.set(fz);
+            this.page.container.position.set((-this._x + this.zoomInPos[0]) * fz, (-this._y + this.zoomInPos[1]) * fz);
         }
     }
-    update() {
-        if (this.page.isZoomIn) {
-            this.blink.outerStrength = 0;
-            this.text.position.y = -this.spriteHeight;
-            this.text.alpha = 0;
-            if (this.isClick) {
-                this.video.update();
-                if (this.fullButton.turn) {
-                    if (this.manager.mouse.x < 250) {
-                        gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
-                    }
-                    else if (this.manager.mouse.x > 500) {
-                        gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
-                    }
-                    if (this.manager.mouse.y > this.h - 110) {
-                        gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 128) / 2.85) });
-                    }
-                    else if (this.manager.mouse.y < this.h - 110) {
-                        gsap.to(this.ui, { duration: 1, y: 0 });
-                    }
-                }
-                else {
-                    this.manager.uiSystem.container.position.x = 0;
-                    this.ui.position.set(0);
-                }
+    onClickUpdate() {
+        this.video.update();
+        if (this.fullButton.turn) {
+            if (this.manager.mouse.x < 250) {
+                gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
+            }
+            else if (this.manager.mouse.x > 500) {
+                gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
+            }
+            if (this.manager.mouse.y > this.h - 110) {
+                gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 128) / 2.85) });
+            }
+            else if (this.manager.mouse.y < this.h - 110) {
+                gsap.to(this.ui, { duration: 1, y: 0 });
             }
         }
-        else if (this.sprite.isPointerOver) {
-            this.blink.outerStrength = 5;
-        }
         else {
-            this.blink.effect();
+            this.manager.uiSystem.container.position.x = 0;
+            this.ui.position.set(0);
         }
     }
     clickEvent() {
         this.sprite.interactive = false;
-        let tl = gsap.timeline();
-        tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-        tl.to(this.page.container, { duration: 0.5, x: (-this._x + 0) * this.zoomIn, y: (-this._y + 0) * this.zoomIn }, 0);
+        this.zoom();
         this.page.children.player.move(this._x, this.sprite.width);
-
         this.video = this.videoList[this.random]();
         this.video.setup();
         this.drawUI();
@@ -108,97 +93,6 @@ class YouthVideo extends Video {
         this.cancel.visible = true;
         this.page.isZoomIn = true;
         this.isClick = true;
-    }
-    drawUI() {
-        this.ui = new PIXI.Container();
-        const textures = this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures;
-        this.frame = createSprite("image/video/youth/video.png", 0.5, 0.25);
-        this.playButton = createSprite(textures["play.png"], 0.5, this.uiScale);
-        this.volumeButton = createSprite(textures["volume.png"], 0.5, this.uiScale);
-        this.nextButton = createSprite(textures["next.png"], 0.5, this.uiScale);
-        this.fullButton = createSprite(textures["full.png"], 0.5, this.uiScale);
-
-        let standard = -300;
-        let h = 186;
-        let space = 35;
-        this.playButton.position.set(standard, h);
-        this.nextButton.position.set(standard + space * 1, h);
-        this.volumeButton.position.set(standard + space * 2, h);
-        this.fullButton.position.set(-standard, h);
-
-        this.playButton.clickEvent = function () {
-            if (this.video.children.video.isStart && !this.video.children.video.isPlayGame) {
-                if (this.video.videoCrol.paused) { this.play(); } else { this.pause(); }
-            }
-        }.bind(this);
-
-        this.nextButton.clickEvent = function () {
-            this.random++;
-            if (this.random >= this.videoList.length) { this.random = 0 }
-            this.pause();
-            this.container.removeChild(this.video.container);
-            this.video = this.videoList[this.random]();
-            this.video.setup();
-            this.video.container.position.set(0, -24);
-            this.video.videoCrol.muted = this.volumeButton.turn;
-        }.bind(this);
-
-        this.volumeButton.clickEvent = function () {
-            if (this.video.videoCrol.muted) {
-                this.volumeButton.turn = false;
-                this.video.videoCrol.muted = false;
-                this.video.sound.volume = 0.5;
-                this.volumeButton.texture = textures["volume.png"];
-            }
-            else {
-                this.volumeButton.turn = true;
-                this.video.videoCrol.muted = true;
-                this.video.sound.volume = 0;
-                this.volumeButton.texture = textures["volume_off.png"];
-            }
-        }.bind(this);
-        this.volumeButton.turn = false;
-
-        this.fullButton.clickEvent = function () {
-            if (this.fullButton.turn) {
-                closeFullscreen();
-                this.fullButton.turn = false;
-            }
-            else {
-                openFullscreen(document.documentElement);
-                this.fullButton.turn = true;
-            }
-            function openFullscreen(elem) {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) { /* Safari */
-                    elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) { /* IE11 */
-                    elem.msRequestFullscreen();
-                }
-            }
-            function closeFullscreen() {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) { /* Safari */
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) { /* IE11 */
-                    document.msExitFullscreen();
-                }
-            }
-        }.bind(this);
-        this.fullButton.turn = false;
-        this.playButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
-        this.volumeButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
-        this.nextButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
-        this.fullButton.hitArea = new PIXI.Rectangle(-this.uiHitArea, -this.uiHitArea, this.uiHitArea * 2, this.uiHitArea * 2);
-        addPointerEvent(this.playButton);
-        addPointerEvent(this.volumeButton);
-        addPointerEvent(this.nextButton);
-        addPointerEvent(this.fullButton);
-
-        this.ui.addChild(this.frame, this.playButton, this.volumeButton, this.nextButton, this.fullButton);
-        this.container.addChild(this.ui);
     }
 }
 class Graduate extends linkObject {
@@ -209,30 +103,16 @@ class Graduate extends linkObject {
         this.y = -0.118;
         this.url = "image/building/youth/graduate.png";
         this.zoomIn = 1.3;
-    }
-    resize() {
-        this.w = this.manager.w;
-        this.h = this.manager.h;
-        this.container.removeChildren();
-        this.draw();
-        if (this.isClick) {
-            this.sprite.interactive = false;
-            let tl = gsap.timeline();
-            tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-            tl.to(this.page.container, { duration: 0.5, x: (-this._x + 35) * this.zoomIn, y: (-this._y - 100) * this.zoomIn }, 0);
-        }
-        this.container.scale.set(this.manager.canvasScale);
+        this.zoomInPos = [35, -100];
     }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
-        let tl = gsap.timeline();
-        tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-        tl.to(this.page.container, { duration: 0.5, x: (-this._x + 35) * this.zoomIn, y: (-this._y - 100) * this.zoomIn }, 0);
+        this.zoom();
         this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
         this.isClick = true;
-        this.drawCancel();
+        if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
     }
 }
