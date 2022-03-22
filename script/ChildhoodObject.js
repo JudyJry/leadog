@@ -83,7 +83,7 @@ class Puzzle extends linkObject {
             this.sprite.interactive = false;
             let tl = gsap.timeline();
             tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-            tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: (-this._y + 90) * this.zoomIn }, 0);
+            tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: (-this._y + 40) * this.zoomIn }, 0);
             this.hintBar = this.drawHintBar();
             this.pieceBar = this.drawPieceBar();
             this.answer = this.drawPieceAnswer();
@@ -95,7 +95,7 @@ class Puzzle extends linkObject {
         this.sprite.interactive = false;
         let tl = gsap.timeline();
         tl.to(this.page.container.scale, { duration: 0.5, x: this.zoomIn, y: this.zoomIn });
-        tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: (-this._y + 90) * this.zoomIn }, 0);
+        tl.to(this.page.container, { duration: 0.5, x: -this._x * this.zoomIn, y: (-this._y + 40) * this.zoomIn }, 0);
         this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
         this.isClick = true;
@@ -156,7 +156,7 @@ class Puzzle extends linkObject {
         addPointerEvent(c.exitButton);
         c.text = createText(this.hintList[this.random], TextStyle.Hint, [0, 0.5]);
         c.text.position.set(-450, -5);
-        c.position.set(-20, -375);
+        c.position.set(0, -330);
         c.addChild(bar, c.exitButton, c.text);
         this.container.addChild(c);
         return c;
@@ -191,7 +191,7 @@ class Puzzle extends linkObject {
             mask.position.set(0, -40);
             pieceText.mask = mask;
             pieces.alpha = 0.5;
-            c.position.set(-19, 150);
+            c.position.set(0, 196);
             c.addChild(bar, pieces, pieceText, mask);
         }
         function drawPieces(src) {
@@ -262,17 +262,17 @@ class Puzzle extends linkObject {
         this.container.addChild(c);
         return c;
         function drawPieces(src) {
-            let sheet = this.manager.app.loader.resources[src].spritesheet;
-            let pos = [
-                [-372, -104],
-                [-20, -104],
-                [354, -105],
-                [56, 39],
-                [0, 0],
-                [22, -104],
-                [-350, -6],
-                [-332, -104],
-                [-413, 40],
+            const sheet = this.manager.app.loader.resources[src].spritesheet;
+            const pos = [
+                [-353, -57],
+                [-1, -57],
+                [373, -58],
+                [75, 86],
+                [19, 47],
+                [41, -57],
+                [-331, 41],
+                [-313, -57],
+                [-394, 87]
             ]
             c.piece = [];
             for (let i = 0; i < Object.keys(sheet.textures).length; i++) {
@@ -293,12 +293,17 @@ class Puzzle extends linkObject {
     }
     onComplete() {
         this.isComplete = this.page.userData.puzzle_complete = true;
+        this.url = this.textureUrl[1];
+        let s = createSprite(this.url);
+        s.alpha = 0;
+        this.container.addChild(s);
+        gsap.to(s, { duration: 1, alpha: 1 });
         let d = new Dialog(this.manager, {
             context: `恭喜你解完所有狗狗拼圖，\n現在讓我們繼續認識導盲犬吧！`,
             cancel: () => {
                 d.remove();
                 this.cancelEvent();
-                this.url = this.textureUrl[1];
+                this.container.removeChild(s);
                 this.sprite.texture = PIXI.Texture.from(this.url);
             }
         })

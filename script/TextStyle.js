@@ -23,10 +23,7 @@ const TextStyle = {
     Dialog: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
         fontSize: 24,
-        fill: ColorSlip.white,
-        stroke: ColorSlip.lightGreen,
-        lineJoin: "round",
-        strokeThickness: 3,
+        fill: ColorSlip.darkOrange,
         leading: 20,
         align: "center"
     }),
@@ -38,10 +35,7 @@ const TextStyle = {
     Hint: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
         fontSize: 24,
-        fill: ColorSlip.white,
-        stroke: ColorSlip.lightGreen,
-        lineJoin: "round",
-        strokeThickness: 3,
+        fill: ColorSlip.darkOrange,
         leading: 20,
         align: "left"
     }),
