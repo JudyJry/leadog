@@ -4,6 +4,10 @@ import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, Door, Video } from './GameObject.js';
 import { ElderlyAction_Hair, ElderlyAction_Story1, ElderlyAction_Story2, ElderlyAction_Story3 } from './ElderlyAction.js';
 import { ColorSlip } from './ColorSlip.js';
+import { addPointerEvent, createSprite, createText } from './GameFunction.js';
+import { TextStyle } from './TextStyle.js';
+import { mapData } from './Data.js';
+import { FilterSet } from './FilterSet.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -136,11 +140,26 @@ class Map extends linkObject {
         this.x = 0.44;
         this.y = -0.081;
         this.url = "image/building/elderly/map.png";
-        this.zoomIn = 1.5;
-        this.textures = this.manager.app.loader.resources["image/map/sprites.json"].spritesheet.textures;
+        this.zoomIn = 1.6;
+        this.zoomInPos = [0, -20];
+        this.originPos = [0, 43];
+        this.uiScale = 0.5;
+        //dir = ["north", "west", "south", "east"];
+        this.dir = ["n", "w", "s", "e"];
     }
-    onClickResize() { }
-    onClickUpdate() { }
+    onClickResize() {
+        this.map = this.drawMap();
+    }
+    onClickUpdate() {
+        for (let i = 0; i < this.dir.length; i++) {
+            if (this.map.land[this.dir[i]].isPointerOver) {
+                this.map.land[this.dir[i]].blink.outerStrength = 5;
+            }
+            else {
+                this.map.land[this.dir[i]].blink.effect();
+            }
+        }
+    }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
@@ -150,6 +169,8 @@ class Map extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
+        this.textures = this.manager.app.loader.resources["image/map/sprites.json"].spritesheet.textures;
+        this.map = this.drawMap();
     }
     cancelEvent() {
         let tl = gsap.timeline({
@@ -163,8 +184,161 @@ class Map extends linkObject {
         this.page.isZoomIn = false;
         this.cancel.visible = false;
         this.cancel = undefined;
+        this.container.removeChild(this.map);
     }
+    drawMap() {
+        const ox = this.originPos[0];
+        const oy = this.originPos[1];
+        const scale = this.uiScale;
+        const textures = this.textures;
+        const data_num = mapData.elderly_num;
+        const dir = this.dir;
+        let c = new PIXI.Container();
+        let mask = createSprite("image/map/mask.png", 0.5, scale);
+        mask.position.set(ox, oy);
 
+        let bg = new PIXI.Graphics()
+            .beginFill(ColorSlip.lightBlue)
+            .drawRect(0, 0, 352, 434.5);
+        bg.pivot.set(352 / 2, 434.5 / 2);
+        bg.position.set(ox, oy);
+        bg.mask = mask;
+
+        drawFrontLayer();
+        drawBrand();
+        drawMark();
+        drawLand();
+
+        c.addChild(mask, bg, c.land, c.brand, c.mark, c.frontLayer);
+        this.container.addChild(c);
+        return c;
+        function drawFrontLayer() {
+            c.frontLayer = new PIXI.Container();
+
+            let frame = createSprite("image/map/frame.png", 0.5, scale);
+            let title = createText("導盲犬收養分佈地圖", TextStyle.Map_Blue);
+            title.position.set(0, -130);
+            c.frontLayer.hint = createText("請選擇收養地區", TextStyle.Map_Blue_16);
+            c.frontLayer.hint.position.set(0, -102);
+            let total_num = createText(`各地區收養導盲犬\n北部-${data_num.n}　中部-${data_num.w}\n南部-${data_num.s}　東部-${data_num.e}`, TextStyle.Map_Blue_13);
+            total_num.position.set(100, 200);
+
+            gsap.timeline({ repeat: -1 }).to(c.frontLayer.hint, { duration: 1.5, alpha: 0 }).to(c.frontLayer.hint, { duration: 1.5, alpha: 1 })
+
+            c.frontLayer.addChild(title, c.frontLayer.hint, total_num, frame);
+        }
+        function drawBrand() {
+            const pos = {
+                "n": [122, -62],
+                "w": [-119, -37],
+                "s": [-119, 142],
+                "e": [109, 65]
+            }
+            c.brand = new PIXI.Container();
+            c.brand.position.set(ox, oy);
+            for (let i = 0; i < dir.length; i++) {
+                let e = new PIXI.Container();
+                e.brand = createSprite(textures[`brand_${dir[i]}.png`], 0.5, scale);
+                e.text = createText(data_num[dir[i]] + "隻", TextStyle.Map_Blue_13);
+                e.text.position.set(0, 20);
+                e.position.set(pos[dir[i]][0], pos[dir[i]][1]);
+                e.addChild(e.brand, e.text);
+                c.brand[dir[i]] = e;
+            }
+            c.brand.addChild(c.brand["s"], c.brand["w"], c.brand["n"], c.brand["e"]);
+        }
+        function drawMark() {
+            const pos = {
+                "n": [42, -83],
+                "w": [-22.5, 8],
+                "s": [-59, 115],
+                "e": [22.5, 58]
+            }
+            c.mark = new PIXI.Container();
+            c.mark.position.set(ox, oy);
+            for (let i = 0; i < dir.length; i++) {
+                let e = createSprite(textures[`mark_${dir[i]}.png`], [0.5, 1], scale);
+                e.position.set(pos[dir[i]][0], pos[dir[i]][1]);
+                gsap.from(e.scale, { duration: 0.8, x: 0, y: 0 })
+                c.mark[dir[i]] = e;
+            }
+            c.mark.addChild(c.mark["s"], c.mark["w"], c.mark["n"], c.mark["e"]);
+        }
+        function drawLand() {
+            const pos = {
+                "n": [39.5, -78],
+                "w": [-22.5, -1.5],
+                "s": [-45.25, 120],
+                "e": [22.5, 63]
+            }
+            c.land = new PIXI.Container();
+            c.land.mask = mask;
+            c.land.position.set(ox, oy);
+
+            let tw = createSprite(textures["taiwan.png"], 0.5, scale);
+            tw.position.set(0, 35);
+            for (let i = 0; i < dir.length; i++) {
+                let e = createSprite(textures[`land_${dir[i]}.png`], 0.5, scale);
+                e.position.set(pos[dir[i]][0], pos[dir[i]][1]);
+                e.blink = FilterSet.blink();
+                e.filters = [e.blink.filter];
+                e.clickEvent = () => {
+                    const z = 2;
+                    for (let j = 0; j < dir.length; j++) {
+                        c.brand[dir[j]].alpha = 0;
+                        c.land[dir[j]].interactive = false;
+                        c.land[dir[j]].filters = [];
+                    }
+                    c.brand[dir[i]].alpha = 1;
+                    c.mark.alpha = 0;
+                    gsap.timeline()
+                        .to(c.land.scale, { duration: 0.5, x: z, y: z })
+                        .to(c.land, { duration: 0.5, x: (-e.position.x + ox) * z, y: (-e.position.y + oy) * z }, 0)
+                        .to(c.brand[dir[i]], { duration: 0.5, x: 0 - ox, y: -102 - oy }, 0);
+                    gsap.killTweensOf(c.frontLayer.hint);
+                    c.frontLayer.hint.alpha = 0;
+                    drawSecond();
+                }
+                addPointerEvent(e);
+                c.land[dir[i]] = e;
+            }
+            c.land.addChild(tw, c.land["s"], c.land["w"], c.land["n"], c.land["e"]);
+        }
+        function drawSecond() {
+            //todo: brand arror , cancel , marks+nameText
+            //todo: click brand arror=> changeLocal
+            //todo: click marks=> drawDetail()
+            //todo: click cancel=> returnFrist()
+        }
+        function returnFrist() {
+            //todo: recover the following setting
+            /* e.clickEvent = () => {
+                const z = 2;
+                for (let j = 0; j < dir.length; j++) {
+                    c.brand[dir[j]].alpha = 0;
+                    c.land[dir[j]].interactive = false;
+                    c.land[dir[j]].filters = [];
+                }
+                c.brand[dir[i]].alpha = 1;
+                c.mark.alpha = 0;
+                gsap.timeline()
+                    .to(c.land.scale, { duration: 0.5, x: z, y: z })
+                    .to(c.land, { duration: 0.5, x: (-e.position.x + ox) * z, y: (-e.position.y + oy) * z }, 0)
+                    .to(c.brand[dir[i]], { duration: 0.5, x: 0 - ox, y: -102 - oy }, 0);
+                gsap.killTweensOf(c.frontLayer.hint);
+                c.frontLayer.hint.alpha = 0;
+                drawSecond();
+            } */
+        }
+        function drawDetail() {
+            //todo: bottom arror+text , cancel , nameText , detail text , pic
+            //todo: click bottom arror=> change nameText, detail text, pic
+            //todo: click cancel=> remove all detail view , returnSecond()
+        }
+        function returnSecond() {
+            //todo: return Second setting. ex:obj.alpha
+        }
+    }
 }
 class Book extends linkObject {
     constructor(manager, page) {

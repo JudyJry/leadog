@@ -5,6 +5,7 @@ const ColorSlip = {
     darkOrange: 0x70423c,
     yellow: 0xffff66,
     lightBlue: 0xcae3ec,
+    darkBlue: 0xB0CFD9,
     lightYellow: 0xf6ebcf,
     lightGreen: 0xcbd872,
     brown: 0xC2A178,
