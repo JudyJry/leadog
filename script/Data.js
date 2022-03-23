@@ -142,4 +142,92 @@ const videoData = {
         }
     ]
 }
-export { objType, Page, homePageData, uiData, videoData };
+
+const mapData = {
+    born_num: {
+        n: 26, w: 18, s: 22
+    },
+    born_name: {
+        n: ["Celine", "IQ", "Gavin", "Dora", "Danny", "Alfa", "Joe", "Uwu"],
+        w: ["Coco", "King", "Kia", "Judy", "Jasmin", "DJ", "Ethan", "Jazz"],
+        s: ["Ryan", "Ueqen", "Celie", "Doag", "Ale", "George", "Kally"]
+    },
+    born_detail: [
+        {
+            name: "Ben",
+            birth: "10/14",
+            weight: "400g",
+            gender: "男生",
+            breed: "黃金拉拉",
+            pic: "image/map/born_pic_0.png"
+        },
+        {
+            name: "Judy",
+            birth: "01/27",
+            weight: "320g",
+            gender: "男生",
+            breed: "拉不拉多",
+            pic: "image/map/born_pic_1.png"
+        },
+        {
+            name: "Ryan",
+            birth: "05/20",
+            weight: "420g",
+            gender: "女生",
+            breed: "黃金拉拉",
+            pic: "image/map/born_pic_2.png"
+        },
+        {
+            name: "Green",
+            birth: "10/14",
+            weight: "400g",
+            gender: "男生",
+            breed: "黃金獵犬",
+            pic: "image/map/born_pic_3.png"
+        }
+    ],
+    elderly_num: {
+        n: 26, w: 18, s: 22, e: 14
+    },
+    elderly_name: {
+        n: ["Celine", "IQ", "Gavin", "Dora", "Danny", "Alfa", "Joe", "Uwu"],
+        w: ["Coco", "King", "Kia", "Judy", "Jasmin", "DJ", "Ethan", "Jazz"],
+        s: ["Ryan", "Ueqen", "Celie", "Doag", "Ale", "George", "Kally"],
+        e: ["Lady", "Ginger", "Deny", "Jazz", "Green", "News", "Jet"]
+    },
+    elderly_detail: [
+        {
+            name: "Umo",
+            birth: "12/12",
+            gender: "女生",
+            breed: "黃金獵犬",
+            nature: "親狗也親人",
+            pic: "image/map/elderly_pic_0.png"
+        },
+        {
+            name: "Coco",
+            birth: "01/27",
+            gender: "男生",
+            breed: "黃金獵犬",
+            nature: "超喜歡散步",
+            pic: "image/map/elderly_pic_1.png"
+        },
+        {
+            name: "Kally",
+            birth: "02/14",
+            gender: "女生",
+            breed: "拉不拉多",
+            nature: "喜歡摸摸",
+            pic: "image/map/elderly_pic_2.png"
+        },
+        {
+            name: "Green",
+            birth: "04/30",
+            gender: "女生",
+            breed: "黃金獵犬",
+            nature: "喜歡分享",
+            pic: "image/map/elderly_pic_3.png"
+        }
+    ]
+}
+export { objType, Page, homePageData, uiData, videoData, mapData };

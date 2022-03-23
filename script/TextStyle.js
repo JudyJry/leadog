@@ -32,7 +32,7 @@ const TextStyle = {
         fontSize: 24,
         fill: ColorSlip.white
     }),
-    Hint: new PIXI.TextStyle({
+    Puzzle_Hint: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
         fontSize: 24,
         fill: ColorSlip.darkOrange,

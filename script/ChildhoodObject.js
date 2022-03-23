@@ -91,7 +91,7 @@ class Puzzle extends linkObject {
         }
         c.exitButton.clickEvent = this.cancelEvent.bind(this);
         addPointerEvent(c.exitButton);
-        c.text = createText(this.hintList[this.random], TextStyle.Hint, [0, 0.5]);
+        c.text = createText(this.hintList[this.random], TextStyle.Puzzle_Hint, [0, 0.5]);
         c.text.position.set(-450, -5);
         c.position.set(0, -330);
         c.addChild(bar, c.exitButton, c.text);

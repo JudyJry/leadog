@@ -137,7 +137,34 @@ class Map extends linkObject {
         this.y = -0.081;
         this.url = "image/building/elderly/map.png";
         this.zoomIn = 1.5;
+        this.textures = this.manager.app.loader.resources["image/map/sprites.json"].spritesheet.textures;
     }
+    onClickResize() { }
+    onClickUpdate() { }
+    clickEvent() {
+        this.blink.outerStrength = 0;
+        this.sprite.interactive = false;
+        this.zoom();
+        this.page.children.player.move(this._x, this.sprite.width);
+        this.page.isZoomIn = true;
+        this.isClick = true;
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+    }
+    cancelEvent() {
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.sprite.interactive = true;
+            }.bind(this)
+        });
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.isClick = false;
+        this.page.isZoomIn = false;
+        this.cancel.visible = false;
+        this.cancel = undefined;
+    }
+
 }
 class Book extends linkObject {
     constructor(manager, page) {
