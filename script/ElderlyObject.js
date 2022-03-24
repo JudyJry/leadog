@@ -186,7 +186,18 @@ class Map extends linkObject {
         this.cancel = undefined;
         this.container.removeChild(this.map);
     }
+    uiOverEvent(e) {
+        if (e.isPointerOver) {
+            gsap.killTweensOf(e);
+            gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
+        }
+        else {
+            gsap.killTweensOf(e);
+            gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
+        }
+    }
     drawMap() {
+        const self = this;
         const ox = this.originPos[0];
         const oy = this.originPos[1];
         const scale = this.uiScale;
@@ -201,12 +212,20 @@ class Map extends linkObject {
             s: TextStyle.Map_S_13,
             e: TextStyle.Map_E_13
         }
+        const dirTextStyle = {
+            n: TextStyle.Map_N,
+            w: TextStyle.Map_W,
+            s: TextStyle.Map_S,
+            e: TextStyle.Map_E
+        }
         let selectDir = undefined;
+        let selectDetail = undefined;
         let c = new PIXI.Container();
+        let frame = createSprite("image/map/frame.png", 0.5, scale);
         let mask = createSprite("image/map/mask.png", 0.5, scale);
         mask.position.set(ox, oy);
         drawFrist();
-        this.container.addChild(c);
+        this.container.addChild(c, frame);
         return c;
         function drawFrist() {
             let bg = new PIXI.Graphics()
@@ -225,16 +244,18 @@ class Map extends linkObject {
             c.frontLayer = new PIXI.Container();
 
             let frame = createSprite("image/map/frame.png", 0.5, scale);
-            let title = createText("導盲犬收養分佈地圖", TextStyle.Map_Blue);
+            let title = createText("導盲犬收養分佈地圖", TextStyle.Map_Blue, 0.5, 0.5);
             title.position.set(0, -130);
-            c.frontLayer.hint = createText("請選擇收養地區", TextStyle.Map_Blue_16);
+            c.frontLayer.hint = createText("請選擇收養地區", TextStyle.Map_Blue_16, 0.5, 0.5);
             c.frontLayer.hint.position.set(0, -102);
-            let total_num = createText(`各地區收養導盲犬\n北部-${data_num.n}　中部-${data_num.w}\n南部-${data_num.s}　東部-${data_num.e}`, TextStyle.Map_Blue_13);
-            total_num.position.set(100, 200);
+            c.frontLayer.total_num = createText(
+                `各地區收養導盲犬\n北部-${data_num.n}　中部-${data_num.w}\n南部-${data_num.s}　東部-${data_num.e}`,
+                TextStyle.Map_Blue_13, 0.5, 0.5);
+            c.frontLayer.total_num.position.set(100, 200);
 
             gsap.timeline({ repeat: -1 }).to(c.frontLayer.hint, { duration: 1.5, alpha: 0 }).to(c.frontLayer.hint, { duration: 1.5, alpha: 1 })
 
-            c.frontLayer.addChild(title, c.frontLayer.hint, total_num, frame);
+            c.frontLayer.addChild(title, c.frontLayer.hint, c.frontLayer.total_num);
         }
         function drawBrand() {
             const pos = {
@@ -248,7 +269,7 @@ class Map extends linkObject {
             for (let i = 0; i < dir.length; i++) {
                 let e = new PIXI.Container();
                 e.brand = createSprite(textures[`brand_${dir[i]}.png`], 0.5, scale);
-                e.text = createText(data_num[dir[i]] + "隻", TextStyle.Map_Blue_13);
+                e.text = createText(data_num[dir[i]] + "隻", TextStyle.Map_Blue_13, 0.5, 0.5);
                 e.text.position.set(0, 20);
                 e.position.set(pos[dir[i]][0], pos[dir[i]][1]);
                 e.addChild(e.brand, e.text);
@@ -280,6 +301,12 @@ class Map extends linkObject {
                 "s": [-45.25, 120],
                 "e": [22.5, 63]
             }
+            const hitArea = {
+                "n": new PIXI.Circle(0, 0, 95),
+                "w": new PIXI.Circle(0, 0, 95),
+                "s": new PIXI.Circle(-0.5, 13.5, 95),
+                "e": new PIXI.Rectangle(-198 / 2, -406 / 2, 198, 406)
+            }
             c.land = new PIXI.Container();
             c.land.mask = mask;
             c.land.position.set(ox, oy);
@@ -291,100 +318,214 @@ class Map extends linkObject {
                 e.position.set(pos[dir[i]][0], pos[dir[i]][1]);
                 e.blink = FilterSet.blink();
                 e.filters = [e.blink.filter];
+                e.hitArea = hitArea[dir[i]];
                 e.clickEvent = () => {
-                    const z = 2;
+                    selectDir = dir[i];
+                    c.mark.alpha = 0;
+                    c.frontLayer.hint.alpha = 0;
+                    //c.frontLayer.total_num.alpha = 0;
                     for (let j = 0; j < dir.length; j++) {
                         c.brand[dir[j]].alpha = 0;
                         c.land[dir[j]].interactive = false;
                         c.land[dir[j]].filters = [];
                     }
                     c.brand[dir[i]].alpha = 1;
-                    c.mark.alpha = 0;
+
+                    let z = 2;
+                    let offset = [0, 0];
+                    switch (dir[i]) {
+                        case "s":
+                            offset = [-10, 0];
+                            break;
+                        case "e":
+                            z = 1.6;
+                            offset = [20, 5];
+                            break;
+                    }
                     gsap.timeline()
                         .to(c.land.scale, { duration: 0.5, x: z, y: z })
-                        .to(c.land, { duration: 0.5, x: (-e.position.x + ox) * z, y: (-e.position.y + oy) * z }, 0)
+                        .to(c.land, { duration: 0.5, x: (-e.position.x + offset[0] + ox) * z, y: (-e.position.y + offset[1] + oy) * z }, 0)
                         .to(c.brand[dir[i]], { duration: 0.5, x: 0 - ox, y: -102 - oy }, 0);
                     gsap.killTweensOf(c.frontLayer.hint);
-                    c.frontLayer.hint.alpha = 0;
-                    selectDir = dir[i];
                     drawSecond();
-                    console.log(selectDir);
                 }
                 addPointerEvent(e);
                 c.land[dir[i]] = e;
             }
-            c.land.addChild(tw, c.land["s"], c.land["w"], c.land["n"], c.land["e"]);
+            c.land.addChild(tw, c.land["e"], c.land["s"], c.land["w"], c.land["n"]);
         }
         function drawSecond() {
-            //todo: brand arror , cancel , marks+nameText
-            //todo: click brand arror=> changeLocal
             //todo: click marks=> drawDetail()
-            //todo: click cancel=> returnFrist()
-            const pos = [
-                [27, -16],
-                [-33, -6],
-                [86, 0],
-                [-60, 43],
-                [22, 41],
-                [-27, 75],
-                [11, 107],
-                [62, 107],
-            ]
-            const markScale = [
-                1, 0.7, 0.75, 0.7, 0.5, 0.5, 0.5, 0.6
-            ]
             c.secondLayer = new PIXI.Container();
             let arror_r = createSprite(textures["arror.png"], 0.5, scale);
             let arror_l = createSprite(textures["arror.png"], 0.5, [-scale, scale]);
             arror_r.position.set(48, -102);
             arror_l.position.set(-48, -102);
+            arror_r.clickEvent = changeDir.bind(this, 1);
+            arror_r.overEvent = self.uiOverEvent.bind(self);
+            arror_r.hitArea = new PIXI.Circle(0, 0, 30);
+            addPointerEvent(arror_r);
+            arror_l.clickEvent = changeDir.bind(this, -1);
+            arror_l.overEvent = self.uiOverEvent.bind(self);
+            arror_l.hitArea = new PIXI.Circle(0, 0, 30);
+            addPointerEvent(arror_l);
+
 
             let cancelIcon = createSprite(textures["cancel.png"], 0.5, scale);
             cancelIcon.position.set(140, -130);
+            cancelIcon.clickEvent = returnFrist;
+            cancelIcon.overEvent = self.uiOverEvent.bind(self);
+            cancelIcon.hitArea = new PIXI.Circle(0, 0, 40);
+            addPointerEvent(cancelIcon);
+
+            let tl = gsap.timeline().from(c.secondLayer, { duration: 0.8, alpha: 0 });
 
             let marks = new PIXI.Container();
             for (let i = 0; i < data_name[selectDir].length; i++) {
                 let m = new PIXI.Container();
-                let e = createSprite(textures[`mark_${selectDir}.png`], [0.5, 1], markScale[i]);
-                let t = createText(data_name[selectDir][i], dirTextStyle_13[selectDir]);
-                t.position.set(0, -90 * markScale[i]);
+                let e = createSprite(textures[`mark_${selectDir}.png`], [0.5, 1], data_name[selectDir][i].scale);
+                let t = createText(data_name[selectDir][i].name, dirTextStyle_13[selectDir], 0.5, 0.5);
+                t.position.set(0, -90 * data_name[selectDir][i].scale);
+                m.position.set(data_name[selectDir][i].pos[0] + ox, data_name[selectDir][i].pos[1] + oy);
+                tl.from(m.scale, { duration: 0.8, x: 0, y: 0 }, 0.4);
+                const moffset = 0.05;
+                m.overEvent = () => {
+                    if (m.isPointerOver) {
+                        gsap.timeline()
+                            .to(e.scale, { duration: 0.5, x: data_name[selectDir][i].scale + moffset, y: data_name[selectDir][i].scale + moffset })
+                            .to(t, { duration: 0.5, x: 0, y: -90 * (data_name[selectDir][i].scale + moffset) }, 0)
+                    }
+                    else {
+                        gsap.timeline()
+                            .to(e.scale, { duration: 0.5, x: data_name[selectDir][i].scale, y: data_name[selectDir][i].scale })
+                            .to(t, { duration: 0.5, x: 0, y: -90 * data_name[selectDir][i].scale }, 0)
+                    }
+                }
+                m.clickEvent = () => {
+                    selectDetail = dir.indexOf(selectDir);
+                    drawDetail();
+                }
+                addPointerEvent(m);
+
                 m.addChild(e, t);
-                m.position.set(pos[i][0], pos[i][1] + oy);
                 marks.addChild(m);
-                gsap.from(m.scale, { duration: 0.8, x: 0, y: 0 });
             }
-            console.log(marks);
             c.secondLayer.addChild(marks, arror_l, arror_r, cancelIcon);
             c.addChild(c.secondLayer);
-            gsap.from(c.secondLayer, { duration: 0.8, alpha: 0 })
+
+        }
+        function changeDir(arror) {
+            let i = dir.indexOf(selectDir) + arror;
+            if (i >= dir.length) { i = 0 }
+            else if (i < 0) { i = dir.length - 1; }
+            selectDir = dir[i];
+            for (let j = 0; j < dir.length; j++) {
+                c.brand[dir[j]].alpha = 0;
+            }
+            c.brand[selectDir].alpha = 1;
+            c.brand[selectDir].position.set(0 - ox, -102 - oy);
+            c.removeChild(c.secondLayer);
+            let z = 2;
+            let offset = [0, 0];
+            switch (selectDir) {
+                case "s":
+                    offset = [-10, 0];
+                    break;
+                case "e":
+                    z = 1.6;
+                    offset = [20, 5];
+                    break;
+            }
+            gsap.timeline()
+                .to(c.land.scale, { duration: 0.5, x: z, y: z })
+                .to(c.land, {
+                    duration: 0.5,
+                    x: (-c.land[selectDir].position.x + offset[0] + ox) * z,
+                    y: (-c.land[selectDir].position.y + offset[1] + oy) * z
+                }, 0)
+            drawSecond();
         }
         function returnFrist() {
-            //todo: recover the following setting
-            /* e.clickEvent = () => {
-                const z = 2;
-                for (let j = 0; j < dir.length; j++) {
-                    c.brand[dir[j]].alpha = 0;
-                    c.land[dir[j]].interactive = false;
-                    c.land[dir[j]].filters = [];
-                }
-                c.brand[dir[i]].alpha = 1;
-                c.mark.alpha = 0;
-                gsap.timeline()
-                    .to(c.land.scale, { duration: 0.5, x: z, y: z })
-                    .to(c.land, { duration: 0.5, x: (-e.position.x + ox) * z, y: (-e.position.y + oy) * z }, 0)
-                    .to(c.brand[dir[i]], { duration: 0.5, x: 0 - ox, y: -102 - oy }, 0);
-                gsap.killTweensOf(c.frontLayer.hint);
-                c.frontLayer.hint.alpha = 0;
-                drawSecond();
-            } */
+            c.removeChild(c.secondLayer, c.brand, c.mark);
+            for (let j = 0; j < dir.length; j++) {
+                c.land[dir[j]].interactive = true;
+                c.land[dir[j]].filters = [c.land[dir[j]].blink.filter];
+            }
+            gsap.timeline()
+                .to(c.land.scale, { duration: 0.5, x: 1, y: 1 })
+                .to(c.land, { duration: 0.5, x: ox, y: oy }, 0)
+                .to(c.brand, { duration: 0.5, alpha: 1 }, 0)
+            drawBrand();
+            drawMark();
+            c.frontLayer.hint.alpha = 1;
+            gsap.timeline({ repeat: -1 }).to(c.frontLayer.hint, { duration: 1.5, alpha: 0 }).to(c.frontLayer.hint, { duration: 1.5, alpha: 1 })
+            c.addChild(c.brand, c.mark);
         }
         function drawDetail() {
-            //todo: bottom arror+text , cancel , nameText , detail text , pic
+            console.log(selectDir, selectDetail);
             //todo: click bottom arror=> change nameText, detail text, pic
-            //todo: click cancel=> remove all detail view , returnSecond()
+            c.detailLayer = new PIXI.Container();
+
+            let arror_l = new PIXI.Container();
+            arror_l.s = createSprite(textures["arrorIcon_l.png"], 0.5, scale);
+            arror_l.t = createText("上一頁", TextStyle.Map_Green_13, 0.5, scale);
+            arror_l.t.position.set(42, 0);
+            arror_l.position.set(-150, 192);
+            arror_l.addChild(arror_l.s, arror_l.t);
+            arror_l.overEvent = self.uiOverEvent.bind(self);
+            arror_l.clickEvent = changeDetail.bind(this, -1);
+            arror_l.hitArea = new PIXI.Rectangle(-15, -20, 90, 40);
+            addPointerEvent(arror_l);
+
+            let arror_r = new PIXI.Container();
+            arror_r.s = createSprite(textures["arrorIcon_r.png"], 0.5, scale);
+            arror_r.t = createText("下一頁", TextStyle.Map_Green_13, 0.5, scale);
+            arror_r.t.position.set(-42, 0);
+            arror_r.position.set(150, 192);
+            arror_r.addChild(arror_r.s, arror_r.t);
+            arror_r.overEvent = self.uiOverEvent.bind(self);
+            arror_r.clickEvent = changeDetail.bind(this, 1);
+            arror_r.hitArea = new PIXI.Rectangle(-75, -20, 90, 40);
+            addPointerEvent(arror_r);
+
+            let cancelIcon = createSprite(textures["cancel.png"], 0.5, scale);
+            cancelIcon.position.set(140, -173);
+            cancelIcon.hitArea = new PIXI.Circle(0, 0, 40);
+            cancelIcon.clickEvent = () => {
+                c.removeChild(c.detailLayer)
+            };
+            cancelIcon.overEvent = self.uiOverEvent.bind(self);
+            addPointerEvent(cancelIcon);
+
+            let title = createText("導盲犬收養分佈地圖", TextStyle.Map_Blue, 0.5, 0.5);
+            title.position.set(0 - ox, -130 - oy);
+
+            let pic = createSprite(data_detail[selectDetail].pic, 0.5, scale);
+
+
+            let detailName = createText(data_detail[selectDetail].name, dirTextStyle[dir[selectDetail]], 0, scale);
+            let detailText = createText(
+                `生日：${data_detail[selectDetail].birth}\n性別：${data_detail[selectDetail].gender}\n犬種：${data_detail[selectDetail].breed}\n性格：${data_detail[selectDetail].nature}`,
+                TextStyle.Map_detail, 0, scale);
+            detailName.style.align = data_detail[selectDetail].align;
+            detailText.style.align = data_detail[selectDetail].align;
+            if (data_detail[selectDetail].align === "right") {
+                detailName.anchor.set(1, 0);
+                detailText.anchor.set(1, 0);
+            }
+            detailName.position.set(data_detail[selectDetail].pos[0], data_detail[selectDetail].pos[1]);
+            detailText.position.set(data_detail[selectDetail].pos[0], data_detail[selectDetail].pos[1] + 30);
+
+            c.detailLayer.position.set(ox, oy);
+            c.detailLayer.addChild(pic, detailName, detailText, arror_l, arror_r, cancelIcon, title);
+            c.addChild(c.detailLayer);
         }
-        function returnSecond() {
-            //todo: return Second setting. ex:obj.alpha
+        function changeDetail(arror) {
+            selectDetail += arror;
+            if (selectDetail >= data_detail.length) { selectDetail = 0 }
+            else if (selectDetail < 0) { selectDetail = data_detail.length - 1; }
+            c.removeChild(c.detailLayer);
+            drawDetail();
         }
     }
 }

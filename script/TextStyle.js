@@ -40,89 +40,123 @@ const TextStyle = {
         align: "left"
     }),
     Map_Blue: new PIXI.TextStyle({
-        fontFamily: "GenSenRounded-R",
+        fontFamily: "GenSenRounded-B",
         fill: "white",
-        fontSize: 20,
+        fontSize: 40,
         lineJoin: "round",
         stroke: ColorSlip.darkBlue,
-        strokeThickness: 3,
+        strokeThickness: 5,
         align: "center"
     }),
     Map_Blue_16: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-R",
         fill: "white",
-        fontSize: 16,
+        fontSize: 32,
         lineJoin: "round",
         stroke: ColorSlip.darkBlue,
-        strokeThickness: 3,
+        strokeThickness: 5,
         align: "center"
     }),
     Map_Blue_13: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-R",
         fill: "white",
-        fontSize: 13,
+        fontSize: 26,
         lineJoin: "round",
         stroke: ColorSlip.darkBlue,
-        strokeThickness: 3,
+        strokeThickness: 5,
         align: "center",
         leading: 9
     }),
-    Map_Green: new PIXI.TextStyle({
+    Map_Green_13: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-R",
         fill: "white",
-        fontSize: 20,
+        fontSize: 26,
         lineJoin: "round",
         stroke: ColorSlip.button_submit,
-        strokeThickness: 3,
-        align: "center"
+        strokeThickness: 5,
+        align: "center",
+        leading: 9
     }),
-    Map_Green_16: new PIXI.TextStyle({
-        fontFamily: "GenSenRounded-R",
+    Map_N: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
         fill: "white",
-        fontSize: 16,
+        fontSize: 40,
         lineJoin: "round",
-        stroke: ColorSlip.button_submit,
-        strokeThickness: 3,
+        stroke: ColorSlip.map_n_d,
+        strokeThickness: 5,
         align: "center"
     }),
     Map_N_13: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-R",
         fill: "white",
-        fontSize: 13,
+        fontSize: 26,
         lineJoin: "round",
         stroke: ColorSlip.map_n_d,
-        strokeThickness: 3,
+        strokeThickness: 5,
         align: "center",
         leading: 9
+    }),
+    Map_W: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 40,
+        lineJoin: "round",
+        stroke: ColorSlip.map_w_d,
+        strokeThickness: 5,
+        align: "center"
     }),
     Map_W_13: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-R",
         fill: "white",
-        fontSize: 13,
+        fontSize: 26,
         lineJoin: "round",
         stroke: ColorSlip.map_w_d,
-        strokeThickness: 3,
+        strokeThickness: 5,
         align: "center",
         leading: 9
+    }),
+    Map_S: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 40,
+        lineJoin: "round",
+        stroke: ColorSlip.map_s_d,
+        strokeThickness: 5,
+        align: "center"
     }),
     Map_S_13: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-R",
         fill: "white",
-        fontSize: 13,
+        fontSize: 26,
         lineJoin: "round",
         stroke: ColorSlip.map_s_d,
-        strokeThickness: 3,
+        strokeThickness: 5,
         align: "center",
         leading: 9
+    }),
+    Map_E: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 40,
+        lineJoin: "round",
+        stroke: ColorSlip.map_e_d,
+        strokeThickness: 5,
+        align: "center"
     }),
     Map_E_13: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-R",
         fill: "white",
-        fontSize: 13,
+        fontSize: 26,
         lineJoin: "round",
         stroke: ColorSlip.map_e_d,
-        strokeThickness: 3,
+        strokeThickness: 5,
         align: "center",
+        leading: 9
+    }),
+    Map_detail: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 26,
         leading: 9
     }),
     Act: new PIXI.TextStyle({
