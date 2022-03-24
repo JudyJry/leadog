@@ -1,22 +1,32 @@
 {
 "frames": {
 	"arror.png": {
-		"frame": {"x":108, "y":684, "w":45, "h":31},
+		"frame": {"x":108, "y":733, "w":45, "h":31},
 		"spriteSourceSize": {"x":0,"y":0,"w":45,"h":31},
 		"sourceSize": {"w":45,"h":31}
 	},
+	"arrorIcon_l.png": {
+		"frame": {"x":289, "y":641, "w":38, "h":38},
+		"spriteSourceSize": {"x":0,"y":0,"w":38,"h":38},
+		"sourceSize": {"w":38,"h":38}
+	},
+	"arrorIcon_r.png": {
+		"frame": {"x":289, "y":680, "w":38, "h":38},
+		"spriteSourceSize": {"x":0,"y":0,"w":38,"h":38},
+		"sourceSize": {"w":38,"h":38}
+	},
 	"brand_e.png": {
-		"frame": {"x":0, "y":727, "w":107, "h":41},
+		"frame": {"x":108, "y":641, "w":107, "h":41},
 		"spriteSourceSize": {"x":0,"y":0,"w":107,"h":41},
 		"sourceSize": {"w":107,"h":41}
 	},
 	"brand_n.png": {
-		"frame": {"x":0, "y":684, "w":107, "h":42},
+		"frame": {"x":0, "y":727, "w":107, "h":42},
 		"spriteSourceSize": {"x":0,"y":0,"w":107,"h":42},
 		"sourceSize": {"w":107,"h":42}
 	},
 	"brand_s.png": {
-		"frame": {"x":108, "y":641, "w":107, "h":42},
+		"frame": {"x":0, "y":684, "w":107, "h":42},
 		"spriteSourceSize": {"x":0,"y":0,"w":107,"h":42},
 		"sourceSize": {"w":107,"h":42}
 	},
@@ -24,6 +34,11 @@
 		"frame": {"x":0, "y":641, "w":107, "h":42},
 		"spriteSourceSize": {"x":0,"y":0,"w":107,"h":42},
 		"sourceSize": {"w":107,"h":42}
+	},
+	"cancel.png": {
+		"frame": {"x":108, "y":683, "w":49, "h":49},
+		"spriteSourceSize": {"x":0,"y":0,"w":49,"h":49},
+		"sourceSize": {"w":49,"h":49}
 	},
 	"land_e.png": {
 		"frame": {"x":592, "y":296, "w":198, "h":406},
@@ -46,22 +61,22 @@
 		"sourceSize": {"w":255,"h":295}
 	},
 	"mark_e.png": {
-		"frame": {"x":152, "y":716, "w":43, "h":73},
+		"frame": {"x":202, "y":683, "w":43, "h":73},
 		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":73},
 		"sourceSize": {"w":43,"h":73}
 	},
 	"mark_n.png": {
-		"frame": {"x":239, "y":641, "w":42, "h":73},
+		"frame": {"x":246, "y":715, "w":42, "h":73},
 		"spriteSourceSize": {"x":0,"y":0,"w":42,"h":73},
 		"sourceSize": {"w":42,"h":73}
 	},
 	"mark_s.png": {
-		"frame": {"x":108, "y":716, "w":43, "h":73},
+		"frame": {"x":158, "y":683, "w":43, "h":73},
 		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":73},
 		"sourceSize": {"w":43,"h":73}
 	},
 	"mark_w.png": {
-		"frame": {"x":196, "y":684, "w":42, "h":73},
+		"frame": {"x":246, "y":641, "w":42, "h":73},
 		"spriteSourceSize": {"x":0,"y":0,"w":42,"h":73},
 		"sourceSize": {"w":42,"h":73}
 	},

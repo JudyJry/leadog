@@ -85,6 +85,46 @@ const TextStyle = {
         strokeThickness: 3,
         align: "center"
     }),
+    Map_N_13: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-R",
+        fill: "white",
+        fontSize: 13,
+        lineJoin: "round",
+        stroke: ColorSlip.map_n_d,
+        strokeThickness: 3,
+        align: "center",
+        leading: 9
+    }),
+    Map_W_13: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-R",
+        fill: "white",
+        fontSize: 13,
+        lineJoin: "round",
+        stroke: ColorSlip.map_w_d,
+        strokeThickness: 3,
+        align: "center",
+        leading: 9
+    }),
+    Map_S_13: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-R",
+        fill: "white",
+        fontSize: 13,
+        lineJoin: "round",
+        stroke: ColorSlip.map_s_d,
+        strokeThickness: 3,
+        align: "center",
+        leading: 9
+    }),
+    Map_E_13: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-R",
+        fill: "white",
+        fontSize: 13,
+        lineJoin: "round",
+        stroke: ColorSlip.map_e_d,
+        strokeThickness: 3,
+        align: "center",
+        leading: 9
+    }),
     Act: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
         fontSize: 54,

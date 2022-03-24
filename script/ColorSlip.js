@@ -12,5 +12,9 @@ const ColorSlip = {
     button_submit: 0xC6D86B,
     button_cancel: 0xF09683,
     button_back: 0xF7C38A,
+    map_n_d: 0xE47C6B,
+    map_w_d: 0xCFA376,
+    map_s_d: 0xEBD967,
+    map_e_d: 0xB7C364
 }
 export { ColorSlip };

@@ -192,26 +192,35 @@ class Map extends linkObject {
         const scale = this.uiScale;
         const textures = this.textures;
         const data_num = mapData.elderly_num;
+        const data_name = mapData.elderly_name;
+        const data_detail = mapData.elderly_detail;
         const dir = this.dir;
+        const dirTextStyle_13 = {
+            n: TextStyle.Map_N_13,
+            w: TextStyle.Map_W_13,
+            s: TextStyle.Map_S_13,
+            e: TextStyle.Map_E_13
+        }
+        let selectDir = undefined;
         let c = new PIXI.Container();
         let mask = createSprite("image/map/mask.png", 0.5, scale);
         mask.position.set(ox, oy);
-
-        let bg = new PIXI.Graphics()
-            .beginFill(ColorSlip.lightBlue)
-            .drawRect(0, 0, 352, 434.5);
-        bg.pivot.set(352 / 2, 434.5 / 2);
-        bg.position.set(ox, oy);
-        bg.mask = mask;
-
-        drawFrontLayer();
-        drawBrand();
-        drawMark();
-        drawLand();
-
-        c.addChild(mask, bg, c.land, c.brand, c.mark, c.frontLayer);
+        drawFrist();
         this.container.addChild(c);
         return c;
+        function drawFrist() {
+            let bg = new PIXI.Graphics()
+                .beginFill(ColorSlip.lightBlue)
+                .drawRect(0, 0, 352, 434.5);
+            bg.pivot.set(352 / 2, 434.5 / 2);
+            bg.position.set(ox, oy);
+            bg.mask = mask;
+            drawFrontLayer();
+            drawBrand();
+            drawMark();
+            drawLand();
+            c.addChild(mask, bg, c.land, c.brand, c.mark, c.frontLayer);
+        }
         function drawFrontLayer() {
             c.frontLayer = new PIXI.Container();
 
@@ -297,7 +306,9 @@ class Map extends linkObject {
                         .to(c.brand[dir[i]], { duration: 0.5, x: 0 - ox, y: -102 - oy }, 0);
                     gsap.killTweensOf(c.frontLayer.hint);
                     c.frontLayer.hint.alpha = 0;
+                    selectDir = dir[i];
                     drawSecond();
+                    console.log(selectDir);
                 }
                 addPointerEvent(e);
                 c.land[dir[i]] = e;
@@ -309,6 +320,43 @@ class Map extends linkObject {
             //todo: click brand arror=> changeLocal
             //todo: click marks=> drawDetail()
             //todo: click cancel=> returnFrist()
+            const pos = [
+                [27, -16],
+                [-33, -6],
+                [86, 0],
+                [-60, 43],
+                [22, 41],
+                [-27, 75],
+                [11, 107],
+                [62, 107],
+            ]
+            const markScale = [
+                1, 0.7, 0.75, 0.7, 0.5, 0.5, 0.5, 0.6
+            ]
+            c.secondLayer = new PIXI.Container();
+            let arror_r = createSprite(textures["arror.png"], 0.5, scale);
+            let arror_l = createSprite(textures["arror.png"], 0.5, [-scale, scale]);
+            arror_r.position.set(48, -102);
+            arror_l.position.set(-48, -102);
+
+            let cancelIcon = createSprite(textures["cancel.png"], 0.5, scale);
+            cancelIcon.position.set(140, -130);
+
+            let marks = new PIXI.Container();
+            for (let i = 0; i < data_name[selectDir].length; i++) {
+                let m = new PIXI.Container();
+                let e = createSprite(textures[`mark_${selectDir}.png`], [0.5, 1], markScale[i]);
+                let t = createText(data_name[selectDir][i], dirTextStyle_13[selectDir]);
+                t.position.set(0, -90 * markScale[i]);
+                m.addChild(e, t);
+                m.position.set(pos[i][0], pos[i][1] + oy);
+                marks.addChild(m);
+                gsap.from(m.scale, { duration: 0.8, x: 0, y: 0 });
+            }
+            console.log(marks);
+            c.secondLayer.addChild(marks, arror_l, arror_r, cancelIcon);
+            c.addChild(c.secondLayer);
+            gsap.from(c.secondLayer, { duration: 0.8, alpha: 0 })
         }
         function returnFrist() {
             //todo: recover the following setting
