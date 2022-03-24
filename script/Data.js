@@ -300,16 +300,6 @@ const mapData = {
             pic: "image/map/born_pic_2.png",
             pos: [-159, 53],
             align: "left"
-        },
-        {
-            name: "Green",
-            birth: "10/14",
-            weight: "400g",
-            gender: "男生",
-            breed: "黃金獵犬",
-            pic: "image/map/born_pic_3.png",
-            pos: [-159, 53],
-            align: "left"
         }
     ],
     elderly_num: {

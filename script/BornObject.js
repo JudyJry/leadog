@@ -264,7 +264,7 @@ class Map extends linkObject {
                 addPointerEvent(e);
                 c.land[dir[i]] = e;
             }
-            c.land.addChild(tw, c.land["e"], c.land["s"], c.land["w"], c.land["n"]);
+            c.land.addChild(tw, c.land["s"], c.land["w"], c.land["n"]);
         }
         function drawSecond() {
             //todo: click marks=> drawDetail()
