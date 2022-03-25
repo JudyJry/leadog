@@ -64,7 +64,7 @@ const TextStyle = {
         lineJoin: "round",
         stroke: ColorSlip.darkBlue,
         strokeThickness: 5,
-        align: "center",
+        align: "left",
         leading: 9
     }),
     Map_Green_13: new PIXI.TextStyle({

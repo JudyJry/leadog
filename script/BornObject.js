@@ -417,7 +417,7 @@ class Map extends linkObject {
 
             let detailName = createText(data_detail[selectDetail].name, dirTextStyle[dir[selectDetail]], 0, scale);
             let detailText = createText(
-                `生日：${data_detail[selectDetail].birth}\n體重：${data_detail[selectDetail].weight}\n性別：${data_detail[selectDetail].gender}\n犬種：${data_detail[selectDetail].breed}`,
+                `生日：${data_detail[selectDetail].birth}\n重量：${data_detail[selectDetail].weight}\n性別：${data_detail[selectDetail].gender}\n犬種：${data_detail[selectDetail].breed}`,
                 TextStyle.Map_detail, 0, scale);
             detailName.style.align = data_detail[selectDetail].align;
             detailText.style.align = data_detail[selectDetail].align;
