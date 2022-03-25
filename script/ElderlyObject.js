@@ -355,7 +355,6 @@ class Map extends linkObject {
             c.land.addChild(tw, c.land["e"], c.land["s"], c.land["w"], c.land["n"]);
         }
         function drawSecond() {
-            //todo: click marks=> drawDetail()
             c.secondLayer = new PIXI.Container();
             let arror_r = createSprite(textures["arror.png"], 0.5, scale);
             let arror_l = createSprite(textures["arror.png"], 0.5, [-scale, scale]);
@@ -463,7 +462,6 @@ class Map extends linkObject {
         }
         function drawDetail() {
             console.log(selectDir, selectDetail);
-            //todo: click bottom arror=> change nameText, detail text, pic
             c.detailLayer = new PIXI.Container();
 
             let arror_l = new PIXI.Container();

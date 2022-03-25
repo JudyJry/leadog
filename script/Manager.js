@@ -205,6 +205,7 @@ const loadList = {
         "image/building/born/mirror.png",
         "image/building/born/map.png",
         "image/building/born/video.png",
+        //"image/born/sprites.json",
         "image/map/sprites.json",
     ],
     "childhood": [

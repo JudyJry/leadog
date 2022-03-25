@@ -47,6 +47,47 @@ class Mirror extends linkObject {
         this.y = -0.048;
         this.url = "image/building/born/mirror.png";
         this.zoomIn = 1.5;
+        this.originPos = [0, 0]
+        this.uiScale = 0.5
+    }
+    onClickResize() { this.mirror = this.drawMirror(); }
+    onClickUpdate() { }
+    clickEvent() {
+        this.blink.outerStrength = 0;
+        this.sprite.interactive = false;
+        this.zoom();
+        this.page.children.player.move(this._x, this.sprite.width);
+        this.page.isZoomIn = true;
+        this.isClick = true;
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+        //this.textures = this.manager.app.loader.resources["image/born/sprites.json"].spritesheet.textures;
+        this.mirror = this.drawMirror();
+    }
+    cancelEvent() {
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.sprite.interactive = true;
+            }.bind(this)
+        });
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.isClick = false;
+        this.page.isZoomIn = false;
+        this.cancel.visible = false;
+        this.cancel = undefined;
+    }
+    drawMirror() {
+        const self = this;
+        const ox = this.originPos[0];
+        const oy = this.originPos[1];
+        const scale = this.uiScale;
+        const textures = this.textures;
+        let c = new PIXI.Container();
+        //todo
+        c.addChild();
+        this.container.addChild(c);
+        return c;
     }
 }
 class Map extends linkObject {
@@ -267,7 +308,6 @@ class Map extends linkObject {
             c.land.addChild(tw, c.land["s"], c.land["w"], c.land["n"]);
         }
         function drawSecond() {
-            //todo: click marks=> drawDetail()
             c.secondLayer = new PIXI.Container();
             let arror_r = createSprite(textures["arror.png"], 0.5, scale);
             let arror_l = createSprite(textures["arror.png"], 0.5, [-scale, scale]);
@@ -375,7 +415,6 @@ class Map extends linkObject {
         }
         function drawDetail() {
             console.log(selectDir, selectDetail);
-            //todo: click bottom arror=> change nameText, detail text, pic
             c.detailLayer = new PIXI.Container();
 
             let arror_l = new PIXI.Container();
