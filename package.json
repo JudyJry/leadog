@@ -2,13 +2,14 @@
   "name": "leadog",
   "version": "1.0.0",
   "description": "",
-  "main": "server.mjs",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "webpack serve",
     "dev": "webpack-dev-server -w --config webpack.dev.js --mode development",
     "watch": "webpack -w --mode development",
     "build": "webpack --mode production",
+    "pkg": "pkg package.json",
     "start": "node server.mjs"
   },
   "author": "Jell",
@@ -33,5 +34,19 @@
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.6.0",
     "webpack-merge": "^5.8.0"
+  },
+  "bin": "server.js",
+  "pkg": {
+    "scripts": [
+      "dist/*.js"
+    ],
+    "assets": [
+      "image/*",
+      "image/**/*",
+      "image/**/**/*",
+      "sound/*",
+      "ttc/*",
+      "video/*"
+    ]
   }
 }

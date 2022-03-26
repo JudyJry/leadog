@@ -277,7 +277,7 @@ const mapData = {
             weight: "400g",
             gender: "男生",
             breed: "黃金拉拉",
-            pic: "image/map/born_pic_0.png",
+            pic: "born_pic_0.png",
             pos: [-159, 53],
             align: "left"
         },
@@ -287,7 +287,7 @@ const mapData = {
             weight: "320g",
             gender: "男生",
             breed: "拉不拉多",
-            pic: "image/map/born_pic_1.png",
+            pic: "born_pic_1.png",
             pos: [-159, 53],
             align: "left"
         },
@@ -297,7 +297,7 @@ const mapData = {
             weight: "420g",
             gender: "女生",
             breed: "黃金拉拉",
-            pic: "image/map/born_pic_2.png",
+            pic: "born_pic_2.png",
             pos: [-159, 53],
             align: "left"
         }
@@ -472,7 +472,7 @@ const mapData = {
             gender: "女生",
             breed: "黃金獵犬",
             nature: "親狗也親人",
-            pic: "image/map/elderly_pic_0.png",
+            pic: "elderly_pic_0.png",
             pos: [-159, 53],
             align: "left"
         },
@@ -482,7 +482,7 @@ const mapData = {
             gender: "男生",
             breed: "黃金獵犬",
             nature: "超喜歡散步",
-            pic: "image/map/elderly_pic_1.png",
+            pic: "elderly_pic_1.png",
             pos: [159, 53],
             align: "right"
         },
@@ -492,7 +492,7 @@ const mapData = {
             gender: "女生",
             breed: "拉不拉多",
             nature: "喜歡摸摸",
-            pic: "image/map/elderly_pic_2.png",
+            pic: "elderly_pic_2.png",
             pos: [46, 31],
             align: "left"
         },
@@ -502,7 +502,7 @@ const mapData = {
             gender: "女生",
             breed: "黃金獵犬",
             nature: "喜歡分享",
-            pic: "image/map/elderly_pic_3.png",
+            pic: "elderly_pic_3.png",
             pos: [159, 53],
             align: "right"
         }

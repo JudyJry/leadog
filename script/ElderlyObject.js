@@ -8,6 +8,7 @@ import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { TextStyle } from './TextStyle.js';
 import { mapData } from './Data.js';
 import { FilterSet } from './FilterSet.js';
+import { brightnessOverEvent } from './UI.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -186,16 +187,6 @@ class Map extends linkObject {
         this.cancel = undefined;
         this.container.removeChild(this.map);
     }
-    uiOverEvent(e) {
-        if (e.isPointerOver) {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
-        }
-        else {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
-        }
-    }
     drawMap() {
         const self = this;
         const ox = this.originPos[0];
@@ -221,8 +212,8 @@ class Map extends linkObject {
         let selectDir = undefined;
         let selectDetail = undefined;
         let c = new PIXI.Container();
-        let frame = createSprite("image/map/frame.png", 0.5, scale);
-        let mask = createSprite("image/map/mask.png", 0.5, scale);
+        let frame = createSprite(textures["frame.png"], 0.5, scale);
+        let mask = createSprite(textures["mask.png"], 0.5, scale);
         mask.position.set(ox, oy);
         drawFrist();
         this.container.addChild(c, frame);
@@ -361,11 +352,11 @@ class Map extends linkObject {
             arror_r.position.set(48, -102);
             arror_l.position.set(-48, -102);
             arror_r.clickEvent = changeDir.bind(this, 1);
-            arror_r.overEvent = self.uiOverEvent.bind(self);
+            arror_r.overEvent = brightnessOverEvent;
             arror_r.hitArea = new PIXI.Circle(0, 0, 30);
             addPointerEvent(arror_r);
             arror_l.clickEvent = changeDir.bind(this, -1);
-            arror_l.overEvent = self.uiOverEvent.bind(self);
+            arror_l.overEvent = brightnessOverEvent;
             arror_l.hitArea = new PIXI.Circle(0, 0, 30);
             addPointerEvent(arror_l);
 
@@ -373,7 +364,7 @@ class Map extends linkObject {
             let cancelIcon = createSprite(textures["cancel.png"], 0.5, scale);
             cancelIcon.position.set(140, -130);
             cancelIcon.clickEvent = returnFrist;
-            cancelIcon.overEvent = self.uiOverEvent.bind(self);
+            cancelIcon.overEvent = brightnessOverEvent;
             cancelIcon.hitArea = new PIXI.Circle(0, 0, 40);
             addPointerEvent(cancelIcon);
 
@@ -470,7 +461,7 @@ class Map extends linkObject {
             arror_l.t.position.set(42, 0);
             arror_l.position.set(-150, 192);
             arror_l.addChild(arror_l.s, arror_l.t);
-            arror_l.overEvent = self.uiOverEvent.bind(self);
+            arror_l.overEvent = brightnessOverEvent;
             arror_l.clickEvent = changeDetail.bind(this, -1);
             arror_l.hitArea = new PIXI.Rectangle(-15, -20, 90, 40);
             addPointerEvent(arror_l);
@@ -481,7 +472,7 @@ class Map extends linkObject {
             arror_r.t.position.set(-42, 0);
             arror_r.position.set(150, 192);
             arror_r.addChild(arror_r.s, arror_r.t);
-            arror_r.overEvent = self.uiOverEvent.bind(self);
+            arror_r.overEvent = brightnessOverEvent;
             arror_r.clickEvent = changeDetail.bind(this, 1);
             arror_r.hitArea = new PIXI.Rectangle(-75, -20, 90, 40);
             addPointerEvent(arror_r);
@@ -492,13 +483,13 @@ class Map extends linkObject {
             cancelIcon.clickEvent = () => {
                 c.removeChild(c.detailLayer)
             };
-            cancelIcon.overEvent = self.uiOverEvent.bind(self);
+            cancelIcon.overEvent = brightnessOverEvent;
             addPointerEvent(cancelIcon);
 
             let title = createText("導盲犬收養分佈地圖", TextStyle.Map_Blue, 0.5, 0.5);
             title.position.set(0 - ox, -130 - oy);
 
-            let pic = createSprite(data_detail[selectDetail].pic, 0.5, scale);
+            let pic = createSprite(textures[data_detail[selectDetail].pic], 0.5, scale);
 
 
             let detailName = createText(data_detail[selectDetail].name, dirTextStyle[dir[selectDetail]], 0, scale);

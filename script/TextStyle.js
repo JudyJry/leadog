@@ -39,6 +39,18 @@ const TextStyle = {
         leading: 20,
         align: "left"
     }),
+    Act: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 54,
+        fill: ColorSlip.darkOrange,
+    }),
+    Act_small: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 36,
+        fill: ColorSlip.darkOrange,
+        align: "center",
+        lineHeight: 60
+    }),
     Map_Blue: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
         fill: "white",
@@ -159,15 +171,51 @@ const TextStyle = {
         fontSize: 26,
         leading: 9
     }),
-    Act: new PIXI.TextStyle({
+    Mirror_title: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 60,
+        lineJoin: "round",
+        stroke: ColorSlip.mirror_brown,
+        strokeThickness: 8,
+        align: "center"
+    }),
+    Mirror_startText: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
         fontSize: 54,
-        fill: ColorSlip.darkOrange,
+        fill: ColorSlip.mirror_brown,
+        align: "center",
+        lineHeight: 112
     }),
-    Act_small: new PIXI.TextStyle({
+    Mirror_DogHint: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
-        fontSize: 36,
-        fill: ColorSlip.darkOrange,
+        fontSize: 28,
+        fill: ColorSlip.mirror_brown,
+        align: "center",
+        lineHeight: 54
+    }),
+    Mirror_Hint: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 32,
+        fill: ColorSlip.mirror_lightBrown,
+        align: "center",
+        lineHeight: 60
+    }),
+    Mirror_dad: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 48,
+        fill: ColorSlip.white,
+        stroke: ColorSlip.mirror_dad,
+        strokeThickness: 5,
+        align: "center",
+        lineHeight: 60
+    }),
+    Mirror_mom: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 48,
+        fill: ColorSlip.white,
+        stroke: ColorSlip.mirror_mom,
+        strokeThickness: 5,
         align: "center",
         lineHeight: 60
     }),

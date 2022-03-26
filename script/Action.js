@@ -7,6 +7,7 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ColorSlip } from './ColorSlip';
 import { TextStyle } from './TextStyle';
 import { addPointerEvent, createSprite, createText } from "./GameFunction.js";
+import { brightnessOverEvent } from './UI';
 
 gsap.registerPlugin(PixiPlugin);
 gsap.registerPlugin(MotionPathPlugin);
@@ -414,20 +415,10 @@ export class ActionUI extends ActionObject {
     }
     setInteract(e = this.sprite) {
         e.clickEvent = this.clickEvent.bind(this);
-        e.overEvent = this.overEvent.bind(this);
+        e.overEvent = brightnessOverEvent;
         addPointerEvent(e);
     }
     clickEvent(_) { alert("click " + this.name); }
-    overEvent(e) {
-        if (e.isPointerOver) {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
-        }
-        else {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
-        }
-    }
     resize() {
         this.w = window.innerWidth;
         this.h = window.innerHeight;

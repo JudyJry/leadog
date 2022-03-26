@@ -15,6 +15,10 @@ const ColorSlip = {
     map_n_d: 0xE47C6B,
     map_w_d: 0xCFA376,
     map_s_d: 0xEBD967,
-    map_e_d: 0xB7C364
+    map_e_d: 0xB7C364,
+    mirror_brown: 0x7E3F39,
+    mirror_lightBrown: 0x9C6460,
+    mirror_dad: 0xC6D86B,
+    mirror_mom: 0xF4AA8C
 }
 export { ColorSlip };

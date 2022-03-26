@@ -8,6 +8,7 @@ import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { TextStyle } from './TextStyle.js';
 import { mapData } from './Data.js';
 import { FilterSet } from './FilterSet.js';
+import { brightnessOverEvent, drawButton } from './UI.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -47,7 +48,7 @@ class Mirror extends linkObject {
         this.y = -0.048;
         this.url = "image/building/born/mirror.png";
         this.zoomIn = 1.5;
-        this.originPos = [0, 0]
+        this.originPos = [3.5, -15.5]
         this.uiScale = 0.5
     }
     onClickResize() { this.mirror = this.drawMirror(); }
@@ -61,7 +62,7 @@ class Mirror extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        //this.textures = this.manager.app.loader.resources["image/born/sprites.json"].spritesheet.textures;
+        this.textures = this.manager.app.loader.resources["image/building/born/sprites.json"].spritesheet.textures;
         this.mirror = this.drawMirror();
     }
     cancelEvent() {
@@ -76,18 +77,256 @@ class Mirror extends linkObject {
         this.page.isZoomIn = false;
         this.cancel.visible = false;
         this.cancel = undefined;
+        this.container.removeChild(this.mirror);
     }
     drawMirror() {
         const self = this;
         const ox = this.originPos[0];
         const oy = this.originPos[1];
         const scale = this.uiScale;
+
+        /* const textures = {
+            "mask.png": "image/building/born/mirror/mask.png",
+            "dialog_start.png": "image/building/born/mirror/dialog_start.png",
+            "dialog_dogHint.png": "image/building/born/mirror/dialog_dogHint.png",
+            "dogHint.png": "image/building/born/mirror/dogHint.png",
+            "frame_dog.png": "image/building/born/mirror/frame_dog.png",
+            //8
+            "8_m.png": "image/building/born/mirror/8_m.png",
+            "8_d.png": "image/building/born/mirror/8_d.png",
+            "8_m_s.png": "image/building/born/mirror/8_m_s.png",
+            "8_d_s.png": "image/building/born/mirror/8_d_s.png",
+            //7
+            "7_m.png": "image/building/born/mirror/7_m.png",
+            "7_d.png": "image/building/born/mirror/7_d.png",
+            "7_m_s.png": "image/building/born/mirror/7_m_s.png",
+            "7_d_s.png": "image/building/born/mirror/7_d_s.png",
+            //6
+            "6_m.png": "image/building/born/mirror/6_m.png",
+            "6_d.png": "image/building/born/mirror/6_d.png",
+            "6_m_s.png": "image/building/born/mirror/6_m_s.png",
+            "6_d_s.png": "image/building/born/mirror/6_d_s.png",
+            //5
+            "5_m.png": "image/building/born/mirror/6_m.png",
+            "5_d.png": "image/building/born/mirror/6_d.png",
+            "5_m_s.png": "image/building/born/mirror/6_m_s.png",
+            "5_d_s.png": "image/building/born/mirror/6_d_s.png",
+            //4
+            "4_m.png": "image/building/born/mirror/6_m.png",
+            "4_d.png": "image/building/born/mirror/6_d.png",
+            "4_m_s.png": "image/building/born/mirror/6_m_s.png",
+            "4_d_s.png": "image/building/born/mirror/6_d_s.png",
+            //3
+            "4_m.png": "image/building/born/mirror/6_m.png",
+            "4_d.png": "image/building/born/mirror/6_d.png",
+            "4_m_s.png": "image/building/born/mirror/6_m_s.png",
+            "4_d_s.png": "image/building/born/mirror/6_d_s.png",
+            //2
+            "2_m.png": "image/building/born/mirror/6_m.png",
+            "2_d.png": "image/building/born/mirror/6_d.png",
+            "2_m_s.png": "image/building/born/mirror/6_m_s.png",
+            "2_d_s.png": "image/building/born/mirror/6_d_s.png",
+            //1
+            "1_m.png": "image/building/born/mirror/6_m.png",
+            "1_d.png": "image/building/born/mirror/6_d.png",
+            "1_m_s.png": "image/building/born/mirror/6_m_s.png",
+            "1_d_s.png": "image/building/born/mirror/6_d_s.png",
+        }; */
+
         const textures = this.textures;
+        const generStr = ["一", "二", "三", "四", "五", "六", "七", "八"];
+        const genderStr = ["Daddy", "Mommy"];
+        const genderTextStyle = { "Daddy": TextStyle.Mirror_dad, "Mommy": TextStyle.Mirror_mom };
+        let selectGener = undefined;
+        let selectGender = {};
         let c = new PIXI.Container();
-        //todo
-        c.addChild();
+        let mask = createSprite(textures["mask.png"], 0.5, scale);
+        c.position.set(ox, oy);
+        c.addChild(mask);
+        drawStart_1();
         this.container.addChild(c);
         return c;
+        //draw stage
+        function drawStart_1() {
+            let layer = drawLayer();
+            let dialog = createSprite(textures["dialog_start.png"], 0.5, scale);
+            let title = createText("遊戲方法", TextStyle.Mirror_title, 0.5, scale);
+            let text = createText(`選擇要認識爸爸\n或媽媽，讀完資料\n即可獲得該張卡牌`, TextStyle.Mirror_startText, 0.5, scale);
+            let start = drawButton("開始遊戲", ColorSlip.button_submit);
+            dialog.position.set(0, -32);
+            title.position.set(0, -132);
+            start.position.set(0, 200);
+            start.clickEvent = () => {
+                gsap.to(layer, {
+                    duration: 0.5, alpha: 0, onComplete: () => {
+                        c.removeChild(layer);
+                        drawStart_2();
+                    }
+                })
+            }
+            addPointerEvent(start);
+            layer.addChild(start, dialog, title, text);
+        }
+        function drawStart_2() {
+            let layer = drawLayer();
+            let dialog = createSprite(textures["dialog_start.png"], 0.5, scale);
+            let text = createText(
+                `我是第九代導盲犬\n我的爸爸媽媽\n也都是導盲犬唷！\n一起來認識我們吧！`
+                , TextStyle.Mirror_startText, 0.5, scale);
+            let start = drawButton("開始遊戲", ColorSlip.button_submit);
+            dialog.position.set(0, -32);
+            start.position.set(0, 200);
+            start.clickEvent = () => {
+                gsap.to(layer, {
+                    duration: 0.5, alpha: 0, onComplete: () => {
+                        selectGener = 8;
+                        c.removeChild(layer);
+                        drawSelectStage(selectGener);
+                    }
+                })
+            }
+            addPointerEvent(start);
+            layer.addChild(start, dialog, text);
+        }
+        function drawSelectStage(gener) {
+            let layer = drawLayer();
+            let title = createText(`第${generStr[gener - 1]}代`, TextStyle.Mirror_title, 0.5, scale);
+            let hint = createText("請選擇要認識Daddy、Mommy", TextStyle.Mirror_Hint, 0.5, scale);
+            let dad = drawGenderDog(genderStr[0], textures[`${gener}_d_s.png`]);
+            let mom = drawGenderDog(genderStr[1], textures[`${gener}_m_s.png`]);
+            title.position.set(0, -192);
+            hint.position.set(0, -145);
+            dad.position.set(-85, 5);
+            mom.position.set(85, 5);
+
+            let list = drawSelectList();
+            let dogHint = undefined;
+            switch (gener) {
+                case 8:
+                    dogHint = drawDogHint(`我的Daddy、Mommy\n都是導盲犬喔！`);
+                    layer.addChild(dogHint);
+                    break;
+                case 7:
+                    dogHint = drawDogHint(`可點擊下方卡牌看到\n剛剛收集的卡牌喔！`, [-50, -25]);
+                    layer.addChild(dogHint);
+                    break;
+                case 6:
+                    dogHint = drawDogHint(`收集的卡牌也會\n在手冊出現喔！`, [-40, -30], scale - 0.1);
+                    layer.addChild(dogHint);
+                    break;
+            }
+
+            layer.addChild(title, hint, dad, mom);
+        }
+        function drawSelected(gener, gender) {
+            const g = { "Daddy": "d", "Mommy": "m" };
+            let layer = drawLayer();
+            let dialog = createSprite(textures["dialog_start.png"], 0.5, scale);
+            let pic = createSprite(textures[`${gener}_${g[gender]}.png`], 0.5, scale);
+            let title = createText(`第${generStr[gener - 1]}代`, TextStyle.Mirror_title, 0.5, scale);
+            let btn = gener == 1 ? drawButton("結束遊戲", ColorSlip.button_cancel) : drawButton("繼續遊戲", ColorSlip.button_submit);
+            let cbtn = createSprite("image/cancel.svg", 0.5, scale);
+            dialog.position.set(0, -32);
+            pic.position.set(0, -32);
+            title.position.set(0, -132);
+            cbtn.position.set(134, -195);
+            btn.clickEvent = () => {
+                selectGender[gener] = gender;
+                selectGener -= 1;
+                console.log("select:" + selectGener + "," + gender);
+                gsap.to(layer, {
+                    duration: 0.5, alpha: 0, onComplete: () => {
+                        c.removeChild(layer);
+                        if (selectGener == 0) {
+                            drawEnd();
+                        }
+                        else {
+                            drawSelectStage(selectGener);
+                        }
+                    }
+                })
+            }
+            btn.position.set(0, 200);
+            cbtn.overEvent = brightnessOverEvent;
+            cbtn.clickEvent = () => {
+                gsap.to(layer, {
+                    duration: 0.5, alpha: 0, onComplete: () => {
+                        c.removeChild(layer);
+                        drawSelectStage(selectGener);
+                    }
+                })
+            }
+            addPointerEvent(btn);
+            addPointerEvent(cbtn);
+            layer.addChild(dialog, pic, title, btn, cbtn);
+        }
+        function drawEnd() {
+            //todo: draw: cancelbtn,title,hint,doghint,selectlist
+            let layer = drawLayer();
+            //layer.addChild();
+        }
+        function drawDogCardDetail() {
+            //todo: draw: selected dog, arrorcrol ,cancelbtn, continuebtn
+            let layer = drawLayer();
+            //layer.addChild();
+        }
+        // draw duplicate obj
+        function drawLayer() {
+            let layer = new PIXI.Container();
+            layer.mask = mask;
+            //layer.position.set(ox, oy);
+            c.addChild(layer);
+            gsap.from(layer, { duration: 0.5, alpha: 0 });
+            return layer;
+        }
+        function drawDogHint(str, hintPos = [-68, -25], hintScale = scale) {
+            let c = new PIXI.Container();
+            let hint = createText(str, TextStyle.Mirror_DogHint, 0.5, hintScale);
+            let bg = createSprite(textures["dialog_dogHint.png"], 0.5, hintScale);
+            let dog = createSprite(textures["dogHint.png"], 0.5, scale);
+            hint.position.set(hintPos[0], hintPos[1]);
+            bg.position.set(hintPos[0] + 8, hintPos[1] - 2);
+            dog.position.set(95, 13);
+            c.position.set(56, 216);
+            c.addChild(bg, hint, dog);
+            gsap.timeline()
+                .from(dog, { duration: 0.5, x: 190, y: 135 })
+                .from(hint, { duration: 0.5, alpha: 0 }, 0.5)
+                .from(bg, { duration: 0.5, alpha: 0 }, 0.5);
+            return c;
+        }
+        function drawGenderDog(gender, picUrl) {
+            const f = FilterSet.link();
+            let layer = new PIXI.Container();
+            let bg = createSprite(textures["frame_dog.png"], 0.5, scale);
+            let pic = createSprite(picUrl, 0.5, scale);
+            let text = createText(gender, genderTextStyle[gender], 0.5, scale);
+            text.position.set(0, 66);
+            layer.gender = gender;
+            layer.overEvent = () => {
+                if (layer.isPointerOver) { layer.filters = [f]; }
+                else { layer.filters = []; }
+            }
+            layer.clickEvent = () => {
+                gsap.to(c.children[1], {
+                    duration: 0.5, alpha: 0, onComplete: () => {
+                        c.removeChildAt(1);
+                        drawSelected(selectGener, layer.gender);
+                    }
+                })
+            }
+            layer.addChild(bg, pic, text);
+            addPointerEvent(layer);
+            return layer;
+        }
+        function drawSelectList() {
+            //todo: a list have duplicate dog, use drawDogCard()
+            let c = new PIXI.Container();
+            return c;
+        }
+        function drawDogCard() {
+            //todo: duplicate dog for drawSelectList
+        }
     }
 }
 class Map extends linkObject {
@@ -143,16 +382,6 @@ class Map extends linkObject {
         this.cancel = undefined;
         this.container.removeChild(this.map);
     }
-    uiOverEvent(e) {
-        if (e.isPointerOver) {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
-        }
-        else {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
-        }
-    }
     drawMap() {
         const self = this;
         const ox = this.originPos[0];
@@ -178,8 +407,8 @@ class Map extends linkObject {
         let selectDir = undefined;
         let selectDetail = undefined;
         let c = new PIXI.Container();
-        let frame = createSprite("image/map/frame.png", 0.5, scale);
-        let mask = createSprite("image/map/mask.png", 0.5, scale);
+        let frame = createSprite(textures["frame.png"], 0.5, scale);
+        let mask = createSprite(textures["mask.png"], 0.5, scale);
         mask.position.set(ox, oy);
         drawFrist();
         this.container.addChild(c, frame);
@@ -314,11 +543,11 @@ class Map extends linkObject {
             arror_r.position.set(48, -102);
             arror_l.position.set(-48, -102);
             arror_r.clickEvent = changeDir.bind(this, 1);
-            arror_r.overEvent = self.uiOverEvent.bind(self);
+            arror_r.overEvent = brightnessOverEvent;
             arror_r.hitArea = new PIXI.Circle(0, 0, 30);
             addPointerEvent(arror_r);
             arror_l.clickEvent = changeDir.bind(this, -1);
-            arror_l.overEvent = self.uiOverEvent.bind(self);
+            arror_l.overEvent = brightnessOverEvent;
             arror_l.hitArea = new PIXI.Circle(0, 0, 30);
             addPointerEvent(arror_l);
 
@@ -326,7 +555,7 @@ class Map extends linkObject {
             let cancelIcon = createSprite(textures["cancel.png"], 0.5, scale);
             cancelIcon.position.set(140, -130);
             cancelIcon.clickEvent = returnFrist;
-            cancelIcon.overEvent = self.uiOverEvent.bind(self);
+            cancelIcon.overEvent = brightnessOverEvent;
             cancelIcon.hitArea = new PIXI.Circle(0, 0, 40);
             addPointerEvent(cancelIcon);
 
@@ -423,7 +652,7 @@ class Map extends linkObject {
             arror_l.t.position.set(42, 0);
             arror_l.position.set(-150, 192);
             arror_l.addChild(arror_l.s, arror_l.t);
-            arror_l.overEvent = self.uiOverEvent.bind(self);
+            arror_l.overEvent = brightnessOverEvent;
             arror_l.clickEvent = changeDetail.bind(this, -1);
             arror_l.hitArea = new PIXI.Rectangle(-15, -20, 90, 40);
             addPointerEvent(arror_l);
@@ -434,7 +663,7 @@ class Map extends linkObject {
             arror_r.t.position.set(-42, 0);
             arror_r.position.set(150, 192);
             arror_r.addChild(arror_r.s, arror_r.t);
-            arror_r.overEvent = self.uiOverEvent.bind(self);
+            arror_r.overEvent = brightnessOverEvent;
             arror_r.clickEvent = changeDetail.bind(this, 1);
             arror_r.hitArea = new PIXI.Rectangle(-75, -20, 90, 40);
             addPointerEvent(arror_r);
@@ -445,13 +674,13 @@ class Map extends linkObject {
             cancelIcon.clickEvent = () => {
                 c.removeChild(c.detailLayer)
             };
-            cancelIcon.overEvent = self.uiOverEvent.bind(self);
+            cancelIcon.overEvent = brightnessOverEvent;
             addPointerEvent(cancelIcon);
 
             let title = createText("導盲犬出生分佈地圖", TextStyle.Map_Blue, 0.5, 0.5);
             title.position.set(0 - ox, -130 - oy);
 
-            let pic = createSprite(data_detail[selectDetail].pic, 0.5, scale);
+            let pic = createSprite(textures[data_detail[selectDetail].pic], 0.5, scale);
 
 
             let detailName = createText(data_detail[selectDetail].name, dirTextStyle[dir[selectDetail]], 0, scale);

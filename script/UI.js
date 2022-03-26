@@ -73,19 +73,9 @@ export class UI {
         icon.scale.set(this.scale);
         icon.anchor.set(anchor);
         icon.clickEvent = this.clickEvent.bind(this);
-        icon.overEvent = this.overEvent.bind(this);
+        icon.overEvent = brightnessOverEvent;
         addPointerEvent(icon);
         return icon;
-    }
-    overEvent(e) {
-        if (e.isPointerOver) {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
-        }
-        else {
-            gsap.killTweensOf(e);
-            gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
-        }
     }
     clickEvent() {
         let d = new Dialog(this.manager, {
@@ -397,7 +387,7 @@ export class Dialog {
         for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
 }
-function drawButton(text, color) {
+export function drawButton(text, color) {
     const texture = PIXI.Texture.from("image/dialog_button.png");
     const ts = TextStyle.Dialog_Button;
     let c = new PIXI.Container();
@@ -408,5 +398,34 @@ function drawButton(text, color) {
     b.tint = ColorSlip.button_back;
     b.position.y = 10;
     c.addChild(b, c.sprite, c.text);
+    c.overEvent = buttonOverEvent;
     return c;
+}
+
+function buttonOverEvent(e) {
+    if (e.isPointerOver) {
+        gsap.killTweensOf(e.sprite);
+        gsap.killTweensOf(e.text);
+        gsap.timeline()
+            .to(e.sprite, { duration: 0.25, y: 4 })
+            .to(e.text, { duration: 0.25, y: 4 }, 0);
+    }
+    else {
+        gsap.killTweensOf(e.sprite);
+        gsap.killTweensOf(e.text);
+        gsap.timeline()
+            .to(e.sprite, { duration: 0.25, y: 0 })
+            .to(e.text, { duration: 0.25, y: 0 }, 0);
+    }
+}
+
+export function brightnessOverEvent(e) {
+    if (e.isPointerOver) {
+        gsap.killTweensOf(e);
+        gsap.to(e, { duration: 0.5, pixi: { brightness: 0.8 } });
+    }
+    else {
+        gsap.killTweensOf(e);
+        gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
+    }
 }
