@@ -136,6 +136,7 @@ class Mirror extends linkObject {
         const textures = this.textures;
         const generStr = ["一", "二", "三", "四", "五", "六", "七", "八"];
         const genderStr = ["Daddy", "Mommy"];
+        const gStr = { "Daddy": "d", "Mommy": "m" };
         const genderTextStyle = { "Daddy": TextStyle.Mirror_dad, "Mommy": TextStyle.Mirror_mom };
         let selectGener = undefined;
         let selectGender = {};
@@ -199,7 +200,7 @@ class Mirror extends linkObject {
             dad.position.set(-85, 5);
             mom.position.set(85, 5);
 
-            let list = drawSelectList();
+            let list = gener !== 8 ? drawSelectList() : new PIXI.Container();
             let dogHint = undefined;
             switch (gener) {
                 case 8:
@@ -216,13 +217,12 @@ class Mirror extends linkObject {
                     break;
             }
 
-            layer.addChild(title, hint, dad, mom);
+            layer.addChild(title, hint, dad, mom, list);
         }
         function drawSelected(gener, gender) {
-            const g = { "Daddy": "d", "Mommy": "m" };
             let layer = drawLayer();
             let dialog = createSprite(textures["dialog_start.png"], 0.5, scale);
-            let pic = createSprite(textures[`${gener}_${g[gender]}.png`], 0.5, scale);
+            let pic = createSprite(textures[`${gener}_${gStr[gender]}.png`], 0.5, scale);
             let title = createText(`第${generStr[gener - 1]}代`, TextStyle.Mirror_title, 0.5, scale);
             let btn = gener == 1 ? drawButton("結束遊戲", ColorSlip.button_cancel) : drawButton("繼續遊戲", ColorSlip.button_submit);
             let cbtn = createSprite("image/cancel.svg", 0.5, scale);
@@ -261,13 +261,42 @@ class Mirror extends linkObject {
             layer.addChild(dialog, pic, title, btn, cbtn);
         }
         function drawEnd() {
-            //todo: draw: cancelbtn,title,hint,doghint,selectlist
             let layer = drawLayer();
-            //layer.addChild();
+            let title = createText("恭喜完成", TextStyle.Mirror_title, 0.5, scale);
+            let hint = createText(`導盲犬八代都必須是合格導盲犬且健康\n才能誕生健康的導盲犬寶寶喔！`, TextStyle.Mirror_Hint, 0.5, scale);
+            let dogHint = drawDogHint(`收集的卡牌也會\n在手冊出現喔！`, [-50, -5], 0.4);
+            let cbtn = createSprite("image/cancel.svg", 0.5, scale);
+            let list = new PIXI.Container();
+            for (let i = 0; i < generStr.length; i++) {
+                const s = 0.45;
+                let card = drawDogCard(i + 1, selectGender[i + 1], s);
+                let text = createText(`第${generStr[i]}代`, TextStyle.Mirror_title, 0.5, scale * s);
+                if (i < 4) {
+                    card.position.set(124 + (-80 * i), 88);
+                    text.position.set(124 + (-80 * i), 156);
+                }
+                else {
+                    card.position.set(124 + (-80 * (i - 4)), -40);
+                    text.position.set(124 + (-80 * (i - 4)), 20);
+                }
+                list.addChild(card, text);
+            }
+            cbtn.overEvent = brightnessOverEvent;
+            cbtn.clickEvent = () => {
+                gsap.to(layer, {
+                    duration: 0.5, alpha: 0, onComplete: () => {
+                        self.cancelEvent();
+                    }
+                })
+            }
+            title.position.set(0, -192);
+            hint.position.set(0, -128);
+            cbtn.position.set(134, -195);
+            layer.addChild(title, hint, dogHint, list);
         }
-        function drawDogCardDetail() {
+        function drawDogCardDetail(gener, gender) {
             //todo: draw: selected dog, arrorcrol ,cancelbtn, continuebtn
-            let layer = drawLayer();
+            drawSelected(gener, gender);
             //layer.addChild();
         }
         // draw duplicate obj
@@ -320,12 +349,38 @@ class Mirror extends linkObject {
             return layer;
         }
         function drawSelectList() {
-            //todo: a list have duplicate dog, use drawDogCard()
-            let c = new PIXI.Container();
-            return c;
+            //todo: if i>5 can move layer by mousedown+mousemove
+            let layer = new PIXI.Container();
+            let i = 0;
+            for (const [key, value] of Object.entries(selectGender)) {
+                let card = drawDogCard(key, value, 0.36);
+                card.position.set(i * 60, 0);
+                layer.addChild(card);
+                i++;
+            }
+            layer.position.set(-132, 196);
+            return layer;
         }
-        function drawDogCard() {
-            //todo: duplicate dog for drawSelectList
+        function drawDogCard(gener, gender, cardScale) {
+            const f = FilterSet.link();
+            let layer = new PIXI.Container();
+            let dialog = createSprite(textures["frame_dog.png"], 0.5, scale * cardScale);
+            let pic = createSprite(textures[`${gener}_${gStr[gender]}_s.png`], 0.5, scale * cardScale);
+            layer.addChild(dialog, pic);
+            layer.overEvent = () => {
+                if (layer.isPointerOver) { layer.filters = [f]; }
+                else { layer.filters = []; }
+            }
+            layer.clickEvent = () => {
+                gsap.to(c.children[1], {
+                    duration: 0.5, alpha: 0, onComplete: () => {
+                        c.removeChildAt(1);
+                        drawDogCardDetail(gener, gender);
+                    }
+                })
+            }
+            addPointerEvent(layer);
+            return layer;
         }
     }
 }
