@@ -80,7 +80,6 @@ export class UI {
     clickEvent() {
         let d = new Dialog(this.manager, {
             context: `這是一個${this.name}框框`,
-            cancelUrl: "image/dialog_exit.png",
             cancel: () => d.remove()
         })
     }
@@ -106,6 +105,20 @@ class Book extends UI {
             this.container.position.set(0, 0 * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
+    }
+    clickEvent() {
+        const data = this.manager.userData;
+        let str = "出生：";
+        for (let i = 0; i < data.born.mirror_collect.length; i++) {
+            str += `\n    第${data.born.mirror_collect[i].gener}代：${data.born.mirror_collect[i].gender}`;
+        }
+        let c_p = data.childhood.puzzle_complete ? "完成" : "未完成";
+        str += "\n幼年：\n    拼圖：" + c_p
+        let d = new Dialog(this.manager, {
+            context: str,
+            backgroundScale: 1 + (data.born.mirror_collect.length / 4),
+            cancel: () => d.remove()
+        })
     }
 }
 class Notify extends UI {
@@ -294,6 +307,8 @@ class Cancel extends UI {
 
 const defaultDialogOptions = {
     context: "",
+    scale: 1,
+    backgroundScale: 1,
     submit: false,
     submitText: "確認",
     submitColor: ColorSlip.button_submit,
@@ -307,13 +322,13 @@ export class Dialog {
         this.options = Object.assign({}, defaultDialogOptions, options);
         this.textStyle = TextStyle.Dialog;
         this.container = new PIXI.Container();
-        this.dialog = createSprite("image/dialog.png");
-        this.context = createText(this.options.context, this.textStyle);
+        this.dialog = createSprite("image/dialog.png", 0.5, this.options.backgroundScale * this.options.scale);
+        this.context = createText(this.options.context, this.textStyle, 0.5, this.options.scale);
         this.submitColor = this.options.submitColor;
         this.cancelColor = this.options.cancelColor;
         this.submit = this.options.submit ? this.drawSubmit() : false;
         this.cancel = this.options.cancel ? this.drawCancel() : false;
-        this.buttonHeight = 60;
+        this.buttonHeight = 70;
         this.buttonSpace = 88;
         this.draw();
     }
@@ -334,33 +349,34 @@ export class Dialog {
         }
     }
     drawSubmit() {
-        let c = drawButton(this.options.submitText, this.submitColor);
+        let c = drawButton(this.options.submitText, this.submitColor, this.options.scale);
         c.overEvent = this.overEvent;
         c.clickEvent = this.options.submit;
         addPointerEvent(c);
         return c;
     }
     drawCancel() {
-        let c = drawButton(this.options.cancelText, this.cancelColor);
+        let c = drawButton(this.options.cancelText, this.cancelColor, this.options.scale);
         c.overEvent = this.overEvent;
         c.clickEvent = this.options.cancel;
         addPointerEvent(c);
         return c;
     }
     draw() {
+        let btnh = (this.dialog.height / 2) - this.buttonHeight - (20 * (this.options.backgroundScale - 1));
         this.context.position.set(0, -50);
         this.container.addChild(this.dialog, this.context);
         if (this.submit && this.cancel) {
-            this.submit.position.set(-this.buttonSpace - 5, this.buttonHeight);
-            this.cancel.position.set(this.buttonSpace - 5, this.buttonHeight);
+            this.submit.position.set(-this.buttonSpace - 5, btnh);
+            this.cancel.position.set(this.buttonSpace - 5, btnh);
             this.container.addChild(this.submit, this.cancel);
         }
         else if (this.submit) {
-            this.submit.position.set(-5, this.buttonHeight);
+            this.submit.position.set(-5, btnh);
             this.container.addChild(this.submit);
         }
         else if (this.cancel) {
-            this.cancel.position.set(-5, this.buttonHeight);
+            this.cancel.position.set(-5, btnh);
             this.container.addChild(this.cancel);
         }
         //this.container.alpha = 0;
@@ -387,12 +403,12 @@ export class Dialog {
         for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
 }
-export function drawButton(text, color) {
+export function drawButton(text, color, scale = 1) {
     const texture = PIXI.Texture.from("image/dialog_button.png");
     const ts = TextStyle.Dialog_Button;
     let c = new PIXI.Container();
-    let b = createSprite(texture);
-    c.sprite = createSprite(texture);
+    let b = createSprite(texture, 0.5, scale);
+    c.sprite = createSprite(texture, 0.5, scale);
     c.text = createText(text, ts);
     c.sprite.tint = color;
     b.tint = ColorSlip.button_back;

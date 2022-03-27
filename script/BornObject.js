@@ -4,11 +4,12 @@ import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, Video, Door } from './GameObject.js';
 import { BornAction_Story1, BornAction_Story2 } from './BornAction.js';
 import { ColorSlip } from './ColorSlip.js';
-import { addPointerEvent, createSprite, createText } from './GameFunction.js';
+import { addDragEvent, addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { TextStyle } from './TextStyle.js';
 import { mapData } from './Data.js';
 import { FilterSet } from './FilterSet.js';
 import { brightnessOverEvent, drawButton } from './UI.js';
+import { math } from './math.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -49,7 +50,9 @@ class Mirror extends linkObject {
         this.url = "image/building/born/mirror.png";
         this.zoomIn = 1.5;
         this.originPos = [3.5, -15.5]
-        this.uiScale = 0.5
+        this.uiScale = 0.5;
+        this.selectGener = undefined;
+        this.selectGender = {};
     }
     onClickResize() { this.mirror = this.drawMirror(); }
     onClickUpdate() { }
@@ -78,6 +81,13 @@ class Mirror extends linkObject {
         this.cancel.visible = false;
         this.cancel = undefined;
         this.container.removeChild(this.mirror);
+    }
+    returnResult() {
+        //console.log(this.selectGender);
+        for (const [key, value] of Object.entries(this.selectGender)) {
+            this.manager.userData.born.mirror_collect.push({ gener: key, gender: value });
+        }
+        console.log(this.manager.userData.born.mirror_collect);
     }
     drawMirror() {
         const self = this;
@@ -138,13 +148,16 @@ class Mirror extends linkObject {
         const genderStr = ["Daddy", "Mommy"];
         const gStr = { "Daddy": "d", "Mommy": "m" };
         const genderTextStyle = { "Daddy": TextStyle.Mirror_dad, "Mommy": TextStyle.Mirror_mom };
-        let selectGener = undefined;
-        let selectGender = {};
         let c = new PIXI.Container();
         let mask = createSprite(textures["mask.png"], 0.5, scale);
         c.position.set(ox, oy);
         c.addChild(mask);
-        drawStart_1();
+        if (this.selectGener === undefined) {
+            drawStart_1();
+        }
+        else {
+            drawSelectStage(this.selectGener);
+        }
         this.container.addChild(c);
         return c;
         //draw stage
@@ -159,7 +172,7 @@ class Mirror extends linkObject {
             start.position.set(0, 200);
             start.clickEvent = () => {
                 gsap.to(layer, {
-                    duration: 0.5, alpha: 0, onComplete: () => {
+                    duration: 0.2, alpha: 0, onComplete: () => {
                         c.removeChild(layer);
                         drawStart_2();
                     }
@@ -179,10 +192,10 @@ class Mirror extends linkObject {
             start.position.set(0, 200);
             start.clickEvent = () => {
                 gsap.to(layer, {
-                    duration: 0.5, alpha: 0, onComplete: () => {
-                        selectGener = 8;
+                    duration: 0.2, alpha: 0, onComplete: () => {
+                        self.selectGener = 8;
                         c.removeChild(layer);
-                        drawSelectStage(selectGener);
+                        drawSelectStage(self.selectGener);
                     }
                 })
             }
@@ -231,17 +244,18 @@ class Mirror extends linkObject {
             title.position.set(0, -132);
             cbtn.position.set(134, -195);
             btn.clickEvent = () => {
-                selectGender[gener] = gender;
-                selectGener -= 1;
-                console.log("select:" + selectGener + "," + gender);
+                self.selectGender[gener] = gender;
+                console.log("select:" + self.selectGener + "," + self.selectGender[gener]);
+                self.selectGener -= 1;
                 gsap.to(layer, {
-                    duration: 0.5, alpha: 0, onComplete: () => {
+                    duration: 0.2, alpha: 0, onComplete: () => {
                         c.removeChild(layer);
-                        if (selectGener == 0) {
+                        if (self.selectGener == 0) {
+                            self.returnResult();
                             drawEnd();
                         }
                         else {
-                            drawSelectStage(selectGener);
+                            drawSelectStage(self.selectGener);
                         }
                     }
                 })
@@ -252,7 +266,7 @@ class Mirror extends linkObject {
                 gsap.to(layer, {
                     duration: 0.5, alpha: 0, onComplete: () => {
                         c.removeChild(layer);
-                        drawSelectStage(selectGener);
+                        drawSelectStage(self.selectGener);
                     }
                 })
             }
@@ -269,11 +283,11 @@ class Mirror extends linkObject {
             let list = new PIXI.Container();
             for (let i = 0; i < generStr.length; i++) {
                 const s = 0.45;
-                let card = drawDogCard(i + 1, selectGender[i + 1], s);
-                let text = createText(`第${generStr[i]}代`, TextStyle.Mirror_title, 0.5, scale * s);
+                let card = drawDogCard(i + 1, self.selectGender[i + 1], s);
+                let text = createText(`第${generStr[i]}代`, TextStyle.Mirror_title_12, 0.5, scale);
                 if (i < 4) {
                     card.position.set(124 + (-80 * i), 88);
-                    text.position.set(124 + (-80 * i), 156);
+                    text.position.set(124 + (-80 * i), 148);
                 }
                 else {
                     card.position.set(124 + (-80 * (i - 4)), -40);
@@ -284,20 +298,96 @@ class Mirror extends linkObject {
             cbtn.overEvent = brightnessOverEvent;
             cbtn.clickEvent = () => {
                 gsap.to(layer, {
-                    duration: 0.5, alpha: 0, onComplete: () => {
+                    duration: 0.2, alpha: 0, onComplete: () => {
                         self.cancelEvent();
                     }
                 })
             }
+            addPointerEvent(cbtn);
             title.position.set(0, -192);
             hint.position.set(0, -128);
             cbtn.position.set(134, -195);
-            layer.addChild(title, hint, dogHint, list);
+            layer.addChild(title, hint, dogHint, list, cbtn);
         }
         function drawDogCardDetail(gener, gender) {
-            //todo: draw: selected dog, arrorcrol ,cancelbtn, continuebtn
-            drawSelected(gener, gender);
-            //layer.addChild();
+            let layer = drawLayer();
+            let dialog = createSprite(textures["dialog_start.png"], 0.5, scale);
+            let pic = createSprite(textures[`${gener}_${gStr[gender]}.png`], 0.5, scale);
+            let title = createText(`第${generStr[gener - 1]}代`, TextStyle.Mirror_title, 0.5, scale);
+            let btn = drawButton("關閉", ColorSlip.button_cancel);
+            let cbtn = createSprite("image/cancel.svg", 0.5, scale);
+            let arror_l = createSprite(textures["arror_l.png"], 0.5, scale);
+            let arror_r = createSprite(textures["arror_r.png"], 0.5, scale);
+            dialog.position.set(0, -32);
+            pic.position.set(0, -32);
+            title.position.set(0, -132);
+            cbtn.position.set(134, -195);
+            arror_l.position.set(-80, -132);
+            arror_r.position.set(80, -132);
+            btn.clickEvent = cbtn.clickEvent = () => {
+                gsap.to(layer, {
+                    duration: 0.2, alpha: 0, onComplete: () => {
+                        c.removeChild(layer);
+                        if (self.selectGener == 0) {
+                            drawEnd();
+                        }
+                        else {
+                            drawSelectStage(self.selectGener);
+                        }
+                    }
+                })
+            }
+            btn.position.set(0, 200);
+            cbtn.overEvent = arror_l.overEvent = arror_r.overEvent = brightnessOverEvent;
+            arror_l.clickEvent = () => {
+                gener++;
+                if (gener == 8) {
+                    arror_l.interactive = false;
+                    arror_l.alpha = 0.5;
+                    arror_r.interactive = true;
+                    arror_r.alpha = 1;
+                }
+                else {
+                    arror_r.interactive = true;
+                    arror_r.alpha = 1;
+                    arror_l.interactive = true;
+                    arror_l.alpha = 1;
+                }
+                gender = self.selectGender[gener];
+                title.text = `第${generStr[gener - 1]}代`;
+                pic.texture = textures[`${gener}_${gStr[gender]}.png`];
+            }
+            arror_r.clickEvent = () => {
+                gener--;
+                if (gener == 8 - Object.keys(self.selectGender).length + 1) {
+                    arror_r.interactive = false;
+                    arror_r.alpha = 0.5;
+                    arror_l.interactive = true;
+                    arror_l.alpha = 1;
+                }
+                else {
+                    arror_l.interactive = true;
+                    arror_l.alpha = 1;
+                    arror_r.interactive = true;
+                    arror_r.alpha = 1;
+                }
+                gender = self.selectGender[gener];
+                title.text = `第${generStr[gener - 1]}代`;
+                pic.texture = textures[`${gener}_${gStr[gender]}.png`];
+            }
+            addPointerEvent(btn);
+            addPointerEvent(cbtn);
+            addPointerEvent(arror_l);
+            addPointerEvent(arror_r);
+            if (gener == 8) {
+                arror_l.interactive = false;
+                arror_l.alpha = 0.5;
+            }
+            if (gener == 8 - Object.keys(self.selectGender).length + 1) {
+                arror_r.interactive = false;
+                arror_r.alpha = 0.5;
+            }
+            layer.addChild(dialog, pic, title, btn, cbtn, arror_l, arror_r);
         }
         // draw duplicate obj
         function drawLayer() {
@@ -305,7 +395,7 @@ class Mirror extends linkObject {
             layer.mask = mask;
             //layer.position.set(ox, oy);
             c.addChild(layer);
-            gsap.from(layer, { duration: 0.5, alpha: 0 });
+            gsap.from(layer, { duration: 0.2, alpha: 0 });
             return layer;
         }
         function drawDogHint(str, hintPos = [-68, -25], hintScale = scale) {
@@ -338,9 +428,9 @@ class Mirror extends linkObject {
             }
             layer.clickEvent = () => {
                 gsap.to(c.children[1], {
-                    duration: 0.5, alpha: 0, onComplete: () => {
+                    duration: 0.2, alpha: 0, onComplete: () => {
                         c.removeChildAt(1);
-                        drawSelected(selectGener, layer.gender);
+                        drawSelected(self.selectGener, layer.gender);
                     }
                 })
             }
@@ -349,16 +439,49 @@ class Mirror extends linkObject {
             return layer;
         }
         function drawSelectList() {
-            //todo: if i>5 can move layer by mousedown+mousemove
             let layer = new PIXI.Container();
-            let i = 0;
-            for (const [key, value] of Object.entries(selectGender)) {
-                let card = drawDogCard(key, value, 0.36);
-                card.position.set(i * 60, 0);
-                layer.addChild(card);
-                i++;
+            let list = new PIXI.Container();
+
+            let count = 0;
+            for (let i = 8; i > 8 - Object.keys(self.selectGender).length; i--) {
+                let card = drawDogCard(i, self.selectGender[i], 0.36);
+                card.position.set(count * 60, 0);
+                list.addChild(card);
+                count++;
             }
+            if (count > 5) {
+                let prevX = undefined;
+                let slider = drawSlider(list);
+                let len = list.getBounds().width;
+                list.dragDownEvent = (e, event) => {
+                    prevX = event.data.global.x;
+                    slider.track.alpha = 0.5;
+                    slider.handle.alpha = 1;
+                }
+                list.dragMoveEvent = (e, event) => {
+                    e.position.x += event.data.global.x - prevX;
+                    prevX = event.data.global.x;
+                    if (e.position.x > 0) { e.position.x = 0 }
+                    if (e.position.x <= slider.trackLength - len) {
+                        e.position.x = slider.trackLength - len;
+                        slider.handle.position.x = slider.len;
+                    }
+                    else {
+                        slider.handle.position.x = -math.Map(e.position.x, 0, len, 0, slider.trackLength);
+                    }
+                }
+                list.dragUpEvent = (e, event) => {
+                    slider.track.alpha = 0;
+                    slider.handle.alpha = 0.5;
+                    prevX = undefined;
+                }
+                addDragEvent(list);
+                slider.position.set(-28, 43);
+                layer.addChild(slider);
+            }
+
             layer.position.set(-132, 196);
+            layer.addChild(list);
             return layer;
         }
         function drawDogCard(gener, gender, cardScale) {
@@ -373,7 +496,7 @@ class Mirror extends linkObject {
             }
             layer.clickEvent = () => {
                 gsap.to(c.children[1], {
-                    duration: 0.5, alpha: 0, onComplete: () => {
+                    duration: 0.2, alpha: 0, onComplete: () => {
                         c.removeChildAt(1);
                         drawDogCardDetail(gener, gender);
                     }
@@ -381,6 +504,51 @@ class Mirror extends linkObject {
             }
             addPointerEvent(layer);
             return layer;
+        }
+        function drawSlider(obj) {
+            let slider = new PIXI.Container();
+            slider.handleLength = 40 * (8 - Object.keys(self.selectGender).length + 5);
+            slider.trackLength = 320;
+            slider.listLength = obj.getBounds().width;
+            slider.len = slider.trackLength - slider.handleLength;
+            slider.handle = new PIXI.Graphics()
+                .beginFill(ColorSlip.white)
+                .drawRoundedRect(0, 0, slider.handleLength, 8, 4)
+                .endFill();
+            slider.track = new PIXI.Graphics()
+                .beginFill(ColorSlip.darkBlue)
+                .drawRoundedRect(0, 0, slider.trackLength, 8, 4)
+                .endFill();
+
+            let prevX = undefined;
+
+            slider.handle.dragDownEvent = (e, event) => {
+                prevX = event.data.global.x;
+                slider.track.alpha = 0.5;
+                slider.handle.alpha = 1;
+            }
+            slider.handle.dragMoveEvent = (e, event) => {
+                e.position.x += event.data.global.x - prevX;
+                prevX = event.data.global.x;
+                if (e.position.x < 0) { e.position.x = 0 }
+                if (slider.handleLength + e.position.x >= slider.trackLength) {
+                    e.position.x = slider.len;
+                    obj.position.x = slider.trackLength - slider.listLength;
+                }
+                else {
+                    obj.position.x = -math.Map(e.position.x, 0, slider.trackLength, 0, slider.listLength);
+                }
+            }
+            slider.handle.dragUpEvent = (e, event) => {
+                slider.track.alpha = 0;
+                slider.handle.alpha = 0.5;
+                prevX = undefined;
+            }
+            addDragEvent(slider.handle);
+            slider.track.alpha = 0;
+            slider.handle.alpha = 0.8;
+            slider.addChild(slider.track, slider.handle);
+            return slider;
         }
     }
 }

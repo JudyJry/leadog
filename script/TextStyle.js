@@ -219,5 +219,14 @@ const TextStyle = {
         align: "center",
         lineHeight: 60
     }),
+    Mirror_title_12: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 24,
+        lineJoin: "round",
+        stroke: ColorSlip.mirror_brown,
+        strokeThickness: 5,
+        align: "center"
+    }),
 }
 export { TextStyle };

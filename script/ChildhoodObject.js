@@ -4,7 +4,7 @@ import { PixiPlugin } from "gsap/PixiPlugin";
 import { PageObject, linkObject, Background, Player, Door, Video } from './GameObject.js';
 import { ChildhoodAction_Dora, ChildhoodAction_Kelly } from './ChildhoodAction.js';
 import { Dialog } from './UI.js';
-import { addPointerEvent, createSprite, createText, rectCollision } from './GameFunction.js';
+import { addDragEvent, addPointerEvent, createSprite, createText, rectCollision } from './GameFunction.js';
 import { TextStyle } from './TextStyle.js';
 import { FilterSet } from './FilterSet.js';
 
@@ -150,25 +150,27 @@ class Puzzle extends linkObject {
         }
         function addPieceEvent(e) {
             let f = FilterSet.link();
-            e.interactive = true;
-            e.buttonMode = true;
-            e.on("pointerover", () => { e.isPointerOver = true; e.filters = [f]; });
-            e.on("pointerout", () => { e.isPointerOver = false; e.filters = []; });
-            e.on("pointerdown", (event) => {
+            e.overEvent = () => {
+                if (e.isPointerOver) {
+                    e.filters = [f];
+                }
+                else {
+                    e.filters = [];
+                }
+            }
+            e.dragMoveEvent = (e, event) => {
+                e.position.x = event.data.global.x - (t.w / 2);
+                e.position.y = event.data.global.y - (t.h / 2);
+            }
+            e.dragDownEvent = (e, event) => {
                 e.scale.set(t.zoomIn);
                 c.removeChild(e);
                 t.manager.app.stage.addChild(e);
                 e.isDragging = true;
                 e.position.x = event.data.global.x - (t.w / 2);
                 e.position.y = event.data.global.y - (t.h / 2);
-            });
-            e.on("pointermove", (event) => {
-                if (e.isDragging) {
-                    e.position.x = event.data.global.x - (t.w / 2);
-                    e.position.y = event.data.global.y - (t.h / 2);
-                }
-            });
-            e.on("pointerup", (event) => {
+            };
+            e.dragUpEvent = (e, event) => {
                 let collision = rectCollision(e, t.answer.piece[e.index]);
                 console.log(collision);
                 if (collision) {
@@ -188,7 +190,8 @@ class Puzzle extends linkObject {
                     e.position.y = pos[e.index][1];
                     e.isDragging = false;
                 }
-            });
+            };
+            addDragEvent(e);
         }
     }
     drawPieceAnswer() {

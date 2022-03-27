@@ -43,6 +43,9 @@ export default class Manager {
         this.isMute = false;
 
         this.userData = {
+            born: {
+                mirror_collect: []
+            },
             childhood: {
                 puzzle_complete: false,
             }

@@ -40,16 +40,16 @@ const videoData = {
     born: [
         {
             name: "this.born_story",
-            url: "video/this.born_story1.mp4",
-            soundUrl: "sound/this.born_story.mp3",
+            url: "video/born_story1.mp4",
+            soundUrl: "sound/born_story.mp3",
             startText: "來聽聽剛出生的寶寶都在做什麼吧！",
             endText: `謝謝你聆聽剛出生的狗狗的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
             endTime: 46
         },
         {
             name: "this.born_story",
-            url: "video/this.born_story2.mp4",
-            soundUrl: "sound/this.born_story.mp3",
+            url: "video/born_story2.mp4",
+            soundUrl: "sound/born_story.mp3",
             startText: "來聽聽剛出生的寶寶都在做什麼吧！",
             endText: `謝謝你聆聽剛出生的狗狗的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
             endTime: 30
