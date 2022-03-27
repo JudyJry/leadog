@@ -76,8 +76,8 @@ class Puzzle extends linkObject {
     }
     drawHintBar() {
         let c = new PIXI.Container();
-        let bar = createSprite("image/building/childhood/hintBar.png");
-        c.exitButton = createSprite("image/building/childhood/exit.png", 0.5, 0.25);
+        let bar = createSprite(this.textures["hintBar.png"]);
+        c.exitButton = createSprite(this.textures["exit.png"], 0.5, 0.25);
         c.exitButton.position.set(425, -3);
         c.exitButton.overEvent = e => {
             if (e.isPointerOver) {
@@ -112,14 +112,14 @@ class Puzzle extends linkObject {
             [435, 14],
         ]
         let c = new PIXI.Container();
-        drawPieceBarBackground.call(t);
-        drawPieces.call(t, "image/building/childhood/piece_sprites.json");
+        drawPieceBarBackground();
+        drawPieces();
         this.container.addChild(c);
         return c;
         function drawPieceBarBackground() {
-            let bar = createSprite("image/building/childhood/pieceBar.png");
-            let pieces = createSprite("image/building/childhood/piece.png");
-            let pieceText = createSprite("image/building/childhood/piece.png");
+            let bar = createSprite(t.textures["pieceBar.png"]);
+            let pieces = createSprite(t.textures["piece.png"]);
+            let pieceText = createSprite(t.textures["piece.png"]);
             let mask = new PIXI.Graphics()
                 .beginFill(0xff0000)
                 .drawRect(0, 0, 976, 22)
@@ -131,12 +131,10 @@ class Puzzle extends linkObject {
             c.position.set(0, 196);
             c.addChild(bar, pieces, pieceText, mask);
         }
-        function drawPieces(src) {
-            let sheet = this.manager.app.loader.resources[src].spritesheet;
-
+        function drawPieces() {
             c.piece = [];
-            for (let i = 0; i < Object.keys(sheet.textures).length; i++) {
-                c.piece.push(new PIXI.Sprite(sheet.textures[`piece_${i}.png`]));
+            for (let i = 0; i < t.hintList.length; i++) {
+                c.piece.push(new PIXI.Sprite(t.textures[`piece_${i}.png`]));
                 c.piece[i].index = i;
                 c.piece[i].anchor.set(0.5);
                 c.piece[i].scale.set(1);
@@ -197,12 +195,11 @@ class Puzzle extends linkObject {
     drawPieceAnswer() {
         const t = this;
         let c = new PIXI.Container();
-        drawPieces.call(this, "image/building/childhood/piece_sprites.json");
+        drawPieces();
         c.position.set(-19, -99);
         this.container.addChild(c);
         return c;
-        function drawPieces(src) {
-            const sheet = this.manager.app.loader.resources[src].spritesheet;
+        function drawPieces() {
             const pos = [
                 [-353, -57],
                 [-1, -57],
@@ -215,8 +212,8 @@ class Puzzle extends linkObject {
                 [-394, 87]
             ]
             c.piece = [];
-            for (let i = 0; i < Object.keys(sheet.textures).length; i++) {
-                c.piece.push(new PIXI.Sprite(sheet.textures[`piece_${i}.png`]));
+            for (let i = 0; i < t.hintList.length; i++) {
+                c.piece.push(new PIXI.Sprite(t.textures[`piece_${i}.png`]));
                 c.piece[i].index = i;
                 c.piece[i].anchor.set(0.5);
                 c.piece[i].scale.set(1);
@@ -233,6 +230,7 @@ class Puzzle extends linkObject {
         this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
         this.isClick = true;
+        this.textures = this.manager.app.loader.resources["image/building/childhood/sprites.json"].spritesheet.textures;
         if (!this.isComplete) {
             gameStart.call(this);
         }

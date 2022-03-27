@@ -216,8 +216,9 @@ const loadList = {
         "image/building/childhood/door.png",
         "image/building/childhood/book.png",
         "image/building/childhood/puzzle.png",
+        "image/building/childhood/puzzle_complete.png",
         "image/building/childhood/video.png",
-        "image/building/childhood/piece_sprites.json",
+        "image/building/childhood/sprites.json",
         "image/video/childhood/sprites.json",
     ],
     "youth": [

@@ -105,6 +105,8 @@ class Graduate extends linkObject {
         this.zoomIn = 1.3;
         this.zoomInPos = [35, -100];
     }
+    onClickResize() { this.graduate = this.drawGraduate(); }
+    onClickUpdate() { }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
@@ -114,6 +116,16 @@ class Graduate extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
+        this.graduate = this.drawGraduate();
+    }
+    drawGraduate() {
+        let c = new PIXI.Container();
+        //c.position.set(0,0);
+        //c.addChild();
+        return c;
+        function drawSomething() {
+
+        }
     }
 }
 class Mirror extends linkObject {
@@ -123,6 +135,29 @@ class Mirror extends linkObject {
         this.y = -0.026;
         this.url = "image/building/youth/mirror.png";
         this.zoomIn = 1.5;
+        this.originPos = [-2, -37];
+    }
+    onClickResize() { this.mirror = this.drawMirror(); }
+    onClickUpdate() { }
+    clickEvent() {
+        this.blink.outerStrength = 0;
+        this.sprite.interactive = false;
+        this.zoom();
+        this.page.children.player.move(this._x, this.sprite.width);
+        this.page.isZoomIn = true;
+        this.isClick = true;
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+        this.mirror = this.drawMirror();
+    }
+    drawMirror() {
+        let c = new PIXI.Container();
+        //c.position.set(0,0);
+        //c.addChild();
+        return c;
+        function drawSomething() {
+
+        }
     }
 }
 const loadList = {
