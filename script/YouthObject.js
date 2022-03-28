@@ -7,6 +7,8 @@ import YouthAction_Instruction from './YouthAction_Instruction.js';
 import YouthAction_Traffic from './YouthAction_Traffic.js';
 import YouthAction_Instruction2 from './YouthAction_Instruction2.js';
 import { addPointerEvent, createSprite } from './GameFunction.js';
+import { FilterSet } from './FilterSet.js';
+import { brightnessOverEvent } from './UI.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -104,6 +106,8 @@ class Graduate extends linkObject {
         this.url = "image/building/youth/graduate.png";
         this.zoomIn = 1.3;
         this.zoomInPos = [35, -100];
+        this.originPos = [-13, 101];
+        this.uiScale = 1;
     }
     onClickResize() { this.graduate = this.drawGraduate(); }
     onClickUpdate() { }
@@ -116,15 +120,82 @@ class Graduate extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
+        this.textures = this.manager.app.loader.resources["image/building/youth/graduate/sprites.json"].spritesheet.textures;
         this.graduate = this.drawGraduate();
     }
     drawGraduate() {
+        const self = this;
+        const ox = this.originPos[0];
+        const oy = this.originPos[1];
+        const scale = this.uiScale;
+        const textures = this.textures;
+        const gradLength = 7;
         let c = new PIXI.Container();
-        //c.position.set(0,0);
-        //c.addChild();
+        c.position.set(ox, oy);
+        drawGrad();
+        this.container.addChild(c);
         return c;
-        function drawSomething() {
+        function drawGrad() {
+            const pos = [
+                [-503, 0],
+                [-251, -115],
+                [0, 0],
+                [251, -115],
+                [503, 0],
+                [-251, 115],
+                [251, 115]
+            ]
+            const pic = [
+                "grad_Brwon.png",
+                "grad_Brwon.png",
+                "grad_kelly.png",
+                "grad_kelly.png",
+                "grad_Vivian.png",
+                "grad_Vivian.png",
+                "grad_Vivian.png",
+            ]
+            let layer = drawLayer();
+            layer.position.set(0, 32);
+            for (let i = 0; i < gradLength; i++) {
+                const f = FilterSet.link();
+                let e = createSprite(textures[`grad_0${i + 1}.png`], 0.5, scale);
+                e.position.set(pos[i][0], pos[i][1]);
+                e.overEvent = () => {
+                    if (e.isPointerOver) {
+                        e.filters = [f];
+                    }
+                    else {
+                        e.filters = [];
+                    }
+                }
+                e.clickEvent = () => {
+                    c.removeChild(layer);
+                    drawGradDetail(pic[i]);
+                }
+                addPointerEvent(e);
+                layer.addChild(e);
+            }
 
+        }
+        function drawGradDetail(pic) {
+            let layer = drawLayer();
+            let bg = createSprite(textures["board.png"], 0.5, scale);
+            let detail = createSprite(textures[pic], 0.5, scale);
+            let btn = createSprite("image/cancel.svg", 0.5, scale * 0.5);
+            btn.position.set(530, -135);
+            detail.position.set(0, 30);
+            btn.overEvent = brightnessOverEvent;
+            btn.clickEvent = () => {
+                c.removeChild(layer);
+                drawGrad();
+            }
+            addPointerEvent(btn);
+            layer.addChild(bg, detail, btn)
+        }
+        function drawLayer() {
+            let layer = new PIXI.Container();
+            c.addChild(layer);
+            return layer;
         }
     }
 }

@@ -1,0 +1,65 @@
+{
+"frames": {
+	"board.png": {
+		"frame": {"x":0, "y":0, "w":1295, "h":538},
+		"spriteSourceSize": {"x":0,"y":0,"w":1295,"h":538},
+		"sourceSize": {"w":1295,"h":538}
+	},
+	"grad_01.png": {
+		"frame": {"x":1148, "y":539, "w":250, "h":441},
+		"spriteSourceSize": {"x":0,"y":0,"w":250,"h":441},
+		"sourceSize": {"w":250,"h":441}
+	},
+	"grad_02.png": {
+		"frame": {"x":1398, "y":1423, "w":208, "h":208},
+		"spriteSourceSize": {"x":0,"y":0,"w":208,"h":208},
+		"sourceSize": {"w":208,"h":208}
+	},
+	"grad_03.png": {
+		"frame": {"x":1147, "y":981, "w":251, "h":441},
+		"spriteSourceSize": {"x":0,"y":0,"w":251,"h":441},
+		"sourceSize": {"w":251,"h":441}
+	},
+	"grad_04.png": {
+		"frame": {"x":1296, "y":0, "w":208, "h":208},
+		"spriteSourceSize": {"x":0,"y":0,"w":208,"h":208},
+		"sourceSize": {"w":208,"h":208}
+	},
+	"grad_05.png": {
+		"frame": {"x":1147, "y":1423, "w":250, "h":441},
+		"spriteSourceSize": {"x":0,"y":0,"w":250,"h":441},
+		"sourceSize": {"w":250,"h":441}
+	},
+	"grad_06.png": {
+		"frame": {"x":1398, "y":1632, "w":208, "h":209},
+		"spriteSourceSize": {"x":0,"y":0,"w":208,"h":209},
+		"sourceSize": {"w":208,"h":209}
+	},
+	"grad_07.png": {
+		"frame": {"x":1296, "y":209, "w":208, "h":209},
+		"spriteSourceSize": {"x":0,"y":0,"w":208,"h":209},
+		"sourceSize": {"w":208,"h":209}
+	},
+	"grad_Brwon.png": {
+		"frame": {"x":0, "y":1423, "w":1146, "h":441},
+		"spriteSourceSize": {"x":0,"y":0,"w":1146,"h":441},
+		"sourceSize": {"w":1146,"h":441}
+	},
+	"grad_Vivian.png": {
+		"frame": {"x":0, "y":539, "w":1147, "h":441},
+		"spriteSourceSize": {"x":0,"y":0,"w":1147,"h":441},
+		"sourceSize": {"w":1147,"h":441}
+	},
+	"grad_kelly.png": {
+		"frame": {"x":0, "y":981, "w":1146, "h":441},
+		"spriteSourceSize": {"x":0,"y":0,"w":1146,"h":441},
+		"sourceSize": {"w":1146,"h":441}
+	}
+
+},
+"meta": {
+	"image": "sprites.png",
+	"size": {"w": 1607, "h": 1865},
+	"scale": "1"
+}
+}
