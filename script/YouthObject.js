@@ -181,8 +181,8 @@ class Graduate extends linkObject {
             let layer = drawLayer();
             let bg = createSprite(textures["board.png"], 0.5, scale);
             let detail = createSprite(textures[pic], 0.5, scale);
-            let btn = createSprite("image/cancel.svg", 0.5, scale * 0.5);
-            btn.position.set(530, -135);
+            let btn = createSprite("image/cancel.svg", 0.5, scale * 0.6);
+            btn.position.set(530, -145);
             detail.position.set(0, 30);
             btn.overEvent = brightnessOverEvent;
             btn.clickEvent = () => {
@@ -206,7 +206,9 @@ class Mirror extends linkObject {
         this.y = -0.026;
         this.url = "image/building/youth/mirror.png";
         this.zoomIn = 1.5;
+        this.zoomInPos = [0, 0];
         this.originPos = [-2, -37];
+        this.uiScale = 0.5;
     }
     onClickResize() { this.mirror = this.drawMirror(); }
     onClickUpdate() { }
@@ -219,15 +221,30 @@ class Mirror extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
+        this.textures = this.manager.app.loader.resources["image/building/youth/mirror/sprites.json"].spritesheet.textures;
         this.mirror = this.drawMirror();
     }
     drawMirror() {
+        const self = this;
+        const ox = this.originPos[0];
+        const oy = this.originPos[1];
+        const scale = this.uiScale;
+        const textures = this.textures;
         let c = new PIXI.Container();
-        //c.position.set(0,0);
-        //c.addChild();
+        c.position.set(ox, oy);
+        drawSomething();
+        this.container.addChild(c);
         return c;
         function drawSomething() {
-
+            let layer = drawLayer();
+            let sth = createSprite(textures["sth.png"], 0.5, scale);
+            sth.position.set(0, 0);
+            layer.addChild(sth);
+        }
+        function drawLayer() {
+            let layer = new PIXI.Container();
+            c.addChild(layer);
+            return layer;
         }
     }
 }
