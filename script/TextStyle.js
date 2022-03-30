@@ -255,5 +255,11 @@ const TextStyle = {
         strokeThickness: 8,
         align: "center"
     }),
+    Mirror_DogHint_16: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 32,
+        fill: ColorSlip.mirror_brown,
+        lineHeight: 54
+    }),
 }
 export { TextStyle };

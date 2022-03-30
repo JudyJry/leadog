@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { PageObject, linkObject, Background, Player, Door, Video } from './GameObject.js';
 import { ChildhoodAction_Dora, ChildhoodAction_Kelly } from './ChildhoodAction.js';
-import { Dialog } from './UI.js';
+import { brightnessOverEvent, Dialog, glowOverEvent } from './UI.js';
 import { addDragEvent, addPointerEvent, createSprite, createText, rectCollision } from './GameFunction.js';
 import { TextStyle } from './TextStyle.js';
 import { FilterSet } from './FilterSet.js';
@@ -79,16 +79,7 @@ class Puzzle extends linkObject {
         let bar = createSprite(this.textures["hintBar.png"]);
         c.exitButton = createSprite(this.textures["exit.png"], 0.5, 0.25);
         c.exitButton.position.set(425, -3);
-        c.exitButton.overEvent = e => {
-            if (e.isPointerOver) {
-                gsap.killTweensOf(e);
-                gsap.to(e, { duration: 0.5, pixi: { brightness: 0.9 } });
-            }
-            else {
-                gsap.killTweensOf(e);
-                gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
-            }
-        }
+        c.exitButton.overEvent = brightnessOverEvent;
         c.exitButton.clickEvent = this.cancelEvent.bind(this);
         addPointerEvent(c.exitButton);
         c.text = createText(this.hintList[this.random], TextStyle.Puzzle_Hint, [0, 0.5]);
@@ -147,15 +138,7 @@ class Puzzle extends linkObject {
             }
         }
         function addPieceEvent(e) {
-            let f = FilterSet.link();
-            e.overEvent = () => {
-                if (e.isPointerOver) {
-                    e.filters = [f];
-                }
-                else {
-                    e.filters = [];
-                }
-            }
+            e.overEvent = glowOverEvent;
             e.dragMoveEvent = (e, event) => {
                 e.position.x = event.data.global.x - (t.w / 2);
                 e.position.y = event.data.global.y - (t.h / 2);

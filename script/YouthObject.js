@@ -8,9 +8,10 @@ import YouthAction_Traffic from './YouthAction_Traffic.js';
 import YouthAction_Instruction2 from './YouthAction_Instruction2.js';
 import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { FilterSet } from './FilterSet.js';
-import { brightnessOverEvent } from './UI.js';
+import { brightnessOverEvent, drawButton, glowOverEvent } from './UI.js';
 import { TextStyle } from './TextStyle.js';
 import { ThreeNotOneQuestionData } from './Data.js';
+import { ColorSlip } from './ColorSlip.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -173,17 +174,9 @@ class Graduate extends linkObject {
             let layer = drawLayer();
             layer.position.set(0, 32);
             for (let i = 0; i < gradLength; i++) {
-                const f = FilterSet.link();
                 let e = createSprite(textures[`grad_0${i + 1}.png`], 0.5, scale);
                 e.position.set(pos[i][0], pos[i][1]);
-                e.overEvent = () => {
-                    if (e.isPointerOver) {
-                        e.filters = [f];
-                    }
-                    else {
-                        e.filters = [];
-                    }
-                }
+                e.overEvent = glowOverEvent;
                 e.clickEvent = () => {
                     c.removeChild(layer);
                     drawGradDetail(pic[i]);
@@ -261,14 +254,18 @@ class Mirror extends linkObject {
         const scale = this.uiScale;
         const textures = this.textures;
         const data = ThreeNotOneQuestionData;
+        const options = ["A", "B", "C", "D"];
+        let count = undefined;
+        let correct = [];
         let frame = createSprite(textures["frame.png"], 0.5, scale);
         let c = new PIXI.Container();
         let mask = createSprite(textures["mask.png"], 0.5, scale);
-        c.addChild(mask);
+        c.addChild(mask, frame);
         c.mask = mask;
+        frame.position.set(-ox, -oy);
         c.position.set(ox, oy);
         drawPage(1);
-        this.container.addChild(frame, c);
+        this.container.addChild(c);
         return c;
         // draw page
         function drawPage(page) {
@@ -285,17 +282,14 @@ class Mirror extends linkObject {
             pagePic.position.set(0, -100);
             if (page == 1) { arror_l.interactive = false; arror_l.alpha = 0.5; }
             else if (page == 3) {
-                const f = FilterSet.link();
                 arror_r.interactive = false; arror_r.alpha = 0.5;
                 let dogHint = drawDogHint(`如果您也想要認識導盲犬時，\n也請您務必先徵求主人的同意！`);
                 let startIcon = createSprite(textures["startIcon.png"], 0.5, scale);
                 startIcon.position.set(196, 149);
-                startIcon.overEvent = (e) => {
-                    if (e.isPointerOver) { e.filters = [f]; }
-                    else { e.filters = []; }
-                }
+                startIcon.overEvent = glowOverEvent;
                 startIcon.clickEvent = () => {
                     c.removeChild(layer);
+                    count = 0;
                     drawQuestion();
                 }
                 addPointerEvent(startIcon);
@@ -303,37 +297,118 @@ class Mirror extends linkObject {
             }
             layer.addChild(arror_r, arror_l, pagePic);
         }
-        function drawQuestion(count) {
-            const options = ["A", "B", "C", "D"];
+        function drawQuestion() {
+            const pos = [
+                [-234, 9],
+                [-234, 68],
+                [-13, 9],
+                [-13, 68]
+            ]
             let layer = drawLayer("問答遊戲");
-            let Q = createText("Q" + (count + 1) + ":" + data[count].Q, TextStyle.Mirror_Hint, 0.5, scale);
+            let q = createText("Q" + (count + 1) + ":" + data[count].Q, TextStyle.Mirror_DogHint_16, 0.5, scale);
             let select = new PIXI.Container();
             for (let i = 0; i < data[count].select.length; i++) {
                 let e = new PIXI.Container();
                 let s = createText(data[count].select[i], TextStyle.Mirror_title_20, [0, 0.5], scale);
-                let o = createText(options[i], TextStyle.Mirror_Hint, 0.5, scale);
+                let o = createText(options[i], TextStyle.Mirror_DogHint_16, 0.5, scale);
                 let bg = createSprite(textures["option.png"], 0.5, scale);
-                s.position.set(50, 0);
-                o.position.set(-1, 8);
+                s.position.set(50, 6);
+                o.position.set(-0.5, 9);
+                e.position.set(pos[i][0], pos[i][1]);
                 e.addChild(bg, s, o);
+                e.overEvent = glowOverEvent;
+                e.clickEvent = () => {
+                    if (s.text === data[count].A) { correct[count] = true; }
+                    else { correct[count] = false; }
+                    c.removeChild(layer);
+                    drawAnswer(correct[count]);
+                    console.log(correct[count]);
+                }
+                addPointerEvent(e);
                 select.addChild(e);
             }
-            Q.position.set(0, -50);
-            layer.addChild(Q, select);
+            q.position.set(0, -50);
+            layer.addChild(q, select);
         }
-        function drawAnswer() {
+        function drawAnswer(isCorrect) {
             let layer = drawLayer("問答遊戲");
+            let dog = drawDog();
+            let q = createText("Q" + (count + 1) + ":" + data[count].Q, TextStyle.Mirror_DogHint_16, 0.5, scale);
+            let explain = createText(data[count].explain, TextStyle.Mirror_DogHint_16, 0.5, scale);
+            let select = new PIXI.Container();
+            let s = createText(data[count].A, TextStyle.Mirror_title_20, [0, 0.5], scale);
+            let o = createText(options[data[count].select.indexOf(data[count].A)], TextStyle.Mirror_DogHint_16, 0.5, scale);
+            let bg = createSprite(textures["option.png"], 0.5, scale);
+            let btn = count == 3 ? drawButton("結束遊戲", ColorSlip.button_cancel, scale * 1.5) : drawButton("繼續遊戲", ColorSlip.button_submit, scale * 1.5);
+
+            s.position.set(50, 6);
+            o.position.set(-0.5, 9);
+            select.position.set(-234, 9);
+            select.addChild(bg, s, o);
+            explain.position.set(91, 55);
+            q.position.set(0, -50);
+            btn.position.set(197, 160);
+            btn.clickEvent = () => {
+                count++;
+                c.removeChild(layer);
+                if (count >= 4) {
+                    if (correct.every(e => e)) { drawGameClear(); }
+                    else { drawGameOver(); }
+                }
+                else { drawQuestion(); }
+            }
+            addPointerEvent(btn);
+            layer.addChild(dog, q, select, explain, btn);
         }
         function drawGameClear() {
+            self.manager.userData.youth.mirror_correct = true;
             let layer = drawLayer("問答遊戲");
+            let dog = drawDog();
+            let restart = drawButton("重新遊戲", ColorSlip.button_submit, scale * 1.5);
+            let exit = drawButton("打開手冊", ColorSlip.button_cancel, scale * 1.5);
+            let text = createText(`恭喜你答對所有問題！\n獲得導盲犬徽章，可在探險手冊中顯示`, TextStyle.Mirror_title_20, 0.5, scale);
+            restart.position.set(44, 122);
+            exit.position.set(155, 122);
+            text.position.set(0, 25);
+            restart.clickEvent = () => {
+                c.removeChild(layer);
+                count = 0;
+                correct = [];
+                drawQuestion();
+            }
+            exit.clickEvent = () => {
+                c.removeChild(layer);
+                self.cancelEvent();
+                self.manager.uiSystem.ui.book.clickEvent();
+            }
+            addPointerEvent(restart);
+            addPointerEvent(exit);
+            layer.addChild(dog, restart, exit, text);
+        }
+        function drawGameOver() {
+            let layer = drawLayer("問答遊戲");
+            let dog = drawDog();
+            let restart = drawButton("再試一次", ColorSlip.button_submit, scale * 1.5);
+            let exit = drawButton("離開遊戲", ColorSlip.button_cancel, scale * 1.5);
+            let text = createText(`真可惜！你沒有答對所有問題\n再試一次吧！`, TextStyle.Mirror_title_20, 0.5, scale);
+            restart.position.set(44, 122);
+            exit.position.set(155, 122);
+            text.position.set(0, 25);
+            restart.clickEvent = () => {
+                c.removeChild(layer);
+                count = 0;
+                correct = [];
+                drawQuestion();
+            }
+            exit.clickEvent = () => {
+                c.removeChild(layer);
+                drawPage(3);
+            }
+            addPointerEvent(restart);
+            addPointerEvent(exit);
+            layer.addChild(dog, restart, exit, text);
         }
         // draw obj
-        function drawSomething() {
-            let layer = drawLayer("公共場所遇見導盲犬時：");
-            let sth = createSprite(textures["sth.png"], 0.5, scale);
-            sth.position.set(0, 0);
-            layer.addChild(sth);
-        }
         function drawLayer(titleText) {
             let layer = new PIXI.Container();
             let bigTitle = createText("三不一問知識", TextStyle.Mirror_title_36, 0.5, scale);
@@ -379,10 +454,16 @@ class Mirror extends linkObject {
             e.position.set(-35, 164);
             e.addChild(bg, hint, dog);
             gsap.timeline()
-                .from(dog, { duration: 0.5, y: 264 })
-                .from(hint, { duration: 0.5, alpha: 0 }, 0.5)
-                .from(bg, { duration: 0.5, alpha: 0 }, 0.5);
+                .from(dog, { duration: 0.75, y: 264 })
+                .from(hint, { duration: 0.75, alpha: 0 }, 0.5)
+                .from(bg, { duration: 0.75, alpha: 0 }, 0.5);
             return e;
+        }
+        function drawDog() {
+            let dog = createSprite(textures["dog.png"], 0.5, scale);
+            dog.position.set(-171, 182);
+            gsap.from(dog, { duration: 0.75, y: 380 });
+            return dog;
         }
     }
 }

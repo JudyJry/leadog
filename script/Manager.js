@@ -47,7 +47,10 @@ export default class Manager {
                 mirror_collect: []
             },
             childhood: {
-                puzzle_complete: false,
+                puzzle_complete: false
+            },
+            youth: {
+                mirror_correct: false
             }
         }
     }

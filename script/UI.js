@@ -5,6 +5,7 @@ import { TextStyle } from './TextStyle.js';
 import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { uiData } from './Data.js';
 import { ColorSlip } from './ColorSlip.js';
+import { FilterSet } from './FilterSet.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -113,7 +114,9 @@ class Book extends UI {
             str += `\n    第${data.born.mirror_collect[i].gener}代：${data.born.mirror_collect[i].gender}`;
         }
         let c_p = data.childhood.puzzle_complete ? "完成" : "未完成";
-        str += "\n幼年：\n    拼圖：" + c_p
+        let y_p = data.youth.mirror_correct ? "完成" : "未完成";
+        str += "\n幼年拼圖：" + c_p;
+        str += "\n壯年問答遊戲：" + y_p;
         let d = new Dialog(this.manager, {
             context: str,
             backgroundScale: 1 + (data.born.mirror_collect.length / 4),
@@ -409,7 +412,7 @@ export function drawButton(text, color, scale = 1) {
     let c = new PIXI.Container();
     let b = createSprite(texture, 0.5, scale);
     c.sprite = createSprite(texture, 0.5, scale);
-    c.text = createText(text, ts);
+    c.text = createText(text, ts, 0.5, scale);
     c.sprite.tint = color;
     b.tint = ColorSlip.button_back;
     b.position.y = 10;
@@ -444,4 +447,8 @@ export function brightnessOverEvent(e) {
         gsap.killTweensOf(e);
         gsap.to(e, { duration: 0.5, pixi: { brightness: 1 } });
     }
+}
+export function glowOverEvent(e) {
+    if (e.isPointerOver) { e.filters = [FilterSet.link()]; }
+    else { e.filters = []; }
 }
