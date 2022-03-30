@@ -228,5 +228,32 @@ const TextStyle = {
         strokeThickness: 5,
         align: "center"
     }),
+    Mirror_title_16: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 32,
+        lineJoin: "round",
+        stroke: ColorSlip.mirror_brown,
+        strokeThickness: 5,
+        align: "center"
+    }),
+    Mirror_title_20: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 40,
+        lineJoin: "round",
+        stroke: ColorSlip.mirror_brown,
+        strokeThickness: 5,
+        align: "center"
+    }),
+    Mirror_title_36: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 72,
+        lineJoin: "round",
+        stroke: ColorSlip.mirror_brown,
+        strokeThickness: 8,
+        align: "center"
+    }),
 }
 export { TextStyle };

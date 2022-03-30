@@ -6,9 +6,11 @@ import YouthAction_Bus from './YouthAction_bus.js';
 import YouthAction_Instruction from './YouthAction_Instruction.js';
 import YouthAction_Traffic from './YouthAction_Traffic.js';
 import YouthAction_Instruction2 from './YouthAction_Instruction2.js';
-import { addPointerEvent, createSprite } from './GameFunction.js';
+import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { FilterSet } from './FilterSet.js';
 import { brightnessOverEvent } from './UI.js';
+import { TextStyle } from './TextStyle.js';
+import { ThreeNotOneQuestionData } from './Data.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -111,6 +113,20 @@ class Graduate extends linkObject {
     }
     onClickResize() { this.graduate = this.drawGraduate(); }
     onClickUpdate() { }
+    cancelEvent() {
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.sprite.interactive = true;
+            }.bind(this)
+        });
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.isClick = false;
+        this.page.isZoomIn = false;
+        this.cancel.visible = false;
+        this.cancel = undefined;
+        this.container.removeChild(this.graduate);
+    }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
@@ -212,6 +228,20 @@ class Mirror extends linkObject {
     }
     onClickResize() { this.mirror = this.drawMirror(); }
     onClickUpdate() { }
+    cancelEvent() {
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.sprite.interactive = true;
+            }.bind(this)
+        });
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.isClick = false;
+        this.page.isZoomIn = false;
+        this.cancel.visible = false;
+        this.cancel = undefined;
+        this.container.removeChild(this.mirror);
+    }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
@@ -230,21 +260,129 @@ class Mirror extends linkObject {
         const oy = this.originPos[1];
         const scale = this.uiScale;
         const textures = this.textures;
+        const data = ThreeNotOneQuestionData;
+        let frame = createSprite(textures["frame.png"], 0.5, scale);
         let c = new PIXI.Container();
+        let mask = createSprite(textures["mask.png"], 0.5, scale);
+        c.addChild(mask);
+        c.mask = mask;
         c.position.set(ox, oy);
-        drawSomething();
-        this.container.addChild(c);
+        drawPage(1);
+        this.container.addChild(frame, c);
         return c;
+        // draw page
+        function drawPage(page) {
+            let layer = page == 1 ? drawLayer("公共場所遇見導盲犬時：") : drawLayer("法律知識");
+            let arror_r = drawArror("right", () => {
+                c.removeChild(layer);
+                drawPage(page + 1);
+            });
+            let arror_l = drawArror("left", () => {
+                c.removeChild(layer);
+                drawPage(page - 1);
+            });
+            let pagePic = createSprite(textures[`page_${page}.png`], [0.5, 0], scale);
+            pagePic.position.set(0, -100);
+            if (page == 1) { arror_l.interactive = false; arror_l.alpha = 0.5; }
+            else if (page == 3) {
+                const f = FilterSet.link();
+                arror_r.interactive = false; arror_r.alpha = 0.5;
+                let dogHint = drawDogHint(`如果您也想要認識導盲犬時，\n也請您務必先徵求主人的同意！`);
+                let startIcon = createSprite(textures["startIcon.png"], 0.5, scale);
+                startIcon.position.set(196, 149);
+                startIcon.overEvent = (e) => {
+                    if (e.isPointerOver) { e.filters = [f]; }
+                    else { e.filters = []; }
+                }
+                startIcon.clickEvent = () => {
+                    c.removeChild(layer);
+                    drawQuestion();
+                }
+                addPointerEvent(startIcon);
+                layer.addChild(dogHint, startIcon);
+            }
+            layer.addChild(arror_r, arror_l, pagePic);
+        }
+        function drawQuestion(count) {
+            const options = ["A", "B", "C", "D"];
+            let layer = drawLayer("問答遊戲");
+            let Q = createText("Q" + (count + 1) + ":" + data[count].Q, TextStyle.Mirror_Hint, 0.5, scale);
+            let select = new PIXI.Container();
+            for (let i = 0; i < data[count].select.length; i++) {
+                let e = new PIXI.Container();
+                let s = createText(data[count].select[i], TextStyle.Mirror_title_20, [0, 0.5], scale);
+                let o = createText(options[i], TextStyle.Mirror_Hint, 0.5, scale);
+                let bg = createSprite(textures["option.png"], 0.5, scale);
+                s.position.set(50, 0);
+                o.position.set(-1, 8);
+                e.addChild(bg, s, o);
+                select.addChild(e);
+            }
+            Q.position.set(0, -50);
+            layer.addChild(Q, select);
+        }
+        function drawAnswer() {
+            let layer = drawLayer("問答遊戲");
+        }
+        function drawGameClear() {
+            let layer = drawLayer("問答遊戲");
+        }
+        // draw obj
         function drawSomething() {
-            let layer = drawLayer();
+            let layer = drawLayer("公共場所遇見導盲犬時：");
             let sth = createSprite(textures["sth.png"], 0.5, scale);
             sth.position.set(0, 0);
             layer.addChild(sth);
         }
-        function drawLayer() {
+        function drawLayer(titleText) {
             let layer = new PIXI.Container();
+            let bigTitle = createText("三不一問知識", TextStyle.Mirror_title_36, 0.5, scale);
+            let title = createText(titleText, TextStyle.Mirror_title_16, 0.5, scale);
+            bigTitle.position.set(0, -155);
+            title.position.set(0, -112);
+            layer.addChild(bigTitle, title);
             c.addChild(layer);
             return layer;
+        }
+        function drawArror(dir, clickEvent) {
+            let arror = new PIXI.Container();
+            let a = createSprite(textures["arror.png"], 0.5, scale);
+            let text = createText("", TextStyle.Map_Green_13, 0.5, scale);
+            switch (dir) {
+                case "right":
+                    text.text = "下一頁";
+                    text.position.set(-47, 0);
+                    arror.position.set(190, -112);
+                    break;
+                case "left":
+                    text.text = "上一頁";
+                    text.position.set(47, 0);
+                    a.scale.set(-scale, scale);
+                    arror.position.set(-190, -112);
+                    break;
+            }
+            arror.addChild(text, a);
+
+            arror.overEvent = brightnessOverEvent;
+            arror.clickEvent = clickEvent;
+            addPointerEvent(arror);
+            return arror;
+        }
+        function drawDogHint(str, hintPos = [32, -19], hintScale = scale) {
+            let e = new PIXI.Container();
+            let hint = createText(str, TextStyle.Mirror_DogHint, 0.5, hintScale);
+            let bg = createSprite(textures["dialog.png"], 0.5, hintScale);
+            let dog = createSprite(textures["dogHint.png"], 0.5, scale);
+            hint.position.set(hintPos[0], hintPos[1]);
+            bg.position.set(hintPos[0] + 2, hintPos[1] - 1);
+            dog.position.set(-118, 20);
+            e.position.set(-35, 164);
+            e.addChild(bg, hint, dog);
+            gsap.timeline()
+                .from(dog, { duration: 0.5, y: 264 })
+                .from(hint, { duration: 0.5, alpha: 0 }, 0.5)
+                .from(bg, { duration: 0.5, alpha: 0 }, 0.5);
+            return e;
         }
     }
 }
