@@ -10,6 +10,7 @@
     "watch": "webpack -w --mode development",
     "build": "webpack --mode production",
     "pkg": "pkg package.json",
+    "pkgwin": "pkg -t win package.json",
     "start": "node server.mjs"
   },
   "author": "Jell",
@@ -21,6 +22,7 @@
     "@pixi/sound": "^4.1.1",
     "gsap": "^3.8.0",
     "jquery": "^3.6.0",
+    "open": "^8.4.0",
     "pixi-filters": "^4.1.5",
     "pixi.js": "^6.2.0"
   },

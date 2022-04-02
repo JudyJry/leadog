@@ -6,6 +6,8 @@ var _path = require("path");
 
 var _fs = require("fs");
 
+var open = require("open");
+
 var _this = void 0;
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
@@ -74,6 +76,6 @@ var mineTypes = {
     }
 }).listen(port, hostname, function () {
     _newArrowCheck(this, _this);
-
+    open("http://" + hostname + ":" + port, "chrome");
     console.log(hostname + ":" + port + " is Ready.");
 }.bind(void 0));

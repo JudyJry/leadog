@@ -1,6 +1,7 @@
 import { createServer } from 'http';
 import { join, extname } from 'path';
 import { lstatSync, createReadStream } from 'fs'; //file system module
+import open from 'open';
 
 const hostname = "localhost";
 const port = 8000;
@@ -57,4 +58,8 @@ createServer(function (req, res) {
         res.write('500 Internal Error\n');
         res.end();
     }
-}).listen(port, hostname, () => { console.log(`${hostname}:${port} is Ready.`); });
+})
+    .listen(port, hostname, () => {
+        console.log(`${hostname}:${port} is Ready.`);
+        open(`http://${hostname}:${port}`, "chrome");
+    });
