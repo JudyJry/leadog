@@ -10,7 +10,6 @@
     "watch": "webpack -w --mode development",
     "build": "webpack --mode production",
     "pkg": "pkg package.json",
-    "pkgwin": "pkg -t win package.json",
     "start": "node server.mjs"
   },
   "author": "Jell",
