@@ -192,74 +192,114 @@ class Gashapon extends linkObject {
     drawGashapon() {
         const self = this;
         const scale = this.uiScale;
-        //const textures = this.textures;
-        const textures = GashaponTextures;
-        this.sprite.alpha = 0;
+        const textures = this.textures;
+        const lucky = {
+            "big": "大吉",
+            "middle": "中吉",
+            "middle2": "中吉",
+            "small": "小吉",
+        }
+        const eggsPos = [
+            [-55.684, 62.3096],
+            [-38.59, 23.615],
+            [-33.972, 0.963],
+            [-45.184, 26.545],
+            [-26.744, 77.742]
+        ]
+        let random = undefined;
         let c = new PIXI.Container();
         let frame = drawFrame();
         drawStart();
         this.container.addChild(c);
+        this.sprite.alpha = 0;
         return c;
         //layer
         function drawFrame() {
-            let frame = new PIXI.Container();
-            frame.eggs = createSprite(textures["eggs_0.png"], 0.5, scale);
-            frame.front = createSprite(textures["gashapon_front.png"], 0.5, scale);
-            frame.back = createSprite(textures["gashapon_back.png"], 0.5, scale);
-            frame.turn = createSprite(textures["turn.png"], 0.5, scale);
-            frame.mouth = createSprite(textures["mouth.png"], 0.5, scale);
-            frame.eggMask = createSprite(textures["mask.png"], 0.5, scale);
-            frame.egg = createSprite(textures["egg.png"], 0.5, scale);
-            frame.eggs.position.set(-19.607, 21.94);
-            frame.back.position.set(0, -11.868);
-            frame.turn.position.set(27, 96.5);
-            frame.mouth.position.set(-49.103, 115.687);
-            frame.eggMask.position.set(-49.103, 107.742);
-            frame.egg.position.set(-24.454, 84.206);
-            frame.egg.mask = frame.eggMask;
-            frame.addChild(frame.back, frame.eggs, frame.front, frame.turn, frame.eggMask, frame.egg, frame.mouth);
-            this.container.addChild(frame);
-            return frame;
+            let e = new PIXI.Container();
+            e.eggs = createSprite(textures["eggs_0.png"], 0.5, scale);
+            e.front = createSprite(textures["gashapon_front.png"], 0.5, scale);
+            e.back = createSprite(textures["gashapon_back.png"], 0.5, scale);
+            e.turn = createSprite(textures["turn.png"], 0.5, scale);
+            e.mouth = createSprite(textures["mouth.png"], 0.5, scale);
+            e.eggMask = createSprite(textures["mask.png"], 0.5, scale);
+            e.egg = createSprite(textures["egg.png"], 0.5, scale);
+            e.eggs.position.set(eggsPos[0][0], eggsPos[0][1]);
+            e.back.position.set(0, -30);//ok
+            e.turn.position.set(76, 274.5);//ok
+            e.mouth.position.set(-139.452, 328.55);//ok
+            e.eggMask.position.set(-139.452, 306);//ok
+            e.egg.position.set(-49, 168.4);
+            e.egg.mask = e.eggMask;
+            e.addChild(e.back, e.eggs, e.front, e.turn, e.eggMask, e.egg, e.mouth);
+            c.addChild(e);
+            return e;
         }
         function drawStart() {
             let d = new Dialog(self.manager, {
                 context: `抽抽運氣吧！\n看看今天哪隻狗狗適合你吧！`,
                 submitText: "開始遊戲",
                 cancelText: "結束遊戲",
-                submit: () => { drawEggRotate(); },
-                cancel: () => { self.cancelEvent(); }
+                submit: () => { d.remove(); drawEggRotate(); },
+                cancel: () => { d.remove(); self.cancelEvent(); }
             })
         }
         function drawEggRotate() {
+            const eggsTime = 0.3;
             let tl = gsap.timeline()
-                .to(frame.turn, { duration: 0.75, rotate: 180, ease: "none" })
-                .to(frame.turn, { duration: 0.75, rotate: 180, ease: "none" }, 1)
-                .to(frame.turn, { duration: 0.75, rotate: 180, ease: "none" }, 2)
-                .to(frame.egg, { duration: 1, x: -49.103, y: 107.742 }, 3);
+                .to(frame.turn, { duration: 0.75, rotation: Math.PI, ease: "none" })
+                .to(frame.turn, { duration: 0.75, rotation: Math.PI * 2, ease: "none" }, 1)
+                .to(frame.turn, { duration: 0.75, rotation: Math.PI * 3, ease: "none" }, 2)
+                .to(frame.egg, { duration: 1, x: -139.452, y: 306 }, 3);
             let tl2 = gsap.timeline()
-                .to(frame.eggs, { duration: 0.75, onComplete: () => { EggsAnim(1); } })
-                .to(frame.eggs, { duration: 0.75, onComplete: () => { EggsAnim(2); } })
-                .to(frame.eggs, { duration: 0.75, onComplete: () => { EggsAnim(3); } })
-                .to(frame.eggs, { duration: 0.75, onComplete: () => { EggsAnim(4); } })
-                .to(frame.eggs, { duration: 0.75, onComplete: () => { EggsAnim(0); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(1); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(2); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(3); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(1); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(2); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(3); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(1); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(2); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(3); } })
+                .to(frame.eggs, { duration: eggsTime, onComplete: () => { EggsAnim(4); } })
             let anim = gsap.timeline({ onComplete: drawResult });
             anim.add(tl);
             anim.add(tl2, 0);
+
         }
         function drawResult() {
+            random = Math.floor(Math.random() * Object.keys(lucky).length);
+            self.manager.userData.know.lucky = { pic: Object.keys(lucky)[random], str: Object.values(lucky)[random] };
             let layer = drawLayer();
-            let arrow_l = createSprite("image/arrow_l.svg", 0.5, scale), arrow_r, pic_f, pic_b;
+            let arrow_l = createSprite("image/arrow_left.svg", 0.5, scale);
+            let arrow_r = createSprite("image/arrow_right.svg", 0.5, scale);
+            let pic_f = createSprite(textures[`${Object.keys(lucky)[random]}_front.png`], 0.5, scale);
+            let pic_b = createSprite(textures[`${Object.keys(lucky)[random]}_back.png`], 0.5, scale);
+            arrow_l.position.set(-200, 12);
+            arrow_r.position.set(200, 12);
+            pic_b.position.set(0, 16);
+            pic_f.position.set(0, 16);
+            pic_b.scale.x = 0;
+            arrow_l.overEvent = brightnessOverEvent;
+            arrow_r.overEvent = brightnessOverEvent;
+            arrow_l.clickEvent = picAnim.bind(this, pic_f, pic_b);
+            arrow_r.clickEvent = picAnim.bind(this, pic_f, pic_b);
+            addPointerEvent(arrow_l);
+            addPointerEvent(arrow_r);
             layer.addChild(arrow_l, arrow_r, pic_f, pic_b);
+
+            setTimeout(drawEnd, 5000);
         }
         function drawEnd() {
             let d = new Dialog(self.manager, {
-                context: `恭喜您獲得${小吉}！點擊回家手冊\n一起認識更多導盲犬吧！`,
+                context: `恭喜您獲得${Object.values(lucky)[random]}！\n點擊回家手冊\n一起認識更多導盲犬吧！`,
                 submitText: "前往手冊",
                 cancelText: "結束遊戲",
                 submit: () => {
+                    d.remove();
+                    self.cancelEvent();
                     //todo
                 },
-                cancel: () => { self.cancelEvent(); }
+                cancel: () => { d.remove(); self.cancelEvent(); }
             })
         }
         //obj
@@ -270,6 +310,19 @@ class Gashapon extends linkObject {
         }
         function EggsAnim(count) {
             frame.eggs.texture = textures[`eggs_${count}.png`];
+            frame.eggs.position.set(eggsPos[count][0], eggsPos[count][1]);
+        }
+        function picAnim(pic_f, pic_b) {
+            if (pic_b.scale.x == 0) {
+                gsap.timeline()
+                    .to(pic_f.scale, { duration: 0.5, x: 0, ease: "none" })
+                    .to(pic_b.scale, { duration: 0.5, x: 1, ease: "none" })
+            }
+            else if (pic_f.scale.x == 0) {
+                gsap.timeline()
+                    .to(pic_b.scale, { duration: 0.5, x: 0, ease: "none" })
+                    .to(pic_f.scale, { duration: 0.5, x: 1, ease: "none" })
+            }
         }
     }
 }
@@ -283,26 +336,4 @@ class Book extends linkObject {
         this.zoomIn = 2;
         this.spriteHeight = 120;
     }
-}
-
-const GashaponTextures = {
-    "gashapon_back.png": "image/building/know/gashapon/gashapon_back.png",
-    "gashapon_front.png": "image/building/know/gashapon/gashapon_front.png",
-    "mask.png": "image/building/know/gashapon/mask.png",
-    "mouth.png": "image/building/know/gashapon/mouth.png",
-    "turn.png": "image/building/know/gashapon/turn.png",
-    "big_back.png": "image/building/know/gashapon/big_back.png",
-    "big_front.png": "image/building/know/gashapon/big_front.png",
-    "middle_back.png": "image/building/know/gashapon/middle_back.png",
-    "middle_front.png": "image/building/know/gashapon/middle_front.png",
-    "middle2_back.png": "image/building/know/gashapon/middle2_back.png",
-    "middle2_front.png": "image/building/know/gashapon/middle2_front.png",
-    "small_back.png": "image/building/know/gashapon/small_back.png",
-    "small_front.png": "image/building/know/gashapon/small_front.png",
-    "egg.png": "image/building/know/gashapon/egg.png",
-    "eggs_0.png": "image/building/know/gashapon/eggs_0.png",
-    "eggs_1.png": "image/building/know/gashapon/eggs_1.png",
-    "eggs_2.png": "image/building/know/gashapon/eggs_2.png",
-    "eggs_3.png": "image/building/know/gashapon/eggs_3.png",
-    "eggs_4.png": "image/building/know/gashapon/eggs_4.png",
 }

@@ -51,6 +51,9 @@ export default class Manager {
             },
             youth: {
                 mirror_correct: false
+            },
+            know: {
+                lucky: { pic: undefined, str: undefined }
             }
         }
     }
@@ -257,14 +260,6 @@ const loadList = {
         "image/building/know/blackboard.png",
         "image/building/know/gashapon.png",
         "image/building/know/gashapon_alpha.png",
-        "image/building/know/big_front.png",
-        "image/building/know/big_back.png",
-        "image/building/know/middle_front.png",
-        "image/building/know/middle_back.png",
-        "image/building/know/middle2_front.png",
-        "image/building/know/middle2_back.png",
-        "image/building/know/small_front.png",
-        "image/building/know/small_back.png",
         "image/building/know/gashapon/sprites.json",
     ],
     "company": [

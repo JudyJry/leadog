@@ -109,17 +109,18 @@ class Book extends UI {
     }
     clickEvent() {
         const data = this.manager.userData;
-        let str = "出生：";
+        let strArray = JSON.stringify(data).slice(1, -1).split("\"").join(" ").split(",");
+        /* let str = "出生：";
         for (let i = 0; i < data.born.mirror_collect.length; i++) {
             str += `\n    第${data.born.mirror_collect[i].gener}代：${data.born.mirror_collect[i].gender}`;
         }
         let c_p = data.childhood.puzzle_complete ? "完成" : "未完成";
         let y_p = data.youth.mirror_correct ? "完成" : "未完成";
         str += "\n幼年拼圖：" + c_p;
-        str += "\n壯年問答遊戲：" + y_p;
+        str += "\n壯年問答遊戲：" + y_p; */
         let d = new Dialog(this.manager, {
-            context: str,
-            backgroundScale: 1 + (data.born.mirror_collect.length / 4),
+            context: strArray.join("\n"),
+            backgroundScale: 1 + (strArray.length * 0.08),
             cancel: () => d.remove()
         })
     }
