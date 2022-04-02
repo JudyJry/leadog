@@ -246,10 +246,10 @@ export class Player extends GameObject {
         this.name = "Player";
         this.mouse = this.manager.mouse;
         this.container.zIndex = 90;
-        this.scale = 0.5;
+        this.scale = 0.6;
         this.x = -0.412;
-        this.y = 0.119;
-        this.speed = 25;
+        this.y = 0.1;
+        this.speed = 75;
         this.draw = function () {
             this._x = (this.x * this.w * 2);
             this._y = (this.y * this.h * 2);

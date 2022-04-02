@@ -62,14 +62,14 @@ class Puzzle extends linkObject {
         this.zoomInPos = [0, 40];
         this.hintList = [
             "黃金獵犬個性聰明、有主見在教導指令時可以快速學會！",
-            "黃金獵犬的臉比較短、且耳朵也比較短。",
-            "黃金獵犬的的毛髮較長，多為奶油或深咖啡色。",
-            "黃金獵犬的的尾巴蓬鬆且有裝飾毛。",
-            "拉不拉多的個性溫和、活潑，較沒有攻擊性。",
             "拉不拉多的臉比較長且耳朵也比較長。",
-            "拉不拉多多為短毛，毛色有黑色、米黃色、巧克力色。",
-            "拉不拉多的尾巴為短毛無裝飾毛。",
             "黃金拉拉個性平易近人、服從性高，面對危險能更加的敏銳！",
+            "拉不拉多的尾巴為短毛無裝飾毛。",
+            "拉不拉多的個性溫和、活潑，較沒有攻擊性。",
+            "拉不拉多多為短毛，毛色有黑色、米黃色、巧克力色。",
+            "黃金獵犬的的毛髮較長，多為奶油或深咖啡色。",
+            "黃金獵犬的臉比較短、且耳朵也比較短。",
+            "黃金獵犬的的尾巴蓬鬆且有裝飾毛。",
         ]
         this.random = Math.floor(Math.random() * this.hintList.length);
         this.isAnswer = new Array(this.hintList.length).fill(false);
@@ -159,9 +159,7 @@ class Puzzle extends linkObject {
                     t.answer.piece[e.index].alpha = 1;
                     e.interactive = false;
                     t.isAnswer[e.index] = true;
-                    t.random++;
-                    if (t.random >= t.hintList.length) { t.random = 0; }
-                    t.hintBar.text.text = t.hintList[t.random];
+                    t.hintBar.text.text = t.hintList[e.index];
                 }
                 else {
                     e.scale.set(t.scale);
@@ -186,13 +184,13 @@ class Puzzle extends linkObject {
             const pos = [
                 [-353, -57],
                 [-1, -57],
-                [373, -58],
-                [75, 86],
-                [19, 47],
+                [372, -58],
+                [74, 86],
+                [19.5, 47],
                 [41, -57],
-                [-331, 41],
+                [-332, 41],
                 [-313, -57],
-                [-394, 87]
+                [-395, 87]
             ]
             c.piece = [];
             for (let i = 0; i < t.hintList.length; i++) {

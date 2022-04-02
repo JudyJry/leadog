@@ -1,6 +1,6 @@
 {
 "frames": {
-	"arror.png": {
+	"arrow.png": {
 		"frame": {"x":1638, "y":2317, "w":65, "h":65},
 		"spriteSourceSize": {"x":0,"y":0,"w":65,"h":65},
 		"sourceSize": {"w":65,"h":65}

@@ -270,19 +270,19 @@ class Mirror extends linkObject {
         // draw page
         function drawPage(page) {
             let layer = page == 1 ? drawLayer("公共場所遇見導盲犬時：") : drawLayer("法律知識");
-            let arror_r = drawArror("right", () => {
+            let arrow_r = drawarrow("right", () => {
                 c.removeChild(layer);
                 drawPage(page + 1);
             });
-            let arror_l = drawArror("left", () => {
+            let arrow_l = drawarrow("left", () => {
                 c.removeChild(layer);
                 drawPage(page - 1);
             });
             let pagePic = createSprite(textures[`page_${page}.png`], [0.5, 0], scale);
             pagePic.position.set(0, -100);
-            if (page == 1) { arror_l.interactive = false; arror_l.alpha = 0.5; }
+            if (page == 1) { arrow_l.interactive = false; arrow_l.alpha = 0.5; }
             else if (page == 3) {
-                arror_r.interactive = false; arror_r.alpha = 0.5;
+                arrow_r.interactive = false; arrow_r.alpha = 0.5;
                 let dogHint = drawDogHint(`如果您也想要認識導盲犬時，\n也請您務必先徵求主人的同意！`);
                 let startIcon = createSprite(textures["startIcon.png"], 0.5, scale);
                 startIcon.position.set(196, 149);
@@ -295,7 +295,7 @@ class Mirror extends linkObject {
                 addPointerEvent(startIcon);
                 layer.addChild(dogHint, startIcon);
             }
-            layer.addChild(arror_r, arror_l, pagePic);
+            layer.addChild(arrow_r, arrow_l, pagePic);
         }
         function drawQuestion() {
             const pos = [
@@ -305,6 +305,7 @@ class Mirror extends linkObject {
                 [-13, 68]
             ]
             let layer = drawLayer("問答遊戲");
+            let dogHint = drawDogHint(`如果您也想要認識導盲犬時，\n也請您務必先徵求主人的同意！`);
             let q = createText("Q" + (count + 1) + ":" + data[count].Q, TextStyle.Mirror_DogHint_16, 0.5, scale);
             let select = new PIXI.Container();
             for (let i = 0; i < data[count].select.length; i++) {
@@ -328,7 +329,7 @@ class Mirror extends linkObject {
                 select.addChild(e);
             }
             q.position.set(0, -50);
-            layer.addChild(q, select);
+            layer.addChild(dogHint, q, select);
         }
         function drawAnswer(isCorrect) {
             let layer = drawLayer("問答遊戲");
@@ -419,29 +420,29 @@ class Mirror extends linkObject {
             c.addChild(layer);
             return layer;
         }
-        function drawArror(dir, clickEvent) {
-            let arror = new PIXI.Container();
-            let a = createSprite(textures["arror.png"], 0.5, scale);
+        function drawarrow(dir, clickEvent) {
+            let arrow = new PIXI.Container();
+            let a = createSprite(textures["arrow.png"], 0.5, scale);
             let text = createText("", TextStyle.Map_Green_13, 0.5, scale);
             switch (dir) {
                 case "right":
                     text.text = "下一頁";
                     text.position.set(-47, 0);
-                    arror.position.set(190, -112);
+                    arrow.position.set(190, -112);
                     break;
                 case "left":
                     text.text = "上一頁";
                     text.position.set(47, 0);
                     a.scale.set(-scale, scale);
-                    arror.position.set(-190, -112);
+                    arrow.position.set(-190, -112);
                     break;
             }
-            arror.addChild(text, a);
+            arrow.addChild(text, a);
 
-            arror.overEvent = brightnessOverEvent;
-            arror.clickEvent = clickEvent;
-            addPointerEvent(arror);
-            return arror;
+            arrow.overEvent = brightnessOverEvent;
+            arrow.clickEvent = clickEvent;
+            addPointerEvent(arrow);
+            return arrow;
         }
         function drawDogHint(str, hintPos = [32, -19], hintScale = scale) {
             let e = new PIXI.Container();

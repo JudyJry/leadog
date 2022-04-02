@@ -347,18 +347,18 @@ class Map extends linkObject {
         }
         function drawSecond() {
             c.secondLayer = new PIXI.Container();
-            let arror_r = createSprite(textures["arror.png"], 0.5, scale);
-            let arror_l = createSprite(textures["arror.png"], 0.5, [-scale, scale]);
-            arror_r.position.set(48, -102);
-            arror_l.position.set(-48, -102);
-            arror_r.clickEvent = changeDir.bind(this, 1);
-            arror_r.overEvent = brightnessOverEvent;
-            arror_r.hitArea = new PIXI.Circle(0, 0, 30);
-            addPointerEvent(arror_r);
-            arror_l.clickEvent = changeDir.bind(this, -1);
-            arror_l.overEvent = brightnessOverEvent;
-            arror_l.hitArea = new PIXI.Circle(0, 0, 30);
-            addPointerEvent(arror_l);
+            let arrow_r = createSprite(textures["arrow.png"], 0.5, scale);
+            let arrow_l = createSprite(textures["arrow.png"], 0.5, [-scale, scale]);
+            arrow_r.position.set(48, -102);
+            arrow_l.position.set(-48, -102);
+            arrow_r.clickEvent = changeDir.bind(this, 1);
+            arrow_r.overEvent = brightnessOverEvent;
+            arrow_r.hitArea = new PIXI.Circle(0, 0, 30);
+            addPointerEvent(arrow_r);
+            arrow_l.clickEvent = changeDir.bind(this, -1);
+            arrow_l.overEvent = brightnessOverEvent;
+            arrow_l.hitArea = new PIXI.Circle(0, 0, 30);
+            addPointerEvent(arrow_l);
 
 
             let cancelIcon = createSprite(textures["cancel.png"], 0.5, scale);
@@ -400,12 +400,12 @@ class Map extends linkObject {
                 m.addChild(e, t);
                 marks.addChild(m);
             }
-            c.secondLayer.addChild(marks, arror_l, arror_r, cancelIcon);
+            c.secondLayer.addChild(marks, arrow_l, arrow_r, cancelIcon);
             c.addChild(c.secondLayer);
 
         }
-        function changeDir(arror) {
-            let i = dir.indexOf(selectDir) + arror;
+        function changeDir(arrow) {
+            let i = dir.indexOf(selectDir) + arrow;
             if (i >= dir.length) { i = 0 }
             else if (i < 0) { i = dir.length - 1; }
             selectDir = dir[i];
@@ -455,27 +455,27 @@ class Map extends linkObject {
             console.log(selectDir, selectDetail);
             c.detailLayer = new PIXI.Container();
 
-            let arror_l = new PIXI.Container();
-            arror_l.s = createSprite(textures["arrorIcon_l.png"], 0.5, scale);
-            arror_l.t = createText("上一頁", TextStyle.Map_Green_13, 0.5, scale);
-            arror_l.t.position.set(42, 0);
-            arror_l.position.set(-150, 192);
-            arror_l.addChild(arror_l.s, arror_l.t);
-            arror_l.overEvent = brightnessOverEvent;
-            arror_l.clickEvent = changeDetail.bind(this, -1);
-            arror_l.hitArea = new PIXI.Rectangle(-15, -20, 90, 40);
-            addPointerEvent(arror_l);
+            let arrow_l = new PIXI.Container();
+            arrow_l.s = createSprite(textures["arrowIcon_l.png"], 0.5, scale);
+            arrow_l.t = createText("上一頁", TextStyle.Map_Green_13, 0.5, scale);
+            arrow_l.t.position.set(42, 0);
+            arrow_l.position.set(-150, 192);
+            arrow_l.addChild(arrow_l.s, arrow_l.t);
+            arrow_l.overEvent = brightnessOverEvent;
+            arrow_l.clickEvent = changeDetail.bind(this, -1);
+            arrow_l.hitArea = new PIXI.Rectangle(-15, -20, 90, 40);
+            addPointerEvent(arrow_l);
 
-            let arror_r = new PIXI.Container();
-            arror_r.s = createSprite(textures["arrorIcon_r.png"], 0.5, scale);
-            arror_r.t = createText("下一頁", TextStyle.Map_Green_13, 0.5, scale);
-            arror_r.t.position.set(-42, 0);
-            arror_r.position.set(150, 192);
-            arror_r.addChild(arror_r.s, arror_r.t);
-            arror_r.overEvent = brightnessOverEvent;
-            arror_r.clickEvent = changeDetail.bind(this, 1);
-            arror_r.hitArea = new PIXI.Rectangle(-75, -20, 90, 40);
-            addPointerEvent(arror_r);
+            let arrow_r = new PIXI.Container();
+            arrow_r.s = createSprite(textures["arrowIcon_r.png"], 0.5, scale);
+            arrow_r.t = createText("下一頁", TextStyle.Map_Green_13, 0.5, scale);
+            arrow_r.t.position.set(-42, 0);
+            arrow_r.position.set(150, 192);
+            arrow_r.addChild(arrow_r.s, arrow_r.t);
+            arrow_r.overEvent = brightnessOverEvent;
+            arrow_r.clickEvent = changeDetail.bind(this, 1);
+            arrow_r.hitArea = new PIXI.Rectangle(-75, -20, 90, 40);
+            addPointerEvent(arrow_r);
 
             let cancelIcon = createSprite(textures["cancel.png"], 0.5, scale);
             cancelIcon.position.set(140, -173);
@@ -506,11 +506,11 @@ class Map extends linkObject {
             detailText.position.set(data_detail[selectDetail].pos[0], data_detail[selectDetail].pos[1] + 30);
 
             c.detailLayer.position.set(ox, oy);
-            c.detailLayer.addChild(pic, detailName, detailText, arror_l, arror_r, cancelIcon, title);
+            c.detailLayer.addChild(pic, detailName, detailText, arrow_l, arrow_r, cancelIcon, title);
             c.addChild(c.detailLayer);
         }
-        function changeDetail(arror) {
-            selectDetail += arror;
+        function changeDetail(arrow) {
+            selectDetail += arrow;
             if (selectDetail >= data_detail.length) { selectDetail = 0 }
             else if (selectDetail < 0) { selectDetail = data_detail.length - 1; }
             c.removeChild(c.detailLayer);

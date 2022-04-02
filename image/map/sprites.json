@@ -1,16 +1,16 @@
 {
 "frames": {
-	"arror.png": {
+	"arrow.png": {
 		"frame": {"x":905, "y":909, "w":45, "h":31},
 		"spriteSourceSize": {"x":0,"y":0,"w":45,"h":31},
 		"sourceSize": {"w":45,"h":31}
 	},
-	"arrorIcon_l.png": {
+	"arrowIcon_l.png": {
 		"frame": {"x":998, "y":859, "w":38, "h":38},
 		"spriteSourceSize": {"x":0,"y":0,"w":38,"h":38},
 		"sourceSize": {"w":38,"h":38}
 	},
-	"arrorIcon_r.png": {
+	"arrowIcon_r.png": {
 		"frame": {"x":1036, "y":898, "w":38, "h":38},
 		"spriteSourceSize": {"x":0,"y":0,"w":38,"h":38},
 		"sourceSize": {"w":38,"h":38}
