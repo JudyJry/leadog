@@ -4,7 +4,7 @@ import { TextStyle } from "./TextStyle.js";
 import { FilterSet } from "./FilterSet.js";
 import { addPointerEvent, createSprite, createText } from "./GameFunction.js";
 import { math } from "./math.js";
-import { Page } from "./Data.js";
+import { bookData, Page } from "./Data.js";
 import Manager from "./Manager.js";
 import { brightnessOverEvent } from "./UI.js";
 

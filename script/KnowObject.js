@@ -335,5 +335,128 @@ class Book extends linkObject {
         this.url = "image/building/know/book.png";
         this.zoomIn = 2;
         this.spriteHeight = 120;
+        this.uiScale = 1;
+        this.originPos = [0, 0];
+        this.texturesUrl = "image/know/book/sprites.json"
+    }
+    onClickResize() { this.book = this.drawBook(); }
+    clickEvent() {
+        this.blink.outerStrength = 0;
+        this.sprite.interactive = false;
+        this.zoom();
+        this.page.children.player.move(this._x, this.sprite.width);
+        this.page.isZoomIn = true;
+        this.isClick = true;
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+        this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+        this.book = this.drawBook();
+    }
+    cancelEvent() {
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.sprite.interactive = true;
+            }.bind(this)
+        });
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.isClick = false;
+        this.page.isZoomIn = false;
+        this.cancel.visible = false;
+        this.cancel = undefined;
+        this.manager.app.stage.removeChild(this.book);
+    }
+    drawBook() {
+        const self = this;
+        const scale = this.uiScale;
+        const textures = this.textures;
+        const data = bookData.know;
+        const sortList = ["a", "b", "c"];
+        let selectSort = sortList[0];
+        let c = new PIXI.Container();
+        let page = drawPage();
+        this.manager.app.stage.addChild(c);
+        return c;
+        //page
+        function drawIntroduction() {
+            let layer = drawLayer("寄養家庭");
+            let instruction = createSprite(textures[`text_${selectSort}.png`], 0.5, scale);
+            let dogList = drawDogList(selectSort);
+            instruction.position.set(-500, 0);
+            layer.addChild(instruction, dogList);
+        }
+        function drawDogDetail() {
+
+        }
+        //obj
+        function drawPage() {
+            let e = new PIXI.Container();
+            let cover = createSprite(textures["bookcover.png"], 0.5, scale);
+            let pages = createSprite(textures["pages.png"], 0.5, scale);
+            e.page_l = createSprite(textures["page_l.png"], 1, scale);
+            e.page_r = createSprite(textures["page_r.png"], [0, 1], scale);
+            cover.position.set(0, 100);
+            e.page_l.position.set(0, 418);
+            e.page_r.position.set(0, 418);
+            e.addChild(cover, pages, e.page_l, e.page_r);
+            return e;
+        }
+        function drawLayer(titleText) {
+            let layer = new PIXI.Container();
+            let bigTitle = createText("一起回家吧！", TextStyle.Mirror_title_36, 0.5, scale);
+            let title = createText(titleText, TextStyle.Mirror_title_16, 0.5, scale);
+            bigTitle.position.set(0, -155);
+            title.position.set(0, -112);
+            layer.addChild(bigTitle, title);
+            c.addChild(layer);
+            return layer;
+        }
+        function drawDogList(sort) {
+            let e = new PIXI.Container();
+            for (let i = 0; i < data[sort].length; i++) {
+                let child = drawDog(sort, i);
+                child.position.x = i * 100;
+                child.position.y = i < 3 ? -100 : 100;
+                e.addChild(child);
+            }
+            return e;
+        }
+        function drawDog(sort, index) {
+            let e = new PIXI.Container();
+            let dogFrame = createSprite(textures[`dogFrame.png`], 0.5, scale);
+            let name = createText(data[sort][index].name, TextStyle[`Book_${sort}`], 0.5, scale);
+            let pic = createSprite(textures[`pic_${sort}_${index}.png`], 0.5, scale);
+            let love = drawLove(data[sort][index].love);
+            name.position.set(0, -40);
+            e.addChild(dogFrame, name, pic, love);
+            return e;
+        }
+        function drawLove(num) {
+            let e = new PIXI.Container();
+            let n = createText(num, TextStyle.Mirror_title_20, 0.5, scale);
+            let s = createSprite(textures["love.png"], 0.5, scale);
+            n.position.set(20, 0);
+            s.position.set(-20, 0);
+            e.position.set(0, 40);
+            e.addChild(n, s);
+            return e;
+        }
+        function pageAnim(page, onComplete = () => { }) {
+            const animTime = 0.5;
+            gsap.timeline({ onComplete: onComplete })
+                .to(page, { duration: animTime, skewX: 200, scale: scale * 0.5, ease: "none" })
+                .to(page, { duration: animTime, skewX: 220, scale: 0, ease: "none" })
+                .to(page, { duration: animTime, skewX: 200, scale: -scale * 0.5, ease: "none" })
+                .to(page, { duration: animTime, skewX: 0, scale: -scale, ease: "none" })
+        }
+        function drawDialog() {
+            let d = new Dialog(self.manager, {
+                context: `確定要離開本網站，前往\n台灣導盲犬協會獲得資料`,
+                submitText: "前往網站",
+                cancelText: "繼續閱讀",
+                submit: () => { d.remove(); window.open("https://www.guidedog.org.tw/", "_blank"); },
+                cancel: () => { d.remove(); }
+            })
+        }
     }
 }

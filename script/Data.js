@@ -555,4 +555,87 @@ const ThreeNotOneQuestionData = [
         ],
     },
 ]
-export { objType, Page, homePageData, uiData, videoData, mapData, ThreeNotOneQuestionData };
+
+const bookData = {
+    know: {
+        a: [
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Coco",
+                love: "520",
+            },
+            {
+                name: "Lady",
+                love: "100",
+            },
+            {
+                name: "Ella",
+                love: "666",
+            },
+            {
+                name: "Uwu",
+                love: "880",
+            },
+            {
+                name: "Woff",
+                love: "134",
+            }
+        ],
+        b: [
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            }
+        ],
+        c: [
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            },
+            {
+                name: "Judy",
+                love: "152",
+            }
+        ]
+    }
+}
+export { objType, Page, homePageData, uiData, videoData, mapData, ThreeNotOneQuestionData, bookData };
