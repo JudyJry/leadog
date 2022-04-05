@@ -3,8 +3,11 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, Door, OtherObject } from './GameObject.js';
 import { FilterSet } from './FilterSet.js';
-import { addPointerEvent, createSprite } from './GameFunction.js';
-import { brightnessOverEvent, Dialog, glowOverEvent } from './UI.js';
+import { addPointerEvent, createSprite, createText } from './GameFunction.js';
+import { brightnessOverEvent, Dialog, drawButton, glowOverEvent } from './UI.js';
+import { bookData } from './Data.js';
+import { TextStyle } from './TextStyle.js';
+import { ColorSlip } from './ColorSlip.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -337,8 +340,9 @@ class Book extends linkObject {
         this.spriteHeight = 120;
         this.uiScale = 1;
         this.originPos = [0, 0];
-        this.texturesUrl = "image/know/book/sprites.json"
+        this.texturesUrl = "image/building/know/book/sprites.json"
     }
+    zoom() { }
     onClickResize() { this.book = this.drawBook(); }
     clickEvent() {
         this.blink.outerStrength = 0;
@@ -353,13 +357,13 @@ class Book extends linkObject {
         this.book = this.drawBook();
     }
     cancelEvent() {
-        let tl = gsap.timeline({
+        /* let tl = gsap.timeline({
             onComplete: function () {
                 this.sprite.interactive = true;
             }.bind(this)
         });
         tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
-        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0); */
         this.isClick = false;
         this.page.isZoomIn = false;
         this.cancel.visible = false;
@@ -371,83 +375,228 @@ class Book extends linkObject {
         const scale = this.uiScale;
         const textures = this.textures;
         const data = bookData.know;
+        const centerX = 300;
         const sortList = ["a", "b", "c"];
+        const sortText = {
+            "a": {
+                title_1: "寄養家庭",
+                title_2: "寄養幼犬(2個月~2歲)",
+                hint: `點擊下方”我要寄養”可了解幼犬資料，並且可及時\n連結到台灣各個導盲犬協會獲得更多資訊。`,
+                buttonText: "我要寄養"
+            },
+            "b": {
+                title_1: "申請導盲犬",
+                title_2: "申請導盲犬(2歲~10歲)",
+                hint: `點擊下方”我要申請”可了解導盲犬資料，並且可及時\n連結到台灣各個導盲犬協會獲得更多資訊。`,
+                buttonText: "我要申請"
+            },
+            "c": {
+                title_1: "收養家庭",
+                title_2: "收養退休犬(11歲以後)",
+                hint: `點擊下方”我要收養”可了解退休犬資料，並且可及時\n連結到台灣各個導盲犬協會獲得更多資訊。`,
+                buttonText: "我要收養"
+            }
+        }
         let selectSort = sortList[0];
         let c = new PIXI.Container();
         let page = drawPage();
-        this.manager.app.stage.addChild(c);
+        let usingLayer = new PIXI.Container();
+        c.addChild(usingLayer);
+        onSelectSort();
+        this.manager.app.stage.addChildAt(c, 1);
         return c;
         //page
         function drawIntroduction() {
-            let layer = drawLayer("寄養家庭");
-            let instruction = createSprite(textures[`text_${selectSort}.png`], 0.5, scale);
+            let layer = drawLayer(sortText[selectSort].title_1, sortText[selectSort].title_2);
+            let instruction = createSprite(textures[`text_${selectSort}.png`], [0.5, 0], scale);
+            let hint = createText(sortText[selectSort].hint, TextStyle.Mirror_DogHint_16, 0.5, scale * 0.6)
             let dogList = drawDogList(selectSort);
-            instruction.position.set(-500, 0);
-            layer.addChild(instruction, dogList);
+            instruction.position.set(-centerX, -220);
+            hint.position.set(centerX, -280);
+            dogList.position.set(124, 20);
+            layer.addChild(instruction, dogList, hint);
+            usingLayer = layer;
         }
         function drawDogDetail() {
-
+            let layer = drawLayer(sortText[selectSort].title_1, sortText[selectSort].title_2);
+            let pic = createSprite(textures[`detail_pic_${selectSort}_0.png`], 0.5, scale);
+            let text = createSprite(textures[`detail_${selectSort}.png`], 0, scale);
+            pic.position.set(-centerX + 9, -25);
+            text.position.set(72, -308);
+            layer.addChildAt(pic, 0);
+            layer.addChild(text);
+            usingLayer = layer;
         }
         //obj
         function drawPage() {
+            const bookmarkPosY = { "a": -280, "b": -80, "c": 120 };
             let e = new PIXI.Container();
             let cover = createSprite(textures["bookcover.png"], 0.5, scale);
             let pages = createSprite(textures["pages.png"], 0.5, scale);
+            e.ribbon = createSprite(textures[`ribbon_${selectSort}.png`], 0.5, scale);
             e.page_l = createSprite(textures["page_l.png"], 1, scale);
             e.page_r = createSprite(textures["page_r.png"], [0, 1], scale);
-            cover.position.set(0, 100);
-            e.page_l.position.set(0, 418);
-            e.page_r.position.set(0, 418);
-            e.addChild(cover, pages, e.page_l, e.page_r);
+            e.arrow_l = drawArrow("left", () => { });
+            e.arrow_r = drawArrow("right", () => { });
+
+            pages.position.set(0, -11.408);
+            e.page_l.position.set(0.5, 372.272);
+            e.page_r.position.set(-0.5, 372.272);
+            e.ribbon.position.set(-23, -316);
+
+            e.bookmark = {};
+            for (let i of sortList) {
+                e.bookmark[i] = createSprite(textures[`bookmark_${i}.png`], 0.5, scale);
+                e.bookmark[i].position.set(600, bookmarkPosY[i]);
+                e.bookmark[i].overEvent = bookmarkOverEvent;
+                e.bookmark[i].clickEvent = (e) => { onSelectSort(i); }
+                addPointerEvent(e.bookmark[i]);
+            }
+            e.addChild(cover, pages, e.arrow_l, e.arrow_r);
+            c.addChild(e);
             return e;
         }
-        function drawLayer(titleText) {
+        function drawArrow(dir, clickEvent) {
+            let arrow = new PIXI.Container();
+            let a;
+            let text = createText("", TextStyle.Map_Green_13, 0.5, scale * 0.6);
+            switch (dir) {
+                case "right":
+                    a = createSprite(textures["arrow_r.png"], 0.5, scale);
+                    text.text = "下一頁";
+                    text.position.set(-47, 0);
+                    arrow.position.set(537, 334);
+                    arrow.addChild(text, a);
+                    break;
+                case "left":
+                    a = createSprite(textures["arrow_l.png"], 0.5, scale);
+                    text.text = "上一頁";
+                    text.position.set(47, 0);
+                    arrow.position.set(-537, 334);
+                    arrow.addChild(text, a);
+                    break;
+            }
+            arrow.overEvent = brightnessOverEvent;
+            arrow.clickEvent = () => { pageAnim(dir); clickEvent(); };
+            addPointerEvent(arrow);
+            return arrow;
+        }
+        function drawLayer(title_1, title_2) {
             let layer = new PIXI.Container();
-            let bigTitle = createText("一起回家吧！", TextStyle.Mirror_title_36, 0.5, scale);
-            let title = createText(titleText, TextStyle.Mirror_title_16, 0.5, scale);
-            bigTitle.position.set(0, -155);
-            title.position.set(0, -112);
-            layer.addChild(bigTitle, title);
+            let bigTitle = createText("一起回家吧！", TextStyle.Mirror_title_36, 0.5, scale * 0.75);
+            let title = createText(title_1, TextStyle.Mirror_title_16, 0.5, scale);
+            let title2 = createText(title_2, TextStyle.Mirror_title_16, 0.5, scale);
+            bigTitle.position.set(-centerX, -340);
+            title.position.set(-centerX, -270);
+            title2.position.set(centerX, -350);
+            layer.addChild(bigTitle, title, title2);
             c.addChild(layer);
+            gsap.from(layer, { duration: 0.5, alpha: 0 });
             return layer;
         }
         function drawDogList(sort) {
+            const spaceX = 175;
+            const spaceY = 140;
             let e = new PIXI.Container();
             for (let i = 0; i < data[sort].length; i++) {
                 let child = drawDog(sort, i);
-                child.position.x = i * 100;
-                child.position.y = i < 3 ? -100 : 100;
+                child.position.x = i < 3 ? i * spaceX : (i - 3) * spaceX;
+                child.position.y = i < 3 ? -spaceY : spaceY;
                 e.addChild(child);
             }
             return e;
         }
         function drawDog(sort, index) {
             let e = new PIXI.Container();
+            let dog = new PIXI.Container();
             let dogFrame = createSprite(textures[`dogFrame.png`], 0.5, scale);
-            let name = createText(data[sort][index].name, TextStyle[`Book_${sort}`], 0.5, scale);
+            let name = createText(data[sort][index].name, TextStyle[`Book_${sort}_13`], 0.5, scale * 0.75);
             let pic = createSprite(textures[`pic_${sort}_${index}.png`], 0.5, scale);
             let love = drawLove(data[sort][index].love);
-            name.position.set(0, -40);
-            e.addChild(dogFrame, name, pic, love);
+            let btn = drawButton(sortText[sort].buttonText, ColorSlip.button_submit, scale * 0.75);
+            name.position.y = -100;
+            btn.position.y = 120;
+            dog.overEvent = glowOverEvent;
+            btn.clickEvent = dog.clickEvent = () => { c.removeChild(usingLayer); pageAnim("right", drawDogDetail); }
+            addPointerEvent(dog);
+            addPointerEvent(btn);
+            dog.addChild(dogFrame, pic);
+            e.addChild(dog, love, name, btn);
             return e;
         }
         function drawLove(num) {
             let e = new PIXI.Container();
-            let n = createText(num, TextStyle.Mirror_title_20, 0.5, scale);
+            let n = createText(num, TextStyle.Mirror_title_12, 0.5, scale);
             let s = createSprite(textures["love.png"], 0.5, scale);
-            n.position.set(20, 0);
-            s.position.set(-20, 0);
-            e.position.set(0, 40);
+            n.position.set(10, 0);
+            s.position.set(-27, 0);
+            e.position.set(0, 50);
             e.addChild(n, s);
             return e;
         }
-        function pageAnim(page, onComplete = () => { }) {
-            const animTime = 0.5;
-            gsap.timeline({ onComplete: onComplete })
-                .to(page, { duration: animTime, skewX: 200, scale: scale * 0.5, ease: "none" })
-                .to(page, { duration: animTime, skewX: 220, scale: 0, ease: "none" })
-                .to(page, { duration: animTime, skewX: 200, scale: -scale * 0.5, ease: "none" })
-                .to(page, { duration: animTime, skewX: 0, scale: -scale, ease: "none" })
+        function pageAnim(dir = "right", onComplete = () => { }) {
+            const animTime = 0.17;
+            const scaleTime = 0.08;
+            let flip = undefined;
+            let skewDir = undefined;
+            if (dir == "left") {
+                flip = page.page_l;
+                skewDir = 1;
+                page.arrow_l.interactive = false;
+            }
+            else {
+                flip = page.page_r;
+                skewDir = -1;
+                page.arrow_r.interactive = false;
+            }
+            page.ribbon.alpha = 0;
+            page.addChild(flip);
+            flip.scale.set(scale);
+            flip.skew.set(0);
+            gsap.timeline({
+                onComplete: () => {
+                    flip.scale.set(scale);
+                    flip.skew.set(0);
+                    page.removeChild(flip);
+                    page.arrow_l.interactive = true;
+                    page.arrow_r.interactive = true;
+                    page.ribbon.alpha = 1;
+                    onComplete();
+                    usingLayer.addChild(page.ribbon);
+                }
+            })
+                .to(flip, { duration: animTime + scaleTime, pixi: { skewY: 45 * skewDir, scaleX: scale * 0.5 }, ease: "none" })
+                .to(flip, { duration: animTime, pixi: { skewY: 90 * skewDir }, ease: "none" })
+                .to(flip, { duration: animTime, pixi: { skewY: 135 * skewDir, scaleX: scale * 0.5 }, ease: "none" })
+                .to(flip, { duration: animTime + scaleTime, pixi: { skewY: 180 * skewDir, scaleX: scale }, ease: "none" })
+        }
+        function onSelectSort(sort = selectSort) {
+            c.removeChild(usingLayer);
+            if (sortList.indexOf(sort) < sortList.indexOf(selectSort)) { pageAnim("left", drawIntroduction) }
+            else if (sortList.indexOf(sort) > sortList.indexOf(selectSort)) { pageAnim("right", drawIntroduction) }
+            else { drawIntroduction(); }
+            selectSort = sort;
+            page.ribbon.texture = textures[`ribbon_${selectSort}.png`];
+            for (let i in page.bookmark) {
+                page.bookmark[i].position.x = 600;
+                page.bookmark[i].interactive = true;
+                page.addChildAt(page.bookmark[i], 1);
+            }
+            page.removeChild(page.bookmark[sort]);
+            page.bookmark[sort].position.x += 10;
+            page.bookmark[sort].interactive = false;
+            page.addChild(page.bookmark[sort]);
+        }
+        function bookmarkOverEvent(e) {
+            if (e.isPointerOver) {
+                gsap.killTweensOf(e);
+                gsap.to(e, { duration: 0.5, x: 608 });
+            }
+            else {
+                gsap.killTweensOf(e);
+                gsap.to(e, { duration: 0.5, x: 600 });
+            }
+
         }
         function drawDialog() {
             let d = new Dialog(self.manager, {

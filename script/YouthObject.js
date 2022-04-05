@@ -270,11 +270,11 @@ class Mirror extends linkObject {
         // draw page
         function drawPage(page) {
             let layer = page == 1 ? drawLayer("公共場所遇見導盲犬時：") : drawLayer("法律知識");
-            let arrow_r = drawarrow("right", () => {
+            let arrow_r = drawArrow("right", () => {
                 c.removeChild(layer);
                 drawPage(page + 1);
             });
-            let arrow_l = drawarrow("left", () => {
+            let arrow_l = drawArrow("left", () => {
                 c.removeChild(layer);
                 drawPage(page - 1);
             });
@@ -420,7 +420,7 @@ class Mirror extends linkObject {
             c.addChild(layer);
             return layer;
         }
-        function drawarrow(dir, clickEvent) {
+        function drawArrow(dir, clickEvent) {
             let arrow = new PIXI.Container();
             let a = createSprite(textures["arrow.png"], 0.5, scale);
             let text = createText("", TextStyle.Map_Green_13, 0.5, scale);

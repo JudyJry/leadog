@@ -261,5 +261,62 @@ const TextStyle = {
         fill: ColorSlip.mirror_brown,
         lineHeight: 54
     }),
+    Book_a: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 40,
+        lineJoin: "round",
+        stroke: ColorSlip.map_n_d,
+        strokeThickness: 5,
+        align: "center"
+    }),
+    Book_a_13: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-R",
+        fill: "white",
+        fontSize: 26,
+        lineJoin: "round",
+        stroke: ColorSlip.map_n_d,
+        strokeThickness: 5,
+        align: "center",
+        leading: 9
+    }),
+    Book_b: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 40,
+        lineJoin: "round",
+        stroke: ColorSlip.darkBlue,
+        strokeThickness: 5,
+        align: "center"
+    }),
+    Book_b_13: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-R",
+        fill: "white",
+        fontSize: 26,
+        lineJoin: "round",
+        stroke: ColorSlip.darkBlue,
+        strokeThickness: 5,
+        align: "center",
+        leading: 9
+    }),
+    Book_c: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fill: "white",
+        fontSize: 40,
+        lineJoin: "round",
+        stroke: ColorSlip.map_s_d,
+        strokeThickness: 5,
+        align: "center"
+    }),
+    Book_c_13: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-R",
+        fill: "white",
+        fontSize: 26,
+        lineJoin: "round",
+        stroke: ColorSlip.map_s_d,
+        strokeThickness: 5,
+        align: "center",
+        leading: 9
+    }),
 }
 export { TextStyle };

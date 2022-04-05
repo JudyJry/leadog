@@ -261,6 +261,7 @@ const loadList = {
         "image/building/know/gashapon.png",
         "image/building/know/gashapon_alpha.png",
         "image/building/know/gashapon/sprites.json",
+        "image/building/know/book/sprites.json",
     ],
     "company": [
         //"image/building/company/bg.png",

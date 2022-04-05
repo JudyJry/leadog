@@ -586,54 +586,54 @@ const bookData = {
         ],
         b: [
             {
-                name: "Judy",
-                love: "152",
+                name: "Pola",
+                love: "945",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Dodo",
+                love: "522",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Cady",
+                love: "130",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Hebe",
+                love: "676",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Owo",
+                love: "980",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Wendy",
+                love: "341",
             }
         ],
         c: [
             {
-                name: "Judy",
-                love: "152",
+                name: "Elsa",
+                love: "561",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Celine",
+                love: "945",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Unao",
+                love: "743",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Gloria",
+                love: "486",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Ama",
+                love: "007",
             },
             {
-                name: "Judy",
-                love: "152",
+                name: "Edward",
+                love: "845",
             }
         ]
     }
