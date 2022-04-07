@@ -382,19 +382,22 @@ class Book extends linkObject {
                 title_1: "寄養家庭",
                 title_2: "寄養幼犬(2個月~2歲)",
                 hint: `點擊下方”我要寄養”可了解幼犬資料，並且可及時\n連結到台灣各個導盲犬協會獲得更多資訊。`,
-                buttonText: "我要寄養"
+                buttonText: "我要寄養",
+                picNum: 2
             },
             "b": {
                 title_1: "申請導盲犬",
                 title_2: "申請導盲犬(2歲~10歲)",
                 hint: `點擊下方”我要申請”可了解導盲犬資料，並且可及時\n連結到台灣各個導盲犬協會獲得更多資訊。`,
-                buttonText: "我要申請"
+                buttonText: "我要申請",
+                picNum: 3
             },
             "c": {
                 title_1: "收養家庭",
                 title_2: "收養退休犬(11歲以後)",
                 hint: `點擊下方”我要收養”可了解退休犬資料，並且可及時\n連結到台灣各個導盲犬協會獲得更多資訊。`,
-                buttonText: "我要收養"
+                buttonText: "我要收養",
+                picNum: 2
             }
         }
         let selectSort = sortList[0];
@@ -421,10 +424,19 @@ class Book extends linkObject {
             let layer = drawLayer(sortText[selectSort].title_1, sortText[selectSort].title_2);
             let pic = createSprite(textures[`detail_pic_${selectSort}_0.png`], 0.5, scale);
             let text = createSprite(textures[`detail_${selectSort}.png`], 0, scale);
+            let btn1 = drawButton(sortText[selectSort].buttonText, ColorSlip.button_submit, scale * 1.2);
+            let btn2 = drawButton("我要捐款", ColorSlip.button_cancel, scale * 1.2);
+            let slideCrol = drawSlideCrol(pic);
             pic.position.set(-centerX + 9, -25);
             text.position.set(72, -308);
+            slideCrol.position.set(-centerX, 300);
+            btn1.position.set(-centerX - 100, -172);
+            btn2.position.set(-centerX + 100, -172);
+            btn1.clickEvent = btn2.clickEvent = drawDialog;
+            addPointerEvent(btn1);
+            addPointerEvent(btn2);
             layer.addChildAt(pic, 0);
-            layer.addChild(text);
+            layer.addChild(text, btn1, btn2, slideCrol);
             usingLayer = layer;
         }
         //obj
@@ -452,6 +464,7 @@ class Book extends linkObject {
                 e.bookmark[i].clickEvent = (e) => { onSelectSort(i); }
                 addPointerEvent(e.bookmark[i]);
             }
+            cover.interactive = true;
             e.addChild(cover, pages, e.arrow_l, e.arrow_r);
             c.addChild(e);
             return e;
@@ -534,6 +547,80 @@ class Book extends linkObject {
             e.addChild(n, s);
             return e;
         }
+        function drawSlideCrol(pic) {
+            const r = 40;
+            const sw = 5;
+            const as = 150 * 2;
+            const len = sortText[selectSort].picNum;
+            let e = new PIXI.Container();
+            e.actionPoint = 0;
+            let arrow_r = new PIXI.Graphics()
+                .lineStyle(sw, ColorSlip.brown)
+                .beginFill(ColorSlip.white)
+                .moveTo(0, 0)
+                .lineTo(0, r)
+                .lineTo((Math.sqrt(3) / 2) * r, r / 2)
+                .closePath()
+                .endFill();
+            let arrow_l = arrow_r.clone()
+            arrow_l.rotation = Math.PI;
+            arrow_l.pivot.set((Math.sqrt(3) / 4) * r, r / 2);
+            arrow_r.pivot.set((Math.sqrt(3) / 4) * r, r / 2);
+            arrow_l.hitArea = new PIXI.Circle((Math.sqrt(3) / 4) * r, r / 2, r * 2);
+            arrow_r.hitArea = new PIXI.Circle((Math.sqrt(3) / 4) * r, r / 2, r * 2);
+            arrow_l.position.set(-as, 0);
+            arrow_r.position.set(as, 0);
+            let list = new PIXI.Container();
+            for (let i = 0; i < len; i++) {
+                let p = new PIXI.Graphics()
+                    .lineStyle(sw, ColorSlip.brown)
+                    .beginFill(ColorSlip.white)
+                    .drawCircle(0, 0, r / 2)
+                    .endFill()
+                p.position.x = i * r * 2;
+                p.hitArea = new PIXI.Circle(0, 0, r * 1.25);
+                if (i != 0) { p.alpha = 0.5; }
+                p.overEvent = brightnessOverEvent;
+                p.clickEvent = () => {
+                    e.actionPoint = i;
+                    for (let j of list.children) {
+                        j.alpha = 0.5;
+                    }
+                    p.alpha = 1;
+                    pic.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
+                }
+                addPointerEvent(p);
+                list.addChild(p);
+            }
+            list.pivot.set((r) * len / 2, 0);
+
+            arrow_l.overEvent = brightnessOverEvent;
+            arrow_r.overEvent = brightnessOverEvent;
+            arrow_r.clickEvent = () => {
+                e.actionPoint++;
+                if (e.actionPoint >= len) { e.actionPoint = 0 }
+                for (let j of list.children) {
+                    j.alpha = 0.5;
+                }
+                list.children[e.actionPoint].alpha = 1;
+                pic.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
+            }
+            arrow_l.clickEvent = () => {
+                e.actionPoint--;
+                if (e.actionPoint <= 0) { e.actionPoint = len - 1; }
+                for (let j of list.children) {
+                    j.alpha = 0.5;
+                }
+                list.children[e.actionPoint].alpha = 1;
+                pic.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
+            }
+
+            addPointerEvent(arrow_l);
+            addPointerEvent(arrow_r);
+            e.addChild(arrow_l, arrow_r, list);
+            e.scale.set(scale * 0.5);
+            return e;
+        }
         function pageAnim(dir = "right", onComplete = () => { }) {
             const animTime = 0.17;
             const scaleTime = 0.08;
@@ -606,6 +693,7 @@ class Book extends linkObject {
                 submit: () => { d.remove(); window.open("https://www.guidedog.org.tw/", "_blank"); },
                 cancel: () => { d.remove(); }
             })
+            self.manager.app.stage.setChildIndex(d.container, 3);
         }
     }
 }

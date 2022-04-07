@@ -383,8 +383,6 @@ export class Dialog {
             this.cancel.position.set(-5, btnh);
             this.container.addChild(this.cancel);
         }
-        //this.container.alpha = 0;
-        //this.container.scale.set(0);
         this.manager.app.stage.addChildAt(this.container, 1);
         let tl = gsap.timeline();
         tl.from(this.container.scale, { duration: 0.5, x: 0.7, y: 0.7, ease: "back.out(1.5)" });
