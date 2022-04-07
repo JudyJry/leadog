@@ -412,12 +412,15 @@ class Book extends linkObject {
         function drawIntroduction() {
             let layer = drawLayer(sortText[selectSort].title_1, sortText[selectSort].title_2);
             let instruction = createSprite(textures[`text_${selectSort}.png`], [0.5, 0], scale);
-            let hint = createText(sortText[selectSort].hint, TextStyle.Mirror_DogHint_16, 0.5, scale * 0.6)
+            let hint = createText(sortText[selectSort].hint, TextStyle.Mirror_DogHint_16, 0.5, scale * 0.6);
             let dogList = drawDogList(selectSort);
+            let arrow_l = drawArrow("left", () => { onSelectSort(sortList[sortList.indexOf(selectSort) - 1], drawDogDetail); });
+            let arrow_r = drawArrow("right", () => { c.removeChild(usingLayer); pageAnim("right", drawDogDetail) });
+            if (selectSort == sortList[0]) { arrow_l.interactive = false; arrow_l.alpha = 0.5; }
             instruction.position.set(-centerX, -220);
             hint.position.set(centerX, -280);
             dogList.position.set(124, 20);
-            layer.addChild(instruction, dogList, hint);
+            layer.addChild(instruction, dogList, hint, arrow_l, arrow_r);
             usingLayer = layer;
         }
         function drawDogDetail() {
@@ -427,6 +430,9 @@ class Book extends linkObject {
             let btn1 = drawButton(sortText[selectSort].buttonText, ColorSlip.button_submit, scale * 1.2);
             let btn2 = drawButton("我要捐款", ColorSlip.button_cancel, scale * 1.2);
             let slideCrol = drawSlideCrol(pic);
+            let arrow_l = drawArrow("left", () => { c.removeChild(usingLayer); pageAnim("left", drawIntroduction) });
+            let arrow_r = drawArrow("right", () => { onSelectSort(sortList[sortList.indexOf(selectSort) + 1]); });
+            if (selectSort == sortList.at(-1)) { arrow_r.interactive = false; arrow_r.alpha = 0.5; }
             pic.position.set(-centerX + 9, -25);
             text.position.set(72, -308);
             slideCrol.position.set(-centerX, 300);
@@ -436,7 +442,7 @@ class Book extends linkObject {
             addPointerEvent(btn1);
             addPointerEvent(btn2);
             layer.addChildAt(pic, 0);
-            layer.addChild(text, btn1, btn2, slideCrol);
+            layer.addChild(text, btn1, btn2, slideCrol, arrow_l, arrow_r);
             usingLayer = layer;
         }
         //obj
@@ -448,8 +454,6 @@ class Book extends linkObject {
             e.ribbon = createSprite(textures[`ribbon_${selectSort}.png`], 0.5, scale);
             e.page_l = createSprite(textures["page_l.png"], 1, scale);
             e.page_r = createSprite(textures["page_r.png"], [0, 1], scale);
-            e.arrow_l = drawArrow("left", () => { });
-            e.arrow_r = drawArrow("right", () => { });
 
             pages.position.set(0, -11.408);
             e.page_l.position.set(0.5, 372.272);
@@ -465,7 +469,7 @@ class Book extends linkObject {
                 addPointerEvent(e.bookmark[i]);
             }
             cover.interactive = true;
-            e.addChild(cover, pages, e.arrow_l, e.arrow_r);
+            e.addChild(cover, pages);
             c.addChild(e);
             return e;
         }
@@ -490,7 +494,7 @@ class Book extends linkObject {
                     break;
             }
             arrow.overEvent = brightnessOverEvent;
-            arrow.clickEvent = () => { pageAnim(dir); clickEvent(); };
+            arrow.clickEvent = clickEvent;
             addPointerEvent(arrow);
             return arrow;
         }
@@ -596,15 +600,6 @@ class Book extends linkObject {
 
             arrow_l.overEvent = brightnessOverEvent;
             arrow_r.overEvent = brightnessOverEvent;
-            arrow_r.clickEvent = () => {
-                e.actionPoint++;
-                if (e.actionPoint >= len) { e.actionPoint = 0 }
-                for (let j of list.children) {
-                    j.alpha = 0.5;
-                }
-                list.children[e.actionPoint].alpha = 1;
-                pic.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
-            }
             arrow_l.clickEvent = () => {
                 e.actionPoint--;
                 if (e.actionPoint <= 0) { e.actionPoint = len - 1; }
@@ -614,7 +609,17 @@ class Book extends linkObject {
                 list.children[e.actionPoint].alpha = 1;
                 pic.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
             }
+            arrow_r.clickEvent = () => {
+                e.actionPoint++;
+                if (e.actionPoint >= len) { e.actionPoint = 0 }
+                for (let j of list.children) {
+                    j.alpha = 0.5;
+                }
+                list.children[e.actionPoint].alpha = 1;
+                pic.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
+            }
 
+            gsap.timeline({ repeat: -1 }).to(e, { duration: 2, onComplete: () => { arrow_r.clickEvent(); } });
             addPointerEvent(arrow_l);
             addPointerEvent(arrow_r);
             e.addChild(arrow_l, arrow_r, list);
@@ -629,12 +634,10 @@ class Book extends linkObject {
             if (dir == "left") {
                 flip = page.page_l;
                 skewDir = 1;
-                page.arrow_l.interactive = false;
             }
             else {
                 flip = page.page_r;
                 skewDir = -1;
-                page.arrow_r.interactive = false;
             }
             page.ribbon.alpha = 0;
             page.addChild(flip);
@@ -645,8 +648,6 @@ class Book extends linkObject {
                     flip.scale.set(scale);
                     flip.skew.set(0);
                     page.removeChild(flip);
-                    page.arrow_l.interactive = true;
-                    page.arrow_r.interactive = true;
                     page.ribbon.alpha = 1;
                     onComplete();
                     usingLayer.addChild(page.ribbon);
@@ -657,10 +658,10 @@ class Book extends linkObject {
                 .to(flip, { duration: animTime, pixi: { skewY: 135 * skewDir, scaleX: scale * 0.5 }, ease: "none" })
                 .to(flip, { duration: animTime + scaleTime, pixi: { skewY: 180 * skewDir, scaleX: scale }, ease: "none" })
         }
-        function onSelectSort(sort = selectSort) {
+        function onSelectSort(sort = selectSort, goto = drawIntroduction) {
             c.removeChild(usingLayer);
-            if (sortList.indexOf(sort) < sortList.indexOf(selectSort)) { pageAnim("left", drawIntroduction) }
-            else if (sortList.indexOf(sort) > sortList.indexOf(selectSort)) { pageAnim("right", drawIntroduction) }
+            if (sortList.indexOf(sort) < sortList.indexOf(selectSort)) { pageAnim("left", goto) }
+            else if (sortList.indexOf(sort) > sortList.indexOf(selectSort)) { pageAnim("right", goto) }
             else { drawIntroduction(); }
             selectSort = sort;
             page.ribbon.texture = textures[`ribbon_${selectSort}.png`];
