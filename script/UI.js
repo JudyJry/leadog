@@ -367,6 +367,7 @@ export class Dialog {
         return c;
     }
     draw() {
+        this.container.zIndex = 150;
         let btnh = (this.dialog.height / 2) - this.buttonHeight - (20 * (this.options.backgroundScale - 1));
         this.context.position.set(0, -50);
         this.container.addChild(this.dialog, this.context);
@@ -383,7 +384,8 @@ export class Dialog {
             this.cancel.position.set(-5, btnh);
             this.container.addChild(this.cancel);
         }
-        this.manager.app.stage.addChildAt(this.container, 1);
+        this.manager.app.stage.addChild(this.container);
+        this.manager.app.stage.sortChildren();
         let tl = gsap.timeline();
         tl.from(this.container.scale, { duration: 0.5, x: 0.7, y: 0.7, ease: "back.out(1.5)" });
         tl.from(this.container, { duration: 0.5, alpha: 0 }, 0);

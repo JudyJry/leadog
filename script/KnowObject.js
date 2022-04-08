@@ -293,17 +293,19 @@ class Gashapon extends linkObject {
             setTimeout(drawEnd, 5000);
         }
         function drawEnd() {
-            let d = new Dialog(self.manager, {
-                context: `恭喜您獲得${Object.values(lucky)[random]}！\n點擊回家手冊\n一起認識更多導盲犬吧！`,
-                submitText: "前往手冊",
-                cancelText: "結束遊戲",
-                submit: () => {
-                    d.remove();
-                    self.cancelEvent();
-                    //todo
-                },
-                cancel: () => { d.remove(); self.cancelEvent(); }
-            })
+            if (self.isClick) {
+                let d = new Dialog(self.manager, {
+                    context: `恭喜您獲得${Object.values(lucky)[random]}！\n點擊回家手冊\n一起認識更多導盲犬吧！`,
+                    submitText: "前往手冊",
+                    cancelText: "結束遊戲",
+                    submit: () => {
+                        d.remove();
+                        self.cancelEvent();
+                        self.page.children.book.clickEvent();
+                    },
+                    cancel: () => { d.remove(); self.cancelEvent(); }
+                })
+            }
         }
         //obj
         function drawLayer() {
@@ -404,6 +406,7 @@ class Book extends linkObject {
         let c = new PIXI.Container();
         let page = drawPage();
         let usingLayer = new PIXI.Container();
+        c.zIndex = 100;
         c.addChild(usingLayer);
         onSelectSort();
         this.manager.app.stage.addChildAt(c, 1);
@@ -425,15 +428,17 @@ class Book extends linkObject {
         }
         function drawDogDetail() {
             let layer = drawLayer(sortText[selectSort].title_1, sortText[selectSort].title_2);
+            let picLayer = new PIXI.Container();
             let pic = createSprite(textures[`detail_pic_${selectSort}_0.png`], 0.5, scale);
             let text = createSprite(textures[`detail_${selectSort}.png`], 0, scale);
             let btn1 = drawButton(sortText[selectSort].buttonText, ColorSlip.button_submit, scale * 1.2);
             let btn2 = drawButton("我要捐款", ColorSlip.button_cancel, scale * 1.2);
-            let slideCrol = drawSlideCrol(pic);
+            let slideCrol = drawSlideCrol(picLayer);
             let arrow_l = drawArrow("left", () => { c.removeChild(usingLayer); pageAnim("left", drawIntroduction) });
             let arrow_r = drawArrow("right", () => { onSelectSort(sortList[sortList.indexOf(selectSort) + 1]); });
             if (selectSort == sortList.at(-1)) { arrow_r.interactive = false; arrow_r.alpha = 0.5; }
-            pic.position.set(-centerX + 9, -25);
+            picLayer.addChild(pic);
+            picLayer.position.set(-centerX + 9, -25);
             text.position.set(72, -308);
             slideCrol.position.set(-centerX, 300);
             btn1.position.set(-centerX - 100, -172);
@@ -441,7 +446,7 @@ class Book extends linkObject {
             btn1.clickEvent = btn2.clickEvent = drawDialog;
             addPointerEvent(btn1);
             addPointerEvent(btn2);
-            layer.addChildAt(pic, 0);
+            layer.addChildAt(picLayer, 0);
             layer.addChild(text, btn1, btn2, slideCrol, arrow_l, arrow_r);
             usingLayer = layer;
         }
@@ -551,10 +556,11 @@ class Book extends linkObject {
             e.addChild(n, s);
             return e;
         }
-        function drawSlideCrol(pic) {
+        function drawSlideCrol(picLayer) {
             const r = 40;
             const sw = 5;
             const as = 150 * 2;
+            const animTime = 0.8;
             const len = sortText[selectSort].picNum;
             let e = new PIXI.Container();
             e.actionPoint = 0;
@@ -591,35 +597,47 @@ class Book extends linkObject {
                         j.alpha = 0.5;
                     }
                     p.alpha = 1;
-                    pic.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
+                    picLayer.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
                 }
                 addPointerEvent(p);
                 list.addChild(p);
             }
             list.pivot.set((r) * len / 2, 0);
 
+            let tl = gsap.timeline({ repeat: -1 });
+            tl.to(e, { duration: 3, onComplete: () => { arrow_r.clickEvent(); } });
             arrow_l.overEvent = brightnessOverEvent;
             arrow_r.overEvent = brightnessOverEvent;
             arrow_l.clickEvent = () => {
+                tl.play(0.001);
                 e.actionPoint--;
                 if (e.actionPoint <= 0) { e.actionPoint = len - 1; }
                 for (let j of list.children) {
                     j.alpha = 0.5;
                 }
                 list.children[e.actionPoint].alpha = 1;
-                pic.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
+
+                let newpic = createSprite(textures[`detail_pic_${selectSort}_${e.actionPoint}.png`], 0.5, scale);
+                picLayer.addChild(newpic);
+                gsap.timeline({ onComplete: () => { picLayer.removeChildAt(0); } })
+                    .from(newpic, { duration: animTime, alpha: 0 })
             }
             arrow_r.clickEvent = () => {
+                tl.play(0.001);
                 e.actionPoint++;
                 if (e.actionPoint >= len) { e.actionPoint = 0 }
                 for (let j of list.children) {
                     j.alpha = 0.5;
                 }
                 list.children[e.actionPoint].alpha = 1;
-                pic.texture = textures[`detail_pic_${selectSort}_${e.actionPoint}.png`];
+
+                let newpic = createSprite(textures[`detail_pic_${selectSort}_${e.actionPoint}.png`], 0.5, scale);
+                picLayer.addChild(newpic);
+                gsap.timeline({ onComplete: () => { picLayer.removeChildAt(0); } })
+                    .from(newpic, { duration: animTime, alpha: 0 })
             }
 
-            gsap.timeline({ repeat: -1 }).to(e, { duration: 2, onComplete: () => { arrow_r.clickEvent(); } });
+
             addPointerEvent(arrow_l);
             addPointerEvent(arrow_r);
             e.addChild(arrow_l, arrow_r, list);
@@ -694,7 +712,6 @@ class Book extends linkObject {
                 submit: () => { d.remove(); window.open("https://www.guidedog.org.tw/", "_blank"); },
                 cancel: () => { d.remove(); }
             })
-            self.manager.app.stage.setChildIndex(d.container, 3);
         }
     }
 }
