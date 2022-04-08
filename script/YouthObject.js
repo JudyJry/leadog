@@ -319,11 +319,39 @@ class Mirror extends linkObject {
                 e.addChild(bg, s, o);
                 e.overEvent = glowOverEvent;
                 e.clickEvent = () => {
-                    if (s.text === data[count].A) { correct[count] = true; }
-                    else { correct[count] = false; }
-                    c.removeChild(layer);
-                    drawAnswer(correct[count]);
-                    console.log(correct[count]);
+                    let ox = undefined;
+                    if (s.text === data[count].A) {
+                        correct[count] = true;
+                        ox = createSprite(textures["correct.png"], 0.5, scale * 0.9);
+                        ox.position.set(-0.5, 6);
+                        e.addChild(ox);
+                        gsap.timeline({
+                            onComplete: () => {
+                                c.removeChild(layer);
+                                drawAnswer(correct[count]);
+                                console.log(correct[count]);
+                            }
+                        })
+                            .from(ox.scale, { duration: 0.5, x: scale * 1.2, y: scale * 1.2 })
+                            .from(ox, { duration: 0.3 })
+                    }
+                    else {
+                        correct[count] = false;
+                        ox = createSprite(textures["incorrect.png"], 0.5, scale * 0.9);
+                        e.addChild(ox);
+                        ox.position.set(-0.5, 6);
+                        gsap.timeline({
+                            onComplete: () => {
+                                c.removeChild(layer);
+                                drawAnswer(correct[count]);
+                                console.log(correct[count]);
+                            }
+                        })
+                            .from(ox.scale, { duration: 0.3, x: scale * 1.2, y: scale * 1.2 })
+                            .from(ox, { duration: 0.3, x: "+=2", y: "+=2" }, 0)
+                            .from(ox, { duration: 0.3, x: "-=4", y: "-=4" })
+                            .from(ox, { duration: 0.3 })
+                    }
                 }
                 addPointerEvent(e);
                 select.addChild(e);
