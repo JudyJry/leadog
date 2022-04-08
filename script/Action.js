@@ -491,10 +491,11 @@ export class ActionGoodjob extends ActionObject {
 }
 
 export class ActionStart extends ActionUI {
-    constructor(manager, action, text) {
+    constructor(manager, action, text, uiUrl = "image/video/actionUI_sprites.json") {
         super(manager, action);
         this.name = "ActionStart";
         this.isNotStart = true;
+        this.uiUrl = uiUrl;
         this.draw = function () {
             this.sprite = createSprite(
                 this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures["know.png"]
@@ -529,7 +530,7 @@ export class ActionStart extends ActionUI {
                     this.action.removeChild(this.action.children.video.bg);
                     this.action.children.video.drawBg();
                     this.action.obj.playButton.texture =
-                        this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures["pause.png"];
+                        this.manager.resources[this.uiUrl].spritesheet.textures["pause.png"];
                 }.bind(this)
             });
         }

@@ -349,7 +349,6 @@ class Book extends linkObject {
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
-        this.zoom();
         this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
         this.isClick = true;
@@ -359,13 +358,7 @@ class Book extends linkObject {
         this.book = this.drawBook();
     }
     cancelEvent() {
-        /* let tl = gsap.timeline({
-            onComplete: function () {
-                this.sprite.interactive = true;
-            }.bind(this)
-        });
-        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
-        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0); */
+        this.sprite.interactive = true;
         this.isClick = false;
         this.page.isZoomIn = false;
         this.cancel.visible = false;

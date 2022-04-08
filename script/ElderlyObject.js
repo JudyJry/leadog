@@ -51,7 +51,7 @@ class Tv extends Video {
         this.y = -0.049;
         this.url = "image/building/elderly/tv.png";
         this.zoomIn = 2.6;
-        this.zoomInPos = [83.4, -73.35]
+        this.zoomInPos = [83.4, -70]
         this.fadeText = "點擊播放影片";
         this.spriteHeight = 10;
         this.videoList = [function () { return new ElderlyAction_Hair(this.manager, this) }.bind(this)];
@@ -60,7 +60,7 @@ class Tv extends Video {
             frameUrl: "image/video/tv.png",
             frameScale: 0.5,
             uiHitArea: 79, uiScale: 0.25,
-            standard: -270, height: 235, space: 42
+            standard: -270, height: 230, space: 42
         }
     }
     onClickResize() {
@@ -105,7 +105,7 @@ class Tv extends Video {
         this.page.children.player.move(this._x, this.sprite.width);
         this.video = this.videoList[this.random]();
         this.video.setup();
-        this.video.container.position.set(-83, 73);
+        this.video.container.position.set(-83.5, 70);
         this.drawUI();
         this.fullButton.position.set(-this.uiOptions.standard - 160, this.uiOptions.height);
         if (!this.cancel) { this.drawCancel(); }

@@ -77,12 +77,12 @@ export class ElderlyAction_Hair extends Action.ActionPage {
         super(manager, obj);
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.255;
+        this.videoScale = 0.256;
         this.videoData = videoData.elderly[3];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
             "video": new Elderly_Hair_Video(this.manager, this, this.videoData.url),
-            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText, "image/video/elderly/elderly_video_sprites.json"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
         this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
