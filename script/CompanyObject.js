@@ -80,32 +80,52 @@ class Webside extends linkObject {
         }
         let c = new PIXI.Container();
         let pages = new PIXI.Container();
-        drawPage();
-
+        let navMask = new PIXI.Container();
         let frame = drawFrame();
+        drawPage();
+        let slider = drawSlider(pages);
+        let nav = drawNav();
+        frame.addChild(nav, slider);
         c.addChild(frame);
 
         this.container.addChild(c);
         return c;
         function drawPage() {
-            let layer = drawLayer();
             let page_0 = createSprite(pageTextures["page_0_0.png"], 0.5, scale);
             page_0.position.y = py - 50;
+            page_0.navMask = new PIXI.Graphics()
+                .beginFill(ColorSlip.white)
+                .drawRect(0, 0, page_0.getBounds().width, page_0.getBounds().height)
+                .endFill()
+            page_0.navMask.pivot.set(page_0.getBounds().width / 2, page_0.getBounds().height / 2)
+
+            page_0.navMask.position.y = py - 50;
             pages.addChild(page_0);
+            navMask.addChild(page_0.navMask);
 
             for (let i = 1; i < 5; i++) {
                 let e = createSprite(pageTextures[`page_${i}.png`], 0.5, scale);
+                const bound = e.getBounds()
+                e.navMask = new PIXI.Graphics()
+                    .beginFill(ColorSlip.white)
+                    .drawRect(0, 0, bound.width, bound.height)
+                    .endFill()
+                e.navMask.pivot.set(bound.width / 2, bound.height / 2)
                 e.position.y = py + (399 * i) + (89 * (i - 1));
+                e.navMask.position.y = py + (399 * i) + (89 * (i - 1));
                 pages.addChild(e);
+                navMask.addChild(e.navMask);
             }
+            pages.addChild(navMask);
+            let layer = drawLayer();
             layer.addChildAt(pages, 0);
+            navMask.alpha = 0.5;
         }
         //obj
         function drawFrame() {
             let e = new PIXI.Container();
             let frame = createSprite(textures["frame.png"], 0.5, scale);
             let cancel = createSprite(textures["cancel.png"], 0.5, scale);
-            e.slider = drawSlider(pages);
 
             cancel.position.set(ox - 46, -oy + 46);
 
@@ -113,20 +133,19 @@ class Webside extends linkObject {
             cancel.clickEvent = self.cancelEvent.bind(self);
             addPointerEvent(cancel);
 
-            e.addChild(frame, cancel, e.slider);
+            e.addChild(frame, cancel);
             return e;
         }
         function drawLayer() {
             let layer = new PIXI.Container();
             let logo = createSprite("image/logo.png", 0.5, scale * 0.25);
-            layer.nav = drawNav();
             let mask = new PIXI.Graphics()
                 .beginFill(ColorSlip.white)
                 .drawRect(0, 0, 815, 575)
                 .endFill();
             mask.pivot.set(815 / 2, 575 / 2);
             logo.position.set(-ox + 65, -oy + 105);
-            layer.addChild(logo, layer.nav, mask);
+            layer.addChild(logo, mask);
             c.addChildAt(layer, 0);
             layer.mask = mask;
             return layer;
@@ -224,25 +243,24 @@ class Webside extends linkObject {
             function onUp(event) { gsap.killTweensOf(e); }
         }
         function drawNav() {
+            const theme = [
+                "light", "dark", "light", "dark", "dark"
+            ]
             let e = new PIXI.Container();
-            e.light = new PIXI.Container();
-            e.dark = new PIXI.Container();
-            for (let i = 0; i < 3; i++) {
-                e[`nav_light_${i}`] = createSprite(textures[`nav_light_${i}.png`], 0.5, scale);
-                e[`nav_dark_${i}`] = createSprite(textures[`nav_dark_${i}.png`], 0.5, scale);
-                e[`nav_light_${i}`].position.x = 120 * i;
-                e[`nav_dark_${i}`].position.x = 120 * i;
-                e.light.addChild(e[`nav_light_${i}`]);
-                e.dark.addChild(e[`nav_dark_${i}`]);
+            e.pageNav = [];
+            for (let i = 0; i < theme.length; i++) {
+                e.pageNav.push(new PIXI.Container());
+                for (let j = 0; j < 3; j++) {
+                    let item = createSprite(textures[`nav_${theme[i]}_${j}.png`], 0.5, scale);
+                    item.overEvent = brightnessOverEvent;
+                    item.clickEvent = () => { slider.setHandle(0.125 + (0.17 * j)); }
+                    addPointerEvent(item);
+                    item.position.x = 120 * j;
+                    e.pageNav[i].addChild(item);
+                }
+                e.addChild(e.pageNav[i]);
+                e.pageNav[i].mask = navMask.children[i];
             }
-            e.dark.alpha = 0;
-            e.change = (theme) => {
-                let item = theme == "light" ? e.light : e.dark;
-                let alphaItem = theme == "light" ? e.dark : e.light;
-                gsap.to(item, { duration: 0.5, alpha: 1 });
-                gsap.to(alphaItem, { duration: 0.5, alpha: 0 });
-            }
-            e.addChild(e.light, e.dark);
             e.position.set(50, -oy + 105);
             return e;
         }
