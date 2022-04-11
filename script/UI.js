@@ -31,9 +31,9 @@ export default class UIsystem {
         this.logo = undefined;
     }
     drawLogo() {
-        this.logo = PIXI.Sprite.from("image/logo.svg");
-        this.logo.scale.set(0.8);
-        this.logo.position.set((-0.5 * this.w) + 30, (-0.5 * this.h) + 10);
+        this.logo = PIXI.Sprite.from("image/logo.png");
+        this.logo.scale.set(0.4);
+        this.logo.position.set((-0.5 * this.w) + 50, (-0.5 * this.h) + 20);
         this.container.addChild(this.logo);
     }
     setup() {

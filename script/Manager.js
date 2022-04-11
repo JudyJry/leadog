@@ -164,8 +164,7 @@ export default class Manager {
 const loadList = {
     "ui": [
         //uiSystem-png
-        "image/logo.svg",
-        "image/logo@2x.png",
+        "image/logo.png",
         "image/book.svg",
         "image/index.svg",
         "image/menu.svg",

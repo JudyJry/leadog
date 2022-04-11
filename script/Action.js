@@ -84,10 +84,10 @@ export class LogoVideo extends ActionObject {
             this.action.children.sound.play();
             this.action.removeChild(this.container);
         }.bind(this);
-        this.draw = function (x = 0, y = -0.1) {
+        this.draw = function (x = 0, y = 0) {
             let _x = (x * this.w);
             let _y = (y * this.h);
-            this.sprite = createSprite("image/logo@2x.png", 0.5, 2);
+            this.sprite = createSprite("image/logo.png");
             this.container.addChild(this.sprite);
             this.container.position.set(_x, _y);
             let tl = gsap.timeline();
