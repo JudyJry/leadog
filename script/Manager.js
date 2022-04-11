@@ -263,7 +263,19 @@ const loadList = {
         "image/building/know/book/sprites.json",
     ],
     "company": [
-        //"image/building/company/bg.png",
+        "image/building/company/bg.png",
+        "image/building/company/webside/page_0_0.png",
+        "image/building/company/webside/page_0_1.png",
+        "image/building/company/webside/page_0_2.png",
+        "image/building/company/webside/page_0_3.png",
+        "image/building/company/webside/page_0_4.png",
+        "image/building/company/webside/page_0_5.png",
+        "image/building/company/webside/page_0_6.png",
+        "image/building/company/webside/page_1.png",
+        "image/building/company/webside/page_2.png",
+        "image/building/company/webside/page_3.png",
+        "image/building/company/webside/page_4.png",
+        "image/building/company/webside/sprites.json"
     ],
     "market": [
         //"image/building/market/bg.png",
