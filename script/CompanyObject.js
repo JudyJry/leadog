@@ -3,9 +3,10 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, Door, Video } from './GameObject.js';
 import { addDragEvent, addPointerEvent, createSprite } from './GameFunction.js';
-import { brightnessOverEvent } from './UI.js';
+import { brightnessOverEvent, Dialog } from './UI.js';
 import { ColorSlip } from './ColorSlip.js';
 import { math } from './math.js';
+import { Page } from './Data.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -78,48 +79,38 @@ class Webside extends linkObject {
             "page_3.png": "image/building/company/webside/page_3.png",
             "page_4.png": "image/building/company/webside/page_4.png",
         }
+        const themeList = [
+            ["light", "light", "dark", "light", "dark", "dark", "dark"]
+            , "dark", "light", "dark", "dark"];
         let c = new PIXI.Container();
         let pages = new PIXI.Container();
-        let navMask = new PIXI.Container();
+        let navMask = { "light": new PIXI.Container(), "dark": new PIXI.Container() };
         let frame = drawFrame();
-        drawPage();
-        let slider = drawSlider(pages);
-        let nav = drawNav();
-        frame.addChild(nav, slider);
+        let layer = drawPage();
+        c.slider = drawSlider(pages);
+        c.nav = drawNav();
+        frame.addChild(c.slider);
+        layer.addChild(c.nav);
         c.addChild(frame);
 
         this.container.addChild(c);
         return c;
         function drawPage() {
-            let page_0 = createSprite(pageTextures["page_0_0.png"], 0.5, scale);
-            page_0.position.y = py - 50;
-            page_0.navMask = new PIXI.Graphics()
-                .beginFill(ColorSlip.white)
-                .drawRect(0, 0, page_0.getBounds().width, page_0.getBounds().height)
-                .endFill()
-            page_0.navMask.pivot.set(page_0.getBounds().width / 2, page_0.getBounds().height / 2)
-
-            page_0.navMask.position.y = py - 50;
-            pages.addChild(page_0);
-            navMask.addChild(page_0.navMask);
+            pages.addChild(navMask.light, navMask.dark);
+            c.carouselPage = drawCarouselPage();
+            c.carouselCrol = drawCarouselCrol();
 
             for (let i = 1; i < 5; i++) {
                 let e = createSprite(pageTextures[`page_${i}.png`], 0.5, scale);
-                const bound = e.getBounds()
-                e.navMask = new PIXI.Graphics()
-                    .beginFill(ColorSlip.white)
-                    .drawRect(0, 0, bound.width, bound.height)
-                    .endFill()
-                e.navMask.pivot.set(bound.width / 2, bound.height / 2)
                 e.position.y = py + (399 * i) + (89 * (i - 1));
-                e.navMask.position.y = py + (399 * i) + (89 * (i - 1));
                 pages.addChild(e);
-                navMask.addChild(e.navMask);
+
+                let m = drawNavMask(e);
+                navMask[themeList[i]].addChild(m);
             }
-            pages.addChild(navMask);
             let layer = drawLayer();
             layer.addChildAt(pages, 0);
-            navMask.alpha = 0.5;
+            return layer;
         }
         //obj
         function drawFrame() {
@@ -168,27 +159,6 @@ class Webside extends linkObject {
                 .drawRect(0, 0, 20, slider.trackLength)
                 .endFill();
             slider.track.visible = false;
-            let prevY = undefined;
-            slider.handle.dragDownEvent = (e, event) => {
-                prevY = event.data.global.y;
-            }
-            slider.handle.dragMoveEvent = (e, event) => {
-                e.position.y += event.data.global.y - prevY;
-                prevY = event.data.global.y;
-                if (e.position.y < 0) { e.position.y = 0 }
-
-                if (slider.handleLength + e.position.y >= slider.trackLength) {
-                    e.position.y = slider.len;
-                    obj.position.y = -slider.listLength + (541.25 * 2);
-                }
-                else {
-                    obj.position.y = -math.Map(e.position.y, 0, slider.trackLength, 0, slider.listLength);
-                }
-            }
-            slider.handle.dragUpEvent = (e, event) => {
-                prevY = undefined;
-            }
-            addDragEvent(slider.handle);
 
             slider.getHandle = () => {
                 return math.Map(slider.handle.position.y, 0, slider.trackLength, 0, 1);
@@ -206,6 +176,44 @@ class Webside extends linkObject {
                     obj.position.y = -math.Map(e.position.y, 0, slider.trackLength, 0, slider.listLength);
                 }
             }
+
+            let prevY = undefined;
+            slider.handle.dragDownEvent = (e, event) => {
+                prevY = event.data.global.y;
+            }
+            slider.handle.dragMoveEvent = (e, event) => {
+                e.position.y += event.data.global.y - prevY;
+                prevY = event.data.global.y;
+                if (e.position.y < 0) { e.position.y = 0 }
+
+                if (slider.handleLength + e.position.y >= slider.trackLength) {
+                    e.position.y = slider.len;
+                    obj.position.y = -slider.listLength + (541.25 * 2);
+                }
+                else {
+                    obj.position.y = -math.Map(e.position.y, 0, slider.trackLength, 0, slider.listLength);
+                }
+
+                if (slider.getHandle() < 0.12) {
+                    navReset();
+                }
+                else if (slider.getHandle() < 0.29) {
+                    navActiveChange(0);
+                }
+                else if (slider.getHandle() < 0.46) {
+                    navActiveChange(1);
+                }
+                else if (slider.getHandle() < 0.63) {
+                    navActiveChange(2);
+                }
+                else {
+                    navReset(false);
+                }
+            }
+            slider.handle.dragUpEvent = (e, event) => {
+                prevY = undefined;
+            }
+            addDragEvent(slider.handle);
 
             let arrow_up = drawArrow(slider, "up");
             let arrow_down = drawArrow(slider, "down");
@@ -243,26 +251,180 @@ class Webside extends linkObject {
             function onUp(event) { gsap.killTweensOf(e); }
         }
         function drawNav() {
-            const theme = [
-                "light", "dark", "light", "dark", "dark"
-            ]
+            const theme = ["light", "dark"];
             let e = new PIXI.Container();
             e.pageNav = [];
+            e.button = new PIXI.Container();
             for (let i = 0; i < theme.length; i++) {
                 e.pageNav.push(new PIXI.Container());
                 for (let j = 0; j < 3; j++) {
                     let item = createSprite(textures[`nav_${theme[i]}_${j}.png`], 0.5, scale);
-                    item.overEvent = brightnessOverEvent;
-                    item.clickEvent = () => { slider.setHandle(0.125 + (0.17 * j)); }
-                    addPointerEvent(item);
                     item.position.x = 120 * j;
                     e.pageNav[i].addChild(item);
                 }
                 e.addChild(e.pageNav[i]);
-                e.pageNav[i].mask = navMask.children[i];
+                e.pageNav[i].mask = navMask[theme[i]];
             }
+            for (let j = 0; j < 3; j++) {
+                let lightItem = e.pageNav[0].children[j];
+                let darkItem = e.pageNav[1].children[j];
+                let p = new PIXI.Graphics()
+                    .beginFill(ColorSlip.white)
+                    .drawRect(0, 0, 110, 34.5)
+                    .endFill();
+                p.pivot.set(110 / 2, 34.5 / 2);
+                p.isActive = true;
+                p.overEvent = () => {
+                    if (p.isPointerOver || p.isActive) {
+                        gsap.killTweensOf(lightItem);
+                        gsap.to(lightItem, { duration: 0.5, alpha: 1 });
+                        gsap.killTweensOf(darkItem);
+                        gsap.to(darkItem, { duration: 0.5, alpha: 1 });
+                    }
+                    else {
+                        gsap.killTweensOf(lightItem);
+                        gsap.to(lightItem, { duration: 0.5, alpha: 0.5 });
+                        gsap.killTweensOf(darkItem);
+                        gsap.to(darkItem, { duration: 0.5, alpha: 0.5 });
+                    }
+                };
+                p.clickEvent = () => {
+                    for (let i in e.button.children) {
+                        e.button.children[i].isActive = false;
+                        e.pageNav[0].children[i].alpha = 0.5;
+                        e.pageNav[1].children[i].alpha = 0.5;
+                    }
+                    p.isActive = true;
+                    c.slider.setHandle(0.125 + (0.17 * j));
+                }
+                addPointerEvent(p);
+                p.position.x = 120 * j;
+                p.alpha = 0;
+                e.button.addChild(p);
+            }
+            e.addChild(e.button);
             e.position.set(50, -oy + 105);
             return e;
+        }
+        function drawNavMask(page) {
+            const bound = page.getBounds();
+            let e = new PIXI.Graphics()
+                .beginFill(ColorSlip.white)
+                .drawRect(0, 0, bound.width, bound.height)
+                .endFill();
+            e.pivot.set(bound.width / 2, bound.height / 2);
+            e.position.set(page.position.x, page.position.y);
+            return e;
+        }
+        function navReset(bool = true, nav = c.nav) {
+            for (let i in nav.button.children) {
+                nav.button.children[i].isActive = bool;
+                nav.pageNav[0].children[i].alpha = bool ? 1 : 0.5;
+                nav.pageNav[1].children[i].alpha = bool ? 1 : 0.5;
+            }
+        }
+        function navActiveChange(active, nav = c.nav) {
+            for (let i in nav.button.children) {
+                nav.button.children[i].isActive = false;
+                nav.pageNav[0].children[i].alpha = 0.5;
+                nav.pageNav[1].children[i].alpha = 0.5;
+            }
+            nav.button.children[active].isActive = true;
+            nav.pageNav[0].children[active].alpha = 1;
+            nav.pageNav[1].children[active].alpha = 1;
+        }
+        function drawCarouselPage() {
+            let e = new PIXI.Container();
+            let p = createSprite(pageTextures["page_0_0.png"], 0.5, scale);
+            p.clickEvent = () => {
+                let d = new Dialog(self.manager, {
+                    context: ` 確定前往${Page.home}？`,
+                    submitText: "前往房間",
+                    cancelText: "取消",
+                    submit: () => { self.manager.toOtherPage(Page.home); },
+                    cancel: () => { d.remove(); }
+                })
+            }
+            addPointerEvent(p);
+            e.position.y = py - 50;
+            e.addChild(p);
+            pages.addChild(e);
+
+            p.navMask = drawNavMask(p);
+            navMask[themeList[0][0]].addChild(p.navMask);
+            return e;
+        }
+        function drawCarouselCrol() {
+            const r = 15;
+            const len = 7;
+            let item = new PIXI.Container();
+            item.actionPoint = 0;
+            let tl = gsap.timeline({ repeat: -1 })
+                .to(item, {
+                    duration: 5, onComplete: () => {
+                        item.actionPoint++;
+                        if (item.actionPoint >= len) { item.actionPoint = 0; }
+                        pointClickEvent(item.actionPoint);
+                    }
+                });
+            for (let i = 0; i < len; i++) {
+                let p = new PIXI.Graphics()
+                    .lineStyle(2, ColorSlip.black, 0.27)
+                    .beginFill(ColorSlip.white)
+                    .drawCircle(0, 0, r / 2)
+                    .endFill()
+                p.position.x = i * r * 2;
+                p.hitArea = new PIXI.Circle(0, 0, r * 1.25);
+                if (i != 0) { p.alpha = 0.5; }
+                p.overEvent = brightnessOverEvent;
+                p.clickEvent = () => { tl.play(0.001); pointClickEvent(i) };
+                addPointerEvent(p);
+                item.addChild(p);
+            }
+
+            item.position.set(ox - 270, 120);
+            pages.addChild(item);
+            return item;
+            function pointClickEvent(i) {
+                let p = item.children[i];
+                item.actionPoint = i;
+                for (let j of item.children) {
+                    j.alpha = 0.5;
+                }
+                p.alpha = 1;
+
+                const m = c.carouselPage.children[0].navMask;
+                m.position.x = -1000;
+
+                let cp = createSprite(pageTextures[`page_0_${i}.png`], 0.5, scale);
+                cp.clickEvent = () => {
+                    let d = new Dialog(self.manager, {
+                        context: i == 0 ? ` 確定前往${Page[Object.keys(Page)[i]]}？` : ` 確定前往${Page[Object.keys(Page)[i]]}房間？`,
+                        submitText: "前往房間",
+                        cancelText: "取消",
+                        submit: () => { self.manager.toOtherPage(Page[Object.keys(Page)[i]]); },
+                        cancel: () => { d.remove(); }
+                    })
+                }
+                addPointerEvent(cp);
+                cp.navMask = drawNavMask(cp);
+                navMask[themeList[0][i]].addChild(cp.navMask);
+                c.carouselPage.addChild(cp);
+                gsap.timeline({
+                    onComplete: () => {
+                        if (i == 0) {
+                            navMask[themeList[0][len - 1]].removeChild(m);
+                        }
+                        else {
+                            navMask[themeList[0][i - 1]].removeChild(m);
+                        }
+                        c.carouselPage.removeChildAt(0);
+                    }
+                })
+                    .from(cp, { duration: 1, x: 1000 })
+                    .from(cp.navMask, { duration: 1, x: 1000 }, 0)
+                    .from(m, { duration: 0.8, x: 0, ease: "power1.in" }, 0);
+            }
         }
     }
 }
