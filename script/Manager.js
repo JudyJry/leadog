@@ -12,7 +12,7 @@ import ElderlyObject from './ElderlyObject.js';
 import CompanyObject from './CompanyObject.js';
 import MarketObject from './MarketObject.js';
 import KnowObject from './KnowObject.js';
-import { Page } from './Data.js';
+import { Page, userData } from './Data.js';
 import { addPointerEvent } from './GameFunction.js';
 
 export default class Manager {
@@ -42,20 +42,7 @@ export default class Manager {
 
         this.isMute = false;
 
-        this.userData = {
-            born: {
-                mirror_collect: []
-            },
-            childhood: {
-                puzzle_complete: false
-            },
-            youth: {
-                mirror_correct: false
-            },
-            know: {
-                lucky: { pic: undefined, str: undefined }
-            }
-        }
+        this.userData = userData;
     }
     setup() {
         this.uiSystem.setup();
@@ -166,6 +153,7 @@ const loadList = {
         //uiSystem-png
         "image/logo.png",
         "image/book.svg",
+        "image/book/sprites.json",
         "image/index.svg",
         "image/menu.svg",
         "image/notify.svg",
@@ -260,6 +248,7 @@ const loadList = {
         "image/building/know/gashapon.png",
         "image/building/know/gashapon_alpha.png",
         "image/building/know/gashapon/sprites.json",
+        "image/building/know/book/cover.png",
         "image/building/know/book/sprites.json",
     ],
     "company": [

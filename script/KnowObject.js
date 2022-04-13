@@ -271,7 +271,7 @@ class Gashapon extends linkObject {
         }
         function drawResult() {
             random = Math.floor(Math.random() * Object.keys(lucky).length);
-            self.manager.userData.know.lucky = { pic: Object.keys(lucky)[random], str: Object.values(lucky)[random] };
+            self.manager.userData.know.lucky[Object.keys(lucky)[random]] = true;
             let layer = drawLayer();
             let arrow_l = createSprite("image/arrow_left.svg", 0.5, scale);
             let arrow_r = createSprite("image/arrow_right.svg", 0.5, scale);
@@ -363,7 +363,7 @@ class Book extends linkObject {
         this.page.isZoomIn = false;
         this.cancel.visible = false;
         this.cancel = undefined;
-        this.manager.app.stage.removeChild(this.book);
+        this.book.onCancel();
     }
     drawBook() {
         const self = this;
@@ -397,14 +397,30 @@ class Book extends linkObject {
         }
         let selectSort = sortList[0];
         let c = new PIXI.Container();
-        let page = drawPage();
+        let bg = drawBg();
+        let page = undefined;
         let usingLayer = new PIXI.Container();
         c.zIndex = 100;
         c.addChild(usingLayer);
-        onSelectSort();
+        drawStart();
         this.manager.app.stage.addChildAt(c, 1);
+        c.onCancel = drawEnd;
         return c;
         //page
+        function drawStart() {
+            let s = createSprite("image/building/know/book/cover.png", 0.5, scale * 0.5);
+            s.alpha = 0;
+            c.addChild(s);
+            gsap.timeline()
+                .to(s, { duration: 0.5, alpha: 1 })
+                .to(s, {
+                    duration: 0.5, x: centerX, onComplete: () => {
+                        page = drawPage();
+                        onSelectSort();
+                        c.removeChild(s);
+                    }
+                })
+        }
         function drawIntroduction() {
             let layer = drawLayer(sortText[selectSort].title_1, sortText[selectSort].title_2);
             let instruction = createSprite(textures[`text_${selectSort}.png`], [0.5, 0], scale);
@@ -443,10 +459,38 @@ class Book extends linkObject {
             layer.addChild(text, btn1, btn2, slideCrol, arrow_l, arrow_r);
             usingLayer = layer;
         }
+        function drawEnd() {
+            let s = createSprite("image/building/know/book/cover.png", 0.5, scale * 0.5);
+            s.position.x = centerX;
+            c.removeChild(page, usingLayer);
+            c.addChild(s);
+            gsap.timeline()
+                .to(s, {
+                    duration: 0.5, x: 0
+                })
+                .to(s, {
+                    duration: 0.5, alpha: 0, onComplete: () => {
+                        c.removeChild(s);
+                        self.manager.app.stage.removeChild(self.book);
+                    }
+                })
+                .to(bg, { duration: 1, alpha: 0 }, 0);
+        }
         //obj
+        function drawBg() {
+            let bg = new PIXI.Graphics()
+                .beginFill(ColorSlip.black, 0.2)
+                .drawRect(0, 0, 1920, 1080)
+                .endFill();
+            bg.pivot.set(1920 / 2, 1080 / 2);
+            c.addChild(bg);
+            gsap.from(bg, { duration: 1, alpha: 0 });
+            return bg;
+        }
         function drawPage() {
             const bookmarkPosY = { "a": -280, "b": -80, "c": 120 };
             let e = new PIXI.Container();
+
             let cover = createSprite(textures["bookcover.png"], 0.5, scale);
             let pages = createSprite(textures["pages.png"], 0.5, scale);
             e.ribbon = createSprite(textures[`ribbon_${selectSort}.png`], 0.5, scale);

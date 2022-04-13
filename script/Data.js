@@ -638,4 +638,53 @@ const bookData = {
         ]
     }
 }
-export { objType, Page, homePageData, uiData, videoData, mapData, ThreeNotOneQuestionData, bookData };
+
+const userData = {
+    born: {
+        video: {
+            story1: false,
+            story2: false
+        },
+        mirror_collect: new Array(8).fill(false)
+    },
+    childhood: {
+        video: {
+            kelly: false,
+            dora: false
+        },
+        puzzle_complete: false
+    },
+    youth: {
+        video: {
+            bus: false,
+            instruction: false,
+            instruction2: false,
+            traffic: false,
+        },
+        mirror_correct: false
+    },
+    elderly: {
+        video: {
+            story1: false,
+            story2: false,
+            story3: false,
+            hair: false
+        },
+    },
+    know: {
+        video: {
+            story1: false,
+            story2: false,
+            story3: false,
+            story4: false,
+            story5: false,
+        },
+        lucky: {
+            big: false,
+            middle: false,
+            middle2: false,
+            small: false,
+        }
+    }
+}
+export { objType, Page, homePageData, uiData, videoData, mapData, ThreeNotOneQuestionData, bookData, userData };

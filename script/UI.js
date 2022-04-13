@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { TextStyle } from './TextStyle.js';
 import { addPointerEvent, createSprite, createText } from './GameFunction.js';
-import { uiData } from './Data.js';
+import { Page, uiData } from './Data.js';
 import { ColorSlip } from './ColorSlip.js';
 import { FilterSet } from './FilterSet.js';
 
@@ -101,28 +101,323 @@ class Book extends UI {
     constructor(manager, UIsystem) {
         super(manager, UIsystem);
         this.name = "Book";
+        this.uiScale = 1;
+        this.originPos = [0, 0];
+        this.texturesUrl = "image/book/sprites.json"
         this.draw = function () {
             this.icon = this.drawIcon('image/book.svg');
             this.container.position.set(0, 0 * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
-    clickEvent() {
-        const data = this.manager.userData;
-        let strArray = JSON.stringify(data).slice(1, -1).split("\"").join(" ").split(",");
-        /* let str = "出生：";
-        for (let i = 0; i < data.born.mirror_collect.length; i++) {
-            str += `\n    第${data.born.mirror_collect[i].gener}代：${data.born.mirror_collect[i].gender}`;
+    resize() {
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+        this.container.removeChildren();
+        this.draw();
+        if (this.isClick) {
+            this.icon.interactive = false;
+            this.onClickResize();
         }
-        let c_p = data.childhood.puzzle_complete ? "完成" : "未完成";
-        let y_p = data.youth.mirror_correct ? "完成" : "未完成";
-        str += "\n幼年拼圖：" + c_p;
-        str += "\n壯年問答遊戲：" + y_p; */
-        let d = new Dialog(this.manager, {
-            context: strArray.join("\n"),
-            backgroundScale: 1 + (strArray.length * 0.08),
-            cancel: () => d.remove()
-        })
+    }
+    update() {
+        if (this.isClick) { this.onClickUpdate(); }
+    }
+    onClickResize() { this.book = this.drawBook(); }
+    onClickResize() { }
+    clickEvent() {
+        this.icon.interactive = false;
+        this.isClick = true;
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+        this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+        this.book = this.drawBook();
+    }
+    drawCancel() {
+        let _x = (this.w * 0.5) - 60;
+        let _y = (this.h * -0.5) + 60;
+        this.cancel = createSprite('image/cancel.svg', 0.5);
+        this.cancel.position.set(_x, _y);
+        this.cancel.overEvent = brightnessOverEvent;
+        this.cancel.clickEvent = this.cancelEvent.bind(this);
+        addPointerEvent(this.cancel);
+        this.manager.app.stage.addChildAt(this.cancel, 1);
+        this.cancel.visible = false;
+    }
+    cancelEvent() {
+        this.icon.interactive = true;
+        this.isClick = false;
+        this.manager.app.stage.removeChild(this.book);
+        this.cancel.visible = false;
+    }
+    drawBook() {
+        const self = this;
+        const scale = this.uiScale;
+        const textures = this.textures;
+        const centerX = 300;
+        const sortList = ["a", "b", "c"];
+        const bookpage = [drawPage_0];
+        const userData = this.manager.userData;
+        let selectSort = sortList[0];
+        let c = new PIXI.Container();
+        let bg = drawBg();
+        let page = undefined;
+        let usingLayer = new PIXI.Container();
+        c.zIndex = 100;
+        c.addChild(usingLayer);
+        drawStart();
+        this.manager.app.stage.addChildAt(c, 1);
+        c.onCancel = drawEnd;
+        return c;
+        //page
+        function drawStart() {
+            let s = createSprite("image/book/cover.png", 0.5, scale * 0.5);
+            s.alpha = 0;
+            c.addChild(s);
+            gsap.timeline()
+                .to(s, { duration: 0.5, alpha: 1 })
+                .to(s, {
+                    duration: 0.5, x: centerX, onComplete: () => {
+                        page = drawPages();
+                        onSelectSort();
+                        c.removeChild(s);
+                    }
+                })
+        }
+        function drawPage_0() {
+            let layer = drawLayer(0);
+            let bigTitle = createText("一起探險吧！", TextStyle.Mirror_title_36, 0.5, scale * 0.75);
+            bigTitle.position.set(-centerX, -340);
+            layer.addChild(bigTitle);
+            layer.sortChildren();
+            usingLayer = layer;
+        }
+        function drawPage_n() {
+            let layer = drawLayer(0);
+            let title = drawTitle("影片收集");
+            let hint = drawHint(`點擊進入首頁中的房子，尋找房間中”互動影片”\n，藉由互動的方式了解導盲犬知識與生活，每觀賞完一部\n皆放入探險手冊之中。`);
+            let it = drawItemText("出生房間", ColorSlip.button_cancel,
+                textures["text_born.png"], () => { self.manager.toOtherPage(Page.born) });
+            let tv = drawTv("", textures["video_born_0.png"], 0, false);
+            tv.position.set(0, 0);
+            e.addChild(tv);
+            it.position.set(centerX, -240);
+            layer.addChild(title, hint, it);
+            layer.sortChildren();
+            usingLayer = layer;
+        }
+        function drawEnd() {
+            let s = createSprite("image/building/know/book/cover.png", 0.5, scale * 0.5);
+            s.position.x = centerX;
+            c.removeChild(page, usingLayer);
+            c.addChild(s);
+            gsap.timeline()
+                .to(s, {
+                    duration: 0.5, x: 0
+                })
+                .to(s, {
+                    duration: 0.5, alpha: 0, onComplete: () => {
+                        c.removeChild(s);
+                        self.manager.app.stage.removeChild(self.book);
+                    }
+                })
+                .to(bg, { duration: 1, alpha: 0 }, 0);
+        }
+        //obj
+        function drawBg() {
+            let bg = new PIXI.Graphics()
+                .beginFill(ColorSlip.black, 0.2)
+                .drawRect(0, 0, 1920, 1080)
+                .endFill();
+            bg.pivot.set(1920 / 2, 1080 / 2);
+            c.addChild(bg);
+            gsap.from(bg, { duration: 1, alpha: 0 });
+            return bg;
+        }
+        function drawPages() {
+            const bookmarkPosY = { "a": -280, "b": -80, "c": 120 };
+            let e = new PIXI.Container();
+
+            let cover = createSprite(textures["bookcover.png"], 0.5, scale);
+            let pages = createSprite(textures["pages.png"], 0.5, scale);
+            e.ribbon = createSprite(textures[`ribbon_${selectSort}.png`], 0.5, scale);
+            e.page_l = createSprite(textures["page_l.png"], 1, scale);
+            e.page_r = createSprite(textures["page_r.png"], [0, 1], scale);
+
+            pages.position.set(0, -11.408);
+            e.page_l.position.set(0.5, 372.272);
+            e.page_r.position.set(-0.5, 372.272);
+            e.ribbon.position.set(-23, -316);
+
+            e.bookmark = {};
+            for (let i of sortList) {
+                e.bookmark[i] = createSprite(textures[`bookmark_${i}.png`], 0.5, scale);
+                e.bookmark[i].position.set(600, bookmarkPosY[i]);
+                e.bookmark[i].overEvent = bookmarkOverEvent;
+                e.bookmark[i].clickEvent = (e) => { onSelectSort(i); }
+                addPointerEvent(e.bookmark[i]);
+            }
+            cover.interactive = true;
+            e.addChild(cover, pages);
+            c.addChild(e);
+            return e;
+        }
+        function drawArrow(dir, clickEvent) {
+            let arrow = new PIXI.Container();
+            arrow.zIndex = 10;
+            let a;
+            let text = createText("", TextStyle.Map_Green_13, 0.5, scale * 0.6);
+            switch (dir) {
+                case "right":
+                    a = createSprite(textures["arrow_r.png"], 0.5, scale);
+                    text.text = "下一頁";
+                    text.position.set(-47, 0);
+                    arrow.position.set(537, 334);
+                    arrow.addChild(text, a);
+                    break;
+                case "left":
+                    a = createSprite(textures["arrow_l.png"], 0.5, scale);
+                    text.text = "上一頁";
+                    text.position.set(47, 0);
+                    arrow.position.set(-537, 334);
+                    arrow.addChild(text, a);
+                    break;
+            }
+            arrow.overEvent = brightnessOverEvent;
+            arrow.clickEvent = clickEvent;
+            addPointerEvent(arrow);
+            return arrow;
+        }
+        function drawLayer(num) {
+            let layer = new PIXI.Container();
+            layer.pageIndex = num;
+            let arrow_l = drawArrow("left", () => { changePage("right", bookpage[layer.pageIndex - 1]) });
+            let arrow_r = drawArrow("right", () => { changePage("right", bookpage[layer.pageIndex + 1]) });
+            if (layer.pageIndex == 0) { arrow_l.interactive = false; arrow_l.alpha = 0.5; }
+            if (layer.pageIndex == bookpage.length - 1) { arrow_r.interactive = false; arrow_r.alpha = 0.5; }
+            layer.addChild(arrow_l, arrow_r);
+            c.addChild(layer);
+            gsap.from(layer, { duration: 0.5, alpha: 0 });
+            return layer;
+        }
+        //in-page-item
+        function drawTitle(text, x = centerX, y = -340) {
+            let e = createText(text, TextStyle.Mirror_title_16, 0.5, scale);
+            e.position.set(x, y);
+            return e;
+        }
+        function drawHint(text, x = centerX, y = -280) {
+            let e = createText(text, TextStyle.Mirror_DogHint_16, 0.5, scale * 0.6);
+            e.position.set(x, y);
+            return e;
+        }
+        function drawItemText(text, color, textUrl, onClick = () => { }) {
+            let e = new PIXI.Container();
+            let btn = drawButton(text, color, scale);
+            let st = createSprite(textUrl, [0, 0.5], scale);
+            btn.clickEvent = () => {
+                let d = new Dialog(self.manager, {
+                    context: `確定前往${text}？`,
+                    submitText: "前往",
+                    submit: () => { d.remove(); onClick(); },
+                    cancelText: "取消",
+                    cancel: () => { d.remove(); }
+                })
+            };
+            addPointerEvent(btn);
+            st.position.set(0, 37);
+            e.addChild(btn, st);
+            return e;
+        }
+        function drawTv(videoUrl, picUrl, tvType = 0, unlock = false) {
+            let e = new PIXI.Container();
+            let v = createSprite(textures[picUrl], 0.5, scale);
+            let s = createSprite(textures[`tv_${tvType}.png`], 0.5, scale);
+            v.position.set(-24, -6);
+            e.addChild(v, s);
+            if (!unlock) {
+                let lock = createSprite(textures["lock.png"], 0.5, scale);
+                lock.position.set(-24, -6);
+                v.tint = 0x7e7e7e;
+                e.addChild(lock);
+            }
+            else if (unlock) {
+                e.overEvent = glowOverEvent;
+                e.clickEvent = () => {
+                    drawVideo(videoUrl);
+                }
+                addPointerEvent(e);
+            }
+            return e;
+        }
+        //event
+        function changePage(dir = "right", goto = () => { }) {
+            c.removeChild(usingLayer);
+            pageAnim(dir, goto);
+        }
+        function pageAnim(dir = "right", onComplete = () => { }) {
+            const animTime = 0.17;
+            const scaleTime = 0.08;
+            let flip = undefined;
+            let skewDir = undefined;
+            if (dir == "left") {
+                flip = page.page_l;
+                skewDir = 1;
+            }
+            else {
+                flip = page.page_r;
+                skewDir = -1;
+            }
+            page.ribbon.alpha = 0;
+            page.addChild(flip);
+            flip.scale.set(scale);
+            flip.skew.set(0);
+            gsap.timeline({
+                onComplete: () => {
+                    flip.scale.set(scale);
+                    flip.skew.set(0);
+                    page.removeChild(flip);
+                    page.ribbon.alpha = 1;
+                    onComplete();
+                    usingLayer.addChild(page.ribbon);
+                }
+            })
+                .to(flip, { duration: animTime + scaleTime, pixi: { skewY: 45 * skewDir, scaleX: scale * 0.5 }, ease: "none" })
+                .to(flip, { duration: animTime, pixi: { skewY: 90 * skewDir }, ease: "none" })
+                .to(flip, { duration: animTime, pixi: { skewY: 135 * skewDir, scaleX: scale * 0.5 }, ease: "none" })
+                .to(flip, { duration: animTime + scaleTime, pixi: { skewY: 180 * skewDir, scaleX: scale }, ease: "none" })
+        }
+        function onSelectSort(sort = selectSort, goto = () => { }) {
+            c.removeChild(usingLayer);
+            if (sortList.indexOf(sort) < sortList.indexOf(selectSort)) { pageAnim("left", goto) }
+            else if (sortList.indexOf(sort) > sortList.indexOf(selectSort)) { pageAnim("right", goto) }
+            else { goto(); }
+            selectSort = sort;
+            page.ribbon.texture = textures[`ribbon_${selectSort}.png`];
+            for (let i in page.bookmark) {
+                page.bookmark[i].position.x = 600;
+                page.bookmark[i].interactive = true;
+                page.addChildAt(page.bookmark[i], 1);
+            }
+            page.removeChild(page.bookmark[sort]);
+            page.bookmark[sort].position.x += 10;
+            page.bookmark[sort].interactive = false;
+            page.addChild(page.bookmark[sort]);
+        }
+        function bookmarkOverEvent(e) {
+            if (e.isPointerOver) {
+                gsap.killTweensOf(e);
+                gsap.to(e, { duration: 0.5, x: 608 });
+            }
+            else {
+                gsap.killTweensOf(e);
+                gsap.to(e, { duration: 0.5, x: 600 });
+            }
+
+        }
+        function drawVideo(url) {
+
+        }
     }
 }
 class Notify extends UI {

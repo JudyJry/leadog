@@ -84,9 +84,11 @@ class Mirror extends linkObject {
     }
     returnResult() {
         //console.log(this.selectGender);
+        let arr = [];
         for (const [key, value] of Object.entries(this.selectGender)) {
-            this.manager.userData.born.mirror_collect.push({ gener: key, gender: value });
+            arr.push({ gener: key, gender: value });
         }
+        this.manager.userData.born.mirror_collect = arr;
         console.log(this.manager.userData.born.mirror_collect);
     }
     drawMirror() {
