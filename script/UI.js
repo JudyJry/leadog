@@ -306,15 +306,93 @@ class Book extends UI {
             let title_l = drawTitle("遊戲收集");
             let hint = drawHint(`點擊進入首頁中的房子，尋找房間中的”互動遊戲”，\n藉由遊戲的方式了解導盲犬知識與樂趣，成功完成遊\n戲將會獲得獎勵，放入探險手冊之中。`);
             let it_mirror = drawItemText("祖宗八代", ColorSlip.button_submit, "text_mirror.png", () => { self.manager.toOtherPage(Page.born) });
+            let mirror = drawMirror();
             it_mirror.position.y = -165;
-            layer.left.addChild(title_l, hint, it_mirror);
+            mirror.position.set(-194, 0);
+            layer.left.addChild(title_l, hint, it_mirror, mirror);
 
             let title_r = drawTitle("遊戲收集");
             let it_puzzle = drawItemText("品種拼圖", ColorSlip.button_submit, "text_puzzle.png", () => { self.manager.toOtherPage(Page.childhood) });
+            let puzzle_0 = drawPuzzle(0);
+            let puzzle_1 = drawPuzzle(1);
+            let puzzle_2 = drawPuzzle(2);
             it_puzzle.position.y = -280;
-            layer.right.addChild(title_r, it_puzzle);
+            puzzle_0.position.set(0, -90);
+            puzzle_1.position.set(-130, 192);
+            puzzle_2.position.set(130, 192);
+            layer.right.addChild(title_r, it_puzzle, puzzle_0, puzzle_1, puzzle_2);
 
             usingLayer = layer;
+            function drawMirror() { //todo
+                const picUrl = "image/building/born/sprites.json";
+                const generText = ["八", "七", "六", "五", "四", "三", "二", "一"];
+                let picTextures;
+                let e = new PIXI.Container();
+                try {
+                    self.manager.app.loader.add(picUrl);
+                    self.manager.app.loader.load(onload);
+                }
+                catch { onload(); }
+                return e;
+                function onload() {
+                    picTextures = self.manager.app.loader.resources[picUrl].spritesheet.textures;
+                    for (let i = 0; i < 8; i++) {
+                        let item = drawPicItem(i);
+                        if (i < 4) {
+                            item.position.set(128 * i, 0);
+                        }
+                        else {
+                            item.position.set(128 * (i - 4), 192);
+                        }
+                        e.addChild(item);
+                    }
+                }
+                function drawPicItem(i) {
+                    const d = userData.born.mirror_collect[i];
+                    const genderStr = d.gender === "Daddy" ? "d" : "m";
+                    let e = new PIXI.Container();
+                    let b = createSprite(textures["mirror_frame.png"], 0.5, scale);
+                    let p;
+                    let t = createText(`第${generText[i]}代`, TextStyle.Mirror_title_12, 0.5, scale * 0.8);
+                    t.position.y = 95;
+                    e.addChild(b, t);
+                    if (!d) {
+                        let lock = createSprite(textures["lock.png"], 0.5, scale * 0.75);
+                        p = createSprite(picTextures["frame_dog.png"], 0.5, scale * 0.3);
+                        p.tint = 0x7e7e7e;
+                        e.addChild(p, lock);
+                    }
+                    else {
+                        p = createSprite(picTextures[`${d.gener}_${genderStr}_s.png`], 0.5, scale * 0.35);
+                        e.addChild(p);
+                        e.overEvent = brightnessOverEvent;
+                        e.clickEvent = () => {
+                            let bg = drawBg();
+                            let bbg = createSprite(picTextures["dialog_start.png"], 0.5, scale);
+                            let ss = createSprite(picTextures[`${d.gener}_${genderStr}.png`], 0.5, scale);
+                            bg.clickEvent = () => {
+                                c.removeChild(bbg, ss, bg);
+                            }
+                            addPointerEvent(bg);
+                            c.addChild(bbg, ss);
+                            gsap.from(ss, { duration: 1, alpha: 0 });
+                        }
+                        addPointerEvent(e);
+                    }
+                    return e;
+                }
+            }
+            function drawPuzzle(i) {
+                let e = new PIXI.Container();
+                let p = createSprite(textures[`puzzle_${i}.png`], 0.5, scale);
+                e.addChild(p);
+                if (!userData.childhood.puzzle_complete) {
+                    let lock = createSprite(textures["lock.png"], 0.5, scale);
+                    p.tint = 0x7e7e7e;
+                    e.addChild(lock);
+                }
+                return e;
+            }
         }
         function drawPage_4() {
             let layer = drawLayer(4);
@@ -357,7 +435,7 @@ class Book extends UI {
 
             let title_l = drawTitle("詩籤收集");
             let hint = drawHint(`點擊進入知識教育館，點選房間中”扭蛋機”，會依照\n您今天的運氣分配相應的導盲犬，最後會獲得導盲犬\n詩籤，並放入探險手冊之中。`);
-            let it_l = drawItemText("導盲犬詩籤", ColorSlip.button_yellow, "text_gashapon_0.png", () => { self.manager.toOtherPage(Page.know) });
+            let it_l = drawItemText("導盲犬詩籤", ColorSlip.button_yellow, "text_gashapon_0.png", () => { self.manager.toOtherPage(Page.know) }, 1.15);
             let pic_l = createSprite(textures["pic_gashapon.png"]);
 
             it_l.position.y = -165;
@@ -366,7 +444,7 @@ class Book extends UI {
             layer.left.addChild(title_l, hint, it_l, pic_l);
 
             let title_r = drawTitle("詩籤收集");
-            let it_r = drawItemText("導盲犬詩籤", ColorSlip.button_yellow, "text_gashapon_1.png", () => { self.manager.toOtherPage(Page.know) });
+            let it_r = drawItemText("導盲犬詩籤", ColorSlip.button_yellow, "text_gashapon_1.png", () => { self.manager.toOtherPage(Page.know) }, 1.15);
             let pic_r = drawPic();
             it_r.position.y = -280;
             pic_r.position.set(-192, -88);
@@ -554,9 +632,9 @@ class Book extends UI {
             e.position.set(x, y);
             return e;
         }
-        function drawItemText(text, color, textUrl, onClick = () => { }) {
+        function drawItemText(text, color, textUrl, onClick = () => { }, width = 1) {
             let e = new PIXI.Container();
-            let btn = drawButton(text, color, scale * 0.75);
+            let btn = drawButton(text, color, scale * 0.75, width);
             let st = createSprite(textures[textUrl], [0, 0.5], scale);
             btn.clickEvent = () => {
                 let d = new Dialog(self.manager, {
@@ -568,9 +646,9 @@ class Book extends UI {
                 })
             };
             addPointerEvent(btn);
-            st.position.set(65, 5);
+            st.position.set(65 * width, 5);
             e.addChild(btn, st);
-            e.position.x = -180;
+            e.position.x = -180 + (10 * width);
             return e;
         }
         function drawTv(pageName, videoIndex, tvType = 0) {
@@ -958,12 +1036,12 @@ export class Dialog {
         for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
 }
-export function drawButton(text, color, scale = 1) {
+export function drawButton(text, color, scale = 1, width = 1) {
     const texture = PIXI.Texture.from("image/dialog_button.png");
     const ts = TextStyle.Dialog_Button;
     let c = new PIXI.Container();
-    let b = createSprite(texture, 0.5, scale);
-    c.sprite = createSprite(texture, 0.5, scale);
+    let b = createSprite(texture, 0.5, [scale * width, scale]);
+    c.sprite = createSprite(texture, 0.5, [scale * width, scale]);
     c.text = createText(text, ts, 0.5, scale);
     c.sprite.tint = color;
     b.tint = ColorSlip.button_back;
