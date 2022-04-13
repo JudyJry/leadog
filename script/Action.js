@@ -548,6 +548,9 @@ export class ActionEnd extends ActionUI {
             this.setPosition(textDescribe, 0, 0);
             this.container.addChild(textTitle, textDescribe);
             this.container.alpha = 0;
+
+            const videoData = this.action.videoData.name.split("_");
+            this.manager.userData[videoData[0]].video[videoData[1]] = true;;
         }
     }
     draw2() {

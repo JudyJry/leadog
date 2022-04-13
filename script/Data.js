@@ -39,7 +39,7 @@ const homePageData = [
 const videoData = {
     born: [
         {
-            name: "born_story",
+            name: "born_story1",
             url: "video/born_story1.mp4",
             soundUrl: "sound/born_story.mp3",
             startText: "來聽聽剛出生的寶寶都在做什麼吧！",
@@ -47,7 +47,7 @@ const videoData = {
             endTime: 46
         },
         {
-            name: "born_story",
+            name: "born_story2",
             url: "video/born_story2.mp4",
             soundUrl: "sound/born_story.mp3",
             startText: "來聽聽剛出生的寶寶都在做什麼吧！",
