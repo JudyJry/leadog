@@ -26,6 +26,7 @@ export default class ResourceLoader {
         this.setupLoadingPage();
         this.loader.add(list);
         this.loader.onProgress.add(this.loadProgressHandler.bind(this));
+        this.loader.onError.add((loader, resource) => { console.log("load error:" + resource.url) });
         this.loader.load(this.init.bind(this));
     }
     loadAsset(func, onComplete = () => { }, list = undefined) {
@@ -36,6 +37,7 @@ export default class ResourceLoader {
                 if (list !== undefined) {
                     self.loader.add(list);
                     self.loader.onProgress.add(self.loadProgressHandler.bind(self));
+                    self.loader.onError.add((loader, resource) => { console.log("load error:" + resource.url) });
                     self.loader.load(
                         function () {
                             func.apply(this, arguments);

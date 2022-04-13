@@ -136,6 +136,7 @@ class Gashapon extends linkObject {
         this.zoomInPos = [20, -50];
         this.uiScale = 1;
         this.fadeText = "開始遊戲";
+        this.texturesUrl = "image/building/know/gashapon/sprites.json";
         this.draw = function () {
             this._x = (this.x * this.w * 2);
             this._y = (this.y * this.h * 2);
@@ -174,8 +175,18 @@ class Gashapon extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        this.textures = this.manager.app.loader.resources["image/building/know/gashapon/sprites.json"].spritesheet.textures;
-        this.gashapon = this.drawGashapon();
+        try {
+            const self = this;
+            this.manager.app.loader.add(this.texturesUrl);
+            this.manager.app.loader.load(() => {
+                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.gashapon = self.drawGashapon();
+            });
+        }
+        catch {
+            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.gashapon = this.drawGashapon();
+        }
     }
     cancelEvent() {
         let tl = gsap.timeline({
@@ -354,8 +365,18 @@ class Book extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
-        this.book = this.drawBook();
+        try {
+            const self = this;
+            this.manager.app.loader.add(this.texturesUrl);
+            this.manager.app.loader.load(() => {
+                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.book = self.drawBook();
+            });
+        }
+        catch {
+            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.book = this.drawBook();
+        }
     }
     cancelEvent() {
         this.sprite.interactive = true;

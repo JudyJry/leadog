@@ -111,6 +111,7 @@ class Graduate extends linkObject {
         this.zoomInPos = [35, -100];
         this.originPos = [-13, 101];
         this.uiScale = 1;
+        this.texturesUrl = "image/building/youth/graduate/sprites.json";
     }
     onClickResize() { this.graduate = this.drawGraduate(); }
     onClickUpdate() { }
@@ -137,8 +138,18 @@ class Graduate extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        this.textures = this.manager.app.loader.resources["image/building/youth/graduate/sprites.json"].spritesheet.textures;
-        this.graduate = this.drawGraduate();
+        try {
+            const self = this;
+            this.manager.app.loader.add(this.texturesUrl);
+            this.manager.app.loader.load(() => {
+                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.graduate = self.drawGraduate();
+            });
+        }
+        catch {
+            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.graduate = this.drawGraduate();
+        }
     }
     drawGraduate() {
         const self = this;
@@ -190,7 +201,7 @@ class Graduate extends linkObject {
             let layer = drawLayer();
             let bg = createSprite(textures["board.png"], 0.5, scale);
             let detail = createSprite(textures[pic], 0.5, scale);
-            let btn = createSprite("image/cancel.svg", 0.5, scale * 0.6);
+            let btn = createSprite("image/cancel.png", 0.5, scale * 0.6);
             btn.position.set(530, -145);
             detail.position.set(0, 30);
             btn.overEvent = brightnessOverEvent;
@@ -218,6 +229,7 @@ class Mirror extends linkObject {
         this.zoomInPos = [0, 0];
         this.originPos = [-2, -37];
         this.uiScale = 0.5;
+        this.texturesUrl = "image/building/youth/mirror/sprites.json";
     }
     onClickResize() { this.mirror = this.drawMirror(); }
     onClickUpdate() { }
@@ -244,8 +256,18 @@ class Mirror extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        this.textures = this.manager.app.loader.resources["image/building/youth/mirror/sprites.json"].spritesheet.textures;
-        this.mirror = this.drawMirror();
+        try {
+            const self = this;
+            this.manager.app.loader.add(this.texturesUrl);
+            this.manager.app.loader.load(() => {
+                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.mirror = self.drawMirror();
+            });
+        }
+        catch {
+            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.mirror = this.drawMirror();
+        }
     }
     drawMirror() {
         const self = this;
@@ -396,9 +418,11 @@ class Mirror extends linkObject {
             let restart = drawButton("重新遊戲", ColorSlip.button_submit, scale * 1.5);
             let exit = drawButton("打開手冊", ColorSlip.button_cancel, scale * 1.5);
             let text = createText(`恭喜你答對所有問題！\n獲得導盲犬徽章，可在探險手冊中顯示`, TextStyle.Mirror_title_20, 0.5, scale);
+            let medal = drawMedal();
             restart.position.set(44, 122);
             exit.position.set(155, 122);
-            text.position.set(0, 25);
+            text.position.set(0, 55);
+            medal.position.set(0, -40);
             restart.clickEvent = () => {
                 c.removeChild(layer);
                 count = 0;
@@ -412,7 +436,16 @@ class Mirror extends linkObject {
             }
             addPointerEvent(restart);
             addPointerEvent(exit);
-            layer.addChild(dog, restart, exit, text);
+            layer.addChild(dog, restart, exit, text, medal);
+            function drawMedal() {
+                const medalTextures = self.manager.app.loader.resources["image/book/sprites.json"].spritesheet.textures;
+                let e = new PIXI.Container();
+                let s = createSprite(medalTextures["medal.png"], 0.5, scale);
+                let l = createSprite(medalTextures["light.png"], 0.5, scale);
+                e.addChild(l, s);
+                gsap.timeline({ repeat: -1 }).to(l, { duration: 5, rotation: Math.PI * 2, ease: "none" });
+                return e;
+            }
         }
         function drawGameOver() {
             let layer = drawLayer("問答遊戲");

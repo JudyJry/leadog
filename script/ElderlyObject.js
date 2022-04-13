@@ -147,6 +147,7 @@ class Map extends linkObject {
         this.uiScale = 0.5;
         //dir = ["north", "west", "south", "east"];
         this.dir = ["n", "w", "s", "e"];
+        this.texturesUrl = "image/map/sprites.json";
     }
     onClickResize() {
         this.map = this.drawMap();
@@ -170,8 +171,18 @@ class Map extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        this.textures = this.manager.app.loader.resources["image/map/sprites.json"].spritesheet.textures;
-        this.map = this.drawMap();
+        try {
+            const self = this;
+            this.manager.app.loader.add(this.texturesUrl);
+            this.manager.app.loader.load(() => {
+                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.map = self.drawMap();
+            });
+        }
+        catch {
+            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.map = this.drawMap();
+        }
     }
     cancelEvent() {
         let tl = gsap.timeline({
@@ -220,7 +231,7 @@ class Map extends linkObject {
         return c;
         function drawFrist() {
             let bg = new PIXI.Graphics()
-                .beginFill(ColorSlip.lightBlue)
+                .beginFill(ColorSlip.map_bg)
                 .drawRect(0, 0, 352, 434.5);
             bg.pivot.set(352 / 2, 434.5 / 2);
             bg.position.set(ox, oy);

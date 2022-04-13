@@ -140,6 +140,48 @@ const videoData = {
             endText: `謝謝你幫助狗狗整理毛髮\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
             endTime: 43
         }
+    ],
+    know: [
+        {
+            name: "know_story1",
+            url: "video/know_story1.mp4",
+            soundUrl: "sound/know_story1.wav",
+            startText: "一起看看狗狗與收養家庭的故事吧！",
+            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
+            endTime: 0
+        },
+        {
+            name: "know_story2",
+            url: "video/know_story2.mp4",
+            soundUrl: "sound/know_story2.wav",
+            startText: "一起看看狗狗與收養家庭的故事吧！",
+            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
+            endTime: 0
+        },
+        {
+            name: "know_story3",
+            url: "video/know_story3.mp4",
+            soundUrl: "sound/know_story3.wav",
+            startText: "一起看看狗狗與收養家庭的故事吧！",
+            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
+            endTime: 0
+        },
+        {
+            name: "know_story4",
+            url: "video/know_story4.mp4",
+            soundUrl: "sound/know_story4.wav",
+            startText: "一起看看狗狗與收養家庭的故事吧！",
+            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
+            endTime: 0
+        },
+        {
+            name: "know_story5",
+            url: "video/know_story5.mp4",
+            soundUrl: "sound/know_story5.wav",
+            startText: "一起看看狗狗與收養家庭的故事吧！",
+            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
+            endTime: 0
+        },
     ]
 }
 

@@ -53,6 +53,7 @@ class Mirror extends linkObject {
         this.uiScale = 0.5;
         this.selectGener = undefined;
         this.selectGender = {};
+        this.texturesUrl = "image/building/born/sprites.json";
     }
     onClickResize() { this.mirror = this.drawMirror(); }
     onClickUpdate() { }
@@ -65,8 +66,18 @@ class Mirror extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        this.textures = this.manager.app.loader.resources["image/building/born/sprites.json"].spritesheet.textures;
-        this.mirror = this.drawMirror();
+        try {
+            const self = this;
+            this.manager.app.loader.add(this.texturesUrl);
+            this.manager.app.loader.load(() => {
+                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.mirror = self.drawMirror();
+            });
+        }
+        catch {
+            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.mirror = this.drawMirror();
+        }
     }
     cancelEvent() {
         let tl = gsap.timeline({
@@ -240,7 +251,7 @@ class Mirror extends linkObject {
             let pic = createSprite(textures[`${gener}_${gStr[gender]}.png`], 0.5, scale);
             let title = createText(`第${generStr[gener - 1]}代`, TextStyle.Mirror_title, 0.5, scale);
             let btn = gener == 1 ? drawButton("結束遊戲", ColorSlip.button_cancel) : drawButton("繼續遊戲", ColorSlip.button_submit);
-            let cbtn = createSprite("image/cancel.svg", 0.5, scale);
+            let cbtn = createSprite("image/cancel.png", 0.5, scale);
             dialog.position.set(0, -32);
             pic.position.set(0, -32);
             title.position.set(0, -132);
@@ -281,7 +292,7 @@ class Mirror extends linkObject {
             let title = createText("恭喜完成", TextStyle.Mirror_title, 0.5, scale);
             let hint = createText(`導盲犬八代都必須是合格導盲犬且健康\n才能誕生健康的導盲犬寶寶喔！`, TextStyle.Mirror_Hint, 0.5, scale);
             let dogHint = drawDogHint(`收集的卡牌也會\n在手冊出現喔！`, [-50, -5], 0.4);
-            let cbtn = createSprite("image/cancel.svg", 0.5, scale);
+            let cbtn = createSprite("image/cancel.png", 0.5, scale);
             let list = new PIXI.Container();
             for (let i = 0; i < generStr.length; i++) {
                 const s = 0.45;
@@ -317,7 +328,7 @@ class Mirror extends linkObject {
             let pic = createSprite(textures[`${gener}_${gStr[gender]}.png`], 0.5, scale);
             let title = createText(`第${generStr[gener - 1]}代`, TextStyle.Mirror_title, 0.5, scale);
             let btn = drawButton("關閉", ColorSlip.button_cancel);
-            let cbtn = createSprite("image/cancel.svg", 0.5, scale);
+            let cbtn = createSprite("image/cancel.png", 0.5, scale);
             let arrow_l = createSprite(textures["arrow_l.png"], 0.5, scale);
             let arrow_r = createSprite(textures["arrow_r.png"], 0.5, scale);
             dialog.position.set(0, -32);
@@ -567,6 +578,7 @@ class Map extends linkObject {
         this.uiScale = 0.5;
         //dir = ["north", "west", "south", "east"];
         this.dir = ["n", "w", "s"];
+        this.texturesUrl = "image/map/sprites.json";
     }
     onClickResize() {
         this.map = this.drawMap();
@@ -590,8 +602,18 @@ class Map extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        this.textures = this.manager.app.loader.resources["image/map/sprites.json"].spritesheet.textures;
-        this.map = this.drawMap();
+        try {
+            const self = this;
+            this.manager.app.loader.add(this.texturesUrl);
+            this.manager.app.loader.load(() => {
+                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.map = self.drawMap();
+            });
+        }
+        catch {
+            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.map = this.drawMap();
+        }
     }
     cancelEvent() {
         let tl = gsap.timeline({
@@ -640,7 +662,7 @@ class Map extends linkObject {
         return c;
         function drawFrist() {
             let bg = new PIXI.Graphics()
-                .beginFill(ColorSlip.lightBlue)
+                .beginFill(ColorSlip.map_bg)
                 .drawRect(0, 0, 352, 434.5);
             bg.pivot.set(352 / 2, 434.5 / 2);
             bg.position.set(ox, oy);

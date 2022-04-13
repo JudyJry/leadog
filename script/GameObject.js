@@ -204,20 +204,10 @@ export class linkObject extends GameObject {
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
     }
-    /* drawCancel() {
-        let ch = this.sprite.height / 2;
-        let cw = this.sprite.width / 2;
-        this.cancel = createSprite('image/cancel.svg', 0.5, this.scale);
-        this.cancel.position.set(cw + 50, -ch + 60);
-        this.cancel.clickEvent = this.cancelEvent.bind(this);
-        addPointerEvent(this.cancel);
-        this.container.addChild(this.cancel);
-        this.cancel.visible = false;
-    } */
     drawCancel() {
         let _x = (this.w * 0.5) - 60;
         let _y = (this.h * -0.5) + 60;
-        this.cancel = createSprite('image/cancel.svg', 0.5);
+        this.cancel = createSprite('image/cancel.png', 0.5);
         this.cancel.position.set(_x, _y);
         this.cancel.overEvent = brightnessOverEvent;
         this.cancel.clickEvent = this.cancelEvent.bind(this);
@@ -417,7 +407,7 @@ export class Video extends linkObject {
     drawCancel() {
         let _x = (this.w * 0.5) - 60;
         let _y = (this.h * -0.5) + 60;
-        this.cancel = createSprite('image/cancel.svg', 0.5);
+        this.cancel = createSprite('image/cancel.png', 0.5);
         this.cancel.position.set(_x, _y);
         this.cancel.clickEvent = this.cancelEvent.bind(this);
         addPointerEvent(this.cancel);

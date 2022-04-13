@@ -173,7 +173,7 @@ const loadList = {
         "image/ui_1.svg",
         "image/ui_2.svg",
         //page-ui
-        "image/cancel.svg",
+        "image/cancel.png",
         "image/dialog.png",
         "image/dialog_button.png",
         "image/arrow_right.svg",
