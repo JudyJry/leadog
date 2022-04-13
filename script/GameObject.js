@@ -208,6 +208,7 @@ export class linkObject extends GameObject {
         let _x = (this.w * 0.5) - 60;
         let _y = (this.h * -0.5) + 60;
         this.cancel = createSprite('image/cancel.png', 0.5);
+        this.cancel.zIndex = 199;
         this.cancel.position.set(_x, _y);
         this.cancel.overEvent = brightnessOverEvent;
         this.cancel.clickEvent = this.cancelEvent.bind(this);
@@ -408,6 +409,7 @@ export class Video extends linkObject {
         let _x = (this.w * 0.5) - 60;
         let _y = (this.h * -0.5) + 60;
         this.cancel = createSprite('image/cancel.png', 0.5);
+        this.cancel.zIndex = 150;
         this.cancel.position.set(_x, _y);
         this.cancel.clickEvent = this.cancelEvent.bind(this);
         addPointerEvent(this.cancel);
