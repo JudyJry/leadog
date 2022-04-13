@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { TextStyle } from './TextStyle.js';
 import { addPointerEvent, createSprite, createText } from './GameFunction.js';
-import { Page, uiData } from './Data.js';
+import { Page, uiData, videoData } from './Data.js';
 import { ColorSlip } from './ColorSlip.js';
 import { FilterSet } from './FilterSet.js';
 
@@ -124,12 +124,13 @@ class Book extends UI {
         if (this.isClick) { this.onClickUpdate(); }
     }
     onClickResize() { this.book = this.drawBook(); }
-    onClickResize() { }
+    onClickUpdate() { }
     clickEvent() {
         this.icon.interactive = false;
+        gsap.to(this.icon, { duration: 0.5, pixi: { brightness: 1 } });
+        this.manager.activeObj.isZoomIn = true;
         this.isClick = true;
-        if (!this.cancel) { this.drawCancel(); }
-        this.cancel.visible = true;
+        this.drawCancel();
         this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
         this.book = this.drawBook();
     }
@@ -142,13 +143,13 @@ class Book extends UI {
         this.cancel.clickEvent = this.cancelEvent.bind(this);
         addPointerEvent(this.cancel);
         this.manager.app.stage.addChildAt(this.cancel, 1);
-        this.cancel.visible = false;
     }
     cancelEvent() {
         this.icon.interactive = true;
+        this.manager.activeObj.isZoomIn = false;
         this.isClick = false;
-        this.manager.app.stage.removeChild(this.book);
-        this.cancel.visible = false;
+        this.manager.app.stage.removeChild(this.book, this.cancel);
+
     }
     drawBook() {
         const self = this;
@@ -156,13 +157,14 @@ class Book extends UI {
         const textures = this.textures;
         const centerX = 300;
         const sortList = ["a", "b", "c"];
-        const bookpage = [drawPage_0];
+        const bookpage = [drawPage_0, drawPage_1, drawPage_2];
         const userData = this.manager.userData;
         let selectSort = sortList[0];
         let c = new PIXI.Container();
         let bg = drawBg();
         let page = undefined;
         let usingLayer = new PIXI.Container();
+        usingLayer.pageIndex = 0;
         c.zIndex = 100;
         c.addChild(usingLayer);
         drawStart();
@@ -180,16 +182,97 @@ class Book extends UI {
                     duration: 0.5, x: centerX, onComplete: () => {
                         page = drawPages();
                         onSelectSort();
+                        usingLayer.addChild(page.ribbon);
                         c.removeChild(s);
                     }
                 })
         }
         function drawPage_0() {
             let layer = drawLayer(0);
+
             let bigTitle = createText("一起探險吧！", TextStyle.Mirror_title_36, 0.5, scale * 0.75);
-            bigTitle.position.set(-centerX, -340);
-            layer.addChild(bigTitle);
-            layer.sortChildren();
+            let title_l = createText("LeaDog島嶼", TextStyle.Mirror_title_16, 0.5, scale);
+            let text_l = createSprite(textures["page_a_0.png"], 0.5, scale);
+
+            bigTitle.position.y = -340;
+            title_l.position.y = -270;
+            text_l.position.y = 50;
+            layer.left.addChild(bigTitle, title_l, text_l);
+
+            let title_r = drawTitle("影片收集");
+            let hint = drawHint(`點擊進入首頁中的房子，尋找房間中”互動影片”，\n藉由互動的方式了解導盲犬知識與生活，每觀賞完一\n部皆放入探險手冊之中。`);
+
+            let it_born = drawItemText("出生房間", ColorSlip.button_cancel, "text_born.png", () => { self.manager.toOtherPage(Page.born) });
+            let tv_born_0 = drawTv("born", 0, 0);
+            let tv_born_1 = drawTv("born", 1, 1);
+
+            let it_childhood = drawItemText("幼年房間", ColorSlip.button_cancel, "text_childhood.png", () => { self.manager.toOtherPage(Page.childhood) });
+            let tv_childhood_0 = drawTv("childhood", 0, 2);
+            let tv_childhood_1 = drawTv("childhood", 1, 3);
+
+            it_born.position.y = -165;
+            tv_born_0.position.set(-120, -36);
+            tv_born_1.position.set(120, -36);
+
+            it_childhood.position.y = 90;
+            tv_childhood_0.position.set(-120, 220);
+            tv_childhood_1.position.set(120, 220);
+
+            layer.right.addChild(title_r, hint, it_born, tv_born_0, tv_born_1, it_childhood, tv_childhood_0, tv_childhood_1);
+
+            usingLayer = layer;
+        }
+        function drawPage_1() {
+            let layer = drawLayer(1);
+
+            let title_l = drawTitle("影片收集");
+            let pic_l = createSprite(textures["pic_youth.png"], 0.5, scale);
+            let it_youth = drawItemText("壯年房間", ColorSlip.button_cancel, "text_youth.png", () => { self.manager.toOtherPage(Page.youth) });
+            let tv_youth_0 = drawTv("youth", 0, 0);
+            let tv_youth_1 = drawTv("youth", 1, 1);
+            let tv_youth_2 = drawTv("youth", 2, 2);
+            let tv_youth_3 = drawTv("youth", 3, 3);
+
+            pic_l.position.y = 240;
+            it_youth.position.y = -280;
+            tv_youth_0.position.set(-120, -150);
+            tv_youth_1.position.set(120, -150);
+            tv_youth_2.position.set(-120, 50);
+            tv_youth_3.position.set(120, 50);
+
+            layer.left.addChild(title_l, it_youth, tv_youth_0, tv_youth_1, tv_youth_2, tv_youth_3, pic_l);
+
+            let title_r = drawTitle("影片收集");
+            let pic_r = createSprite(textures["pic_elderly.png"], 0.5, scale);
+            let it_elderly = drawItemText("老年房間", ColorSlip.button_cancel, "text_elderly.png", () => { self.manager.toOtherPage(Page.elderly) });
+            let tv_elderly_0 = drawTv("elderly", 0, 0);
+            let tv_elderly_1 = drawTv("elderly", 1, 1);
+            let tv_elderly_2 = drawTv("elderly", 2, 2);
+            let tv_elderly_3 = drawTv("elderly", 3, 3);
+
+            pic_r.position.y = 0;
+            it_elderly.position.y = -280;
+            tv_elderly_0.position.set(-120, -150);
+            tv_elderly_1.position.set(120, -150);
+            tv_elderly_2.position.set(-120, 220);
+            tv_elderly_3.position.set(120, 220);
+
+
+            layer.right.addChild(title_r, it_elderly, tv_elderly_0, tv_elderly_1, pic_r, tv_elderly_2, tv_elderly_3);
+
+            usingLayer = layer;
+        }
+        function drawPage_2() {
+            let layer = drawLayer(2);
+
+            let title_l = drawTitle("影片收集");
+
+            layer.left.addChild(title_l);
+
+            let title_r = drawTitle("影片收集");
+
+            layer.right.addChild(title_r);
+
             usingLayer = layer;
         }
         function drawPage_n() {
@@ -198,11 +281,13 @@ class Book extends UI {
             let hint = drawHint(`點擊進入首頁中的房子，尋找房間中”互動影片”\n，藉由互動的方式了解導盲犬知識與生活，每觀賞完一部\n皆放入探險手冊之中。`);
             let it = drawItemText("出生房間", ColorSlip.button_cancel,
                 textures["text_born.png"], () => { self.manager.toOtherPage(Page.born) });
+
             let tv = drawTv("", textures["video_born_0.png"], 0, false);
             tv.position.set(0, 0);
-            e.addChild(tv);
+            layer.right.addChild(tv);
+
             it.position.set(centerX, -240);
-            layer.addChild(title, hint, it);
+            layer.right.addChild(title, hint, it);
             layer.sortChildren();
             usingLayer = layer;
         }
@@ -230,12 +315,14 @@ class Book extends UI {
                 .drawRect(0, 0, 1920, 1080)
                 .endFill();
             bg.pivot.set(1920 / 2, 1080 / 2);
+            bg.interactive = true;
             c.addChild(bg);
             gsap.from(bg, { duration: 1, alpha: 0 });
             return bg;
         }
         function drawPages() {
             const bookmarkPosY = { "a": -280, "b": -80, "c": 120 };
+            const bookmarkPage = { "a": 0, "b": 1, "c": 2 };//todo
             let e = new PIXI.Container();
 
             let cover = createSprite(textures["bookcover.png"], 0.5, scale);
@@ -254,7 +341,7 @@ class Book extends UI {
                 e.bookmark[i] = createSprite(textures[`bookmark_${i}.png`], 0.5, scale);
                 e.bookmark[i].position.set(600, bookmarkPosY[i]);
                 e.bookmark[i].overEvent = bookmarkOverEvent;
-                e.bookmark[i].clickEvent = (e) => { onSelectSort(i); }
+                e.bookmark[i].clickEvent = (e) => { onSelectSort(i, bookmarkPage[i], bookpage[bookmarkPage[i]]); }
                 addPointerEvent(e.bookmark[i]);
             }
             cover.interactive = true;
@@ -291,45 +378,57 @@ class Book extends UI {
         function drawLayer(num) {
             let layer = new PIXI.Container();
             layer.pageIndex = num;
-            let arrow_l = drawArrow("left", () => { changePage("right", bookpage[layer.pageIndex - 1]) });
+
+            let arrow_l = drawArrow("left", () => { changePage("left", bookpage[layer.pageIndex - 1]) });
             let arrow_r = drawArrow("right", () => { changePage("right", bookpage[layer.pageIndex + 1]) });
             if (layer.pageIndex == 0) { arrow_l.interactive = false; arrow_l.alpha = 0.5; }
             if (layer.pageIndex == bookpage.length - 1) { arrow_r.interactive = false; arrow_r.alpha = 0.5; }
-            layer.addChild(arrow_l, arrow_r);
+
+            layer.right = new PIXI.Container();
+            layer.left = new PIXI.Container();
+            layer.left.position.x = -centerX;
+            layer.right.position.x = centerX;
+
+            layer.addChild(layer.right, layer.left, arrow_l, arrow_r);
             c.addChild(layer);
             gsap.from(layer, { duration: 0.5, alpha: 0 });
             return layer;
         }
         //in-page-item
-        function drawTitle(text, x = centerX, y = -340) {
+        function drawTitle(text, x = 0, y = -340) {
             let e = createText(text, TextStyle.Mirror_title_16, 0.5, scale);
             e.position.set(x, y);
             return e;
         }
-        function drawHint(text, x = centerX, y = -280) {
+        function drawHint(text, x = 0, y = -260) {
             let e = createText(text, TextStyle.Mirror_DogHint_16, 0.5, scale * 0.6);
             e.position.set(x, y);
             return e;
         }
         function drawItemText(text, color, textUrl, onClick = () => { }) {
             let e = new PIXI.Container();
-            let btn = drawButton(text, color, scale);
-            let st = createSprite(textUrl, [0, 0.5], scale);
+            let btn = drawButton(text, color, scale * 0.75);
+            let st = createSprite(textures[textUrl], [0, 0.5], scale);
             btn.clickEvent = () => {
                 let d = new Dialog(self.manager, {
                     context: `確定前往${text}？`,
                     submitText: "前往",
-                    submit: () => { d.remove(); onClick(); },
+                    submit: () => { d.remove(); onClick(); self.cancelEvent(); },
                     cancelText: "取消",
                     cancel: () => { d.remove(); }
                 })
             };
             addPointerEvent(btn);
-            st.position.set(0, 37);
+            st.position.set(65, 5);
             e.addChild(btn, st);
+            e.position.x = -180;
             return e;
         }
-        function drawTv(videoUrl, picUrl, tvType = 0, unlock = false) {
+        function drawTv(pageName, videoIndex, tvType = 0) {
+            const videoUrl = videoData[pageName][videoIndex].url;
+            const picUrl = `video_${pageName}_${videoIndex}.png`;
+            const videoName = videoData[pageName][videoIndex].name.split("_")[1];
+            const unlock = userData[pageName].video[videoName];
             let e = new PIXI.Container();
             let v = createSprite(textures[picUrl], 0.5, scale);
             let s = createSprite(textures[`tv_${tvType}.png`], 0.5, scale);
@@ -349,6 +448,10 @@ class Book extends UI {
                 addPointerEvent(e);
             }
             return e;
+            function drawVideo(url) {
+                //todo
+                drawDialog();
+            }
         }
         //event
         function changePage(dir = "right", goto = () => { }) {
@@ -387,10 +490,9 @@ class Book extends UI {
                 .to(flip, { duration: animTime, pixi: { skewY: 135 * skewDir, scaleX: scale * 0.5 }, ease: "none" })
                 .to(flip, { duration: animTime + scaleTime, pixi: { skewY: 180 * skewDir, scaleX: scale }, ease: "none" })
         }
-        function onSelectSort(sort = selectSort, goto = () => { }) {
-            c.removeChild(usingLayer);
-            if (sortList.indexOf(sort) < sortList.indexOf(selectSort)) { pageAnim("left", goto) }
-            else if (sortList.indexOf(sort) > sortList.indexOf(selectSort)) { pageAnim("right", goto) }
+        function onSelectSort(sort = selectSort, pageIndex = usingLayer.pageIndex, goto = drawPage_0) {
+            if (sortList.indexOf(sort) < sortList.indexOf(selectSort) || pageIndex < usingLayer.pageIndex) { changePage("left", goto) }
+            else if (sortList.indexOf(sort) > sortList.indexOf(selectSort) || pageIndex > usingLayer.pageIndex) { changePage("right", goto) }
             else { goto(); }
             selectSort = sort;
             page.ribbon.texture = textures[`ribbon_${selectSort}.png`];
@@ -415,8 +517,12 @@ class Book extends UI {
             }
 
         }
-        function drawVideo(url) {
-
+        function drawDialog() {
+            let d = new Dialog(self.manager, {
+                context: `這個功能還沒完成喔`,
+                cancelText: "確定",
+                cancel: () => { d.remove(); }
+            })
         }
     }
 }

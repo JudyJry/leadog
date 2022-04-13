@@ -417,6 +417,7 @@ class Book extends linkObject {
                     duration: 0.5, x: centerX, onComplete: () => {
                         page = drawPage();
                         onSelectSort();
+                        usingLayer.addChild(page.ribbon);
                         c.removeChild(s);
                     }
                 })
@@ -483,6 +484,7 @@ class Book extends linkObject {
                 .drawRect(0, 0, 1920, 1080)
                 .endFill();
             bg.pivot.set(1920 / 2, 1080 / 2);
+            bg.interactive = true;
             c.addChild(bg);
             gsap.from(bg, { duration: 1, alpha: 0 });
             return bg;
