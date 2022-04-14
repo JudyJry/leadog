@@ -17,6 +17,7 @@ export default class ElderlyObject extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "ElderlyObject";
+        this.soundUrl = "sound/elderly.mp3";
         this.children = {
             "background": new Background(this.manager, this, "image/building/elderly/bg.png"),
             "door": new Door(this.manager, this, -0.403, -0.067, "image/building/elderly/door.png"),

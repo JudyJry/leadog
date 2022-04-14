@@ -205,7 +205,7 @@ export class ActionSound {
         this.name = name;
         this.sound = sound.add(name, url);
         this.sound.loop = true;
-        this.sound.volume = this.manager.isMute ? 0 : volume;
+        this.sound.volume = volume;
         this.volume = volume;
         this.isEnd = false;
     }
@@ -222,7 +222,6 @@ export class ActionSound {
     resize() { }
     update() {
         if (this.isEnd) { this.onEnd(); }
-        else this.sound.volume = this.manager.isMute ? 0 : this.volume;
     }
 }
 export class ActionLine extends ActionObject {

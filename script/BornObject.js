@@ -18,6 +18,7 @@ export default class BornObject extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "BornObject";
+        this.soundUrl = "sound/born.mp3"
         this.children = {
             "background": new Background(this.manager, this, "image/building/born/bg.png"),
             "door": new Door(this.manager, this, -0.425, -0.026, "image/building/born/door.png"),

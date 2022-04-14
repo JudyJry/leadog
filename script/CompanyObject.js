@@ -15,6 +15,7 @@ export default class CompanyObject extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "companyObject";
+        this.soundUrl = "sound/company.mp3";
         this.children = {
             "background": new Background(this.manager, this, "image/building/company/bg.png"),
             "door": new Door(this.manager, this, -0.434, -0.052, "image/building/company/door.png"),

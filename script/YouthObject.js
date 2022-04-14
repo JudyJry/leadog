@@ -20,6 +20,7 @@ export default class YouthObject extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "YouthObject";
+        this.soundUrl = "sound/youth.mp3";
         this.children = {
             "background": new Background(this.manager, this, "image/building/youth/bg.png"),
             "door": new Door(this.manager, this, -0.064, 0.117, "image/building/youth/door.png"),

@@ -6,6 +6,7 @@ import * as gf from "./GameFunction.js";
 import { TextStyle } from './TextStyle.js';
 import { FilterSet } from './FilterSet.js';
 import { homePageData, objType } from './Data.js';
+import { sound } from '@pixi/sound';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -14,6 +15,7 @@ export default class HomeObject extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "HomeObject";
+        this.soundUrl = "sound/homepage.mp3";
         this.children = {
             "background": new Background(manager, "image/homepage/map.png"),
             "building": new Building(manager, this)

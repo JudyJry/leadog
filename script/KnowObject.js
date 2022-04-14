@@ -16,6 +16,7 @@ export default class KnowObject extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "KnowObject";
+        this.soundUrl = "sound/know.mp3"
         this.container = new PIXI.Container();
         this.isZoomIn = false;
         this.children = {

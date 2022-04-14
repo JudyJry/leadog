@@ -14,6 +14,7 @@ import MarketObject from './MarketObject.js';
 import KnowObject from './KnowObject.js';
 import { Page, userData } from './Data.js';
 import { addPointerEvent } from './GameFunction.js';
+import { sound } from '@pixi/sound';
 
 export default class Manager {
     constructor() {
@@ -109,6 +110,7 @@ export default class Manager {
         }.bind(this), () => { }, list);
     }
     toOtherPage(e) {
+        sound.remove(this.activeObj.name);
         this.removeChild();
         this.app.stage.removeChildren();
         switch (e) {

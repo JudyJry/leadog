@@ -6,6 +6,7 @@ import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { Page, uiData, videoData } from './Data.js';
 import { ColorSlip } from './ColorSlip.js';
 import { FilterSet } from './FilterSet.js';
+import { sound } from '@pixi/sound';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -854,10 +855,12 @@ class Menu extends UI {
                 if (this.manager.isMute == false) {
                     e.texture = PIXI.Texture.from("image/soundoff.svg");
                     this.manager.isMute = true;
+                    sound.muteAll();
                 }
                 else if (this.manager.isMute == true) {
                     e.texture = PIXI.Texture.from("image/soundon.svg");
                     this.manager.isMute = false;
+                    sound.unmuteAll();
                 }
             }.bind(this));
         function drawItem(self, index, path, clickEvent) {
@@ -906,7 +909,9 @@ class Index extends UI {
             s.scale.set(0.8);
             if (i < 4) { s.position.set(90 + (i * 75), 25); }
             else if (i >= 4) { s.position.set(90 + ((i - 4) * 75), 95); }
-            s.clickEvent = function () { this.manager.toOtherPage(uiData[i].name); }.bind(this);
+            s.clickEvent = function () {
+                this.manager.toOtherPage(uiData[i].name);
+            }.bind(this);
             addPointerEvent(s);
             this.index.addChild(s);
         }

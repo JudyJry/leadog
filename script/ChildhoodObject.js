@@ -15,6 +15,7 @@ export default class ChildhoodObject extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "ChildhoodObject";
+        this.soundUrl = "sound/childhood.mp3";
         this.userData = this.manager.userData.childhood;
         this.children = {
             "background": new Background(this.manager, this, "image/building/childhood/bg.png"),

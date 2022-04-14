@@ -10,6 +10,7 @@ export default class MarketObject extends PageObject {
     constructor(manager) {
         super(manager);
         this.name = "MarketObject";
+        this.soundUrl = "sound/market.mp3";
         this.children = {
             "background": new Background(this.manager, this, "image/building/born/bg.png"),
             "player": new Player(this.manager, this)
