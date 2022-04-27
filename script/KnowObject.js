@@ -5,7 +5,7 @@ import { linkObject, PageObject, Background, Player, Door, OtherObject } from '.
 import { FilterSet } from './FilterSet.js';
 import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { brightnessOverEvent, Dialog, drawButton, glowOverEvent } from './UI.js';
-import { bookData, videoData } from './Data.js';
+import { bookData } from './Data.js';
 import { TextStyle } from './TextStyle.js';
 import { ColorSlip } from './ColorSlip.js';
 
@@ -89,6 +89,14 @@ class Blackboard extends linkObject {
         this.uiScale = 0.5;
         this.originPos = [0, 34];
         this.texturesUrl = "image/building/know/blackboard/sprites.json"
+        this.isPlayVideo = false;
+        this.videoList = [
+            function () { return new KonwAction_Story1(this.manager, this) }.bind(this),
+            function () { return new KonwAction_Story2(this.manager, this) }.bind(this),
+            function () { return new KonwAction_Story3(this.manager, this) }.bind(this),
+            function () { return new KonwAction_Story4(this.manager, this) }.bind(this),
+            function () { return new KonwAction_Story5(this.manager, this) }.bind(this),
+        ]
     }
     onClickResize() { this.blackboard = this.drawBlackboard(); }
     clickEvent() {
@@ -197,7 +205,7 @@ class Blackboard extends linkObject {
                     let p = createSprite(textures["play.png"], 0.5, scale);
                     p.position.set(0, -16)
                     p.overEvent = glowOverEvent;
-                    p.clickEvent = () => { }
+                    p.clickEvent = () => { self.drawVideo(0).bind(self); }
                     addPointerEvent(p);
                     layer.addChild(videoList, p);
                     break;
@@ -289,7 +297,9 @@ class Blackboard extends linkObject {
 
                 b.addChild(v, p);
                 b.overEvent = glowOverEvent;
-                b.clickEvent = () => { };
+                b.clickEvent = () => {
+                    self.drawVideo(parseInt(i, 10) + 1).bind(self);
+                };
                 addPointerEvent(b);
 
                 vpb.addChild(b, t);
@@ -311,6 +321,49 @@ class Blackboard extends linkObject {
                 .to(eraser.front.scale, { duration: 0.2, y: "-=0.1" }, 1.5)
                 .to(eraser.bottom, { duration: 0.2, y: 10 }, 1.5)
                 .to(eraser, { duration: 0.2, x: 0, y: 206, rotation: 0 }, 1.5)
+        }
+    }
+    drawVideo(index) {
+        sound.pause(this.page.name);
+        this.video = this.videoList[index]();
+        this.video.setup();
+        this.drawUI();
+        this.isPlayVideo = true;
+    }
+    onClickResize() {
+        if (this.isPlayVideo) {
+            if (!this.fullButton.turn) {
+                this.page.container.scale.set(this.zoomIn);
+                this.page.container.position.set((-this._x + this.zoomInPos[0]) * this.zoomIn, (-this._y + this.zoomInPos[1]) * this.zoomIn);
+            }
+            else if (this.fullButton.turn) {
+                let fz = 2.3;
+                this.page.container.scale.set(fz);
+                this.page.container.position.set((-this._x + this.zoomInPos[0]) * fz, ((-this._y + this.zoomInPos[1]) * fz) + 7.5);
+            }
+        }
+    }
+    onClickUpdate() {
+        if (this.isPlayVideo) {
+            this.video.update();
+            if (this.fullButton.turn) {
+                if (this.manager.mouse.x < 250) {
+                    gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
+                }
+                else if (this.manager.mouse.x > 500) {
+                    gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
+                }
+                if (this.manager.mouse.y > this.h - 110) {
+                    gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 126) / 2.3) });
+                }
+                else if (this.manager.mouse.y < this.h - 110) {
+                    gsap.to(this.ui, { duration: 1, y: 0 });
+                }
+            }
+            else {
+                this.manager.uiSystem.container.position.x = 0;
+                this.ui.position.set(0);
+            }
         }
     }
 }
