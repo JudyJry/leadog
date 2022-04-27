@@ -4,11 +4,11 @@ import * as Action from "./Action";
 import { videoData } from './Data';
 
 export default class YouthAction_Instruction2 extends Action.ActionPage {
-    constructor(manager, obj) {
+    constructor(manager, obj, scale = 0.355) {
         super(manager, obj);
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.355;
+        this.videoScale = scale;
         this.videoData = videoData.youth[2];
         this.videoTextures = this.manager.resources["image/video/youth/sprites.json"].spritesheet.textures;
         this.children = {

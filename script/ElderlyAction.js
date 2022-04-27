@@ -5,11 +5,11 @@ import { videoData } from './Data';
 import { createSprite } from './GameFunction';
 
 export class ElderlyAction_Story1 extends Action.ActionPage {
-    constructor(manager, obj) {
+    constructor(manager, obj, scale = 0.44) {
         super(manager, obj);
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoScale = scale;
         this.videoData = videoData.elderly[0];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
@@ -21,8 +21,8 @@ export class ElderlyAction_Story1 extends Action.ActionPage {
     }
 }
 export class ElderlyAction_Story2 extends ElderlyAction_Story1 {
-    constructor(manager, obj) {
-        super(manager, obj);
+    constructor(manager, obj, scale = 0.44) {
+        super(manager, obj, scale);
         this.videoData = videoData.elderly[1];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
@@ -34,8 +34,8 @@ export class ElderlyAction_Story2 extends ElderlyAction_Story1 {
     }
 }
 export class ElderlyAction_Story3 extends ElderlyAction_Story1 {
-    constructor(manager, obj) {
-        super(manager, obj);
+    constructor(manager, obj, scale = 0.44) {
+        super(manager, obj, scale);
         this.videoData = videoData.elderly[2];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
@@ -73,11 +73,11 @@ class Elderly_Story_Video extends Action.ActionVideo {
     }
 }
 export class ElderlyAction_Hair extends Action.ActionPage {
-    constructor(manager, obj) {
+    constructor(manager, obj, scale = 0.256) {
         super(manager, obj);
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.256;
+        this.videoScale = scale;
         this.videoData = videoData.elderly[3];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),

@@ -4,12 +4,12 @@ import * as Action from "./Action";
 import { videoData } from './Data';
 
 export class BornAction_Story1 extends Action.ActionPage {
-    constructor(manager, obj) {
+    constructor(manager, obj, scale = 0.44) {
         super(manager, obj);
         this.name = "BornAction_Story1";
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoScale = scale;
         this.videoData = videoData.born[0];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
@@ -21,8 +21,8 @@ export class BornAction_Story1 extends Action.ActionPage {
     }
 }
 export class BornAction_Story2 extends BornAction_Story1 {
-    constructor(manager, obj) {
-        super(manager, obj);
+    constructor(manager, obj, scale = 0.44) {
+        super(manager, obj, scale);
         this.videoData = videoData.born[1];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),

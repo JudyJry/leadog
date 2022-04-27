@@ -5,11 +5,11 @@ import { createSprite } from './GameFunction';
 import { videoData } from './Data';
 
 export class ChildhoodAction_Kelly extends Action.ActionPage {
-    constructor(manager, obj) {
+    constructor(manager, obj, scale = 0.44) {
         super(manager, obj);
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoScale = scale;
         this.videoData = videoData.childhood[0];
         this.videoTextures = this.manager.resources["image/video/childhood/sprites.json"].spritesheet.textures;
         this.children = {
@@ -206,11 +206,11 @@ class Childhood_Kelly_Stage3_Button extends Action.ActionUI {
 }
 
 export class ChildhoodAction_Dora extends Action.ActionPage {
-    constructor(manager, obj) {
+    constructor(manager, obj, scale = 0.44) {
         super(manager, obj);
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoScale = scale;
         this.videoData = videoData.childhood[1];
         this.videoTextures = this.manager.resources["image/video/childhood/sprites.json"].spritesheet.textures;
         this.children = {

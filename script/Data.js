@@ -681,7 +681,7 @@ const bookData = {
     }
 }
 
-const userData = {
+/* const userData = {
     born: {
         video: {
             story1: false,
@@ -726,6 +726,55 @@ const userData = {
             middle: false,
             middle2: false,
             small: false,
+        }
+    }
+} */
+
+const userData = {
+    born: {
+        video: {
+            story1: true,
+            story2: true
+        },
+        mirror_collect: new Array(8).fill(true)
+    },
+    childhood: {
+        video: {
+            kelly: true,
+            dora: true
+        },
+        puzzle_complete: true
+    },
+    youth: {
+        video: {
+            bus: true,
+            instruction: true,
+            instruction2: true,
+            traffic: true,
+        },
+        mirror_correct: true
+    },
+    elderly: {
+        video: {
+            story1: true,
+            story2: true,
+            story3: true,
+            hair: true
+        },
+    },
+    know: {
+        video: {
+            story1: true,
+            story2: true,
+            story3: true,
+            story4: true,
+            story5: true,
+        },
+        lucky: {
+            big: true,
+            middle: true,
+            middle2: true,
+            small: true,
         }
     }
 }

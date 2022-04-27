@@ -4,12 +4,12 @@ import * as Action from "./Action";
 import { videoData } from './Data';
 
 export class KnowAction_Story1 extends Action.ActionPage {
-    constructor(manager, obj) {
+    constructor(manager, obj, scale = 0.353) {
         super(manager, obj);
         this.name = "KnowAction_Story1";
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.353;
+        this.videoScale = scale;
         this.videoData = videoData.know[0];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
@@ -21,8 +21,8 @@ export class KnowAction_Story1 extends Action.ActionPage {
     }
 }
 export class KnowAction_Story2 extends KnowAction_Story1 {
-    constructor(manager, obj) {
-        super(manager, obj);
+    constructor(manager, obj, scale = 0.353) {
+        super(manager, obj, scale);
         this.videoData = videoData.know[1];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
@@ -34,8 +34,8 @@ export class KnowAction_Story2 extends KnowAction_Story1 {
     }
 }
 export class KnowAction_Story3 extends KnowAction_Story1 {
-    constructor(manager, obj) {
-        super(manager, obj);
+    constructor(manager, obj, scale = 0.353) {
+        super(manager, obj, scale);
         this.videoData = videoData.know[2];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
@@ -47,8 +47,8 @@ export class KnowAction_Story3 extends KnowAction_Story1 {
     }
 }
 export class KnowAction_Story4 extends KnowAction_Story1 {
-    constructor(manager, obj) {
-        super(manager, obj);
+    constructor(manager, obj, scale = 0.353) {
+        super(manager, obj, scale);
         this.videoData = videoData.know[3];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
@@ -60,8 +60,8 @@ export class KnowAction_Story4 extends KnowAction_Story1 {
     }
 }
 export class KnowAction_Story5 extends KnowAction_Story1 {
-    constructor(manager, obj) {
-        super(manager, obj);
+    constructor(manager, obj, scale = 0.353) {
+        super(manager, obj, scale);
         this.videoData = videoData.know[4];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),

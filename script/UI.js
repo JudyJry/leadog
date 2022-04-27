@@ -170,6 +170,7 @@ class Book extends UI {
             drawPage_5
         ];
         const userData = this.manager.userData;
+        const animTime = 0.5;
         let selectSort = 0;
         let c = new PIXI.Container();
         let bg = drawBg();
@@ -373,11 +374,14 @@ class Book extends UI {
                             let bbg = createSprite(picTextures["dialog_start.png"], 0.5, scale);
                             let ss = createSprite(picTextures[`${d.gener}_${genderStr}.png`], 0.5, scale);
                             bg.clickEvent = () => {
-                                c.removeChild(bbg, ss, bg);
+                                gsap.timeline({ onComplete: () => { c.removeChild(ss, bbg, bg); } })
+                                    .to(ss, { duration: animTime, alpha: 0 })
+                                    .to(bg, { duration: animTime, alpha: 0 }, 0)
+                                    .to(bbg, { duration: animTime, alpha: 0 }, 0)
                             }
                             addPointerEvent(bg);
                             c.addChild(bbg, ss);
-                            gsap.from(ss, { duration: 1, alpha: 0 });
+                            gsap.from(ss, { duration: animTime, alpha: 0 });
                         }
                         addPointerEvent(e);
                     }
@@ -392,6 +396,11 @@ class Book extends UI {
                     let lock = createSprite(textures["lock.png"], 0.5, scale);
                     p.tint = 0x7e7e7e;
                     e.addChild(lock);
+                }
+                else {
+                    e.overEvent = brightnessOverEvent;
+                    e.clickEvent = () => { drawUnlockObject(`image/book/puzzle_${i}.png`); }
+                    addPointerEvent(e);
                 }
                 return e;
             }
@@ -428,6 +437,9 @@ class Book extends UI {
                 }
                 else {
                     gsap.timeline({ repeat: -1 }).to(l, { duration: 5, rotation: Math.PI * 2, ease: "none" });
+                    e.overEvent = brightnessOverEvent;
+                    e.clickEvent = () => { drawUnlockObject(`image/book/medal.png`); }
+                    addPointerEvent(e);
                 }
                 return e;
             }
@@ -488,26 +500,13 @@ class Book extends UI {
                         }
                         else {
                             e.overEvent = brightnessOverEvent;
-                            e.clickEvent = () => {
-                                let bg = drawBg();
-                                let ss = createSprite(picTextures[picList[i]], 0.5, scale);
-                                bg.clickEvent = () => {
-                                    c.removeChild(ss, bg);
-                                }
-                                addPointerEvent(bg);
-                                c.addChild(ss);
-                                gsap.from(ss, { duration: 1, alpha: 0 });
-                            }
+                            e.clickEvent = () => { drawUnlockObject(picTextures[picList[i]]); }
                             addPointerEvent(e);
                         }
                         pic.addChild(e);
                     }
                 }
             }
-        }
-        function drawPage_n(num) {
-            let layer = drawLayer(num);
-            usingLayer = layer;
         }
         function drawEnd() {
             let s = createSprite("image/building/know/book/cover.png", 0.5, scale * 0.5);
@@ -746,6 +745,25 @@ class Book extends UI {
                 gsap.to(e, { duration: 0.5, x: 600 });
             }
 
+        }
+        function drawUnlockObject(url) {
+            let bg = drawBg();
+            let ss = createSprite(url, 0.5, scale);
+            let hint = createText("點擊任意處關閉", TextStyle.white, 0.5, scale);
+            hint.position.set(0, -(self.h / 2) + 80);
+            bg.clickEvent = () => {
+                gsap.killTweensOf(hint);
+                c.removeChild(hint);
+                gsap.timeline({ onComplete: () => { c.removeChild(ss, bg); } })
+                    .to(ss, { duration: animTime, alpha: 0 })
+                    .to(bg, { duration: animTime, alpha: 0 }, 0)
+            }
+            addPointerEvent(bg);
+            c.addChild(hint, ss);
+            gsap.from(ss, { duration: animTime, alpha: 0 });
+            gsap.timeline({ repeat: -1 })
+                .from(hint, { duration: animTime * 2, alpha: 0 })
+                .from(hint, { duration: animTime * 2, alpha: 1 })
         }
         function drawDialog() {
             let d = new Dialog(self.manager, {
