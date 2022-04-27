@@ -183,7 +183,8 @@ const loadList = {
         //video-ui
         "image/video/video.png",
         "image/TGDAlogo.png",
-        "image/video/actionUI_sprites.json"
+        "image/video/actionUI_sprites.json",
+        "image/video/elderly/elderly_video_sprites.json"
     ],
     "home": [
         "image/homepage/map.png",

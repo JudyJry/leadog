@@ -9,15 +9,15 @@ export class KnowAction_Story1 extends Action.ActionPage {
         this.name = "KnowAction_Story1";
         this.offset = 50;
         this.isPlayGame = false;
-        this.videoScale = 0.44;
+        this.videoScale = 0.353;
         this.videoData = videoData.know[0];
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
             "video": new Know_Story_Video(this.manager, this, this.videoData.url, this.videoData.endTime),
-            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText, "image/video/elderly/elderly_video_sprites.json"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
+        this.end = new KnowEnd(this.manager, this, this.videoData.endText)
     }
 }
 export class KnowAction_Story2 extends KnowAction_Story1 {
@@ -27,10 +27,10 @@ export class KnowAction_Story2 extends KnowAction_Story1 {
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
             "video": new Know_Story_Video(this.manager, this, this.videoData.url, this.videoData.endTime),
-            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText, "image/video/elderly/elderly_video_sprites.json"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
+        this.end = new KnowEnd(this.manager, this, this.videoData.endText)
     }
 }
 export class KnowAction_Story3 extends KnowAction_Story1 {
@@ -40,10 +40,10 @@ export class KnowAction_Story3 extends KnowAction_Story1 {
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
             "video": new Know_Story_Video(this.manager, this, this.videoData.url, this.videoData.endTime),
-            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText, "image/video/elderly/elderly_video_sprites.json"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
+        this.end = new KnowEnd(this.manager, this, this.videoData.endText)
     }
 }
 export class KnowAction_Story4 extends KnowAction_Story1 {
@@ -53,10 +53,10 @@ export class KnowAction_Story4 extends KnowAction_Story1 {
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
             "video": new Know_Story_Video(this.manager, this, this.videoData.url, this.videoData.endTime),
-            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText, "image/video/elderly/elderly_video_sprites.json"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
+        this.end = new KnowEnd(this.manager, this, this.videoData.endText)
     }
 }
 export class KnowAction_Story5 extends KnowAction_Story1 {
@@ -66,10 +66,10 @@ export class KnowAction_Story5 extends KnowAction_Story1 {
         this.children = {
             "sound": new Action.ActionSound(this.manager, this, this.videoData.name, this.videoData.soundUrl),
             "video": new Know_Story_Video(this.manager, this, this.videoData.url, this.videoData.endTime),
-            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText),
+            "ui": new Action.ActionStart(this.manager, this, this.videoData.startText, "image/video/elderly/elderly_video_sprites.json"),
             "logo": new Action.LogoVideo(this.manager, this)
         }
-        this.end = new Action.ActionEnd(this.manager, this, this.videoData.endText)
+        this.end = new KnowEnd(this.manager, this, this.videoData.endText)
     }
 }
 class Know_Story_Video extends Action.ActionVideo {
@@ -109,5 +109,13 @@ class Know_Story_Video extends Action.ActionVideo {
                 this.videoCrol.currentTime = 0;
             }.bind(this)
         });
+    }
+}
+class KnowEnd extends Action.ActionEnd {
+    constructor(manager, action, text) {
+        super(manager, action, text);
+    }
+    onEnd() {
+        this.action.obj.onVideoEnd();
     }
 }

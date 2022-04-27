@@ -8,6 +8,8 @@ import { brightnessOverEvent, Dialog, drawButton, glowOverEvent } from './UI.js'
 import { bookData } from './Data.js';
 import { TextStyle } from './TextStyle.js';
 import { ColorSlip } from './ColorSlip.js';
+import { KnowAction_Story1, KnowAction_Story2, KnowAction_Story3, KnowAction_Story4, KnowAction_Story5 } from './KnowAction.js';
+import { sound } from '@pixi/sound';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -35,54 +37,20 @@ class Billboard extends linkObject {
     constructor(manager, page) {
         super(manager, page);
         this.name = "寄養家庭條件";
-        this.x = -0.189;
+        this.x = -0.21;
         this.y = 0.017;
         this.url = "image/building/know/billboard.png";
         this.zoomIn = 2;
     }
-    onClickResize() { this.clickButton = this.drawClickButton(); }
     clickEvent() {
-        this.blink.outerStrength = 0;
-        this.sprite.interactive = false;
-        this.zoom();
-        this.page.children.player.move(this._x, this.sprite.width);
-        this.page.isZoomIn = true;
-        this.isClick = true;
-        if (!this.cancel) { this.drawCancel(); }
-        this.cancel.visible = true;
-        this.clickButton = this.drawClickButton();
-    }
-    cancelEvent() {
-        let tl = gsap.timeline({
-            onComplete: function () {
-                this.sprite.interactive = true;
-            }.bind(this)
-        });
-        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
-        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
-        this.isClick = false;
-        this.page.isZoomIn = false;
-        this.cancel.visible = false;
-        this.cancel = undefined;
-        this.container.removeChild(this.clickButton);
-    }
-    drawClickButton() {
-        let e = createSprite("image/building/know/billboard_click.png");
-        e.position.set(34, 108);
-        e.overEvent = brightnessOverEvent;
-        e.clickEvent = () => {
-            //todo
-        }
-        addPointerEvent(e);
-        this.container.addChild(e);
-        return e;
+        this.page.children.blackboard.clickEvent();
     }
 }
 class Blackboard extends linkObject {
     constructor(manager, page) {
         super(manager, page);
         this.name = "收養家庭條件";
-        this.x = -0.017;
+        this.x = -0.05;
         this.y = -0.095;
         this.url = "image/building/know/blackboard.png";
         this.zoomIn = 1.8;
@@ -90,15 +58,22 @@ class Blackboard extends linkObject {
         this.originPos = [0, 34];
         this.texturesUrl = "image/building/know/blackboard/sprites.json"
         this.isPlayVideo = false;
+        this.videoIndex = 0;
         this.videoList = [
-            function () { return new KonwAction_Story1(this.manager, this) }.bind(this),
-            function () { return new KonwAction_Story2(this.manager, this) }.bind(this),
-            function () { return new KonwAction_Story3(this.manager, this) }.bind(this),
-            function () { return new KonwAction_Story4(this.manager, this) }.bind(this),
-            function () { return new KonwAction_Story5(this.manager, this) }.bind(this),
+            function () { return new KnowAction_Story1(this.manager, this) }.bind(this),
+            function () { return new KnowAction_Story2(this.manager, this) }.bind(this),
+            function () { return new KnowAction_Story3(this.manager, this) }.bind(this),
+            function () { return new KnowAction_Story4(this.manager, this) }.bind(this),
+            function () { return new KnowAction_Story5(this.manager, this) }.bind(this),
         ]
+        this.uiOptions = {
+            texturesUrl: "image/video/elderly/elderly_video_sprites.json",
+            frameUrl: "image/video/video.png",
+            frameScale: 0.25,
+            uiHitArea: 85, uiScale: 0.22,
+            standard: -310, height: 160, space: 40
+        }
     }
-    onClickResize() { this.blackboard = this.drawBlackboard(); }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
@@ -122,18 +97,37 @@ class Blackboard extends linkObject {
         }
     }
     cancelEvent() {
-        let tl = gsap.timeline({
-            onComplete: function () {
-                this.sprite.interactive = true;
-            }.bind(this)
-        });
+        let tl = gsap.timeline({ onComplete: function () { this.sprite.interactive = true; }.bind(this) });
         tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
         tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
         this.isClick = false;
+        if (this.isPlayVideo) {
+            sound.play(this.page.name);
+            this.isPlayVideo = false;
+            this.video.children.logo.cancelEvent();
+            this.pause();
+            this.video.container.removeChildren();
+            this.container.removeChild(this.video.container, this.ui);
+            if (this.fullButton.turn) {
+                closeFullscreen();
+                this.fullButton.turn = false;
+            }
+            gsap.killTweensOf(this.manager.uiSystem.container);
+            this.manager.uiSystem.container.position.x = 0;
+        }
         this.page.isZoomIn = false;
         this.cancel.visible = false;
         this.cancel = undefined;
         this.container.removeChild(this.blackboard);
+        function closeFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
     }
     drawBlackboard() {
         const self = this;
@@ -141,12 +135,12 @@ class Blackboard extends linkObject {
         const textures = this.textures;
         let c = new PIXI.Container();
         let frame = createSprite(textures["frame.png"], 0.5, scale);
-        let eraser = drawEraser();
+        c.eraser = drawEraser();
         let chalk_0 = createSprite(textures["chalk_0.png"], 0.5, scale);
-        let usingLayer = new PIXI.Container();
+        c.usingLayer = new PIXI.Container();
         chalk_0.position.set(-301, 219);
         c.scale.set(0.88);
-        c.addChild(frame, usingLayer, chalk_0, eraser);
+        c.addChild(frame, c.usingLayer, chalk_0, c.eraser);
         drawStart();
         this.container.addChild(c);
         return c;
@@ -205,7 +199,7 @@ class Blackboard extends linkObject {
                     let p = createSprite(textures["play.png"], 0.5, scale);
                     p.position.set(0, -16)
                     p.overEvent = glowOverEvent;
-                    p.clickEvent = () => { self.drawVideo(0).bind(self); }
+                    p.clickEvent = () => { self.drawVideo(0); }
                     addPointerEvent(p);
                     layer.addChild(videoList, p);
                     break;
@@ -240,7 +234,7 @@ class Blackboard extends linkObject {
             layer.position.set(0, 17);
             c.addChildAt(layer, 1);
             gsap.from(layer, { duration: 0.5, alpha: 0 });
-            usingLayer = layer;
+            c.usingLayer = layer;
             return layer;
         }
         function drawEraser() {
@@ -298,7 +292,7 @@ class Blackboard extends linkObject {
                 b.addChild(v, p);
                 b.overEvent = glowOverEvent;
                 b.clickEvent = () => {
-                    self.drawVideo(parseInt(i, 10) + 1).bind(self);
+                    self.drawVideo(parseInt(i, 10) + 1);
                 };
                 addPointerEvent(b);
 
@@ -309,26 +303,44 @@ class Blackboard extends linkObject {
         }
         //anim
         function pageAnim(goto) {
-            gsap.timeline({ onComplete: () => { c.removeChild(usingLayer); goto(); } })
-                .to(eraser.front.scale, { duration: 0.2, y: "+=0.1" }, 0)
-                .to(eraser.bottom, { duration: 0.2, y: 0 }, 0)
-                .to(eraser, { duration: 0.2, rotation: Math.PI / 4 }, 0)
-                .to(eraser, { duration: 0.3, x: -151, y: -169 })
-                .to(eraser, { duration: 0.3, x: -230, y: 87 })
-                .to(eraser, { duration: 0.3, x: 168, y: -147 })
-                .to(eraser, { duration: 0.3, x: 94, y: 110 })
-                .to(usingLayer, { duration: 1, alpha: 0 }, 0.5)
-                .to(eraser.front.scale, { duration: 0.2, y: "-=0.1" }, 1.5)
-                .to(eraser.bottom, { duration: 0.2, y: 10 }, 1.5)
-                .to(eraser, { duration: 0.2, x: 0, y: 206, rotation: 0 }, 1.5)
+            gsap.timeline({ onComplete: () => { c.removeChild(c.usingLayer); goto(); } })
+                .to(c.eraser.front.scale, { duration: 0.2, y: "+=0.1" }, 0)
+                .to(c.eraser.bottom, { duration: 0.2, y: 0 }, 0)
+                .to(c.eraser, { duration: 0.2, rotation: Math.PI / 4 }, 0)
+                .to(c.eraser, { duration: 0.3, x: -151, y: -169 })
+                .to(c.eraser, { duration: 0.3, x: -230, y: 87 })
+                .to(c.eraser, { duration: 0.3, x: 168, y: -147 })
+                .to(c.eraser, { duration: 0.3, x: 94, y: 110 })
+                .to(c.usingLayer, { duration: 1, alpha: 0 }, 0.5)
+                .to(c.eraser.front.scale, { duration: 0.2, y: "-=0.1" }, 1.5)
+                .to(c.eraser.bottom, { duration: 0.2, y: 10 }, 1.5)
+                .to(c.eraser, { duration: 0.2, x: 0, y: 206, rotation: 0 }, 1.5)
         }
     }
     drawVideo(index) {
         sound.pause(this.page.name);
-        this.video = this.videoList[index]();
+        this.videoIndex = index;
+        this.blackboard.usingLayer.visible = false;
+        this.blackboard.eraser.visible = false;
+        this.video = this.videoList[this.videoIndex]();
         this.video.setup();
+        this.video.container.position.set(0, -11.7);
+        this.container.setChildIndex(this.video.container, 3);
         this.drawUI();
         this.isPlayVideo = true;
+    }
+    onVideoEnd() {
+        sound.play(this.page.name);
+        this.blackboard.usingLayer.visible = true;
+        this.blackboard.eraser.visible = true;
+        this.isPlayVideo = false;
+        this.container.removeChild(this.video.container, this.ui);
+    }
+    resize() {
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.scale.set(this.manager.canvasScale);
+        if (this.isClick && this.fullButton) { this.onClickResize(); }
     }
     onClickResize() {
         if (this.isPlayVideo) {
@@ -337,10 +349,13 @@ class Blackboard extends linkObject {
                 this.page.container.position.set((-this._x + this.zoomInPos[0]) * this.zoomIn, (-this._y + this.zoomInPos[1]) * this.zoomIn);
             }
             else if (this.fullButton.turn) {
-                let fz = 2.3;
+                let fz = 2.85;
                 this.page.container.scale.set(fz);
-                this.page.container.position.set((-this._x + this.zoomInPos[0]) * fz, ((-this._y + this.zoomInPos[1]) * fz) + 7.5);
+                this.page.container.position.set((-this._x + this.zoomInPos[0]) * fz, ((-this._y + this.zoomInPos[1] + 11.7) * fz));
             }
+        }
+        else {
+            { this.blackboard = this.drawBlackboard(); }
         }
     }
     onClickUpdate() {
@@ -354,10 +369,10 @@ class Blackboard extends linkObject {
                     gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
                 }
                 if (this.manager.mouse.y > this.h - 110) {
-                    gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 126) / 2.3) });
+                    gsap.to(this.ui, { duration: 1, y: 0 });
                 }
                 else if (this.manager.mouse.y < this.h - 110) {
-                    gsap.to(this.ui, { duration: 1, y: 0 });
+                    gsap.to(this.ui, { duration: 1, y: ((screen.height - window.innerHeight + 126) / 2.3) });
                 }
             }
             else {
@@ -365,6 +380,137 @@ class Blackboard extends linkObject {
                 this.ui.position.set(0);
             }
         }
+    }
+    drawUI() {
+        this.ui = new PIXI.Container();
+        const self = this;
+        const textures = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures;
+        const uiScale = this.uiOptions.uiScale;
+        const stan = this.uiOptions.standard;
+        const h = this.uiOptions.height;
+        const space = this.uiOptions.space;
+        //this.frame = createSprite(this.uiOptions.frameUrl, 0.5, this.uiOptions.frameScale);
+        //this.ui.addChild(this.frame);
+        this.playButton = drawPlayButton();
+        this.volumeButton = drawVolumeButton();
+        this.nextButton = drawNextButton();
+        this.fullButton = drawFullButton();
+        this.container.addChild(this.ui);
+        function drawPlayButton() {
+            let e = createSprite(textures["play.png"], 0.5, uiScale);
+            e.position.set(stan, h);
+            e.clickEvent = function () {
+                if (self.video.children.video.isStart && !self.video.children.video.isPlayGame) {
+                    if (self.video.videoCrol.paused) { self.play(); } else { self.pause(); }
+                }
+            }.bind(self);
+            UItint(e);
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function drawVolumeButton() {
+            let e = createSprite(textures["volume.png"], 0.5, uiScale);
+            e.position.set(stan + space * 2, h);
+            e.clickEvent = function () {
+                if (self.video.videoCrol.muted) {
+                    e.turn = false;
+                    self.video.videoCrol.muted = false;
+                    self.video.sound.muted = false;
+                    e.texture = textures["volume.png"];
+                }
+                else {
+                    e.turn = true;
+                    self.video.videoCrol.muted = true;
+                    self.video.sound.muted = true;
+                    e.texture = textures["volume_off.png"];
+                }
+            }.bind(self);
+            e.turn = false;
+            UItint(e);
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function drawNextButton() {
+            let e = createSprite(textures["next.png"], 0.5, uiScale);
+            e.position.set(stan + space * 1, h);
+            e.clickEvent = function () {
+                self.videoIndex++;
+                if (self.videoIndex >= self.videoList.length) { self.videoIndex = 0 }
+                self.pause();
+                self.container.removeChild(self.video.container);
+                self.video = self.videoList[self.videoIndex]();
+                self.video.setup();
+                self.video.container.position.set(0, -11.7);
+                self.video.videoCrol.muted = self.volumeButton.turn;
+            }.bind(self);
+            UItint(e);
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function drawFullButton() {
+            let e = createSprite(textures["full.png"], 0.5, uiScale);
+            e.position.set(-stan, h);
+            e.clickEvent = function () {
+                if (e.turn) {
+                    closeFullscreen();
+                    e.turn = false;
+                }
+                else {
+                    openFullscreen(document.documentElement);
+                    e.turn = true;
+                }
+                function openFullscreen(elem) {
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.webkitRequestFullscreen) { /* Safari */
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) { /* IE11 */
+                        elem.msRequestFullscreen();
+                    }
+                }
+                function closeFullscreen() {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) { /* Safari */
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) { /* IE11 */
+                        document.msExitFullscreen();
+                    }
+                }
+            }.bind(self);
+            e.turn = false;
+            UItint(e);
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function addUIButtonEvent(e) {
+            const uiHitArea = self.uiOptions.uiHitArea;
+            e.hitArea = new PIXI.Rectangle(-uiHitArea, -uiHitArea, uiHitArea * 2, uiHitArea * 2);
+            addPointerEvent(e);
+        }
+        function UItint(e, color = ColorSlip.white) {
+            e.tint = color;
+        }
+    }
+    UItint(color = ColorSlip.white) {
+        this.playButton.tint = color;
+        this.volumeButton.tint = color;
+        this.nextButton.tint = color;
+        this.fullButton.tint = color;
+    }
+    play() {
+        this.video.videoCrol.play();
+        this.video.sound.play();
+        this.playButton.texture = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures["pause.png"];
+    }
+    pause() {
+        this.video.videoCrol.pause();
+        this.video.sound.pause();
+        this.playButton.texture = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures["play.png"];
     }
 }
 class Gashapon extends linkObject {

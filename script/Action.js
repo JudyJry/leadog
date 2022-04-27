@@ -549,7 +549,7 @@ export class ActionEnd extends ActionUI {
             this.container.alpha = 0;
 
             const videoData = this.action.videoData.name.split("_");
-            this.manager.userData[videoData[0]].video[videoData[1]] = true;;
+            this.manager.userData[videoData[0]].video[videoData[1]] = true;
         }
     }
     draw2() {
@@ -582,10 +582,13 @@ export class ActionEnd extends ActionUI {
             duration: 1, alpha: 0, onComplete: function () {
                 this.action.removeChild(this.container);
                 delete this.action.children.ui;
-                this.action.obj.cancelEvent();
                 this.manager.uiSystem.container.position.set(0);
+                this.onEnd();
             }.bind(this)
         }, "+=2");
+    }
+    onEnd() {
+        this.action.obj.cancelEvent();
     }
 }
 export class ActionLinsStage extends ActionUI {

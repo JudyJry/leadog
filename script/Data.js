@@ -146,41 +146,41 @@ const videoData = {
             name: "know_story1",
             url: "video/know_story1.mp4",
             soundUrl: "sound/know_story1.mp3",
-            startText: "一起看看狗狗與收養家庭的故事吧！",
-            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 0
+            startText: "一起來聽聽輔導員的自我介紹吧！",
+            endText: `謝謝你聆聽輔導員的自我介紹\n以後可以在「探險手冊」重新觀看喔！`,
+            endTime: 91
         },
         {
             name: "know_story2",
             url: "video/know_story2.mp4",
             soundUrl: "sound/know_story2.mp3",
-            startText: "一起看看狗狗與收養家庭的故事吧！",
-            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 0
+            startText: "一起來聽聽寄養家庭的申請流程吧！",
+            endText: `謝謝你聆聽寄養家庭的申請流程\n以後可以在「探險手冊」重新觀看喔！`,
+            endTime: 89
         },
         {
             name: "know_story3",
             url: "video/know_story3.mp4",
             soundUrl: "sound/know_story3.mp3",
-            startText: "一起看看狗狗與收養家庭的故事吧！",
-            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 0
+            startText: "一起來聽聽想成為寄養家庭的原因吧！",
+            endText: `謝謝你聆聽想成為寄養家庭的原因\n以後可以在「探險手冊」重新觀看喔！`,
+            endTime: 69
         },
         {
             name: "know_story4",
             url: "video/know_story4.mp4",
             soundUrl: "sound/know_story4.mp3",
-            startText: "一起看看狗狗與收養家庭的故事吧！",
-            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 0
+            startText: "一起來聽聽寄養家庭的改變吧！",
+            endText: `謝謝你聆聽寄養家庭的改變\n以後可以在「探險手冊」重新觀看喔！`,
+            endTime: 99
         },
         {
             name: "know_story5",
             url: "video/know_story5.mp4",
             soundUrl: "sound/know_story5.mp3",
-            startText: "一起看看狗狗與收養家庭的故事吧！",
-            endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 0
+            startText: "一起來聽聽來自輔導員的呼籲吧！",
+            endText: `謝謝你聆聽來自輔導員的呼籲\n以後可以在「探險手冊」重新觀看喔！`,
+            endTime: 57
         },
     ]
 }
