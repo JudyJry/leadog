@@ -245,6 +245,8 @@ const loadList = {
         "image/building/elderly/video.png",
         "image/video/elderly/elderly_video_sprites.json",
         "image/map/sprites.json",
+        "image/building/elderly/book/cover.png",
+        "image/building/elderly/book/sprites.json",
     ],
     "know": [
         "image/building/know/bg.png",
