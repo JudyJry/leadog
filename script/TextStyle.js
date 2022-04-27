@@ -2,6 +2,12 @@ import * as PIXI from "pixi.js";
 import { ColorSlip } from "./ColorSlip";
 
 const TextStyle = {
+    white: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-B",
+        fontSize: 30,
+        fill: ColorSlip.white,
+        align: "center"
+    }),
     link: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-B",
         fontSize: 30,

@@ -5,7 +5,7 @@ import { linkObject, PageObject, Background, Player, Door, OtherObject } from '.
 import { FilterSet } from './FilterSet.js';
 import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { brightnessOverEvent, Dialog, drawButton, glowOverEvent } from './UI.js';
-import { bookData } from './Data.js';
+import { bookData, videoData } from './Data.js';
 import { TextStyle } from './TextStyle.js';
 import { ColorSlip } from './ColorSlip.js';
 
@@ -85,9 +85,12 @@ class Blackboard extends linkObject {
         this.x = -0.017;
         this.y = -0.095;
         this.url = "image/building/know/blackboard.png";
-        this.zoomIn = 2;
+        this.zoomIn = 1.8;
+        this.uiScale = 0.5;
+        this.originPos = [0, 34];
+        this.texturesUrl = "image/building/know/blackboard/sprites.json"
     }
-    onClickResize() { this.clickButton = this.drawClickButton(); }
+    onClickResize() { this.blackboard = this.drawBlackboard(); }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
@@ -97,7 +100,18 @@ class Blackboard extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        this.clickButton = this.drawClickButton();
+        try {
+            const self = this;
+            this.manager.app.loader.add(this.texturesUrl);
+            this.manager.app.loader.load(() => {
+                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.blackboard = self.drawBlackboard();
+            });
+        }
+        catch {
+            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.blackboard = this.drawBlackboard();
+        }
     }
     cancelEvent() {
         let tl = gsap.timeline({
@@ -111,18 +125,193 @@ class Blackboard extends linkObject {
         this.page.isZoomIn = false;
         this.cancel.visible = false;
         this.cancel = undefined;
-        this.container.removeChild(this.clickButton);
+        this.container.removeChild(this.blackboard);
     }
-    drawClickButton() {
-        let e = createSprite("image/building/know/blackboard_click.png");
-        e.position.set(272, 122);
-        e.overEvent = brightnessOverEvent;
-        e.clickEvent = () => {
-            //todo
+    drawBlackboard() {
+        const self = this;
+        const scale = this.uiScale;
+        const textures = this.textures;
+        let c = new PIXI.Container();
+        let frame = createSprite(textures["frame.png"], 0.5, scale);
+        let eraser = drawEraser();
+        let chalk_0 = createSprite(textures["chalk_0.png"], 0.5, scale);
+        let usingLayer = new PIXI.Container();
+        chalk_0.position.set(-301, 219);
+        c.scale.set(0.88);
+        c.addChild(frame, usingLayer, chalk_0, eraser);
+        drawStart();
+        this.container.addChild(c);
+        return c;
+        //page
+        function drawStart() {
+            let layer = drawLayer();
+            let line = createSprite(textures["line.png"], 0.5, scale);
+            let a = createSprite(textures["a.png"], 0.5, scale);
+            let a_dog = createSprite(textures["a_dog.png"], 0.5, scale);
+            let b = createSprite(textures["b.png"], 0.5, scale);
+            let b_dog = createSprite(textures["b_dog.png"], 0.5, scale);
+            let chalk_1 = createSprite(textures["chalk_1.png"], 0.5, scale);
+            let click_a = drawClickButton("a");
+            let click_b = drawClickButton("b");
+            a.position.set(-204, -140);
+            a_dog.position.set(-204, 149);
+            click_a.position.set(-204, -31);
+            b.position.set(204, -140);
+            b_dog.position.set(204, 149);
+            click_b.position.set(204, -31);
+            chalk_1.position.set(115, 184);
+            line.position.set(0, -36);
+            layer.addChild(line, a, a_dog, b, b_dog, chalk_1, click_a, click_b);
+
+            function drawClickButton(str) {
+                let e = new PIXI.Container();
+                let sole = createSprite(textures["sole.png"], 0.5, scale);
+                let text = createSprite(textures["click.png"], 0.5, scale);
+                text.position.set(5, 30);
+                if (str == "a") {
+                    text.position.set(-5, 30);
+                    sole.scale.set(-scale, scale);
+                    e.clickEvent = () => { pageAnim(draw_a.bind(this, 0)) }
+                }
+                else { e.clickEvent = () => { pageAnim(draw_b.bind(this, 0)) } }
+                e.overEvent = brightnessOverEvent;
+
+                addPointerEvent(e);
+                e.addChild(sole, text);
+                return e;
+            }
         }
-        addPointerEvent(e);
-        this.container.addChild(e);
-        return e;
+        function draw_a(index) {
+            let layer = drawLayer();
+            let page = createSprite(`image/building/know/blackboard/a_${index}.png`, 0.5, scale);
+            let arrow_l = drawArrow("left", () => { pageAnim(draw_a.bind(this, index - 1)) });
+            let arrow_r = drawArrow("right", () => { pageAnim(draw_a.bind(this, index + 1)) });
+            layer.addChild(page);
+            switch (index) {
+                case 0:
+                    arrow_l = drawArrow("left", () => { pageAnim(drawStart) });
+                    page.position.set(0, 16);
+                    break;
+                case 1:
+                    let videoList = drawVideoList();
+                    let p = createSprite(textures["play.png"], 0.5, scale);
+                    p.position.set(0, -16)
+                    p.overEvent = glowOverEvent;
+                    p.clickEvent = () => { }
+                    addPointerEvent(p);
+                    layer.addChild(videoList, p);
+                    break;
+                case 5:
+                    arrow_r.alpha = 0.5;
+                    arrow_r.interactive = false;
+                    break;
+            }
+            layer.addChild(arrow_l, arrow_r);
+        }
+        function draw_b(index) {
+            let layer = drawLayer();
+            let page = createSprite(`image/building/know/blackboard/b_${index}.png`, 0.5, scale);
+            let arrow_l = drawArrow("left", () => { pageAnim(draw_b.bind(this, index - 1)) });
+            let arrow_r = drawArrow("right", () => { pageAnim(draw_b.bind(this, index + 1)) });
+            layer.addChild(page);
+            switch (index) {
+                case 0:
+                    arrow_l = drawArrow("left", () => { pageAnim(drawStart) });
+                    page.position.set(0, 16);
+                    break;
+                case 3:
+                    arrow_r.alpha = 0.5;
+                    arrow_r.interactive = false;
+                    break;
+            }
+            layer.addChild(arrow_l, arrow_r);
+        }
+        //obj
+        function drawLayer() {
+            let layer = new PIXI.Container();
+            layer.position.set(0, 17);
+            c.addChildAt(layer, 1);
+            gsap.from(layer, { duration: 0.5, alpha: 0 });
+            usingLayer = layer;
+            return layer;
+        }
+        function drawEraser() {
+            let e = new PIXI.Container();
+            e.front = createSprite(textures["eraser_front.png"], 0.5, scale);
+            e.bottom = createSprite(textures["eraser_bottom.png"], 0.5, scale);
+            e.bottom.position.y = 10;
+            e.addChild(e.bottom, e.front);
+            e.position.set(0, 206);
+            return e;
+        }
+        function drawArrow(dir, clickEvent) {
+            let arrow = new PIXI.Container();
+            let a;
+            let text = createText("", TextStyle.Map_Green_13, 0.5, scale);
+            switch (dir) {
+                case "right":
+                    a = createSprite(textures["arrow_r.png"], 0.5, scale * 2);
+                    text.text = "下一頁";
+                    text.position.set(-47, 0);
+                    arrow.position.set(336, 163);
+                    arrow.addChild(text, a);
+                    arrow.hitArea = new PIXI.Rectangle(-80, -20, 100, 40);
+                    break;
+                case "left":
+                    a = createSprite(textures["arrow_l.png"], 0.5, scale * 2);
+                    text.text = "上一頁";
+                    text.position.set(47, 0);
+                    arrow.position.set(-336, 163);
+                    arrow.addChild(text, a);
+                    arrow.hitArea = new PIXI.Rectangle(-20, -20, 100, 40);
+                    break;
+            }
+            arrow.overEvent = brightnessOverEvent;
+            arrow.clickEvent = clickEvent;
+            addPointerEvent(arrow);
+            return arrow;
+        }
+        function drawVideoList() {
+            const text = [`寄養家庭流程`, `想成為寄養\n家庭的因素`, `寄養家庭\n的改變`, `來自輔導\n員的呼籲`];
+            let e = new PIXI.Container();
+            for (let i in text) {
+                e.addChild(drawVideoPlayButton(i, text[i]));
+            }
+            e.position.set(-194, 84);
+            return e;
+            function drawVideoPlayButton(i, text) {
+                let vpb = new PIXI.Container();
+                let b = new PIXI.Container();
+                let v = createSprite(textures[`video_${i}.png`], 0.5, scale);
+                let p = createSprite(textures["play.png"], 0.5, scale);
+                let t = createText(text, TextStyle.white, [0.5, 0], scale);
+                t.position.set(0, 40);
+
+                b.addChild(v, p);
+                b.overEvent = glowOverEvent;
+                b.clickEvent = () => { };
+                addPointerEvent(b);
+
+                vpb.addChild(b, t);
+                vpb.position.set(i * 90, 0);
+                return vpb;
+            }
+        }
+        //anim
+        function pageAnim(goto) {
+            gsap.timeline({ onComplete: () => { c.removeChild(usingLayer); goto(); } })
+                .to(eraser.front.scale, { duration: 0.2, y: "+=0.1" }, 0)
+                .to(eraser.bottom, { duration: 0.2, y: 0 }, 0)
+                .to(eraser, { duration: 0.2, rotation: Math.PI / 4 }, 0)
+                .to(eraser, { duration: 0.3, x: -151, y: -169 })
+                .to(eraser, { duration: 0.3, x: -230, y: 87 })
+                .to(eraser, { duration: 0.3, x: 168, y: -147 })
+                .to(eraser, { duration: 0.3, x: 94, y: 110 })
+                .to(usingLayer, { duration: 1, alpha: 0 }, 0.5)
+                .to(eraser.front.scale, { duration: 0.2, y: "-=0.1" }, 1.5)
+                .to(eraser.bottom, { duration: 0.2, y: 10 }, 1.5)
+                .to(eraser, { duration: 0.2, x: 0, y: 206, rotation: 0 }, 1.5)
+        }
     }
 }
 class Gashapon extends linkObject {
