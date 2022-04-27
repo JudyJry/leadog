@@ -252,7 +252,7 @@ class Blackboard extends linkObject {
             let text = createText("", TextStyle.Map_Green_13, 0.5, scale);
             switch (dir) {
                 case "right":
-                    a = createSprite(textures["arrow_r.png"], 0.5, scale * 2);
+                    a = createSprite(textures["arrow_r.png"], 0.5, scale);
                     text.text = "下一頁";
                     text.position.set(-47, 0);
                     arrow.position.set(336, 163);
@@ -260,7 +260,7 @@ class Blackboard extends linkObject {
                     arrow.hitArea = new PIXI.Rectangle(-80, -20, 100, 40);
                     break;
                 case "left":
-                    a = createSprite(textures["arrow_l.png"], 0.5, scale * 2);
+                    a = createSprite(textures["arrow_l.png"], 0.5, scale);
                     text.text = "上一頁";
                     text.position.set(47, 0);
                     arrow.position.set(-336, 163);
