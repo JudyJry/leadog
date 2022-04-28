@@ -7,6 +7,7 @@ import { Page, uiData, videoData } from './Data.js';
 import { ColorSlip } from './ColorSlip.js';
 import { FilterSet } from './FilterSet.js';
 import { sound } from '@pixi/sound';
+import { VideoPlayer } from './GameObject.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -124,8 +125,14 @@ class Book extends UI {
     update() {
         if (this.isClick) { this.onClickUpdate(); }
     }
-    onClickResize() { this.book = this.drawBook(); }
-    onClickUpdate() { }
+    onClickResize() {
+        if (this.cancel) {
+            this.manager.app.stage.removeChild(this.cancel);
+            this.drawCancel();
+        }
+        if (this.video && this.video.isClick) { this.video.resize(); }
+    }
+    onClickUpdate() { if (this.video && this.video.isClick) { this.video.update(); } }
     clickEvent() {
         this.icon.interactive = false;
         gsap.to(this.icon, { duration: 0.5, pixi: { brightness: 1 } });
@@ -139,7 +146,7 @@ class Book extends UI {
         let _x = (this.w * 0.5) - 60;
         let _y = (this.h * -0.5) + 60;
         this.cancel = createSprite('image/cancel.png', 0.5);
-        this.cancel.zIndex = 199;
+        this.cancel.zIndex = 180;
         this.cancel.position.set(_x, _y);
         this.cancel.overEvent = brightnessOverEvent;
         this.cancel.clickEvent = this.cancelEvent.bind(this);
@@ -147,11 +154,12 @@ class Book extends UI {
         this.manager.app.stage.addChildAt(this.cancel, 1);
     }
     cancelEvent() {
-        this.icon.interactive = true;
-        this.manager.activeObj.isZoomIn = false;
-        this.isClick = false;
-        this.manager.app.stage.removeChild(this.book, this.cancel);
-
+        this.book.onCancel(function () {
+            this.icon.interactive = true;
+            this.manager.activeObj.isZoomIn = false;
+            this.isClick = false;
+            this.manager.app.stage.removeChild(this.book, this.cancel);
+        }.bind(this));
     }
     drawBook() {
         const self = this;
@@ -160,7 +168,7 @@ class Book extends UI {
         const centerX = 292;
         const centerY = -24;
         const sortList = ["a", "b", "c"];
-        const bookmarkPage = { "a": 0, "b": 3, "c": 5 };//todo
+        const bookmarkPage = { "a": 0, "b": 3, "c": 5 };
         const bookpage = [
             drawPage_0,
             drawPage_1,
@@ -326,7 +334,7 @@ class Book extends UI {
             layer.right.addChild(title_r, it_puzzle, puzzle_0, puzzle_1, puzzle_2);
 
             usingLayer = layer;
-            function drawMirror() { //todo
+            function drawMirror() {
                 const picUrl = "image/building/born/sprites.json";
                 const generText = ["八", "七", "六", "五", "四", "三", "二", "一"];
                 let picTextures;
@@ -508,8 +516,8 @@ class Book extends UI {
                 }
             }
         }
-        function drawEnd() {
-            let s = createSprite("image/building/know/book/cover.png", 0.5, scale * 0.5);
+        function drawEnd(onComplete) {
+            let s = createSprite("image/book/cover.png", 0.5, scale * 0.5);
             s.position.x = centerX;
             c.removeChild(page, usingLayer);
             c.addChild(s);
@@ -520,7 +528,8 @@ class Book extends UI {
                 .to(s, {
                     duration: 0.5, alpha: 0, onComplete: () => {
                         c.removeChild(s);
-                        self.manager.app.stage.removeChild(self.book);
+                        onComplete();
+                        //self.manager.app.stage.removeChild(self.book);
                     }
                 })
                 .to(bg, { duration: 1, alpha: 0 }, 0);
@@ -671,15 +680,11 @@ class Book extends UI {
             else if (unlock) {
                 e.overEvent = glowOverEvent;
                 e.clickEvent = () => {
-                    drawVideo(videoUrl);
+                    self.drawVideo(videoData[pageName][videoIndex].call);
                 }
                 addPointerEvent(e);
             }
             return e;
-            function drawVideo(url) {
-                //todo
-                drawDialog();
-            }
         }
         //event
         function changePage(dir = "right", goto = () => { }) {
@@ -765,13 +770,11 @@ class Book extends UI {
                 .from(hint, { duration: animTime * 2, alpha: 0 })
                 .from(hint, { duration: animTime * 2, alpha: 1 })
         }
-        function drawDialog() {
-            let d = new Dialog(self.manager, {
-                context: `這個功能還沒完成喔`,
-                cancelText: "確定",
-                cancel: () => { d.remove(); }
-            })
-        }
+    }
+    drawVideo(func) {
+        //todo
+        this.video = new VideoPlayer(this.manager, this.manager.activeObj, func);
+        this.video.setup();
     }
 }
 class Notify extends UI {

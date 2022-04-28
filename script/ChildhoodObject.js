@@ -55,7 +55,6 @@ class Book extends linkObject {
         this.texturesUrl = "image/building/childhood/book/sprites.json"
     }
     zoom() { }
-    onClickResize() { this.book = this.drawBook(); }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;

@@ -1,3 +1,12 @@
+import { BornAction_Story1, BornAction_Story2 } from "./BornAction";
+import { ChildhoodAction_Dora, ChildhoodAction_Kelly } from "./ChildhoodAction";
+import YouthAction_Bus from "./YouthAction_bus";
+import YouthAction_Instruction from "./YouthAction_Instruction";
+import YouthAction_Instruction2 from "./YouthAction_Instruction2";
+import YouthAction_Traffic from "./YouthAction_Traffic";
+import { ElderlyAction_Hair, ElderlyAction_Story1, ElderlyAction_Story2, ElderlyAction_Story3 } from "./ElderlyAction";
+import { KnowAction_Story1, KnowAction_Story2, KnowAction_Story3, KnowAction_Story4, KnowAction_Story5 } from "./KnowAction";
+
 const objType = Object.freeze({
     "building": 1,
     "animation": 2,
@@ -44,7 +53,8 @@ const videoData = {
             soundUrl: "sound/born_story.mp3",
             startText: "來聽聽剛出生的寶寶都在做什麼吧！",
             endText: `謝謝你聆聽剛出生的狗狗的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 46
+            endTime: 46,
+            call: (manager, obj, scale) => { return new BornAction_Story1(manager, obj, scale); }
         },
         {
             name: "born_story2",
@@ -52,7 +62,8 @@ const videoData = {
             soundUrl: "sound/born_story.mp3",
             startText: "來聽聽剛出生的寶寶都在做什麼吧！",
             endText: `謝謝你聆聽剛出生的狗狗的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 30
+            endTime: 30,
+            call: (manager, obj, scale) => { return new BornAction_Story2(manager, obj, scale); }
         }
     ],
     childhood: [
@@ -62,7 +73,8 @@ const videoData = {
             soundUrl: "sound/childhood_kelly.wav",
             startText: "一起幫助狗狗在寄養家庭中習慣人類社會生活吧！",
             endText: `謝謝你幫助狗狗完成在寄養家庭階段的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 57
+            endTime: 57,
+            call: (manager, obj, scale) => { return new ChildhoodAction_Kelly(manager, obj, scale); }
         },
         {
             name: "childhood_dora",
@@ -70,7 +82,8 @@ const videoData = {
             soundUrl: "sound/childhood_dora.wav",
             startText: "一起幫助狗狗在生活中習慣與人相處吧！",
             endText: `謝謝你幫助狗狗完成在寄養家庭階段的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 94
+            endTime: 94,
+            call: (manager, obj, scale) => { return new ChildhoodAction_Dora(manager, obj, scale); }
         },
     ],
     youth: [
@@ -80,7 +93,8 @@ const videoData = {
             soundUrl: "sound/youth_bus.wav",
             startText: "一起幫助狗狗與訓練師習慣人類生活步調吧！",
             endText: `謝謝你幫助狗狗完成與訓練師生活的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 45
+            endTime: 45,
+            call: (manager, obj, scale) => { return new YouthAction_Bus(manager, obj, scale); }
         },
         {
             name: "youth_instruction",
@@ -88,7 +102,8 @@ const videoData = {
             soundUrl: "sound/youth_instruction.wav",
             startText: "一起幫助狗狗認識指令並成功做到吧！",
             endText: `謝謝你幫助狗狗完成指令訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 65
+            endTime: 65,
+            call: (manager, obj, scale) => { return new YouthAction_Instruction(manager, obj, scale); }
         },
         {
             name: "youth_instruction2",
@@ -96,7 +111,8 @@ const videoData = {
             soundUrl: "sound/youth_instruction2.wav",
             startText: "一起幫助狗狗與訓練師習慣人類生活步調吧！",
             endText: `謝謝你幫助狗狗完成與訓練師生活的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 29
+            endTime: 29,
+            call: (manager, obj, scale) => { return new YouthAction_Instruction2(manager, obj, scale); }
         },
         {
             name: "youth_traffic",
@@ -104,7 +120,8 @@ const videoData = {
             soundUrl: "sound/youth_traffic.wav",
             startText: "一起幫助狗狗帶領訓練師平安度過挑戰吧！",
             endText: `謝謝你幫助狗狗完成與訓練師生活的訓練\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 17
+            endTime: 17,
+            call: (manager, obj, scale) => { return new YouthAction_Traffic(manager, obj, scale); }
         },
     ],
     elderly: [
@@ -114,7 +131,8 @@ const videoData = {
             soundUrl: "sound/elderly_story1.wav",
             startText: "一起看看狗狗與收養家庭的故事吧！",
             endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 178
+            endTime: 178,
+            call: (manager, obj, scale) => { return new ElderlyAction_Story1(manager, obj, scale); }
         },
         {
             name: "elderly_story2",
@@ -122,7 +140,8 @@ const videoData = {
             soundUrl: "sound/elderly_story2.mp3",
             startText: "一起看看狗狗與收養家庭的故事吧！",
             endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 137
+            endTime: 137,
+            call: (manager, obj, scale) => { return new ElderlyAction_Story2(manager, obj, scale); }
         },
         {
             name: "elderly_story3",
@@ -130,7 +149,8 @@ const videoData = {
             soundUrl: "sound/elderly_story3.wav",
             startText: "一起看看狗狗與收養家庭的故事吧！",
             endText: `謝謝你聆聽狗狗與收養家庭的故事\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 116
+            endTime: 116,
+            call: (manager, obj, scale) => { return new ElderlyAction_Story3(manager, obj, scale); }
         },
         {
             name: "elderly_hair",
@@ -138,7 +158,8 @@ const videoData = {
             soundUrl: "sound/elderly_hair.mp3",
             startText: "一起幫助狗狗整理毛髮吧！",
             endText: `謝謝你幫助狗狗整理毛髮\n以後可以在「探險手冊」重新觀看狗狗的生活喔！`,
-            endTime: 43
+            endTime: 43,
+            call: (manager, obj, scale) => { return new ElderlyAction_Hair(manager, obj, scale); }
         }
     ],
     know: [
@@ -148,7 +169,8 @@ const videoData = {
             soundUrl: "sound/know_story1.mp3",
             startText: "一起來聽聽輔導員的自我介紹吧！",
             endText: `謝謝你聆聽輔導員的自我介紹\n以後可以在「探險手冊」重新觀看喔！`,
-            endTime: 91
+            endTime: 91,
+            call: (manager, obj, scale) => { return new KnowAction_Story1(manager, obj, scale); }
         },
         {
             name: "know_story2",
@@ -156,7 +178,8 @@ const videoData = {
             soundUrl: "sound/know_story2.mp3",
             startText: "一起來聽聽寄養家庭的申請流程吧！",
             endText: `謝謝你聆聽寄養家庭的申請流程\n以後可以在「探險手冊」重新觀看喔！`,
-            endTime: 89
+            endTime: 89,
+            call: (manager, obj, scale) => { return new KnowAction_Story2(manager, obj, scale); }
         },
         {
             name: "know_story3",
@@ -164,7 +187,8 @@ const videoData = {
             soundUrl: "sound/know_story3.mp3",
             startText: "一起來聽聽想成為寄養家庭的原因吧！",
             endText: `謝謝你聆聽想成為寄養家庭的原因\n以後可以在「探險手冊」重新觀看喔！`,
-            endTime: 69
+            endTime: 69,
+            call: (manager, obj, scale) => { return new KnowAction_Story3(manager, obj, scale); }
         },
         {
             name: "know_story4",
@@ -172,7 +196,8 @@ const videoData = {
             soundUrl: "sound/know_story4.mp3",
             startText: "一起來聽聽寄養家庭的改變吧！",
             endText: `謝謝你聆聽寄養家庭的改變\n以後可以在「探險手冊」重新觀看喔！`,
-            endTime: 99
+            endTime: 99,
+            call: (manager, obj, scale) => { return new KnowAction_Story4(manager, obj, scale); }
         },
         {
             name: "know_story5",
@@ -180,7 +205,8 @@ const videoData = {
             soundUrl: "sound/know_story5.mp3",
             startText: "一起來聽聽來自輔導員的呼籲吧！",
             endText: `謝謝你聆聽來自輔導員的呼籲\n以後可以在「探險手冊」重新觀看喔！`,
-            endTime: 57
+            endTime: 57,
+            call: (manager, obj, scale) => { return new KnowAction_Story5(manager, obj, scale); }
         },
     ]
 }
@@ -681,7 +707,7 @@ const bookData = {
     }
 }
 
-/* const userData = {
+const userData = {
     born: {
         video: {
             story1: false,
@@ -728,54 +754,6 @@ const bookData = {
             small: false,
         }
     }
-} */
-
-const userData = {
-    born: {
-        video: {
-            story1: true,
-            story2: true
-        },
-        mirror_collect: new Array(8).fill(true)
-    },
-    childhood: {
-        video: {
-            kelly: true,
-            dora: true
-        },
-        puzzle_complete: true
-    },
-    youth: {
-        video: {
-            bus: true,
-            instruction: true,
-            instruction2: true,
-            traffic: true,
-        },
-        mirror_correct: true
-    },
-    elderly: {
-        video: {
-            story1: true,
-            story2: true,
-            story3: true,
-            hair: true
-        },
-    },
-    know: {
-        video: {
-            story1: true,
-            story2: true,
-            story3: true,
-            story4: true,
-            story5: true,
-        },
-        lucky: {
-            big: true,
-            middle: true,
-            middle2: true,
-            small: true,
-        }
-    }
 }
+
 export { objType, Page, homePageData, uiData, videoData, mapData, ThreeNotOneQuestionData, bookData, userData };

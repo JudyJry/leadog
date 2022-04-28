@@ -8,6 +8,7 @@ import { bookData, Page, videoData } from "./Data.js";
 import Manager from "./Manager.js";
 import { brightnessOverEvent } from "./UI.js";
 import { sound } from '@pixi/sound';
+import { ColorSlip } from "./ColorSlip.js";
 
 
 export class PageObject {
@@ -185,6 +186,9 @@ export class linkObject extends GameObject {
         if (this.isClick) {
             this.sprite.interactive = false;
             this.zoom();
+            if (this.cancel) {
+                this.cancel.position.set((this.w * 0.5) - 60, (this.h * -0.5) + 60);
+            }
             this.onClickResize();
         }
         this.container.scale.set(this.manager.canvasScale);
@@ -215,7 +219,7 @@ export class linkObject extends GameObject {
         let _x = (this.w * 0.5) - 60;
         let _y = (this.h * -0.5) + 60;
         this.cancel = createSprite('image/cancel.png', 0.5);
-        this.cancel.zIndex = 199;
+        this.cancel.zIndex = 180;
         this.cancel.position.set(_x, _y);
         this.cancel.overEvent = brightnessOverEvent;
         this.cancel.clickEvent = this.cancelEvent.bind(this);
@@ -373,6 +377,9 @@ export class Video extends linkObject {
         if (this.isClick && this.fullButton) { this.onClickResize(); }
     }
     onClickResize() {
+        if (this.cancel) {
+            this.cancel.position.set((this.w * 0.5) - 60, (this.h * -0.5) + 60);
+        }
         if (!this.fullButton.turn) {
             this.page.container.scale.set(this.zoomIn);
             this.page.container.position.set((-this._x + this.zoomInPos[0]) * this.zoomIn, (-this._y + this.zoomInPos[1]) * this.zoomIn);
@@ -384,7 +391,7 @@ export class Video extends linkObject {
         }
     }
     onClickUpdate() {
-        this.video.update();
+        if (this.video) this.video.update();
         if (this.fullButton.turn) {
             if (this.manager.mouse.x < 250) {
                 gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
@@ -514,6 +521,309 @@ export class Video extends linkObject {
             let e = createSprite(textures["next.png"], 0.5, uiScale);
             e.position.set(stan + space * 1, h);
             e.clickEvent = function () {
+                changeButtonInteractive(false);
+                self.random++;
+                if (self.random >= self.videoList.length) { self.random = 0 }
+                deleteVideo();
+                self.video = self.videoList[self.random]();
+                self.video.setup();
+                self.video.container.position.set(0, -7.4);
+                self.video.videoCrol.muted = self.volumeButton.turn;
+                changeButtonInteractive(true);
+            }.bind(self);
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+            function deleteVideo() {
+                self.video.children.logo.cancelEvent();
+                self.video.children.ui.cancelEvent();
+                self.pause();
+                self.video.container.removeChildren();
+                self.container.removeChild(self.video.container);
+                self.video = undefined;
+            }
+            function changeButtonInteractive(bool) {
+                self.playButton.interactive = bool;
+                self.volumeButton.interactive = bool;
+                self.nextButton.interactive = bool;
+                self.fullButton.interactive = bool;
+            }
+        }
+        function drawFullButton() {
+            let e = createSprite(textures["full.png"], 0.5, uiScale);
+            e.position.set(-stan, h);
+            e.clickEvent = function () {
+                if (e.turn) {
+                    closeFullscreen();
+                    e.turn = false;
+                }
+                else {
+                    openFullscreen(document.documentElement);
+                    e.turn = true;
+                }
+                function openFullscreen(elem) {
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.webkitRequestFullscreen) { /* Safari */
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) { /* IE11 */
+                        elem.msRequestFullscreen();
+                    }
+                }
+                function closeFullscreen() {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) { /* Safari */
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) { /* IE11 */
+                        document.msExitFullscreen();
+                    }
+                }
+            }.bind(self);
+            e.turn = false;
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function addUIButtonEvent(e) {
+            const uiHitArea = self.uiOptions.uiHitArea;
+            e.hitArea = new PIXI.Rectangle(-uiHitArea, -uiHitArea, uiHitArea * 2, uiHitArea * 2);
+            addPointerEvent(e);
+        }
+    }
+    play() {
+        this.video.videoCrol.play();
+        this.video.sound.play();
+        this.playButton.texture = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures["pause.png"];
+    }
+    pause() {
+        this.video.videoCrol.pause();
+        this.video.sound.pause();
+        this.playButton.texture = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures["play.png"];
+    }
+    reload() {
+        this.video.container.removeChildren();
+        this.container.removeChild(this.video.container);
+
+        this.video = this.videoList[this.random]();
+        this.video.setup();
+        this.video.container.position.set(0, -7.4);
+        this.video.videoCrol.muted = this.volumeButton.turn;
+    }
+}
+export class OtherObject extends GameObject {
+    /**
+     * @param {Manager} manager 
+     * @param {string} name
+     * @param {number} x 
+     * @param {number} y 
+     * @param {string} url 
+     */
+    constructor(manager, name, x, y, url) {
+        super(manager);
+        this.name = name;
+        this.container.zIndex = 20;
+        this.x = x;
+        this.y = y;
+        this.url = url;
+        this.draw = function () {
+            this._x = (this.x * this.w * 2);
+            this._y = (this.y * this.h * 2);
+            this.sprite.texture = PIXI.Texture.from(this.url);
+            this.sprite.anchor.set(0.5);
+            this.sprite.scale.set(this.scale);
+            this.container.addChild(this.sprite);
+            this.container.position.set(this._x, this._y);
+        }
+    }
+}
+
+export class VideoPlayer extends Video {
+    constructor(manager, page, videoFunc) {
+        super(manager, page);
+        this.x = 0;
+        this.y = 0;
+        this.videoFunc = videoFunc;
+        this.videoScale = 0.6;
+        this.zoomIn = 1;
+        this.fullZoomIn = 1.67;
+        this.draw = function () {
+            this._x = (this.x * this.w * 2);
+            this._y = (this.y * this.h * 2);
+            this.bg = new PIXI.Graphics()
+                .beginFill(ColorSlip.black, 0.2)
+                .drawRect(0, 0, 1920, 1080)
+                .endFill();
+            this.bg.pivot.set(1920 / 2, 1080 / 2);
+            this.bg.clickEvent = function () { this.cancelEvent(); }.bind(this);
+            addPointerEvent(this.bg);
+            gsap.from(this.bg, { duration: 1, alpha: 0 });
+            this.container.zIndex = 110;
+            this.container.addChild(this.bg);
+            this.container.position.set(this._x, this._y);
+        }
+        this.uiOptions = {
+            texturesUrl: "image/video/actionUI_sprites.json",
+            frameUrl: "image/video/video.png",
+            frameScale: 0.343,
+            uiHitArea: 85, uiScale: 0.25,
+            standard: -530, height: 360, space: 50
+        }
+    }
+    setup() {
+        this.draw();
+        this.container.name = this.name;
+        this.container.scale.set(this.manager.canvasScale);
+        this.manager.app.stage.addChildAt(this.container, 2);
+        this.clickEvent();
+    }
+    update() {
+        if (this.isClick) { this.onClickUpdate(); }
+    }
+    onClickUpdate() {
+        this.video.update();
+        if (this.fullButton.turn) {
+            if (this.manager.mouse.x < 250) {
+                gsap.to(this.manager.uiSystem.container, { duration: 1, x: 0 });
+            }
+            else if (this.manager.mouse.x > 500) {
+                gsap.to(this.manager.uiSystem.container, { duration: 1, x: -250 });
+            }
+            if (this.manager.mouse.y > this.h - 110) {
+                gsap.to(this.ui, { duration: 1, y: -((screen.height - window.innerHeight + 150) / 2.3) });
+            }
+            else if (this.manager.mouse.y < this.h - 110) {
+                gsap.to(this.ui, { duration: 1, y: 0 });
+            }
+        }
+        else {
+            this.manager.uiSystem.container.position.x = 0;
+            this.ui.position.set(0);
+        }
+    }
+    resize() {
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.scale.set(this.manager.canvasScale);
+        if (this.cancel) {
+            this.cancel.position.set((this.w * 0.5) - 60, (this.h * -0.5) + 60);
+        }
+        if (this.isClick && this.fullButton) { this.onClickResize(); }
+    }
+    onClickResize() {
+        if (!this.fullButton.turn) {
+            this.container.scale.set(this.zoomIn);
+        }
+        else if (this.fullButton.turn) {
+            this.container.scale.set(this.fullZoomIn);
+        }
+    }
+    clickEvent() {
+        sound.pause(this.page.name);
+        this.video = this.videoFunc(this.manager, this, this.videoScale);
+        this.video.setup();
+        this.drawUI();
+        this.nextButton.interactive = false;
+        this.nextButton.alpha = 0.5;
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+        this.isClick = true;
+    }
+    cancelEvent() {
+        sound.play(this.page.name);
+        this.video.children.logo.cancelEvent();
+        this.pause();
+        this.video.container.removeChildren();
+        this.container.removeChild(this.video.container, this.ui, this.bg);
+        this.isClick = false;
+        this.video = undefined;
+        this.cancel.visible = false;
+        this.manager.app.stage.removeChild(this.cancel);
+        this.cancel = undefined;
+        if (this.fullButton.turn) {
+            closeFullscreen();
+            this.fullButton.turn = false;
+        }
+        gsap.killTweensOf(this.manager.uiSystem.container);
+        this.manager.uiSystem.container.position.x = 0;
+        this.destroy();
+        delete this;
+        function closeFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+    drawCancel() {
+        let _x = (this.w * 0.5) - 60;
+        let _y = (this.h * -0.5) + 60;
+        this.cancel = createSprite('image/cancel.png', 0.5);
+        this.cancel.zIndex = 190;
+        this.cancel.position.set(_x, _y);
+        this.cancel.clickEvent = this.cancelEvent.bind(this);
+        addPointerEvent(this.cancel);
+        this.manager.app.stage.addChild(this.cancel);
+        this.manager.app.stage.sortChildren();
+        this.cancel.visible = false;
+    }
+    drawUI() {
+        this.ui = new PIXI.Container();
+        const self = this;
+        const textures = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures;
+        const uiScale = this.uiOptions.uiScale;
+        const stan = this.uiOptions.standard;
+        const h = this.uiOptions.height;
+        const space = this.uiOptions.space;
+        this.frame = createSprite(this.uiOptions.frameUrl, 0.5, this.uiOptions.frameScale);
+        this.frame.position.set(0, 7.2);
+        this.ui.addChild(this.frame);
+        this.playButton = drawPlayButton();
+        this.volumeButton = drawVolumeButton();
+        this.nextButton = drawNextButton();
+        this.fullButton = drawFullButton();
+        this.container.addChild(this.ui);
+        function drawPlayButton() {
+            let e = createSprite(textures["play.png"], 0.5, uiScale);
+            e.position.set(stan, h);
+            e.clickEvent = function () {
+                if (self.video.children.video.isStart && !self.video.children.video.isPlayGame) {
+                    if (self.video.videoCrol.paused) { self.play(); } else { self.pause(); }
+                }
+            }.bind(self);
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function drawVolumeButton() {
+            let e = createSprite(textures["volume.png"], 0.5, uiScale);
+            e.position.set(stan + space * 2, h);
+            e.clickEvent = function () {
+                if (self.video.videoCrol.muted) {
+                    e.turn = false;
+                    self.video.videoCrol.muted = false;
+                    self.video.sound.muted = false;
+                    e.texture = textures["volume.png"];
+                }
+                else {
+                    e.turn = true;
+                    self.video.videoCrol.muted = true;
+                    self.video.sound.muted = true;
+                    e.texture = textures["volume_off.png"];
+                }
+            }.bind(self);
+            e.turn = false;
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function drawNextButton() {
+            let e = createSprite(textures["next.png"], 0.5, uiScale);
+            e.position.set(stan + space * 1, h);
+            e.clickEvent = function () {
                 self.random++;
                 if (self.random >= self.videoList.length) { self.random = 0 }
                 self.pause();
@@ -567,42 +877,6 @@ export class Video extends linkObject {
             const uiHitArea = self.uiOptions.uiHitArea;
             e.hitArea = new PIXI.Rectangle(-uiHitArea, -uiHitArea, uiHitArea * 2, uiHitArea * 2);
             addPointerEvent(e);
-        }
-    }
-    play() {
-        this.video.videoCrol.play();
-        this.video.sound.play();
-        this.playButton.texture = this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures["pause.png"];
-    }
-    pause() {
-        this.video.videoCrol.pause();
-        this.video.sound.pause();
-        this.playButton.texture = this.manager.resources["image/video/actionUI_sprites.json"].spritesheet.textures["play.png"];
-    }
-}
-export class OtherObject extends GameObject {
-    /**
-     * @param {Manager} manager 
-     * @param {string} name
-     * @param {number} x 
-     * @param {number} y 
-     * @param {string} url 
-     */
-    constructor(manager, name, x, y, url) {
-        super(manager);
-        this.name = name;
-        this.container.zIndex = 20;
-        this.x = x;
-        this.y = y;
-        this.url = url;
-        this.draw = function () {
-            this._x = (this.x * this.w * 2);
-            this._y = (this.y * this.h * 2);
-            this.sprite.texture = PIXI.Texture.from(this.url);
-            this.sprite.anchor.set(0.5);
-            this.sprite.scale.set(this.scale);
-            this.container.addChild(this.sprite);
-            this.container.position.set(this._x, this._y);
         }
     }
 }

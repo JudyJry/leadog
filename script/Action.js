@@ -74,6 +74,9 @@ class ActionObject extends GameObject {
         this.draw();
         this.container.scale.set(this.manager.canvasScale);
     }
+    destroy() {
+        for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
+    }
 }
 export class LogoVideo extends ActionObject {
     constructor(manager, action) {
@@ -88,11 +91,25 @@ export class LogoVideo extends ActionObject {
             let _x = (x * this.w);
             let _y = (y * this.h);
             this.sprite = createSprite("image/logo.png");
+            this.sprite.alpha = 0;
             this.container.addChild(this.sprite);
             this.container.position.set(_x, _y);
             let tl = gsap.timeline();
-            tl.from(this.sprite, { duration: 2, alpha: 0 });
-            tl.from(this.sprite, { duration: 2, alpha: 1, onComplete: this.onEnd });
+            tl.to(this.sprite, {
+                duration: 0.1, onComplete: function () {
+                    if (typeof this.action.children.ui.start !== "function") {
+                        console.log("video reload");
+                        this.action.obj.reload();
+                        gsap.killTweensOf(this.sprite);
+                    }
+                    else {
+                        console.log("video load");
+                    }
+                }.bind(this)
+            });
+            tl.to(this.sprite, { duration: 2, alpha: 1 }, 0.1);
+            tl.to(this.sprite, { duration: 2, alpha: 0, onComplete: this.onEnd });
+
         }
     }
     cancelEvent() {
@@ -222,6 +239,9 @@ export class ActionSound {
     resize() { }
     update() {
         if (this.isEnd) { this.onEnd(); }
+    }
+    destroy() {
+        for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
 }
 export class ActionLine extends ActionObject {
@@ -425,6 +445,9 @@ export class ActionUI extends ActionObject {
         this.draw();
     }
     update() { }
+    cancelEvent() {
+        gsap.killTweensOf(this.container);
+    }
 }
 export class ActionCountDown extends ActionObject {
     constructor(manager, action, stage) {
@@ -534,6 +557,10 @@ export class ActionStart extends ActionUI {
             });
         }
     }
+    cancelEvent() {
+        gsap.killTweensOf(this.container);
+        gsap.killTweensOf(this.sprite);
+    }
 }
 export class ActionEnd extends ActionUI {
     constructor(manager, action, text) {
@@ -590,6 +617,9 @@ export class ActionEnd extends ActionUI {
     onEnd() {
         this.action.obj.cancelEvent();
     }
+    cancelEvent() {
+        gsap.killTweensOf(this.container);
+    }
 }
 export class ActionLinsStage extends ActionUI {
     constructor(manager, action) {
@@ -631,15 +661,18 @@ export class ActionLinsStage extends ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.action.removeChild(this.container);
-                this.action.removeChild(this.action.children.line.container);
-                this.action.removeChild(this.action.children.rope.container);
-                this.action.children.line.hintGsap.kill();
-                delete this.action.children.rope;
-                delete this.action.children.line;
-                delete this.action.children.ui;
+                this.onClearGameComplete();
             }.bind(this)
         });
+    }
+    onClearGameComplete() {
+        this.action.removeChild(this.container);
+        this.action.removeChild(this.action.children.line.container);
+        this.action.removeChild(this.action.children.rope.container);
+        this.action.children.line.hintGsap.kill();
+        delete this.action.children.rope;
+        delete this.action.children.line;
+        delete this.action.children.ui;
     }
     update() {
         try {
@@ -657,6 +690,10 @@ export class ActionLinsStage extends ActionUI {
             this.countdown = new ActionCountDown(this.manager, this.action, this);
             this.countdown.setup();
         }
+    }
+    cancelEvent() {
+        gsap.killTweensOf(this.container);
+        this.onClearGameComplete();
     }
 }
 export class ActionButtonStage extends ActionUI {
@@ -689,9 +726,7 @@ export class ActionButtonStage extends ActionUI {
         gsap.to(this.container, {
             duration: 1, alpha: 0,
             onComplete: function () {
-                this.action.removeChild(this.container);
-                delete this.action.children.ui;
-
+                this.onClearGameComplete();
             }.bind(this)
         });
     }
@@ -712,5 +747,13 @@ export class ActionButtonStage extends ActionUI {
             this.countdown = new ActionCountDown(this.manager, this.action, this);
             this.countdown.setup();
         }
+    }
+    onClearGameComplete() {
+        this.action.removeChild(this.container);
+        delete this.action.children.ui;
+    }
+    cancelEvent() {
+        gsap.killTweensOf(this.container);
+        this.onClearGameComplete();
     }
 }
