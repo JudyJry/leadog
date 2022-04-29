@@ -87,12 +87,12 @@ class Blackboard extends linkObject {
             const self = this;
             this.manager.app.loader.add(this.texturesUrl);
             this.manager.app.loader.load(() => {
-                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 self.blackboard = self.drawBlackboard();
             });
         }
         catch {
-            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.textures = this.manager.resources[this.texturesUrl].spritesheet.textures;
             this.blackboard = this.drawBlackboard();
         }
     }
@@ -568,12 +568,12 @@ class Gashapon extends linkObject {
             const self = this;
             this.manager.app.loader.add(this.texturesUrl);
             this.manager.app.loader.load(() => {
-                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 self.gashapon = self.drawGashapon();
             });
         }
         catch {
-            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.textures = this.manager.resources[this.texturesUrl].spritesheet.textures;
             this.gashapon = this.drawGashapon();
         }
     }
@@ -757,12 +757,12 @@ class Book extends linkObject {
             const self = this;
             this.manager.app.loader.add(this.texturesUrl);
             this.manager.app.loader.load(() => {
-                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 self.book = self.drawBook();
             });
         }
         catch {
-            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.textures = this.manager.resources[this.texturesUrl].spritesheet.textures;
             this.book = this.drawBook();
         }
     }

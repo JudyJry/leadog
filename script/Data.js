@@ -8,6 +8,7 @@ import { ElderlyAction_Hair, ElderlyAction_Story1, ElderlyAction_Story2, Elderly
 import { KnowAction_Story1, KnowAction_Story2, KnowAction_Story3, KnowAction_Story4, KnowAction_Story5 } from "./KnowAction";
 
 const objType = Object.freeze({
+    "island": 0,
     "building": 1,
     "animation": 2,
     "other": 3
@@ -36,13 +37,13 @@ const uiData = [
 ];
 
 const homePageData = [
-    { type: objType.building, name: "出生", url: "image/homepage/born.png", x: 0.157, y: 0.116 },
-    { type: objType.building, name: "幼年", url: "image/homepage/childhood.png", x: 0.123, y: -0.029 },
-    { type: objType.building, name: "壯年", url: "image/homepage/youth.png", x: 0.057, y: 0.124 },
-    { type: objType.building, name: "老年", url: "image/homepage/elderly.png", x: -0.023, y: 0.098 },
-    { type: objType.building, name: "知識教育館", url: "image/homepage/know.png", x: 0.027, y: -0.147 },
-    { type: objType.building, name: "LEADOG公司", url: "image/homepage/company.png", x: -0.082, y: -0.175 },
-    { type: objType.building, name: "相關活動", url: "image/homepage/market.png", x: 0.158, y: -0.227 },
+    { type: objType.building, name: "出生", url: "born.png", x: 151, y: 48 },
+    { type: objType.building, name: "幼年", url: "childhood.png", x: 117, y: -19 },
+    { type: objType.building, name: "壯年", url: "youth.png", x: 54, y: 52 },
+    { type: objType.building, name: "老年", url: "elderly.png", x: -22, y: 39 },
+    { type: objType.building, name: "知識教育館", url: "know.png", x: 25, y: -80 },
+    { type: objType.building, name: "LEADOG公司", url: "company.png", x: -78, y: -87 },
+    { type: objType.building, name: "相關活動", url: "market.png", x: 151, y: -112 },
 ];
 
 const videoData = {

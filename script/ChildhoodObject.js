@@ -67,12 +67,12 @@ class Book extends linkObject {
             const self = this;
             this.manager.app.loader.add(this.texturesUrl);
             this.manager.app.loader.load(() => {
-                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 self.book = self.drawBook();
             });
         }
         catch {
-            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.textures = this.manager.resources[this.texturesUrl].spritesheet.textures;
             this.book = this.drawBook();
         }
     }
@@ -412,7 +412,7 @@ class Puzzle extends linkObject {
         this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
         this.isClick = true;
-        this.textures = this.manager.app.loader.resources["image/building/childhood/sprites.json"].spritesheet.textures;
+        this.textures = this.manager.resources["image/building/childhood/sprites.json"].spritesheet.textures;
         if (!this.isComplete) {
             gameStart.call(this);
         }

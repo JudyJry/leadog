@@ -71,12 +71,12 @@ class Mirror extends linkObject {
             const self = this;
             this.manager.app.loader.add(this.texturesUrl);
             this.manager.app.loader.load(() => {
-                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 self.mirror = self.drawMirror();
             });
         }
         catch {
-            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.textures = this.manager.resources[this.texturesUrl].spritesheet.textures;
             this.mirror = this.drawMirror();
         }
     }
@@ -607,12 +607,12 @@ class Map extends linkObject {
             const self = this;
             this.manager.app.loader.add(this.texturesUrl);
             this.manager.app.loader.load(() => {
-                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 self.map = self.drawMap();
             });
         }
         catch {
-            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.textures = this.manager.resources[this.texturesUrl].spritesheet.textures;
             this.map = this.drawMap();
         }
     }

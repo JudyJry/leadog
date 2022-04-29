@@ -143,12 +143,12 @@ class Graduate extends linkObject {
             const self = this;
             this.manager.app.loader.add(this.texturesUrl);
             this.manager.app.loader.load(() => {
-                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 self.graduate = self.drawGraduate();
             });
         }
         catch {
-            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.textures = this.manager.resources[this.texturesUrl].spritesheet.textures;
             this.graduate = this.drawGraduate();
         }
     }
@@ -261,12 +261,12 @@ class Mirror extends linkObject {
             const self = this;
             this.manager.app.loader.add(this.texturesUrl);
             this.manager.app.loader.load(() => {
-                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 self.mirror = self.drawMirror();
             });
         }
         catch {
-            this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+            this.textures = this.manager.resources[this.texturesUrl].spritesheet.textures;
             this.mirror = this.drawMirror();
         }
     }
@@ -439,7 +439,7 @@ class Mirror extends linkObject {
             addPointerEvent(exit);
             layer.addChild(dog, restart, exit, text, medal);
             function drawMedal() {
-                const medalTextures = self.manager.app.loader.resources["image/book/sprites.json"].spritesheet.textures;
+                const medalTextures = self.manager.resources["image/book/sprites.json"].spritesheet.textures;
                 let e = new PIXI.Container();
                 let s = createSprite(medalTextures["medal.png"], 0.5, scale);
                 let l = createSprite(medalTextures["light.png"], 0.5, scale);

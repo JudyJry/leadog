@@ -20,7 +20,6 @@ export default class Manager {
     constructor() {
         this.w = window.innerWidth;
         this.h = window.innerHeight;
-        this.canvasScale = 1;
         this.app = new PIXI.Application({
             width: this.w,
             height: this.h,
@@ -28,32 +27,37 @@ export default class Manager {
             antialias: true,
             view: document.getElementById("mainPIXI")
         });
+        this.loader = new ResourceLoader(this.app);
+        this.loader.loadTexture(loadList.home.concat(loadList.ui), this.setup.bind(this));
+        this.resources = this.app.loader.resources;
+
+        this.canvasScale = 1;
         this.anchor = 0.5;
         this.app.stage.x = this.app.renderer.width * this.anchor;
         this.app.stage.y = this.app.renderer.height * this.anchor;
-        this.loader = new ResourceLoader(this.app);
-        this.loader.loadTexture(loadList.ui.concat(loadList.home));
-        this.resources = this.app.loader.resources;
 
         this.keyboard = new Keyboard();
         this.mouse = new Mouse(this);
         this.uiSystem = new UIsystem(this);
         this.deltaTime = 0;
-        this.activeObj = new HomeObject(this);
+        this.activeObj = undefined;
 
         this.isMute = false;
-
         this.userData = userData;
     }
-    setup() {
-        this.uiSystem.setup();
-        this.activeObj.setup();
-        this.mouse.setup();
-        this.app.stage.sortChildren();
+    async setup() {
+        this.activeObj = new HomeObject(this);
+        await new Promise((resolve, _) => {
+            this.uiSystem.setup();
+            this.mouse.setup();
+            this.activeObj.setup();
+            this.app.stage.sortChildren();
+            resolve();
+        });
         this.app.ticker.add((delta) => {
             this.deltaTime = (1 / 60) * delta;
             this.update();
-        })
+        });
     }
     update() {
         this.uiSystem.update();
@@ -187,16 +191,11 @@ const loadList = {
         "image/video/elderly/elderly_video_sprites.json"
     ],
     "home": [
-        "image/homepage/map.png",
-        "image/homepage/island.png",
-        "image/homepage/tree_front.png",
-        "image/homepage/born.png",
-        "image/homepage/childhood.png",
-        "image/homepage/youth.png",
-        "image/homepage/elderly.png",
-        "image/homepage/company.png",
-        "image/homepage/know.png",
-        "image/homepage/market.png",
+        "image/homepage/sprites.json",
+        "image/homepage/island/sprites.json",
+        "image/homepage/island/island_wave_0.png",
+        "image/homepage/island/island_wave_1.png",
+        "image/homepage/island/island_wave_2.png",
     ],
     "born": [
         "image/building/born/bg.png",

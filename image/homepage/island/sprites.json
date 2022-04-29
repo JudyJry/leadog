@@ -1,0 +1,40 @@
+{
+"frames": {
+	"island_0.png": {
+		"frame": {"x":0, "y":0, "w":2027, "h":1204},
+		"spriteSourceSize": {"x":0,"y":0,"w":2027,"h":1204},
+		"sourceSize": {"w":2027,"h":1204}
+	},
+	"island_1.png": {
+		"frame": {"x":1977, "y":1205, "w":760, "h":644},
+		"spriteSourceSize": {"x":0,"y":0,"w":760,"h":644},
+		"sourceSize": {"w":760,"h":644}
+	},
+	"island_2.png": {
+		"frame": {"x":2028, "y":0, "w":696, "h":466},
+		"spriteSourceSize": {"x":0,"y":0,"w":696,"h":466},
+		"sourceSize": {"w":696,"h":466}
+	},
+	"island_reflect_0.png": {
+		"frame": {"x":0, "y":1205, "w":1976, "h":1142},
+		"spriteSourceSize": {"x":0,"y":0,"w":1976,"h":1142},
+		"sourceSize": {"w":1976,"h":1142}
+	},
+	"island_reflect_1.png": {
+		"frame": {"x":1977, "y":1850, "w":753, "h":706},
+		"spriteSourceSize": {"x":0,"y":0,"w":753,"h":706},
+		"sourceSize": {"w":753,"h":706}
+	},
+	"island_reflect_2.png": {
+		"frame": {"x":2028, "y":467, "w":693, "h":443},
+		"spriteSourceSize": {"x":0,"y":0,"w":693,"h":443},
+		"sourceSize": {"w":693,"h":443}
+	}
+
+},
+"meta": {
+	"image": "sprites.png",
+	"size": {"w": 2738, "h": 2557},
+	"scale": "1"
+}
+}

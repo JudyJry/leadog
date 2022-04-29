@@ -45,7 +45,7 @@ class Webside extends linkObject {
         this.page.children.player.move(this._x, this.sprite.width);
         this.page.isZoomIn = true;
         this.isClick = true;
-        this.textures = this.manager.app.loader.resources["image/building/company/webside/sprites.json"].spritesheet.textures;
+        this.textures = this.manager.resources["image/building/company/webside/sprites.json"].spritesheet.textures;
         this.webside = this.drawWebside();
     }
     cancelEvent() {

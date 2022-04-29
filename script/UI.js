@@ -139,7 +139,7 @@ class Book extends UI {
         this.manager.activeObj.isZoomIn = true;
         this.isClick = true;
         this.drawCancel();
-        this.textures = this.manager.app.loader.resources[this.texturesUrl].spritesheet.textures;
+        this.textures = this.manager.resources[this.texturesUrl].spritesheet.textures;
         this.book = this.drawBook();
     }
     drawCancel() {
@@ -346,7 +346,7 @@ class Book extends UI {
                 catch { onload(); }
                 return e;
                 function onload() {
-                    picTextures = self.manager.app.loader.resources[picUrl].spritesheet.textures;
+                    picTextures = self.manager.resources[picUrl].spritesheet.textures;
                     for (let i = 0; i < 8; i++) {
                         let item = drawPicItem(i);
                         if (i < 4) {
@@ -494,7 +494,7 @@ class Book extends UI {
                 catch { drawPicItem(); }
                 return pic;
                 function drawPicItem() {
-                    picTextures = self.manager.app.loader.resources[picUrl].spritesheet.textures;
+                    picTextures = self.manager.resources[picUrl].spritesheet.textures;
                     for (let i = 0; i < picList.length; i++) {
                         let e = new PIXI.Container();
                         let s = createSprite(picTextures[picList[i]], 0.5, scale * 0.45);

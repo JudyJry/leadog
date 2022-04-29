@@ -275,7 +275,7 @@ export class Player extends GameObject {
             }
             function onLoad() {
                 self.isLoaded = true;
-                self.textures = self.manager.app.loader.resources[self.texturesUrl].spritesheet.textures;
+                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 let textures = [];
                 for (let i in self.textures) {
                     const texture = PIXI.Texture.from(i);
