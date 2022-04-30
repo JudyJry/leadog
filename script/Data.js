@@ -8,10 +8,15 @@ import { ElderlyAction_Hair, ElderlyAction_Story1, ElderlyAction_Story2, Elderly
 import { KnowAction_Story1, KnowAction_Story2, KnowAction_Story3, KnowAction_Story4, KnowAction_Story5 } from "./KnowAction";
 
 const objType = Object.freeze({
-    "island": 0,
-    "building": 1,
-    "animation": 2,
-    "other": 3
+    "other": 0,
+    "animation": 1,
+    "island": 2,
+    "building": 3,
+    "dog": 4,
+    "light": 5,
+    "tree": 6,
+    "boat": 7,
+    "wave": 8,
 });
 
 const Page = Object.freeze({
@@ -37,6 +42,36 @@ const uiData = [
 ];
 
 const homePageData = [
+    //reflect
+    { type: objType.island, name: "island_reflect_0", url: "island_reflect_0.png", x: 31, y: 26 },
+    { type: objType.island, name: "island_reflect_1", url: "island_reflect_1.png", x: -311, y: 118 },
+    { type: objType.island, name: "island_reflect_2", url: "island_reflect_2.png", x: 346, y: 165 },
+    //wave
+    { type: objType.wave, name: "island_wave_0", url: "island_wave_0.png", x: 2, y: 2 },
+    { type: objType.wave, name: "island_wave_1", url: "island_wave_1.png", x: -288, y: 121 },
+    { type: objType.wave, name: "island_wave_2", url: "island_wave_2.png", x: 366, y: 125 },
+    //island
+    { type: objType.island, name: "island_0", url: "island_0.png", x: 31, y: 7 },
+    { type: objType.island, name: "island_1", url: "island_1.png", x: -309, y: 106 },
+    { type: objType.island, name: "island_2", url: "island_2.png", x: 347, y: 147 },
+    //tree
+    { type: objType.tree, name: "tree_0", url: "tree_0.png", x: -128, y: -121 },
+    { type: objType.tree, name: "tree_1", url: "tree_1.png", x: 5, y: -158 },
+    { type: objType.tree, name: "tree_2", url: "tree_2.png", x: 88, y: -141 },
+    { type: objType.tree, name: "tree_3", url: "tree_3.png", x: 197, y: -107 },
+    { type: objType.tree, name: "tree_4", url: "tree_4.png", x: -3, y: -39 },
+    { type: objType.tree, name: "tree_5", url: "tree_5.png", x: 92, y: -59 },
+    { type: objType.tree, name: "tree_6", url: "tree_6.png", x: -33, y: 41 },
+    { type: objType.tree, name: "tree_7", url: "tree_7.png", x: -322, y: 112 },
+    { type: objType.tree, name: "tree_8", url: "tree_8.png", x: 358, y: 144 },
+    { type: objType.tree, name: "tree_9", url: "tree_9.png", x: 421, y: 110 },
+    //light
+    { type: objType.other, name: "light_0", url: "light_0.png", x: -136, y: -87 },
+    { type: objType.other, name: "light_1", url: "light_1.png", x: -32, y: -105 },
+    { type: objType.animation, name: "streetLight", url: "streetLight", x: -68, y: 8 },
+    { type: objType.animation, name: "trafficLight", url: "trafficLight", x: 63, y: -26 },
+    { type: objType.other, name: "light_4", url: "light_4.png", x: 301, y: 111 },
+    //building
     { type: objType.building, name: "出生", url: "born.png", x: 151, y: 48 },
     { type: objType.building, name: "幼年", url: "childhood.png", x: 117, y: -19 },
     { type: objType.building, name: "壯年", url: "youth.png", x: 54, y: 52 },
@@ -44,6 +79,18 @@ const homePageData = [
     { type: objType.building, name: "知識教育館", url: "know.png", x: 25, y: -80 },
     { type: objType.building, name: "LEADOG公司", url: "company.png", x: -78, y: -87 },
     { type: objType.building, name: "相關活動", url: "market.png", x: 151, y: -112 },
+    //other
+    { type: objType.other, name: "building_0", url: "building_0.png", x: -178, y: -81 },
+    { type: objType.other, name: "building_1", url: "building_1.png", x: 183, y: -51 },
+    { type: objType.animation, name: "ferrisWheel", url: "ferrisWheel", x: 243, y: -73 },
+    //dog
+    { type: objType.dog, name: "dog_born", url: "dog_born.png", x: 81, y: -113 },
+    { type: objType.dog, name: "dog_childhood", url: "dog_childhood.png", x: -136, y: 18 },
+    { type: objType.dog, name: "dog_youth", url: "dog_youth.png", x: 49, y: 3 },
+    { type: objType.dog, name: "dog_elderly", url: "dog_elderly.png", x: 10, y: 73 },
+    //boat
+    { type: objType.boat, name: "sailboat_0", url: "sailboat_0.png", x: -272, y: -179 },
+    { type: objType.boat, name: "sailboat_1", url: "sailboat_1.png", x: 360, y: 27 },
 ];
 
 const videoData = {

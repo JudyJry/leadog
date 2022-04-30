@@ -29,7 +29,7 @@ export default class ResourceLoader {
                 this.loader.add(list);
                 this.loader.onProgress.add(this.loadProgressHandler.bind(this));
                 this.loader.onError.add((_loader, resource) => { console.log("load error:" + resource.url) });
-                this.loader.onLoad.add((_loader, resource) => { console.log("load:" + resource.url); });
+                this.loader.onLoad.add((_loader, resource) => { /* console.log("load:" + resource.url); */ });
                 this.loader.onComplete.add(() => { resolve(); });
                 this.loader.load(resolve);
             })
@@ -53,7 +53,7 @@ export default class ResourceLoader {
                 if (list !== undefined) {
                     self.loader.add(list);
                     self.loader.onProgress.add(self.loadProgressHandler.bind(self));
-                    self.loader.onLoad.add((_loader, resource) => { console.log("load:" + resource.url); });
+                    self.loader.onLoad.add((_loader, resource) => { /* console.log("load:" + resource.url); */ });
                     self.loader.onError.add((_loader, resource) => { console.log("load error:" + resource.url); });
                     self.loader.onComplete.add(() => { resolve(); });
                     self.loader.load(resolve);

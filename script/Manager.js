@@ -196,6 +196,9 @@ const loadList = {
         "image/homepage/island/island_wave_0.png",
         "image/homepage/island/island_wave_1.png",
         "image/homepage/island/island_wave_2.png",
+        "image/homepage/ferrisWheel/sprites.json",
+        "image/homepage/trafficLight/sprites.json",
+        "image/homepage/streetLight/sprites.json"
     ],
     "born": [
         "image/building/born/bg.png",
