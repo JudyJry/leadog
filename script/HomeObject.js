@@ -28,10 +28,10 @@ class Background extends GameObject {
         this.name = "Background";
         this.container.zIndex = 10;
         this.draw = function () {
-            this.sprite.texture = PIXI.Texture.from(this.url);
+            /* this.sprite.texture = PIXI.Texture.from(this.url);
             this.sprite.anchor.set(0.5);
+            this.container.addChild(this.sprite); */
             this.manager.canvasScale = 1;
-            //this.container.addChild(this.sprite);
         }
     }
 }
@@ -71,6 +71,9 @@ class Building extends GameObject {
                         break;
                     case objType.animation:
                         this.animation.push(this.drawAnimation(i, data.name, data.url, data.x, data.y));
+                        break;
+                    case objType.animationBuilding:
+                        this.building.push(this.drawAnimationBuilding(i, data.name, data.url, data.x, data.y));
                         break;
                     case objType.dog:
                         this.drawOther(i, data.name, data.url, data.x, data.y);
@@ -224,6 +227,111 @@ class Building extends GameObject {
             }
         }
     }
+    drawAnimationBuilding(i, n, url, x, y) {
+        const self = this;
+        const jsonUrl = [
+            "image/homepage/building/" + url + "/normal/sprites.json",
+            "image/homepage/building/" + url + "/open/sprites.json"
+        ];
+        const texturesUrl = [
+            this.manager.resources[jsonUrl[0]].spritesheet.textures,
+            this.manager.resources[jsonUrl[1]].spritesheet.textures,
+        ];
+        let textures_normal = [];
+        let textures_open = [];
+        for (let i = 0; i < Object.keys(texturesUrl[0]).length; i++) {
+            textures_normal.push(texturesUrl[0][i + ".png"]);
+        }
+        for (let i = 0; i < Object.keys(texturesUrl[1]).length; i++) {
+            textures_open.push(texturesUrl[1][i + ".png"]);
+        }
+        let _x = x * 2;
+        let _y = y * 2;
+        let e = new PIXI.Container();
+        let c = new PIXI.AnimatedSprite(textures_normal);
+        let c2 = new PIXI.AnimatedSprite(textures_open);
+        c.anchor.set(0.5);
+        c.scale.set(this.scale);
+        c2.anchor.set(0.5);
+        c2.scale.set(this.scale);
+        c2.visible = false;
+
+        e.name = n;
+        e.dataIndex = i;
+        e.addChild(c, c2);
+        e.isEntering = false;
+        e.blink = FilterSet.blink();
+        e.filters = [e.blink.filter];
+        e.position.set(_x, _y);
+        e.overEvent = buildingOverEvent;
+        e.clickEvent = buildingClickEvent;
+        e.update = buildingUpdate;
+        addPointerEvent(e);
+        drawText();
+        this.container.addChild(e);
+        c2.animationSpeed = 1.5;
+        c.play();
+        return e;
+        function buildingUpdate() {
+            if (e.isPointerOver) {
+                e.blink.outerStrength = 5;
+            }
+            else if (c.isEntering) {
+                e.blink.outerStrength = 0;
+            }
+            else {
+                e.blink.effect();
+            }
+        }
+        function buildingClickEvent(e) {
+            if (!e.isEntering) {
+                e.isEntering = true;
+                let _x = homePageData[e.dataIndex].x * 2;
+                let _y = homePageData[e.dataIndex].y * 2;
+                c.visible = false;
+                c2.visible = true;
+                c.stop();
+                c2.gotoAndPlay(0);
+                gsap.timeline()
+                    .to(self.page.container, { duration: 0.5, x: -_x * self.zoomIn, y: -_y * self.zoomIn })
+                    .to(self.page.container.scale, { duration: 0.5, x: self.zoomIn, y: self.zoomIn }, 0)
+                    .to(self.page.container, { duration: 0.5, onComplete: enter.bind(self) })
+            }
+            function enter() {
+                self.page.container.scale.set(1);
+                self.page.container.position.set(0);
+                c.visible = true;
+                c2.visible = false;
+                c2.stop();
+                c.gotoAndPlay(0);
+                e.isEntering = false;
+                //self.manager.toOtherPage(e.name);
+            };
+        }
+        function buildingOverEvent(e) {
+            if (e.isPointerOver) {
+                gsap.killTweensOf(e.text);
+                gsap.killTweensOf(e.scale);
+                gsap.to(e.text, { duration: 1, y: e.text.originHeight - self.space, alpha: 1 });
+                gsap.to(e.scale, { duration: 1, x: 1.01, y: 1.01 });
+            }
+            else {
+                gsap.killTweensOf(e.text);
+                gsap.killTweensOf(e.scale);
+                gsap.to(e.text, { duration: 0.5, y: e.text.originHeight, alpha: 0 });
+                gsap.to(e.scale, { duration: 1, x: 1, y: 1 });
+            }
+        }
+        function drawText() {
+            e.text = new PIXI.Text(c.name, self.ts);
+            e.text.zIndex = 100;
+            e.text.anchor.set(0.5);
+            e.text.originHeight = (self.spriteHeight * -1) + _y;
+            e.text.position.set(_x, e.text.originHeight);
+            e.text.alpha = 0;
+            self.manager.addChild(e.text);
+        }
+    }
     drawAnimation(i, n, url, x, y) {
         const jsonUrl = "image/homepage/" + url + "/sprites.json";
         const texturesUrl = this.manager.resources[jsonUrl].spritesheet.textures;
@@ -250,6 +358,11 @@ class Building extends GameObject {
                 break;
             case "streetLight":
                 c.animationSpeed = 0.5;
+                break;
+            case "bus":
+                gsap.timeline({ repeat: -1 })
+                    .to(c, { duration: 10, x: 88, y: -36 })
+                    .to(c, { duration: 10, x: _x, y: _y })
                 break;
         }
 
