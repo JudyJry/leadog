@@ -6,8 +6,10 @@ import { TextStyle } from './TextStyle.js';
 import { FilterSet } from './FilterSet.js';
 import { homePageData, objType } from './Data.js';
 import { addPointerEvent, createSprite, createText } from './GameFunction.js';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 
 gsap.registerPlugin(PixiPlugin);
+gsap.registerPlugin(MotionPathPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
 export default class HomeObject extends PageObject {
@@ -80,6 +82,9 @@ class Building extends GameObject {
                         break;
                     case objType.boat:
                         this.drawBoat(i, data.name, data.url, data.x, data.y);
+                        break;
+                    case objType.fish:
+                        this.drawFish(i, data.name, data.url, data.x, data.y);
                         break;
                     case objType.other:
                         this.drawOther(i, data.name, data.url, data.x, data.y);
@@ -209,7 +214,7 @@ class Building extends GameObject {
             function enter() {
                 self.page.container.scale.set(1);
                 self.page.container.position.set(0);
-                //self.manager.toOtherPage(e.name);
+                self.manager.toOtherPage(e.name);
             };
         }
         function buildingOverEvent(e) {
@@ -229,36 +234,22 @@ class Building extends GameObject {
     }
     drawAnimationBuilding(i, n, url, x, y) {
         const self = this;
-        const jsonUrl = [
-            "image/homepage/building/" + url + "/normal/sprites.json",
-            "image/homepage/building/" + url + "/open/sprites.json"
-        ];
-        const texturesUrl = [
-            this.manager.resources[jsonUrl[0]].spritesheet.textures,
-            this.manager.resources[jsonUrl[1]].spritesheet.textures,
-        ];
-        let textures_normal = [];
-        let textures_open = [];
-        for (let i = 0; i < Object.keys(texturesUrl[0]).length; i++) {
-            textures_normal.push(texturesUrl[0][i + ".png"]);
-        }
-        for (let i = 0; i < Object.keys(texturesUrl[1]).length; i++) {
-            textures_open.push(texturesUrl[1][i + ".png"]);
+        const jsonUrl = "image/homepage/building/" + url + "/sprites.json";
+        const texturesUrl = this.manager.resources[jsonUrl].spritesheet.textures;
+        let textures = [];
+        for (let i = 0; i < Object.keys(texturesUrl).length; i++) {
+            textures.push(texturesUrl[i + ".png"]);
         }
         let _x = x * 2;
         let _y = y * 2;
         let e = new PIXI.Container();
-        let c = new PIXI.AnimatedSprite(textures_normal);
-        let c2 = new PIXI.AnimatedSprite(textures_open);
+        let c = new PIXI.AnimatedSprite(textures);
         c.anchor.set(0.5);
         c.scale.set(this.scale);
-        c2.anchor.set(0.5);
-        c2.scale.set(this.scale);
-        c2.visible = false;
-
+        c.loop = false;
         e.name = n;
         e.dataIndex = i;
-        e.addChild(c, c2);
+        e.addChild(c);
         e.isEntering = false;
         e.blink = FilterSet.blink();
         e.filters = [e.blink.filter];
@@ -269,8 +260,8 @@ class Building extends GameObject {
         addPointerEvent(e);
         drawText();
         this.container.addChild(e);
-        c2.animationSpeed = 1.5;
-        c.play();
+        c.animationSpeed = 1.5;
+        c.stop();
         return e;
         function buildingUpdate() {
             if (e.isPointerOver) {
@@ -288,10 +279,7 @@ class Building extends GameObject {
                 e.isEntering = true;
                 let _x = homePageData[e.dataIndex].x * 2;
                 let _y = homePageData[e.dataIndex].y * 2;
-                c.visible = false;
-                c2.visible = true;
-                c.stop();
-                c2.gotoAndPlay(0);
+                c.gotoAndPlay(0);
                 gsap.timeline()
                     .to(self.page.container, { duration: 0.5, x: -_x * self.zoomIn, y: -_y * self.zoomIn })
                     .to(self.page.container.scale, { duration: 0.5, x: self.zoomIn, y: self.zoomIn }, 0)
@@ -300,12 +288,9 @@ class Building extends GameObject {
             function enter() {
                 self.page.container.scale.set(1);
                 self.page.container.position.set(0);
-                c.visible = true;
-                c2.visible = false;
-                c2.stop();
-                c.gotoAndPlay(0);
+                c.gotoAndStop(0);
                 e.isEntering = false;
-                //self.manager.toOtherPage(e.name);
+                self.manager.toOtherPage(e.name);
             };
         }
         function buildingOverEvent(e) {
@@ -323,7 +308,7 @@ class Building extends GameObject {
             }
         }
         function drawText() {
-            e.text = new PIXI.Text(c.name, self.ts);
+            e.text = new PIXI.Text(e.name, self.ts);
             e.text.zIndex = 100;
             e.text.anchor.set(0.5);
             e.text.originHeight = (self.spriteHeight * -1) + _y;
@@ -350,7 +335,9 @@ class Building extends GameObject {
         this.container.addChild(c);
         switch (c.name) {
             case "ferrisWheel":
-                c.animationSpeed = 0.75;
+                c.animationSpeed = 0.1;
+                c.clickEvent = () => { if (c.playing) c.stop(); else c.play(); }
+                addPointerEvent(c);
                 break;
             case "trafficLight":
                 c.animationSpeed = 0.75;
@@ -360,14 +347,51 @@ class Building extends GameObject {
                 c.animationSpeed = 0.5;
                 break;
             case "bus":
+                c.scale.set(this.scale * 0.5);
                 gsap.timeline({ repeat: -1 })
-                    .to(c, { duration: 10, x: 88, y: -36 })
-                    .to(c, { duration: 10, x: _x, y: _y })
+                    .to(c, { duration: 10, x: 82, y: -14 })
+                    .to(c, { duration: 5, x: -64, y: 48, onComplete: () => { c.position.set(_x, _y); } })
+                break;
+            case "dog_born":
+                c.loop = false;
+                c.animationSpeed = 0.5;
+                c.onComplete = () => { setTimeout(() => { c.gotoAndPlay(0); }, 2000) };
+                c.clickEvent = () => { gsap.timeline().to(c, { duration: 0.2, y: "-=10" }).to(c, { duration: 0.2, y: "+=10" }) }
+                addPointerEvent(c);
+                break;
+            case "dog_youth":
+                c.animationSpeed = 1.2;
+                const r = 60;
+                gsap.timeline({ repeat: -1 })
+                    .to(c, { duration: 2, x: "+=" + r, y: "+=" + r, ease: "none", onComplete: () => { c.scale.set(-this.scale, this.scale) } })
+                    .to(c, { duration: 2, x: "-=" + r, y: "-=" + r, ease: "none", onComplete: () => { c.scale.set(this.scale, this.scale) } })
+                break;
+            case "dog_elderly":
+                c.loop = false;
+                c.animationSpeed = 0.5;
+                c.onComplete = () => { setTimeout(() => { c.gotoAndPlay(0); }, 5000) };
                 break;
         }
 
         c.play();
         return c;
+    }
+    drawFish(i, n, url, x, y) {
+        let _x = x * 2;
+        let _y = y * 2;
+        let c = createSprite(this.textures[url], [1, 0], this.scale);
+        c.name = n;
+        c.dataIndex = i;
+        c.position.set(_x, _y);
+        c.alpha = 0.5;
+        this.container.addChild(c);
+        fishAnim();
+
+        function fishAnim() {
+            gsap.timeline({ repeat: -1 })
+                .to(c, { duration: 3, rotation: "+=0.5", x: "+=5", y: "-=5", ease: "power1.inOut" })
+                .to(c, { duration: 3, rotation: "-=0.5", x: "-=5", y: "+=5", ease: "power1.inOut" })
+        }
     }
     drawOther(i, n, url, x, y) {
         let _x = x * 2;

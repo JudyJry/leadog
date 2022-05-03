@@ -17,7 +17,8 @@ const objType = Object.freeze({
     "tree": 6,
     "boat": 7,
     "wave": 8,
-    "animationBuilding": 9
+    "animationBuilding": 9,
+    "fish": 10,
 });
 
 const Page = Object.freeze({
@@ -43,6 +44,8 @@ const uiData = [
 ];
 
 const homePageData = [
+    //fish
+    { type: objType.fish, name: "fish", url: "fish.png", x: -173, y: 76 },
     //reflect
     { type: objType.island, name: "island_reflect_0", url: "island_reflect_0.png", x: 31, y: 26 },
     { type: objType.island, name: "island_reflect_1", url: "island_reflect_1.png", x: -311, y: 118 },
@@ -68,7 +71,7 @@ const homePageData = [
     { type: objType.tree, name: "tree_9", url: "tree_9.png", x: 421, y: 110 },
     //bus
     { type: objType.building, name: "相關活動", url: "market.png", x: 151, y: -112 },
-    { type: objType.animation, name: "bus", url: "bus", x: 147, y: -60 },
+    { type: objType.animation, name: "bus", url: "bus", x: 186, y: -65 },
     //light
     { type: objType.other, name: "light_0", url: "light_0.png", x: -136, y: -87 },
     { type: objType.other, name: "light_1", url: "light_1.png", x: -32, y: -105 },
@@ -76,21 +79,21 @@ const homePageData = [
     { type: objType.animation, name: "trafficLight", url: "trafficLight", x: 63, y: -26 },
     { type: objType.other, name: "light_4", url: "light_4.png", x: 301, y: 111 },
     //building
-    { type: objType.building, name: "出生", url: "born.png", x: 151, y: 48 },
-    { type: objType.building, name: "幼年", url: "childhood.png", x: 117, y: -19 },
+    { type: objType.animationBuilding, name: "幼年", url: "childhood", x: 120, y: -14 },
+    { type: objType.animationBuilding, name: "出生", url: "born", x: 151, y: 48 },
     { type: objType.building, name: "壯年", url: "youth.png", x: 54, y: 52 },
-    { type: objType.building, name: "老年", url: "elderly.png", x: -22, y: 39 },
+    { type: objType.animationBuilding, name: "老年", url: "elderly", x: -22, y: 47 },
     { type: objType.building, name: "知識教育館", url: "know.png", x: 25, y: -80 },
-    { type: objType.animationBuilding, name: "LEADOG公司", url: "company", x: -78, y: -87 },
+    { type: objType.animationBuilding, name: "LEADOG公司", url: "company", x: -78, y: -82 },
     //other
     { type: objType.other, name: "building_0", url: "building_0.png", x: -178, y: -81 },
     { type: objType.other, name: "building_1", url: "building_1.png", x: 183, y: -51 },
     { type: objType.animation, name: "ferrisWheel", url: "ferrisWheel", x: 243, y: -73 },
     //dog
-    { type: objType.dog, name: "dog_born", url: "dog_born.png", x: 81, y: -113 },
+    { type: objType.animation, name: "dog_born", url: "dog/born", x: 81, y: -113 },
     { type: objType.dog, name: "dog_childhood", url: "dog_childhood.png", x: -136, y: 18 },
-    { type: objType.dog, name: "dog_youth", url: "dog_youth.png", x: 49, y: 3 },
-    { type: objType.dog, name: "dog_elderly", url: "dog_elderly.png", x: 10, y: 73 },
+    { type: objType.animation, name: "dog_youth", url: "dog/youth", x: 49, y: 3 },
+    { type: objType.animation, name: "dog_elderly", url: "dog/elderly", x: 10, y: 73 },
     //boat
     { type: objType.boat, name: "sailboat_0", url: "sailboat_0.png", x: -272, y: -179 },
     { type: objType.boat, name: "sailboat_1", url: "sailboat_1.png", x: 360, y: 27 },

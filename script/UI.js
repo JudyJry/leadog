@@ -24,8 +24,8 @@ export default class UIsystem {
         this.uiContainer.zIndex = 100;
         this.ui = {
             "book": new Book(this.manager, this),
-            "notify": new Notify(this.manager, this),
-            "user": new User(this.manager, this),
+            //"notify": new Notify(this.manager, this),
+            //"user": new User(this.manager, this),
             "menu": new Menu(this.manager, this),
             "home": new Index(this.manager, this),
             "cancel": new Cancel(this.manager, this)
@@ -783,7 +783,7 @@ class Notify extends UI {
         this.name = "Notify";
         this.draw = function () {
             this.icon = this.drawIcon('image/notify.svg');
-            this.container.position.set(0, 1 * this.UIsystem.uiSpacing);
+            this.container.position.set(0, Object.keys(this.UIsystem.ui).indexOf("notify") * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
@@ -797,7 +797,7 @@ class User extends UI {
         this.draw = function () {
             this.icon = this.drawIcon('image/user.svg');
             this.drawIndex();
-            this.container.position.set(0, 2 * this.UIsystem.uiSpacing);
+            this.container.position.set(0, Object.keys(this.UIsystem.ui).indexOf("user") * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
@@ -853,7 +853,7 @@ class Menu extends UI {
         this.draw = function () {
             this.icon = this.drawIcon('image/menu.svg');
             this.drawIndex();
-            this.container.position.set(0, 3 * this.UIsystem.uiSpacing);
+            this.container.position.set(0, Object.keys(this.UIsystem.ui).indexOf("menu") * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
@@ -915,7 +915,7 @@ class Index extends UI {
         this.draw = function () {
             this.icon = this.drawIcon('image/index.svg');
             this.drawIndex();
-            this.container.position.set(0, 4 * this.UIsystem.uiSpacing);
+            this.container.position.set(0, Object.keys(this.UIsystem.ui).indexOf("home") * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }

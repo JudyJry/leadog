@@ -102,7 +102,19 @@ export class Background extends GameObject {
             this.manager.canvasScale = this.w / width <= this.h / height ? this.w / width : this.h / height;
             this.container.addChild(this.sprite);
             this.page.container.position.x = this.wall.left;
+            this.caution = createSprite("image/building/caution.png", 1, 0.75);
+            this.caution.zIndex = 200;
+            this.caution.position.set((this.w / 2) - 10, (this.h / 2) - 10);
+            this.manager.app.stage.addChild(this.caution);
         }
+    }
+    resize() {
+        this.manager.app.stage.removeChild(this.caution);
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.removeChildren();
+        this.draw();
+        this.container.scale.set(this.manager.canvasScale);
     }
     update() {
         if (!this.page.isZoomIn) {
@@ -250,41 +262,38 @@ export class Player extends GameObject {
         this.container.zIndex = 90;
         this.scale = 1;
         this.x = -0.412;
-        this.y = 0.1;
+        this.y = 0.2;
         this.speed = 75;
-        this.texturesUrl = "image/walk/childhood/sprites.json";
         this.textures = undefined;
         this.isLoaded = false;
         this.draw = function () {
+            let pageName = this.page.name.replace("Object", "").toLowerCase();
+            if (pageName !== "born" ||
+                pageName !== "childhood" ||
+                pageName !== "youth" ||
+                pageName !== "elderly") { console.log(pageName); pageName = "childhood" }
             this._x = (this.x * this.w * 2);
             this._y = (this.y * this.h * 2);
-            this.sprite.texture = PIXI.Texture.from("image/player.png");
-            this.sprite.anchor.set(0.5);
+            this.texturesUrl = "image/walk/" + pageName + "/sprites.json";
+            this.sprite.texture = PIXI.Texture.from("image/walk/" + pageName + "/player.png");
+            this.sprite.anchor.set(0.5, 1);
             this.sprite.scale.set(this.scale);
             this.container.addChild(this.sprite);
             this.container.position.set(this._x, this._y);
             const self = this;
-            try {
-                this.manager.app.loader.add(this.texturesUrl);
-                this.manager.app.loader.load(() => {
-                    onLoad();
-                });
-            }
-            catch {
-                onLoad();
-            }
+            onLoad();
             function onLoad() {
                 self.isLoaded = true;
-                self.textures = self.manager.resources[self.texturesUrl].spritesheet.textures;
+                const texturesUrl = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 let textures = [];
-                for (let i in self.textures) {
-                    const texture = PIXI.Texture.from(i);
-                    textures.push(texture);
+                for (let i = 0; i < Object.keys(texturesUrl).length; i++) {
+                    textures.push(texturesUrl[i + ".png"]);
                 }
                 self.anim = new PIXI.AnimatedSprite(textures);
-                self.anim.anchor.set(0.5);
+                self.anim.anchor.set(0.5, 1);
                 self.container.addChild(self.anim);
                 self.anim.visible = false;
+                self.breath = self.breathAnim();
             }
         }
     }
@@ -295,6 +304,7 @@ export class Player extends GameObject {
         this.container.alpha = 1;
         let mx = math.Map(this.mouse.x, 0, this.w, -this.w / 2, this.w / 2) - this.page.container.position.x;
         if (mx > this.container.position.x + 50) {
+            this.breath.pause();
             gsap.to(this.container, { duration: 0.5, x: "+=" + this.speed });
             this.sprite.visible = false;
             this.sprite.scale.set(this.scale, this.scale);
@@ -303,6 +313,7 @@ export class Player extends GameObject {
             this.anim.play();
         }
         else if (mx < this.container.position.x - 50) {
+            this.breath.pause();
             gsap.to(this.container, { duration: 0.5, x: "-=" + this.speed });
             this.sprite.visible = false;
             this.sprite.scale.set(-this.scale, this.scale);
@@ -315,12 +326,14 @@ export class Player extends GameObject {
             this.sprite.visible = true;
             this.anim.visible = false;
             this.anim.stop();
+            this.breath.play();
         }
     }
-    breath() {
+    breathAnim() {
         let tl = gsap.timeline({ repeat: -1 });
-        tl.to(this.container.scale, { duration: 1.5, y: "-=0.05" });
-        tl.to(this.container.scale, { duration: 1.5, y: "+=0.05" }, 2);
+        tl.to(this.container.scale, { duration: 1.5, y: "-=0.02" });
+        tl.to(this.container.scale, { duration: 1.5, y: "+=0.02" }, 1.75);
+        return tl;
     }
     move(x, sw) {
         this.container.alpha = 0;
@@ -341,6 +354,7 @@ export class Door extends linkObject {
         this.fadeText = "離開房間";
     }
     clickEvent() {
+        this.manager.app.stage.removeChild(this.page.children.background.caution);
         this.manager.toOtherPage(Page.home);
     }
 }
