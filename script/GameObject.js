@@ -268,10 +268,10 @@ export class Player extends GameObject {
         this.isLoaded = false;
         this.draw = function () {
             let pageName = this.page.name.replace("Object", "").toLowerCase();
-            if (pageName !== "born" ||
-                pageName !== "childhood" ||
-                pageName !== "youth" ||
-                pageName !== "elderly") { console.log(pageName); pageName = "childhood" }
+            if (pageName != "born" &&
+                pageName != "childhood" &&
+                pageName != "youth" &&
+                pageName != "elderly") { pageName = "childhood" }
             this._x = (this.x * this.w * 2);
             this._y = (this.y * this.h * 2);
             this.texturesUrl = "image/walk/" + pageName + "/sprites.json";
@@ -283,6 +283,7 @@ export class Player extends GameObject {
             const self = this;
             onLoad();
             function onLoad() {
+                console.log(self.texturesUrl);
                 self.isLoaded = true;
                 const texturesUrl = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 let textures = [];
