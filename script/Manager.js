@@ -187,6 +187,8 @@ const loadList = {
         "image/building/caution.png",
         "image/walk/childhood/player.png",
         "image/walk/childhood/sprites.json",
+        "image/walk/elderly/player.png",
+        "image/walk/elderly/sprites.json",
         //video-ui
         "image/video/video.png",
         "image/TGDAlogo.png",
@@ -208,6 +210,8 @@ const loadList = {
         "image/homepage/streetLight/sprites.json",
         "image/homepage/bus/sprites.json",
         "image/homepage/dog/born/sprites.json",
+        "image/homepage/dog/childhood/sprites.json",
+        "image/homepage/dog/childhood/catch/sprites.json",
         "image/homepage/dog/youth/sprites.json",
         "image/homepage/dog/elderly/sprites.json",
     ],

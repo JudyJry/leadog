@@ -5,7 +5,7 @@ import { GameObject, PageObject } from './GameObject.js';
 import { TextStyle } from './TextStyle.js';
 import { FilterSet } from './FilterSet.js';
 import { homePageData, objType } from './Data.js';
-import { addPointerEvent, createSprite, createText } from './GameFunction.js';
+import { addDragEvent, addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 
 gsap.registerPlugin(PixiPlugin);
@@ -84,7 +84,7 @@ class Building extends GameObject {
                         this.drawBoat(i, data.name, data.url, data.x, data.y);
                         break;
                     case objType.fish:
-                        this.drawFish(i, data.name, data.url, data.x, data.y);
+
                         break;
                     case objType.other:
                         this.drawOther(i, data.name, data.url, data.x, data.y);
@@ -135,6 +135,8 @@ class Building extends GameObject {
         return e;
     }
     drawBoat(i, n, url, x, y) {
+        let w = this.w;
+        let h = this.h;
         const t = 5;
         const s = 5;
         let _x = x * 2;
@@ -151,17 +153,37 @@ class Building extends GameObject {
         e.position.set(_x, _y);
         this.container.addChild(e);
 
-        gsap.timeline({ repeat: -1 })
+        let tl = gsap.timeline({ repeat: -1 })
             .to(c, { duration: t / 2, rotation: s * (Math.PI / 180), ease: "none" }, 0)
             .to(c, { duration: t / 2, rotation: -s * (Math.PI / 180), ease: "none" }, t / 2)
 
             .to(c2, { duration: t / 2, rotation: -s * (Math.PI / 180), ease: "none" }, 0)
             .to(c2, { duration: t / 2, rotation: s * (Math.PI / 180), ease: "none" }, t / 2)
 
-            .to(e, { duration: t / 2, x: "+=2", ease: "none" }, 0)
-            .to(e, { duration: t / 2, x: "-=2", ease: "none" }, t / 2)
+        e.dragDownEvent = (e, event) => {
+            setPos(e, event)
+            gsap.timeline()
+                .to(c, { duration: 0.5, y: 20 })
+                .to(c, { duration: 0.5, y: -20 }, 0)
+        }
+        e.dragMoveEvent = (e, event) => {
+            setPos(e, event)
+        }
+        e.dragUpEvent = (e, event) => {
+            setPos(e, event)
+            tl.play(true);
+            gsap.timeline()
+                .to(c, { duration: 0.5, y: 0 })
+                .to(c, { duration: 0.5, y: 0 }, 0)
+        }
 
+        addDragEvent(e);
         return e;
+        function setPos(e, event) {
+            tl.pause()
+            e.position.x = event.data.global.x - (w / 2);
+            e.position.y = event.data.global.y - (h / 2);
+        }
     }
     drawBuilding(i, n, url, x, y) {
         const self = this;
@@ -359,6 +381,47 @@ class Building extends GameObject {
                 c.clickEvent = () => { gsap.timeline().to(c, { duration: 0.2, y: "-=10" }).to(c, { duration: 0.2, y: "+=10" }) }
                 addPointerEvent(c);
                 break;
+            case "dog_childhood":
+
+                const fish = this.drawFish(0);
+                const texturesUrl2 = this.manager.resources["image/homepage/dog/childhood/catch/sprites.json"].spritesheet.textures;
+                let textures2 = [];
+                for (let i = 0; i < Object.keys(texturesUrl2).length; i++) {
+                    textures2.push(texturesUrl2[i + ".png"]);
+                }
+                let c2 = new PIXI.AnimatedSprite(textures2);
+                c2.loop = false;
+                c2.anchor.set(0.5);
+                c2.scale.set(this.scale);
+                c2.position.set(_x, _y);
+                this.container.addChild(c2);
+                c2.visible = false;
+                c2.stop();
+                c2.animationSpeed = 0.5;
+                c.animationSpeed = 0.5;
+                c.clickEvent = () => {
+                    if (fish.isHooked) {
+                        fish.isHooked = false;
+                        fish.alpha = 0;
+                        fish.anim.pause(0);
+                        c.gotoAndStop(0);
+                        c.visible = false;
+                        c2.visible = true;
+                        c2.gotoAndPlay(0);
+                        setTimeout(() => {
+                            gsap.to(fish, { duration: 2, alpha: 0.5, onComplete: () => { fish.anim.play(true); } })
+                        }, 3000)
+                    }
+                }
+                addPointerEvent(c);
+
+                c2.onComplete = () => {
+                    c2.gotoAndStop(0);
+                    c2.visible = false;
+                    c.visible = true;
+                    c.gotoAndPlay(0);
+                }
+                break;
             case "dog_youth":
                 c.animationSpeed = 1.2;
                 const r = 60;
@@ -370,27 +433,34 @@ class Building extends GameObject {
                 c.loop = false;
                 c.animationSpeed = 0.5;
                 c.onComplete = () => { setTimeout(() => { c.gotoAndPlay(0); }, 5000) };
+                c.clickEvent = () => { gsap.timeline().to(c, { duration: 0.2, y: "-=5" }).to(c, { duration: 0.2, y: "+=5" }) }
+                addPointerEvent(c);
                 break;
         }
 
         c.play();
         return c;
     }
-    drawFish(i, n, url, x, y) {
-        let _x = x * 2;
-        let _y = y * 2;
-        let c = createSprite(this.textures[url], [1, 0], this.scale);
-        c.name = n;
+    drawFish(i) {
+        const data = homePageData[i];
+        let _x = data.x * 2;
+        let _y = data.y * 2;
+        let c = createSprite(this.textures[data.url], [1, 0], this.scale * 0.5);
+        c.name = data.name;
         c.dataIndex = i;
+        c.isHooked = false;
         c.position.set(_x, _y);
         c.alpha = 0.5;
         this.container.addChild(c);
-        fishAnim();
-
+        c.anim = fishAnim();
+        return c;
         function fishAnim() {
-            gsap.timeline({ repeat: -1 })
+            return gsap.timeline({ repeat: -1 })
                 .to(c, { duration: 3, rotation: "+=0.5", x: "+=5", y: "-=5", ease: "power1.inOut" })
                 .to(c, { duration: 3, rotation: "-=0.5", x: "-=5", y: "+=5", ease: "power1.inOut" })
+                .to(c, { duration: 3, rotation: "+=0.5", x: _x + 27, y: _y - 42, ease: "power1.inOut", onComplete: () => { c.isHooked = true; } })
+                .to(c, { duration: 3, rotation: "-=0.5", ease: "power1.inOut", onComplete: () => { c.isHooked = false; } })
+                .to(c, { duration: 3, rotation: 0, x: _x, y: _y, ease: "power1.inOut" })
         }
     }
     drawOther(i, n, url, x, y) {

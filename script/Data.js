@@ -45,7 +45,7 @@ const uiData = [
 
 const homePageData = [
     //fish
-    { type: objType.fish, name: "fish", url: "fish.png", x: -173, y: 76 },
+    { type: objType.fish, name: "fish", url: "fish.png", x: -169, y: 72 },
     //reflect
     { type: objType.island, name: "island_reflect_0", url: "island_reflect_0.png", x: 31, y: 26 },
     { type: objType.island, name: "island_reflect_1", url: "island_reflect_1.png", x: -311, y: 118 },
@@ -54,6 +54,9 @@ const homePageData = [
     { type: objType.wave, name: "island_wave_0", url: "island_wave_0.png", x: 2, y: 2 },
     { type: objType.wave, name: "island_wave_1", url: "island_wave_1.png", x: -288, y: 121 },
     { type: objType.wave, name: "island_wave_2", url: "island_wave_2.png", x: 366, y: 125 },
+    //boat
+    { type: objType.boat, name: "sailboat_0", url: "sailboat_0.png", x: -272, y: -179 },
+    { type: objType.boat, name: "sailboat_1", url: "sailboat_1.png", x: 360, y: 27 },
     //island
     { type: objType.island, name: "island_0", url: "island_0.png", x: 31, y: 7 },
     { type: objType.island, name: "island_1", url: "island_1.png", x: -309, y: 106 },
@@ -91,12 +94,10 @@ const homePageData = [
     { type: objType.animation, name: "ferrisWheel", url: "ferrisWheel", x: 243, y: -73 },
     //dog
     { type: objType.animation, name: "dog_born", url: "dog/born", x: 81, y: -113 },
-    { type: objType.dog, name: "dog_childhood", url: "dog_childhood.png", x: -136, y: 18 },
+    { type: objType.animation, name: "dog_childhood", url: "dog/childhood", x: -136, y: 18 },
     { type: objType.animation, name: "dog_youth", url: "dog/youth", x: 49, y: 3 },
-    { type: objType.animation, name: "dog_elderly", url: "dog/elderly", x: 10, y: 73 },
-    //boat
-    { type: objType.boat, name: "sailboat_0", url: "sailboat_0.png", x: -272, y: -179 },
-    { type: objType.boat, name: "sailboat_1", url: "sailboat_1.png", x: 360, y: 27 },
+    { type: objType.animation, name: "dog_elderly", url: "dog/elderly", x: 10, y: 71 },
+
 ];
 
 const videoData = {
