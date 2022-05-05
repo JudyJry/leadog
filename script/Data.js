@@ -6,6 +6,7 @@ import YouthAction_Instruction2 from "./YouthAction_Instruction2";
 import YouthAction_Traffic from "./YouthAction_Traffic";
 import { ElderlyAction_Hair, ElderlyAction_Story1, ElderlyAction_Story2, ElderlyAction_Story3 } from "./ElderlyAction";
 import { KnowAction_Story1, KnowAction_Story2, KnowAction_Story3, KnowAction_Story4, KnowAction_Story5 } from "./KnowAction";
+import { CompanyAction_Promotion } from "./CompanyObject";
 
 const objType = Object.freeze({
     "other": 0,
@@ -262,6 +263,14 @@ const videoData = {
             endText: `謝謝你聆聽來自輔導員的呼籲\n以後可以在「探險手冊」重新觀看喔！`,
             endTime: 57,
             call: (manager, obj, scale) => { return new KnowAction_Story5(manager, obj, scale); }
+        },
+    ],
+    company: [
+        {
+            name: "company_promotion",
+            url: "video/company_promotion.mp4",
+            endTime: 95,
+            call: (manager, obj, scale) => { return new CompanyAction_Promotion(manager, obj, scale); }
         },
     ]
 }

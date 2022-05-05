@@ -24,23 +24,21 @@ export default class HomeObject extends PageObject {
     }
 }
 class Background extends GameObject {
-    constructor(manager, url, height = window.innerHeight) {
+    constructor(manager, url) {
         super(manager);
         this.url = url;
         this.name = "Background";
         this.container.zIndex = 10;
         this.draw = function () {
-            /* this.sprite.texture = PIXI.Texture.from(this.url);
-            this.sprite.anchor.set(0.5);
-            this.container.addChild(this.sprite); */
-            this.manager.canvasScale = 1;
+            this.manager.canvasScale = window.innerWidth / 1920;
+            console.log(window.innerWidth / 1920);
         }
     }
 }
 class Building extends GameObject {
     constructor(manager, page) {
         super(manager);
-        this.name = "Building"
+        this.name = "Building";
         this.page = page;
         this.filter = FilterSet.blink();
         this.container.zIndex = 20;
@@ -200,16 +198,9 @@ class Building extends GameObject {
         c.update = buildingUpdate;
         addPointerEvent(c);
 
-        c.text = new PIXI.Text(c.name, this.ts);
-        c.text.zIndex = 100;
-        c.text.anchor.set(0.5);
-        c.text.originHeight = (this.spriteHeight * -1) + _y;
-        c.text.position.set(_x, c.text.originHeight);
-        c.text.alpha = 0;
-
+        drawText();
         c.position.set(_x, _y);
         this.container.addChild(c);
-        this.manager.addChild(c.text);
         return c;
 
         function buildingUpdate() {
@@ -229,7 +220,7 @@ class Building extends GameObject {
                 let _x = homePageData[e.dataIndex].x * 2;
                 let _y = homePageData[e.dataIndex].y * 2;
                 gsap.timeline()
-                    .to(self.page.container, { duration: 0.5, x: -_x * self.zoomIn, y: -_y * self.zoomIn })
+                    .to(self.page.container, { duration: 0.5, x: -_x * self.zoomIn * self.manager.canvasScale, y: -_y * self.zoomIn * self.manager.canvasScale })
                     .to(self.page.container.scale, { duration: 0.5, x: self.zoomIn, y: self.zoomIn }, 0)
                     .to(self.page.container, { duration: 0.5, onComplete: enter.bind(self) })
             }
@@ -252,6 +243,15 @@ class Building extends GameObject {
                 gsap.to(e.text, { duration: 0.5, y: e.text.originHeight, alpha: 0 });
                 gsap.to(e.scale, { duration: 1, x: self.scale, y: self.scale });
             }
+        }
+        function drawText() {
+            c.text = new PIXI.Text(c.name, self.ts);
+            c.text.zIndex = 100;
+            c.text.anchor.set(0.5);
+            c.text.originHeight = (self.spriteHeight * -1) + (_y * self.manager.canvasScale);
+            c.text.position.set(_x * self.manager.canvasScale, c.text.originHeight);
+            c.text.alpha = 0;
+            self.manager.addChild(c.text);
         }
     }
     drawAnimationBuilding(i, n, url, x, y) {
@@ -303,7 +303,7 @@ class Building extends GameObject {
                 let _y = homePageData[e.dataIndex].y * 2;
                 c.gotoAndPlay(0);
                 gsap.timeline()
-                    .to(self.page.container, { duration: 0.5, x: -_x * self.zoomIn, y: -_y * self.zoomIn })
+                    .to(self.page.container, { duration: 0.5, x: -_x * self.zoomIn * self.manager.canvasScale, y: -_y * self.zoomIn * self.manager.canvasScale })
                     .to(self.page.container.scale, { duration: 0.5, x: self.zoomIn, y: self.zoomIn }, 0)
                     .to(self.page.container, { duration: 0.5, onComplete: enter.bind(self) })
             }
@@ -333,8 +333,8 @@ class Building extends GameObject {
             e.text = new PIXI.Text(e.name, self.ts);
             e.text.zIndex = 100;
             e.text.anchor.set(0.5);
-            e.text.originHeight = (self.spriteHeight * -1) + _y;
-            e.text.position.set(_x, e.text.originHeight);
+            e.text.originHeight = (self.spriteHeight * -1) + (_y * self.manager.canvasScale);
+            e.text.position.set(_x * self.manager.canvasScale, e.text.originHeight);
             e.text.alpha = 0;
             self.manager.addChild(e.text);
         }

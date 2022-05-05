@@ -7,6 +7,9 @@ import { brightnessOverEvent, Dialog } from './UI.js';
 import { ColorSlip } from './ColorSlip.js';
 import { math } from './math.js';
 import { Page } from './Data.js';
+import * as Action from "./Action";
+import { videoData } from './Data';
+import { sound } from '@pixi/sound';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -429,7 +432,7 @@ class Webside extends linkObject {
         }
     }
 }
-class CompanyVideo extends linkObject {
+class CompanyVideo extends Video {
     constructor(manager, page) {
         super(manager, page);
         this.name = "Video";
@@ -438,9 +441,221 @@ class CompanyVideo extends linkObject {
         this.url = "image/building/company/video.png";
         this.zoomIn = 1.6;
         this.videoList = [
-            function () { return undefined }.bind(this),
+            function () { return new CompanyAction_Promotion(this.manager, this) }.bind(this),
         ];
+    }
+    drawUI() {
+        this.ui = new PIXI.Container();
+        const self = this;
+        const textures = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures;
+        const uiScale = this.uiOptions.uiScale;
+        const stan = this.uiOptions.standard;
+        const h = this.uiOptions.height;
+        const space = this.uiOptions.space;
+        this.frame = createSprite(this.uiOptions.frameUrl, 0.5, this.uiOptions.frameScale);
+        this.ui.addChild(this.frame);
+        this.playButton = drawPlayButton();
+        this.volumeButton = drawVolumeButton();
+        this.nextButton = drawNextButton();
+        this.fullButton = drawFullButton();
+        this.container.addChild(this.ui);
+        function drawPlayButton() {
+            let e = createSprite(textures["play.png"], 0.5, uiScale);
+            e.position.set(stan, h);
+            e.clickEvent = function () {
+                if (self.video.videoCrol.paused) { self.play(); } else { self.pause(); }
+            }.bind(self);
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function drawVolumeButton() {
+            let e = createSprite(textures["volume.png"], 0.5, uiScale);
+            e.position.set(stan + space * 2, h);
+            e.clickEvent = function () {
+                if (self.video.videoCrol.muted) {
+                    e.turn = false;
+                    self.video.videoCrol.muted = false;
+                    e.texture = textures["volume.png"];
+                }
+                else {
+                    e.turn = true;
+                    self.video.videoCrol.muted = true;
+                    e.texture = textures["volume_off.png"];
+                }
+            }.bind(self);
+            e.turn = false;
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function drawNextButton() {
+            let e = createSprite(textures["next.png"], 0.5, uiScale);
+            e.position.set(stan + space * 1, h);
+            e.alpha = 0.5;
+            self.ui.addChild(e);
+            return e;
+        }
+        function drawFullButton() {
+            let e = createSprite(textures["full.png"], 0.5, uiScale);
+            e.position.set(-stan, h);
+            e.clickEvent = function () {
+                if (e.turn) {
+                    closeFullscreen();
+                    e.turn = false;
+                }
+                else {
+                    openFullscreen(document.documentElement);
+                    e.turn = true;
+                }
+                function openFullscreen(elem) {
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.webkitRequestFullscreen) { /* Safari */
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) { /* IE11 */
+                        elem.msRequestFullscreen();
+                    }
+                }
+                function closeFullscreen() {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) { /* Safari */
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) { /* IE11 */
+                        document.msExitFullscreen();
+                    }
+                }
+            }.bind(self);
+            e.turn = false;
+            addUIButtonEvent(e);
+            self.ui.addChild(e);
+            return e;
+        }
+        function addUIButtonEvent(e) {
+            const uiHitArea = self.uiOptions.uiHitArea;
+            e.hitArea = new PIXI.Rectangle(-uiHitArea, -uiHitArea, uiHitArea * 2, uiHitArea * 2);
+            addPointerEvent(e);
+        }
+    }
+    clickEvent() {
+        this.sprite.interactive = false;
+        this.zoom();
+        this.page.children.player.move(this._x, this.sprite.width);
+        sound.pause(this.page.name);
+        this.video = this.videoList[this.random]();
+        this.video.setup();
+        this.video.container.position.set(0, -7.4);
+        this.drawUI();
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+        this.page.isZoomIn = true;
+        this.isClick = true;
+        setTimeout(() => { this.play(); }, 500);
+    }
+    cancelEvent() {
+        sound.play(this.page.name);
+        let tl = gsap.timeline({ onComplete: function () { this.sprite.interactive = true; }.bind(this) });
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.pause();
+        this.video.container.removeChildren();
+        this.container.removeChild(this.video.container, this.ui);
+
+        this.page.isZoomIn = false;
+        this.isClick = false;
+        this.cancel.visible = false;
+        this.video = undefined;
+        this.cancel = undefined;
+        if (this.fullButton.turn) {
+            closeFullscreen();
+            this.fullButton.turn = false;
+        }
+        gsap.killTweensOf(this.manager.uiSystem.container);
+        this.manager.uiSystem.container.position.x = 0;
+
+        function closeFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+    play() {
+        this.video.videoCrol.play();
+        this.playButton.texture = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures["pause.png"];
+    }
+    pause() {
+        this.video.videoCrol.pause();
+        this.playButton.texture = this.manager.resources[this.uiOptions.texturesUrl].spritesheet.textures["play.png"];
     }
 }
 
+export class CompanyAction_Promotion extends Action.ActionPage {
+    constructor(manager, obj, scale = 0.44) {
+        super(manager, obj);
+        this.offset = 50;
+        this.isPlayGame = false;
+        this.videoScale = scale;
+        this.videoData = videoData.company[0];
+        this.children = {
+            "video": new Company_Promotion_Video(this.manager, this, this.videoData.url, this.videoData.endTime)
+        }
+    }
+
+}
+class Company_Promotion_Video extends Action.ActionVideo {
+    constructor(manager, action, url, end) {
+        super(manager, action, url);
+        this.pauseTime = [0, end];
+        this.isEnd = true;
+        this.count = 0;
+        this.draw = function () {
+            return new Promise(function (resolve, _) {
+                this.loadVideo(url);
+                resolve();
+            }.bind(this))
+                .then(function () {
+                    this.videoCrol.pause();
+                    this.videoCrol.volume = 1;
+                    this.videoCrol.currentTime = 0;
+                    this.videoCrol.ontimeupdate = () => {
+                        this.currentTime = this.videoCrol.currentTime;
+                    };
+                    this.count = 0;
+                    this.isEnd = false;
+                    console.log("load " + this.name);
+                }.bind(this))
+                .catch(function () {
+                    console.error("fall load " + this.name);
+                }.bind(this));
+        }
+    }
+    update() {
+        if (this.currentTime > this.pauseTime[this.count]) {
+            switch (this.count) {
+                case 0:
+                    gsap.to(this.container, { duration: 1, alpha: 1 });
+                    break;
+                case 1:
+                    if (!this.isEnd) {
+                        this.isEnd = true;
+                        this.onEnd();
+                    }
+                    break;
+            }
+            this.count++;
+        }
+
+    }
+    onEnd() {
+        this.videoCrol.ontimeupdate = undefined;
+        this.pause();
+        this.videoCrol.currentTime = 0;
+        this.action.obj.cancelEvent();
+    }
+}
 

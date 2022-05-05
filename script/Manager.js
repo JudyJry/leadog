@@ -290,6 +290,13 @@ const loadList = {
         "image/building/company/webside/sprites.json"
     ],
     "market": [
-        //"image/building/market/bg.png",
+        "image/building/market/bg.png",
+        "image/building/market/grass_0.png",
+        "image/building/market/grass_1.png",
+        "image/building/market/market_0.png",
+        "image/building/market/market_1.png",
+        "image/building/market/market_2.png",
+        "image/building/market/market_3.png",
+
     ]
 }

@@ -92,26 +92,28 @@ export class Background extends GameObject {
         this.container.zIndex = 10;
         this.space = 300;
         this.speed = 5;
+        this.w = 1920;
+        this.h = 1080;
         this.draw = function () {
+            width = window.innerWidth;
+            height = window.innerHeight;
             this.wall = {
-                "right": (-this.w / 2) + ((this.space / 10) + this.speed),
-                "left": (this.w / 2) - ((this.space / 10) + this.speed)
+                "right": (-width / 2) + ((this.space / 10) + this.speed),
+                "left": (width / 2) - ((this.space / 10) + this.speed)
             }
             this.sprite.texture = PIXI.Texture.from(this.url);
             this.sprite.anchor.set(0.5);
-            this.manager.canvasScale = this.w / width <= this.h / height ? this.w / width : this.h / height;
+            this.manager.canvasScale = width / 1920;
             this.container.addChild(this.sprite);
             this.page.container.position.x = this.wall.left;
             this.caution = createSprite("image/building/caution.png", 1, 0.75);
             this.caution.zIndex = 200;
-            this.caution.position.set((this.w / 2) - 10, (this.h / 2) - 10);
+            this.caution.position.set((width / 2) - 10, (height / 2) - 10);
             this.manager.app.stage.addChild(this.caution);
         }
     }
     resize() {
         this.manager.app.stage.removeChild(this.caution);
-        this.w = this.manager.w;
-        this.h = this.manager.h;
         this.container.removeChildren();
         this.draw();
         this.container.scale.set(this.manager.canvasScale);
@@ -119,8 +121,8 @@ export class Background extends GameObject {
     update() {
         if (!this.page.isZoomIn) {
             const frame = this.page.container;
-            if (this.manager.mouse.x > this.w - this.space && frame.position.x > this.wall.right) {
-                let distance = (this.space - (this.w - this.manager.mouse.x)) / 10;
+            if (this.manager.mouse.x > window.innerWidth - this.space && frame.position.x > this.wall.right) {
+                let distance = (this.space - (window.innerWidth - this.manager.mouse.x)) / 10;
                 frame.position.x -= this.speed + distance;
             }
             if (this.manager.mouse.x < this.space && frame.position.x < this.wall.left) {
@@ -254,7 +256,7 @@ export class linkObject extends GameObject {
     }
 }
 export class Player extends GameObject {
-    constructor(manager, page) {
+    constructor(manager, page, y = 0.2) {
         super(manager);
         this.page = page;
         this.name = "Player";
@@ -262,7 +264,7 @@ export class Player extends GameObject {
         this.container.zIndex = 90;
         this.scale = 1;
         this.x = -0.412;
-        this.y = 0.2;
+        this.y = y;
         this.speed = 75;
         this.textures = undefined;
         this.isLoaded = false;
@@ -297,6 +299,12 @@ export class Player extends GameObject {
                 self.breath = self.breathAnim();
             }
         }
+    }
+    resize() {
+        gsap.killTweensOf(this.container.scale);
+        this.container.removeChildren();
+        this.draw();
+        this.container.scale.set(this.manager.canvasScale);
     }
     update() {
         if (!this.page.isZoomIn && this.isLoaded) { this.mouseMove(); }
@@ -390,6 +398,7 @@ export class Video extends linkObject {
         this.h = this.manager.h;
         this.container.scale.set(this.manager.canvasScale);
         if (this.isClick && this.fullButton) { this.onClickResize(); }
+        else { this.draw(); }
     }
     onClickResize() {
         if (this.cancel) {
