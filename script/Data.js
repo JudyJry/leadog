@@ -34,14 +34,14 @@ const Page = Object.freeze({
 });
 
 const uiData = [
-    { name: Page.home, url: "image/home.svg" },
-    { name: Page.market, url: "image/market.svg" },
-    { name: Page.know, url: "image/know.svg" },
-    { name: Page.company, url: "image/company.svg" },
-    { name: Page.born, url: "image/born.svg" },
-    { name: Page.childhood, url: "image/childhood.svg" },
-    { name: Page.youth, url: "image/youth.svg" },
-    { name: Page.elderly, url: "image/elderly.svg" },
+    { name: Page.home, url: "home.png" },
+    { name: Page.market, url: "market.png" },
+    { name: Page.know, url: "know.png" },
+    { name: Page.company, url: "company.png" },
+    { name: Page.born, url: "born.png" },
+    { name: Page.childhood, url: "childhood.png" },
+    { name: Page.youth, url: "youth.png" },
+    { name: Page.elderly, url: "elderly.png" },
 ];
 
 const homePageData = [

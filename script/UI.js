@@ -27,8 +27,7 @@ export default class UIsystem {
             //"notify": new Notify(this.manager, this),
             //"user": new User(this.manager, this),
             "menu": new Menu(this.manager, this),
-            "home": new Index(this.manager, this),
-            "cancel": new Cancel(this.manager, this)
+            "home": new Home(this.manager, this)
         }
         this.logo = undefined;
     }
@@ -39,6 +38,7 @@ export default class UIsystem {
         this.container.addChild(this.logo);
     }
     setup() {
+        this.textures = this.manager.resources["image/icon/sprites.json"].spritesheet.textures;
         for (let [_, e] of Object.entries(this.ui)) { e.setup(); }
         this.uiContainer.position.set((-0.5 * this.w) + 110, (-0.5 * this.h) + 240);
         this.drawLogo();
@@ -56,6 +56,21 @@ export default class UIsystem {
     update() {
         for (let [_, e] of Object.entries(this.ui)) { e.update(); }
     }
+    turnEvent(e) {
+        if (this.ui[e].turn) {
+            return;
+        }
+        else {
+            if (this.ui.menu.turn) {
+                this.ui.menu.container.removeChild(this.ui.menu.index);
+                this.ui.menu.turn = false;
+            }
+            if (this.ui.home.turn) {
+                this.ui.home.container.removeChild(this.ui.home.index);
+                this.ui.home.turn = false;
+            }
+        }
+    }
 }
 export class UI {
     constructor(manager, UIsystem) {
@@ -67,7 +82,7 @@ export class UI {
         this.icon = undefined;
         this.w = window.innerWidth;
         this.h = window.innerHeight;
-        this.scale = 0.75;
+        this.scale = 1;
         this.ts = TextStyle.UI;
         this.tsm = TextStyle.UI_small;
     }
@@ -107,7 +122,7 @@ class Book extends UI {
         this.originPos = [0, 0];
         this.texturesUrl = "image/book/sprites.json"
         this.draw = function () {
-            this.icon = this.drawIcon('image/book.svg');
+            this.icon = this.drawIcon(this.UIsystem.textures["book.png"]);
             this.container.position.set(0, 0 * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
@@ -777,73 +792,6 @@ class Book extends UI {
         this.video.setup();
     }
 }
-class Notify extends UI {
-    constructor(manager, UIsystem) {
-        super(manager, UIsystem);
-        this.name = "Notify";
-        this.draw = function () {
-            this.icon = this.drawIcon('image/notify.svg');
-            this.container.position.set(0, Object.keys(this.UIsystem.ui).indexOf("notify") * this.UIsystem.uiSpacing);
-            this.container.addChild(this.icon);
-        }
-    }
-}
-class User extends UI {
-    constructor(manager, UIsystem) {
-        super(manager, UIsystem);
-        this.name = "User";
-        this.turn = false;
-        this.index = new PIXI.Container();
-        this.draw = function () {
-            this.icon = this.drawIcon('image/user.svg');
-            this.drawIndex();
-            this.container.position.set(0, Object.keys(this.UIsystem.ui).indexOf("user") * this.UIsystem.uiSpacing);
-            this.container.addChild(this.icon);
-        }
-    }
-    drawIndex() {
-        this.indexBg = PIXI.Sprite.from("image/ui_1.svg");
-        this.indexBg.anchor.set(0.05, 0.5);
-        this.indexBg.scale.set(this.scale);
-        this.index.addChild(this.indexBg);
-        drawItem(this, 0, "image/buy.svg",
-            function () {
-                let d = new Dialog(this.manager, {
-                    context: "這是一個購物框框",
-                    cancelUrl: "image/dialog_exit.png",
-                    cancel: () => d.remove()
-                })
-            }.bind(this));
-        drawItem(this, 1, "image/info.svg",
-            function () {
-                let d = new Dialog(this.manager, {
-                    context: "這是一個資訊框框",
-                    cancelUrl: "image/dialog_exit.png",
-                    cancel: () => d.remove()
-                })
-            }.bind(this));
-
-        function drawItem(self, index, path, clickEvent) {
-            let i = PIXI.Sprite.from(path);
-            i.anchor.set(0.5, 1);
-            i.scale.set(0.8);
-            i.position.set(90 + (index * 75), 25);
-            i.clickEvent = clickEvent;
-            addPointerEvent(i);
-            self.index.addChild(i);
-        }
-    }
-    clickEvent() {
-        if (!this.turn) {
-            this.container.addChildAt(this.index, 0);
-            this.turn = true;
-        }
-        else {
-            this.container.removeChild(this.index);
-            this.turn = false;
-        }
-    }
-}
 class Menu extends UI {
     constructor(manager, UIsystem) {
         super(manager, UIsystem);
@@ -851,18 +799,18 @@ class Menu extends UI {
         this.turn = false;
         this.index = new PIXI.Container();
         this.draw = function () {
-            this.icon = this.drawIcon('image/menu.svg');
+            this.icon = this.drawIcon(this.UIsystem.textures["menu.png"]);
             this.drawIndex();
             this.container.position.set(0, Object.keys(this.UIsystem.ui).indexOf("menu") * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
     drawIndex() {
-        this.indexBg = PIXI.Sprite.from("image/ui_1.svg");
-        this.indexBg.anchor.set(0.05, 0.5);
+        this.indexBg = PIXI.Sprite.from(this.UIsystem.textures["ui_0.png"]);
+        this.indexBg.anchor.set(0.01, 0.5);
         this.indexBg.scale.set(this.scale);
         this.index.addChild(this.indexBg);
-        drawItem(this, 0, "image/question.svg",
+        drawItem(this, 0, this.UIsystem.textures["question.png"],
             function () {
                 let d = new Dialog(this.manager, {
                     context: "這是一個問題框框",
@@ -870,16 +818,16 @@ class Menu extends UI {
                     cancel: () => d.remove()
                 })
             }.bind(this));
-        this.sound = drawItem(this, 1, "image/soundon.svg",
+        this.sound = drawItem(this, 1, this.UIsystem.textures["soundon.png"],
             function () {
                 let e = this.sound;
                 if (this.manager.isMute == false) {
-                    e.texture = PIXI.Texture.from("image/soundoff.svg");
+                    e.texture = this.UIsystem.textures["soundoff.png"];
                     this.manager.isMute = true;
                     sound.muteAll();
                 }
                 else if (this.manager.isMute == true) {
-                    e.texture = PIXI.Texture.from("image/soundon.svg");
+                    e.texture = this.UIsystem.textures["soundon.png"];
                     this.manager.isMute = false;
                     sound.unmuteAll();
                 }
@@ -887,8 +835,8 @@ class Menu extends UI {
         function drawItem(self, index, path, clickEvent) {
             let i = PIXI.Sprite.from(path);
             i.anchor.set(0.5, 1);
-            i.scale.set(0.8);
-            i.position.set(90 + (index * 75), 25);
+            i.scale.set(1);
+            i.position.set(100 + (index * 75), 25);
             i.clickEvent = clickEvent;
             addPointerEvent(i);
             self.index.addChild(i);
@@ -896,6 +844,7 @@ class Menu extends UI {
         }
     }
     clickEvent() {
+        this.UIsystem.turnEvent(this.name.toLowerCase());
         if (!this.turn) {
             this.container.addChildAt(this.index, 0);
             this.turn = true;
@@ -906,30 +855,30 @@ class Menu extends UI {
         }
     }
 }
-class Index extends UI {
+class Home extends UI {
     constructor(manager, UIsystem) {
         super(manager, UIsystem);
-        this.name = "Index";
+        this.name = "Home";
         this.turn = false;
         this.index = new PIXI.Container();
         this.draw = function () {
-            this.icon = this.drawIcon('image/index.svg');
+            this.icon = this.drawIcon(this.UIsystem.textures["index.png"]);
             this.drawIndex();
             this.container.position.set(0, Object.keys(this.UIsystem.ui).indexOf("home") * this.UIsystem.uiSpacing);
             this.container.addChild(this.icon);
         }
     }
     drawIndex() {
-        this.indexBg = PIXI.Sprite.from("image/ui_2.svg");
+        this.indexBg = PIXI.Sprite.from(this.UIsystem.textures["ui_1.png"]);
         this.indexBg.anchor.set(0, 0.24);
         this.indexBg.scale.set(this.scale);
         this.index.addChild(this.indexBg);
         for (let i = 0; i < uiData.length; i++) {
-            let s = PIXI.Sprite.from(uiData[i].url);
+            let s = PIXI.Sprite.from(this.UIsystem.textures[uiData[i].url]);
             s.anchor.set(0.5, 1);
-            s.scale.set(0.8);
-            if (i < 4) { s.position.set(90 + (i * 75), 25); }
-            else if (i >= 4) { s.position.set(90 + ((i - 4) * 75), 95); }
+            s.scale.set(1);
+            if (i < 4) { s.position.set(100 + (i * 75), 25); }
+            else if (i >= 4) { s.position.set(100 + ((i - 4) * 75), 95); }
             s.clickEvent = function () {
                 this.manager.toOtherPage(uiData[i].name);
             }.bind(this);
@@ -938,6 +887,7 @@ class Index extends UI {
         }
     }
     clickEvent() {
+        this.UIsystem.turnEvent(this.name.toLowerCase());
         if (!this.turn) {
             this.container.addChildAt(this.index, 0);
             this.turn = true;
@@ -945,22 +895,6 @@ class Index extends UI {
         else {
             this.container.removeChild(this.index);
             this.turn = false;
-        }
-    }
-}
-class Cancel extends UI {
-    constructor(manager, UIsystem) {
-        super(manager, UIsystem);
-        this.name = "Cancel";
-        this.turn = false;
-        this.index = new PIXI.Container();
-        this.scale = 0.85;
-        this.draw = function () {
-            this.icon = this.drawIcon('image/cancel.png');
-            this.icon.scale.set(-this.scale, this.scale);
-            this.container.position.set(15, 5 * this.UIsystem.uiSpacing);
-            this.container.addChild(this.icon);
-            this.icon.visible = false;
         }
     }
 }
