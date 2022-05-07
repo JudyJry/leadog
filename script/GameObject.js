@@ -383,7 +383,8 @@ export class Video extends linkObject {
             frameUrl: "image/video/video.png",
             frameScale: 0.25,
             uiHitArea: 85, uiScale: 0.25,
-            standard: -385, height: 260, space: 45
+            standard: -385, height: 260, space: 45,
+            videoPos: [0, -7.4]
         }
     }
     setup() {
@@ -442,7 +443,7 @@ export class Video extends linkObject {
         sound.pause(this.page.name);
         this.video = this.videoList[this.random]();
         this.video.setup();
-        this.video.container.position.set(0, -7.4);
+        this.video.container.position.set(this.uiOptions.videoPos[0], this.uiOptions.videoPos[1]);
         this.drawUI();
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
@@ -500,6 +501,7 @@ export class Video extends linkObject {
         const stan = this.uiOptions.standard;
         const h = this.uiOptions.height;
         const space = this.uiOptions.space;
+        const videoPos = this.uiOptions.videoPos;
         this.frame = createSprite(this.uiOptions.frameUrl, 0.5, this.uiOptions.frameScale);
         this.ui.addChild(this.frame);
         this.playButton = drawPlayButton();
@@ -551,7 +553,7 @@ export class Video extends linkObject {
                 deleteVideo();
                 self.video = self.videoList[self.random]();
                 self.video.setup();
-                self.video.container.position.set(0, -7.4);
+                self.video.container.position.set(videoPos[0], videoPos[1]);
                 self.video.videoCrol.muted = self.volumeButton.turn;
                 changeButtonInteractive(true);
             }.bind(self);

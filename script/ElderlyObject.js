@@ -61,7 +61,8 @@ class Tv extends Video {
             frameUrl: "image/video/tv.png",
             frameScale: 0.5,
             uiHitArea: 79, uiScale: 0.25,
-            standard: -270, height: 230, space: 42
+            standard: -270, height: 230, space: 42,
+            videoPos: [-83.5, 70]
         }
     }
     onClickResize() {
@@ -106,7 +107,7 @@ class Tv extends Video {
         this.page.children.player.move(this._x, this.sprite.width);
         this.video = this.videoList[this.random]();
         this.video.setup();
-        this.video.container.position.set(-83.5, 70);
+        this.video.container.position.set(this.uiOptions.videoPos[0], this.uiOptions.videoPos[1]);
         this.drawUI();
         this.fullButton.position.set(-this.uiOptions.standard - 160, this.uiOptions.height);
         if (!this.cancel) { this.drawCancel(); }

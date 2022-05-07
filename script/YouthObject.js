@@ -12,6 +12,7 @@ import { brightnessOverEvent, drawButton, glowOverEvent } from './UI.js';
 import { TextStyle } from './TextStyle.js';
 import { ThreeNotOneQuestionData } from './Data.js';
 import { ColorSlip } from './ColorSlip.js';
+import { sound } from '@pixi/sound';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -46,7 +47,8 @@ class YouthVideo extends Video {
             frameUrl: "image/video/youth/video.png",
             frameScale: 0.25,
             uiHitArea: 65, uiScale: 0.2,
-            standard: -300, height: 186, space: 35
+            standard: -300, height: 186, space: 35,
+            videoPos: [0, -24]
         }
         this.videoList = [
             function () { return new YouthAction_Bus(this.manager, this) }.bind(this),
@@ -88,13 +90,14 @@ class YouthVideo extends Video {
         }
     }
     clickEvent() {
+        sound.pause(this.page.name);
         this.sprite.interactive = false;
         this.zoom();
         this.page.children.player.move(this._x, this.sprite.width);
         this.video = this.videoList[this.random]();
         this.video.setup();
         this.drawUI();
-        this.video.container.position.set(0, -24);
+        this.video.container.position.set(this.uiOptions.videoPos[0], this.uiOptions.videoPos[1]);
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
         this.page.isZoomIn = true;

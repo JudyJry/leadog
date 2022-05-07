@@ -256,6 +256,8 @@ const loadList = {
     ],
     "company": [
         "image/building/company/bg.png",
+        "image/building/company/merch.png",
+        "image/building/company/video.png",
         "image/building/company/webside/page_0_0.png",
         "image/building/company/webside/page_0_1.png",
         "image/building/company/webside/page_0_2.png",

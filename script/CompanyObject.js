@@ -23,6 +23,7 @@ export default class CompanyObject extends PageObject {
             "background": new Background(this.manager, this, "image/building/company/bg.png"),
             "door": new Door(this.manager, this, -0.434, -0.052, "image/building/company/door.png"),
             "webside": new Webside(this.manager, this),
+            "merch": new Merch(this.manager, this),
             "video": new CompanyVideo(this.manager, this),
             "player": new Player(this.manager, this)
         };
@@ -430,6 +431,49 @@ class Webside extends linkObject {
                     .from(m, { duration: 0.8, x: 0, ease: "power1.in" }, 0);
             }
         }
+    }
+}
+class Merch extends linkObject {
+    constructor(manager, page) {
+        super(manager, page);
+        this.name = "Webside";
+        this.x = -0.266;
+        this.y = -0.079;
+        this.url = "image/building/company/merch.png";
+        this.zoomIn = 1.5;
+        this.originPos = [0, 0];
+        this.uiScale = 0.5;
+    }
+    onClickResize() { this.merch = this.drawMerch(); }
+    onClickUpdate() { }
+    clickEvent() {
+        this.blink.outerStrength = 0;
+        this.sprite.interactive = false;
+        this.zoom();
+        this.page.children.player.move(this._x, this.sprite.width);
+        this.page.isZoomIn = true;
+        this.isClick = true;
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+        //this.textures = this.manager.resources["image/building/company/merch/sprites.json"].spritesheet.textures;
+        this.merch = this.drawMerch();
+    }
+    cancelEvent() {
+        let tl = gsap.timeline({
+            onComplete: function () {
+                this.sprite.interactive = true;
+            }.bind(this)
+        });
+        tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
+        tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
+        this.isClick = false;
+        this.page.isZoomIn = false;
+        this.cancel.visible = false;
+        this.cancel = undefined;
+        this.container.removeChild(this.merch);
+    }
+    drawMerch() {
+
     }
 }
 class CompanyVideo extends Video {
