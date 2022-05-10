@@ -587,6 +587,7 @@ class Merch extends linkObject {
             btn.overEvent = brightnessOverEvent;
             btn.clickEvent = () => {
                 //todo 
+                dialog_1();
             };
             addPointerEvent(btn);
 
@@ -637,6 +638,20 @@ class Merch extends linkObject {
             function drawForm() {
                 let e = new PIXI.Container();
                 return e;
+            }
+            function dialog_1() {
+                let d = new Dialog(self.manager, {
+                    context: "確定訂購？",
+                    submit: () => { d.remove(); dialog_2(); },
+                    cancel: () => { d.remove(); }
+                })
+            }
+            function dialog_2() {
+                let d = new Dialog(self.manager, {
+                    context: "訂購成功",
+                    submit: () => { d.remove(); },
+                    cancel: null
+                })
             }
         }
         //obj
