@@ -768,6 +768,9 @@ const bookData = {
                 love: "845",
             }
         ]
+    },
+    merch: {
+        like: { a: 945, b: 520, c: 134 }
     }
 }
 
@@ -817,6 +820,9 @@ const userData = {
             middle2: false,
             small: false,
         }
+    },
+    company: {
+        like: { a: false, b: false, c: false }
     }
 }
 

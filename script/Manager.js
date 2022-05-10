@@ -28,7 +28,7 @@ export default class Manager {
             view: document.getElementById("mainPIXI")
         });
         this.loader = new ResourceLoader(this.app);
-        this.loader.loadTexture(loadList.home.concat(loadList.ui), this.setup.bind(this));
+        this.loader.loadTexture(loadList.company.concat(loadList.ui), this.setup.bind(this));
         this.resources = this.app.loader.resources;
 
         this.canvasScale = 1;
@@ -46,7 +46,7 @@ export default class Manager {
         this.userData = userData;
     }
     async setup() {
-        this.activeObj = new HomeObject(this);
+        this.activeObj = new CompanyObject(this);
         await new Promise((resolve, _) => {
             this.uiSystem.setup();
             this.mouse.setup();
@@ -269,7 +269,8 @@ const loadList = {
         "image/building/company/webside/page_2.png",
         "image/building/company/webside/page_3.png",
         "image/building/company/webside/page_4.png",
-        "image/building/company/webside/sprites.json"
+        "image/building/company/webside/sprites.json",
+        "image/building/company/merch/sprites.json",
     ],
     "market": [
         "image/building/market/bg.png",
@@ -279,6 +280,6 @@ const loadList = {
         "image/building/market/market_1.png",
         "image/building/market/market_2.png",
         "image/building/market/market_3.png",
-
+        //"image/building/market/sprites.json",
     ]
 }

@@ -2,14 +2,16 @@ import * as PIXI from 'pixi.js';
 import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, Door, Video } from './GameObject.js';
-import { addDragEvent, addPointerEvent, createSprite } from './GameFunction.js';
+import { addDragEvent, addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { brightnessOverEvent, Dialog } from './UI.js';
 import { ColorSlip } from './ColorSlip.js';
 import { math } from './math.js';
-import { Page } from './Data.js';
+import { bookData, Page, userData } from './Data.js';
 import * as Action from "./Action";
 import { videoData } from './Data';
 import { sound } from '@pixi/sound';
+import { TextStyle } from './TextStyle.js';
+import { DropShadowFilter, GlowFilter } from 'pixi-filters';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -442,9 +444,9 @@ class Merch extends linkObject {
         this.url = "image/building/company/merch.png";
         this.zoomIn = 1.5;
         this.originPos = [0, 0];
-        this.uiScale = 0.5;
+        this.uiScale = 1;
     }
-    onClickResize() { this.merch = this.drawMerch(); }
+    onClickResize() { }
     onClickUpdate() { }
     clickEvent() {
         this.blink.outerStrength = 0;
@@ -455,7 +457,7 @@ class Merch extends linkObject {
         this.isClick = true;
         if (!this.cancel) { this.drawCancel(); }
         this.cancel.visible = true;
-        //this.textures = this.manager.resources["image/building/company/merch/sprites.json"].spritesheet.textures;
+        this.textures = this.manager.resources["image/building/company/merch/sprites.json"].spritesheet.textures;
         this.merch = this.drawMerch();
     }
     cancelEvent() {
@@ -470,10 +472,262 @@ class Merch extends linkObject {
         this.page.isZoomIn = false;
         this.cancel.visible = false;
         this.cancel = undefined;
-        this.container.removeChild(this.merch);
+        this.manager.app.stage.removeChild(this.merch);
     }
     drawMerch() {
+        const self = this;
+        const scale = this.uiScale;
+        const textures = this.textures;
+        const sortList = ["all", "a", "b", "c"];
+        const picDialog = { "a": "疫情下還是要美美的", "b": "展場可以訂購喔！", "c": "展場可以訂購喔！" }
+        let selectSort = sortList[0];
+        let c = new PIXI.Container();
+        let bg = drawBg();
+        let mark = drawMark();
+        let usingLayer = new PIXI.Container();
+        c.zIndex = 100;
+        onSelectSort();
+        this.manager.app.stage.addChildAt(c, 1);
+        return c;
+        //page
+        function drawAll() {
+            const text = {
+                "a": {
+                    name: "LEADOG口罩",
+                    tag: ["口罩", "時尚單品"],
+                    cost: "30-100"
+                },
+                "b": {
+                    name: "LEADOG詩籤",
+                    tag: ["運勢", "大吉大利"],
+                    cost: "30-100"
+                },
+                "c": {
+                    name: "LEADOG明信片",
+                    tag: ["友誼", "傳遞", "溫暖"],
+                    cost: "30-100"
+                }
+            }
+            let layer = drawLayer();
+            let arrow_l = drawArrow("left", () => { });
+            let arrow_r = drawArrow("right", () => { onSelectSort(sortList[1]); });
+            if (selectSort == sortList[0]) { arrow_l.interactive = false; arrow_l.alpha = 0.5; }
 
+            let title = createText("LEADOG商品冊：", TextStyle.Mirror_title_36, [0, 0.5], scale * 0.5);
+            title.position.set(-484, -182);
+
+            for (let i = 1; i < sortList.length; i++) {
+                let item = drawItem(sortList[i]);
+                item.position.x = -340 + ((i - 1) * 340);
+                layer.addChild(item);
+            }
+
+            layer.addChild(title, arrow_l, arrow_r);
+            usingLayer = layer;
+            function drawItem(sort) {
+                const d = 140;
+                let e = new PIXI.Container();
+                let p = createSprite(textures[`pic_${sort}_0.png`], 0.5, scale * 0.65);
+                let name = createText(text[sort].name, TextStyle.white, 1, scale * 0.75);
+                let tag = createText("#" + text[sort].tag.join(" #"), TextStyle.white, 0, scale * 0.5);
+                let cost = createText(text[sort].cost + "元", TextStyle.Mirror_title_12, 0.5, scale);
+                let like = drawLike();
+                name.filters = [new DropShadowFilter()];
+                tag.filters = [new DropShadowFilter()];
+                name.position.set(d, d);
+                tag.position.set(-d, -d);
+                cost.position.y = d + 40;
+                like.position.set(-d, d);
+                p.overEvent = brightnessOverEvent;
+                p.clickEvent = () => { onSelectSort(sort); }
+                addPointerEvent(p);
+                e.addChild(p, tag, name, like, cost);
+                return e;
+                function drawLike() {
+                    let gf = new GlowFilter({ color: ColorSlip.white, distance: 1.5, outerStrength: 1.5, innerStrength: 1.5, knockout: true });
+                    let e = new PIXI.Container();
+                    let h = createSprite(textures["love.png"], [0, 1], scale);
+                    let t = createText(bookData.merch.like[sort], TextStyle.white, [0, 1], scale * 0.75);
+                    t.filters = [new DropShadowFilter()];
+                    t.position.set(32, 2);
+                    if (!userData.company.like[sort]) {
+                        h.filters = [gf];
+                    }
+                    h.overEvent = brightnessOverEvent;
+                    h.clickEvent = () => {
+                        if (!userData.company.like[sort]) {
+                            userData.company.like[sort] = true;
+                            bookData.merch.like[sort]++;
+                            t.text = bookData.merch.like[sort];
+                            h.filters = [];
+
+                        }
+                        else {
+                            userData.company.like[sort] = false;
+                            bookData.merch.like[sort]--;
+                            t.text = bookData.merch.like[sort];
+                            h.filters = [gf];
+                        }
+                    }
+                    addPointerEvent(h);
+                    e.addChild(h, t);
+                    return e;
+                }
+            }
+        }
+        function drawMerchItem(pageNum, picLen) {
+            let layer = drawLayer();
+            let arrow_l = drawArrow("left", () => { onSelectSort(sortList[pageNum - 1]); });
+            let arrow_r = drawArrow("right", () => { onSelectSort(sortList[pageNum + 1]); });
+            if (selectSort == sortList[3]) { arrow_r.interactive = false; arrow_r.alpha = 0.5; }
+
+            let pic = drawPic();
+            let btn = createSprite(textures[`submit_${selectSort}.png`], 0.5, scale);
+            btn.position.set(416, 16);
+            btn.overEvent = brightnessOverEvent;
+            btn.clickEvent = () => {
+                //todo 
+            };
+            addPointerEvent(btn);
+
+            layer.addChild(arrow_l, arrow_r, pic, btn);
+            usingLayer = layer;
+
+            function drawPic() {
+                const d = 210;
+                let picNum = 0;
+                let e = new PIXI.Container();
+                let p = createSprite(textures[`pic_${selectSort}_0.png`], 0.5, scale);
+                let pd = drawPicDialog();
+                let date = createSprite(textures["date.png"], 1, scale);
+                let arrow_l = drawPicArrow("l");
+                let arrow_r = drawPicArrow("r");
+                date.position.set(d + 3, d + 3);
+                e.position.set(-262, 0);
+                e.addChild(p, date, arrow_l, arrow_r, pd);
+                return e;
+                function drawPicDialog() {
+                    let e = new PIXI.Container();
+                    let p = createSprite(textures[`dialog.png`], 0.5, scale);
+                    let t = createText(picDialog[selectSort], TextStyle.Mirror_DogHint, 0.5, scale * 0.5);
+                    e.addChild(p, t);
+                    e.position.set(d + 5, -d - 5);
+                    return e;
+                }
+                function drawPicArrow(dir) {
+                    let a = createSprite(textures["pic_arrow_" + dir + ".png"], 0.5, scale);
+                    a.position.x = dir == "r" ? d : -d;
+                    a.overEvent = brightnessOverEvent;
+                    a.clickEvent = () => {
+                        picNum++;
+                        if (picNum == picLen) { picNum = 0 }
+                        let np = createSprite(textures[`pic_${selectSort}_${picNum}.png`], 0.5, scale);
+                        e.addChildAt(np, 0);
+                        gsap.to(p, {
+                            duration: 0.5, alpha: 0, onComplete: () => {
+                                e.removeChild(p);
+                                p = np;
+                            }
+                        })
+                    }
+                    addPointerEvent(a);
+                    return a;
+                }
+            }
+            function drawForm() {
+                let e = new PIXI.Container();
+                return e;
+            }
+        }
+        //obj
+        function drawBg() {
+            let bg = new PIXI.Graphics()
+                .beginFill(ColorSlip.black, 0.2)
+                .drawRect(0, 0, 1920, 1080)
+                .endFill();
+            bg.pivot.set(1920 / 2, 1080 / 2);
+            bg.interactive = true;
+            c.addChild(bg);
+            gsap.from(bg, { duration: 1, alpha: 0 });
+            return bg;
+        }
+        function drawMark() {
+            const bookmarkPosY = { "all": -228, "a": -136, "b": -44, "c": 48 };
+            let e = new PIXI.Container();
+            e.bookmark = {};
+            for (let i of sortList) {
+                e.bookmark[i] = createSprite(textures[`mark_${i}.png`], 0.5, scale);
+                e.bookmark[i].position.set(540, bookmarkPosY[i]);
+                e.bookmark[i].overEvent = bookmarkOverEvent;
+                e.bookmark[i].clickEvent = (e) => { onSelectSort(i); }
+                addPointerEvent(e.bookmark[i]);
+                e.addChild(e.bookmark[i]);
+            }
+            c.addChild(e);
+            return e;
+            function bookmarkOverEvent(e) {
+                if (e.isPointerOver) {
+                    gsap.killTweensOf(e);
+                    gsap.to(e, { duration: 0.5, x: 548 });
+                }
+                else {
+                    gsap.killTweensOf(e);
+                    gsap.to(e, { duration: 0.5, x: 540 });
+                }
+            }
+        }
+        function drawArrow(dir, clickEvent) {
+            let arrow;
+            switch (dir) {
+                case "right":
+                    arrow = createSprite(textures["arrow_r.png"], 0.5, scale);
+                    arrow.position.set(510, 290);
+                    break;
+                case "left":
+                    arrow = createSprite(textures["arrow_l.png"], 0.5, scale);
+                    arrow.position.set(-510, 290);
+                    break;
+            }
+            arrow.overEvent = brightnessOverEvent;
+            arrow.clickEvent = clickEvent;
+            addPointerEvent(arrow);
+            return arrow;
+        }
+        function drawLayer() {
+            let layer = new PIXI.Container();
+            let p = createSprite(textures[`page_${selectSort}.png`], 0.5, scale);
+            layer.addChild(p);
+            c.addChild(layer);
+            c.setChildIndex(mark, c.children.length - 1);
+            return layer;
+        }
+        function onSelectSort(sort = selectSort) {
+            c.removeChild(usingLayer);
+            selectSort = sort;
+            switch (sort) {
+                case sortList[0]:
+                    drawAll();
+                    break;
+                case sortList[1]:
+                    drawMerchItem(1, 2);
+                    break;
+                case sortList[2]:
+                    drawMerchItem(2, 1);
+                    break;
+                case sortList[3]:
+                    drawMerchItem(3, 4);
+                    break;
+            }
+            for (let i in mark.bookmark) {
+                mark.bookmark[i].position.x = 540;
+                mark.bookmark[i].interactive = true;
+                mark.addChildAt(mark.bookmark[i], 1);
+            }
+            mark.removeChild(mark.bookmark[sort]);
+            mark.bookmark[sort].position.x += 10;
+            mark.bookmark[sort].interactive = false;
+            mark.addChild(mark.bookmark[sort]);
+        }
     }
 }
 class CompanyVideo extends Video {
