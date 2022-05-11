@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
+import $ from "jquery";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, Door, Video } from './GameObject.js';
 import { addDragEvent, addPointerEvent, createSprite, createText } from './GameFunction.js';
@@ -11,7 +12,6 @@ import * as Action from "./Action";
 import { videoData } from './Data';
 import { sound } from '@pixi/sound';
 import { TextStyle } from './TextStyle.js';
-import { GlowFilter } from 'pixi-filters';
 import { FilterSet } from './FilterSet.js';
 
 gsap.registerPlugin(PixiPlugin);
@@ -447,7 +447,15 @@ class Merch extends linkObject {
         this.originPos = [0, 0];
         this.uiScale = 1;
     }
-    onClickResize() { }
+    onClickResize() {
+        let htmlform = $('#pixi-form');
+        htmlform.css('--x', (window.innerWidth / 2) + this.merch.form.position.x - (this.merch.form.width / 2) + 'px');
+        htmlform.css('--y', (window.innerHeight / 2) + this.merch.form.position.y - (this.merch.form.height / 2) - 1 + 'px');
+
+        let submit = $('.pixi-submit');
+        submit.css('--x', (window.innerWidth / 2) + this.merch.btn.position.x - (this.merch.btn.width / 2) + 'px');
+        submit.css('--y', (window.innerHeight / 2) + this.merch.btn.position.y - (this.merch.btn.height / 2) - 1 + 'px');
+    }
     onClickUpdate() { }
     clickEvent() {
         this.blink.outerStrength = 0;
@@ -462,6 +470,8 @@ class Merch extends linkObject {
         this.merch = this.drawMerch();
     }
     cancelEvent() {
+        $('#pixi-form').detach();
+        $('.pixi-submit').detach();
         let tl = gsap.timeline({
             onComplete: function () {
                 this.sprite.interactive = true;
@@ -583,30 +593,32 @@ class Merch extends linkObject {
             if (selectSort == sortList[3]) { arrow_r.interactive = false; arrow_r.alpha = 0.5; }
 
             let pic = drawPic();
+            let form = drawForm();
             let btn = createSprite(textures[`submit_${selectSort}.png`], 0.5, scale);
+            form.position.set(270, 110);
             btn.position.set(416, 16);
-            btn.overEvent = brightnessOverEvent;
-            btn.clickEvent = () => {
-                //todo 
-                dialog_1();
-            };
-            addPointerEvent(btn);
 
-            layer.addChild(arrow_l, arrow_r, pic, btn);
+            drawHtmlForm(form, btn);
+            c.form = form;
+            c.btn = btn;
+
+            layer.addChild(arrow_l, arrow_r, pic, form, btn);
             usingLayer = layer;
 
             function drawPic() {
                 const d = 210;
                 let picNum = 0;
                 let e = new PIXI.Container();
-                let p = createSprite(textures[`pic_${selectSort}_0.png`], 0.5, scale);
+                let p = new PIXI.Container();
                 let pd = drawPicDialog();
                 let date = createSprite(textures["date.png"], 1, scale);
                 let arrow_l = drawPicArrow("l");
                 let arrow_r = drawPicArrow("r");
+                p.addChild(createSprite(textures[`pic_${selectSort}_0.png`], 0.5, scale));
                 date.position.set(d + 3, d + 3);
                 e.position.set(-262, 0);
                 e.addChild(p, date, arrow_l, arrow_r, pd);
+                let tl = gsap.timeline({ repeat: -1 }).to(p, { duration: 5, onComplete: () => { arrow_r.clickEvent() } });
                 return e;
                 function drawPicDialog() {
                     let e = new PIXI.Container();
@@ -621,38 +633,156 @@ class Merch extends linkObject {
                     a.position.x = dir == "r" ? d : -d;
                     a.overEvent = brightnessOverEvent;
                     a.clickEvent = () => {
+                        tl.play(0.01);
                         picNum++;
                         if (picNum == picLen) { picNum = 0 }
                         let np = createSprite(textures[`pic_${selectSort}_${picNum}.png`], 0.5, scale);
-                        e.addChildAt(np, 0);
-                        gsap.to(p, {
+                        p.addChild(np);
+                        gsap.from(np, {
                             duration: 0.5, alpha: 0, onComplete: () => {
-                                e.removeChild(p);
-                                p = np;
+                                p.removeChildAt(0);
                             }
                         })
                     }
+
                     addPointerEvent(a);
                     return a;
                 }
             }
             function drawForm() {
+                const space = 60;
                 let e = new PIXI.Container();
+                let title = createText("填寫訂購表", TextStyle.Form_Unit, [0, 0.5], scale);
+                let name = drawInput("姓名", 144);
+                let phone = drawInput("電話", 144);
+                let email = drawInput("電子信箱", 468);
+                e.addChild(name, phone, email);
+                e.children.forEach((e, i) => {
+                    e.position.y = i * space;
+                });
+                let num = drawUnitInput("訂購數量", "個", 80);
+                num.position.x = 174;
+                title.position.y = -40;
+                e.addChild(num, title);
+                e.pivot.x = e.width / 2;
+                e.pivot.y = e.height / 2;
                 return e;
+                function drawInput(labelText, width) {
+                    const space = 15;
+                    let e = new PIXI.Container();
+                    let label = drawLabel(labelText + " *", 0, -space);
+                    let bg = drawRoundRect(width, 32, 0, space);
+                    e.addChild(label, bg);
+                    return e;
+                }
+                function drawUnitInput(labelText, unitText, width) {
+                    const space = 15;
+                    let e = new PIXI.Container();
+                    let label = drawLabel(labelText + " *", 0, -space);
+                    let unit = createText(unitText, TextStyle.Form_Unit, [1, 0.5], scale);
+                    let input = drawRoundRect(width, 32, 0, space);
+                    unit.position.set(width - 8, space);
+                    e.addChild(label, input, unit);
+                    return e;
+                }
+                function drawRoundRect(w, h, x, y) {
+                    const r = h / 2;
+                    let g = new PIXI.Graphics()
+                        .lineStyle(1, 0xfbe3d0)
+                        .beginFill(0xfaefe4)
+                        .drawRoundedRect(x, y, w, h, r)
+                        .endFill()
+                    g.pivot.y = g.height / 2;
+                    return g;
+                }
+                function drawLabel(text, x, y) {
+                    let t = createText(text, TextStyle.Form_Label, [0, 0.5], scale);
+                    t.position.set(x, y);
+                    return t;
+                }
             }
-            function dialog_1() {
-                let d = new Dialog(self.manager, {
-                    context: "確定訂購？",
-                    submit: () => { d.remove(); dialog_2(); },
-                    cancel: () => { d.remove(); }
-                })
-            }
-            function dialog_2() {
-                let d = new Dialog(self.manager, {
-                    context: "訂購成功",
-                    submit: () => { d.remove(); },
-                    cancel: null
-                })
+            function drawHtmlForm(e, btn) {
+                let htmlform = $("<form id='pixi-form'></form>");
+                htmlform.css('--x', (window.innerWidth / 2) + e.position.x - (e.width / 2) + 'px');
+                htmlform.css('--y', (window.innerHeight / 2) + e.position.y - (e.height / 2) - 1 + 'px');
+                let nameInput = drawInput(144, false);
+                let numInput = drawInput(80);
+                let phoneInput = drawInput(144);
+                let emailInput = drawInput(468);
+                $('body').append(htmlform);
+                let submit = drawSubmit();
+                function drawInput(width, br = true) {
+                    const space = 15;
+                    let input = $("<input class='pixi-input' type='text'></input>");
+                    input.css('--w', width + 'px');
+                    htmlform.append(input);
+                    if (br) htmlform.append($('<br>'));
+                    return input;
+                }
+                function drawSubmit(e = btn) {
+                    let submit = $("<button class='pixi-submit'></button>");
+                    submit.css('--w', 158 + 'px');
+                    submit.css('--h', 53 + 'px');
+                    submit.css('--x', (window.innerWidth / 2) + e.position.x - (e.width / 2) + 'px');
+                    submit.css('--y', (window.innerHeight / 2) + e.position.y - (e.height / 2) - 1 + 'px');
+                    $('body').append(submit);
+
+                    let arr = [];
+                    submit.on('click', () => {
+                        for (let i = 0; i < 4; i++) {
+                            arr.push($('.pixi-input').eq(i).val());
+                        }
+                        if (arr.some(e => e == "")) {
+                            dialog_error();
+                        }
+                        else { dialog_0(); }
+                    })
+                    return submit;
+                    function dialog_0() {
+                        let d = new Dialog(self.manager, {
+                            context: "確定要訂購嗎？",
+                            submit: () => { d.remove(); writeData(dialog_1); },
+                            cancel: () => { d.remove(); }
+                        })
+                    }
+                    function dialog_1() {
+                        let d = new Dialog(self.manager, {
+                            context: "訂購成功",
+                            submit: () => { d.remove(); },
+                            cancel: null
+                        })
+                    }
+                    function dialog_error() {
+                        let d = new Dialog(self.manager, {
+                            context: "請先填寫資料喔！",
+                            submit: () => { d.remove(); },
+                            cancel: null
+                        })
+                    }
+                    async function writeData(onComplete) {
+                        await new Promise((resolve, _) => {
+                            let jsonData = JSON.parse(localStorage.getItem('merch'));
+                            if (jsonData == null) { jsonData = [] }
+                            let data = {
+                                "name": "",
+                                "num": "",
+                                "phone": "",
+                                "email": ""
+                            };
+                            for (let i in Object.keys(data)) {
+                                data[Object.keys(data)[i]] = arr[i];
+                            }
+                            jsonData.push(data);
+                            localStorage.setItem("merch", JSON.stringify(jsonData));
+                            console.log(jsonData);
+
+                            arr = [];
+                            $('#pixi-form')[0].reset();
+                            resolve();
+                        });
+                        return onComplete();
+                    }
+                }
             }
         }
         //obj
@@ -710,6 +840,8 @@ class Merch extends linkObject {
             return arrow;
         }
         function drawLayer() {
+            $('#pixi-form').detach();
+            $('.pixi-submit').detach();
             let layer = new PIXI.Container();
             let p = createSprite(textures[`page_${selectSort}.png`], 0.5, scale);
             layer.addChild(p);

@@ -21,6 +21,7 @@ const ColorSlip = {
     mirror_brown: 0x7E3F39,
     mirror_lightBrown: 0x9C6460,
     mirror_dad: 0xC6D86B,
-    mirror_mom: 0xF4AA8C
+    mirror_mom: 0xF4AA8C,
+    redBrown: 0xa96651,
 }
 export { ColorSlip };

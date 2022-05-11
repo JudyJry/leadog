@@ -1,13 +1,14 @@
 import * as PIXI from 'pixi.js';
 import gsap from "gsap";
+import $ from "jquery";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import { linkObject, PageObject, Background, Player, OtherObject } from './GameObject.js';
 import { sound } from '@pixi/sound';
-import { addPointerEvent, createSprite } from './GameFunction.js';
+import { linkObject, PageObject, Background, Player, OtherObject } from './GameObject.js';
+import { addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { brightnessOverEvent, Dialog } from './UI.js';
 import { ColorSlip } from './ColorSlip.js';
-import { DropShadowFilter } from 'pixi-filters';
 import { FilterSet } from './FilterSet.js';
+import { TextStyle } from './TextStyle.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -105,8 +106,30 @@ class Market extends linkObject {
         this.index = i;
         this.sort = sort;
     }
-    onClickResize() { }
+    onClickResize() {
+        let htmlform = $('#pixi-form');
+        htmlform.css('--x', (window.innerWidth / 2) + this.market.form.position.x - (this.market.form.width / 2) + 'px');
+        htmlform.css('--y', (window.innerHeight / 2) + this.market.form.position.y - (this.market.form.height / 2) - 1 + 'px');
+
+        let submit = $('.pixi-submit');
+        submit.css('--x', (window.innerWidth / 2) + this.market.btn.position.x - (this.market.btn.width / 2) + 'px');
+        submit.css('--y', (window.innerHeight / 2) + this.market.btn.position.y - (this.market.btn.height / 2) - 1 + 'px');
+    }
     onClickUpdate() { }
+    resize() {
+        this.w = this.manager.w;
+        this.h = this.manager.h;
+        this.container.removeChildren();
+        this.draw();
+        if (this.isClick) {
+            this.sprite.interactive = false;
+            if (this.cancel) {
+                this.cancel.position.set((this.w * 0.5) - 60, (this.h * -0.5) + 60);
+            }
+            this.onClickResize();
+        }
+        this.container.scale.set(this.manager.canvasScale);
+    }
     clickEvent() {
         this.blink.outerStrength = 0;
         this.sprite.interactive = false;
@@ -119,6 +142,8 @@ class Market extends linkObject {
         this.market = this.drawMarket(this.index + 1, this.sort);
     }
     cancelEvent() {
+        $('#pixi-form').detach();
+        $('.pixi-submit').detach();
         this.sprite.interactive = true;
         this.isClick = false;
         this.page.isZoomIn = false;
@@ -195,7 +220,12 @@ class Market extends linkObject {
             let arrow_l = drawArrow("left", () => { index--; onSelectSort(sortList[0]); });
             let arrow_r = drawArrow("right", () => { index++; onSelectSort(sortList[2]); });
             let btn = drawButton(index, 660, 144);
-            layer.addChild(arrow_l, arrow_r, btn);
+            let form = drawForm();
+            form.position.set(420, 200);
+            drawHtmlForm(form, btn);
+            c.form = form;
+            c.btn = btn;
+            layer.addChild(arrow_l, arrow_r, form, btn);
             usingLayer = layer;
         }
         function drawEvent_2() {
@@ -204,7 +234,12 @@ class Market extends linkObject {
             let arrow_l = drawArrow("left", () => { index--; onSelectSort(sortList[1]); });
             let arrow_r = drawArrow("right", () => { index++; onSelectSort(); });
             let btn = drawButton(index, -184, 140);
-            layer.addChild(arrow_l, arrow_r, btn);
+            let form = drawForm();
+            form.position.set(-420, 200);
+            drawHtmlForm(form, btn);
+            c.form = form;
+            c.btn = btn;
+            layer.addChild(arrow_l, arrow_r, form, btn);
             usingLayer = layer;
         }
         function drawEvent_3() {
@@ -213,7 +248,12 @@ class Market extends linkObject {
             let arrow_l = drawArrow("left", () => { index--; onSelectSort(); });
             let arrow_r = drawArrow("right", () => { index++; onSelectSort(sortList[3]); });
             let btn = drawButton(index, -184, 140);
-            layer.addChild(arrow_l, arrow_r, btn);
+            let form = drawForm();
+            form.position.set(-420, 200);
+            drawHtmlForm(form, btn);
+            c.form = form;
+            c.btn = btn;
+            layer.addChild(arrow_l, arrow_r, form, btn);
             usingLayer = layer;
         }
         function drawEvent_4() {
@@ -224,7 +264,12 @@ class Market extends linkObject {
             arrow_r.interactive = false;
             arrow_r.alpha = 0.5;
             let btn = drawButton(index, 660, 144);
-            layer.addChild(arrow_l, arrow_r, btn);
+            let form = drawForm();
+            form.position.set(420, 200);
+            drawHtmlForm(form, btn);
+            c.form = form;
+            c.btn = btn;
+            layer.addChild(arrow_l, arrow_r, form, btn);
             usingLayer = layer;
         }
         //obj
@@ -292,6 +337,8 @@ class Market extends linkObject {
         }
         function onSelectSort(sort = selectSort) {
             c.removeChild(usingLayer);
+            $('#pixi-form').detach();
+            $('.pixi-submit').detach();
             page[index]();
             selectSort = sort;
             for (let i in mark.bookmark) {
@@ -308,30 +355,141 @@ class Market extends linkObject {
             let e = createSprite(textures[`btn_${i}.png`], 0.5, scale);
             e.filters = [FilterSet.shadow()];
             e.position.set(x, y);
-            e.overEvent = brightnessOverEvent;
-            e.clickEvent = () => {
-                dialog_0();
-            }
             addPointerEvent(e);
             return e;
-            function dialog_0() {
-                let d = new Dialog(self.manager, {
-                    context: "確定要報名嗎？",
-                    submit: () => { d.remove(); dialog_1(); },
-                    cancel: () => { d.remove(); }
-                })
-            }
-            function dialog_1() {
-                let d = new Dialog(self.manager, {
-                    context: "報名成功",
-                    submit: () => { d.remove(); },
-                    cancel: null
-                })
-            }
         }
         function drawForm() {
+            const space = 60;
             let e = new PIXI.Container();
+            let title = createText("填寫報名表", TextStyle.Form_Unit, [0, 0.5], scale);
+            let name = drawInput("姓名", 220);
+            let phone = drawInput("電話", 220);
+            let email = drawInput("電子信箱", 728);
+            e.addChild(name, phone, email);
+            e.children.forEach((e, i) => {
+                e.position.y = i * space;
+            });
+            let num = drawUnitInput("報名人數", "人", 120);
+            num.position.x = 250;
+            title.position.y = -40;
+            e.addChild(num, title);
+            e.pivot.x = e.width / 2;
+            e.pivot.y = e.height / 2;
             return e;
+            function drawInput(labelText, width) {
+                const space = 15;
+                let e = new PIXI.Container();
+                let label = drawLabel(labelText + " *", 0, -space);
+                let bg = drawRoundRect(width, 32, 0, space);
+                e.addChild(label, bg);
+                return e;
+            }
+            function drawUnitInput(labelText, unitText, width) {
+                const space = 15;
+                let e = new PIXI.Container();
+                let label = drawLabel(labelText + " *", 0, -space);
+                let unit = createText(unitText, TextStyle.Form_Unit, [1, 0.5], scale);
+                let input = drawRoundRect(width, 32, 0, space);
+                unit.position.set(width - 8, space);
+                e.addChild(label, input, unit);
+                return e;
+            }
+            function drawRoundRect(w, h, x, y) {
+                const r = h / 2;
+                let g = new PIXI.Graphics()
+                    .lineStyle(1, 0xfbe3d0)
+                    .beginFill(0xfaefe4)
+                    .drawRoundedRect(x, y, w, h, r)
+                    .endFill()
+                g.pivot.y = g.height / 2;
+                return g;
+            }
+            function drawLabel(text, x, y) {
+                let t = createText(text, TextStyle.Form_Label, [0, 0.5], scale);
+                t.position.set(x, y);
+                return t;
+            }
+        }
+        function drawHtmlForm(e, btn) {
+            let htmlform = $("<form id='pixi-form'></form>");
+            htmlform.css('--x', (window.innerWidth / 2) + e.position.x - (e.width / 2) + 'px');
+            htmlform.css('--y', (window.innerHeight / 2) + e.position.y - (e.height / 2) - 1 + 'px');
+            let nameInput = drawInput(220, false);
+            let numInput = drawInput(120);
+            let phoneInput = drawInput(220);
+            let emailInput = drawInput(728);
+            $('body').append(htmlform);
+            let submit = drawSubmit();
+            function drawInput(width, br = true) {
+                const space = 15;
+                let input = $("<input class='pixi-input' type='text'></input>");
+                input.css('--w', width + 'px');
+                htmlform.append(input);
+                if (br) htmlform.append($('<br>'));
+                return input;
+            }
+            function drawSubmit(e = btn) {
+                let submit = $("<button class='pixi-submit'></button>");
+                submit.css('--x', (window.innerWidth / 2) + e.position.x - (e.width / 2) + 'px');
+                submit.css('--y', (window.innerHeight / 2) + e.position.y - (e.height / 2) - 1 + 'px');
+                $('body').append(submit);
+
+                let arr = [];
+                submit.on('click', () => {
+                    for (let i = 0; i < 4; i++) {
+                        arr.push($('.pixi-input').eq(i).val());
+                    }
+                    if (arr.some(e => e == "")) {
+                        dialog_error();
+                    }
+                    else { dialog_0(); }
+                })
+                return submit;
+                function dialog_0() {
+                    let d = new Dialog(self.manager, {
+                        context: "確定要報名嗎？",
+                        submit: () => { d.remove(); writeData(dialog_1); },
+                        cancel: () => { d.remove(); }
+                    })
+                }
+                function dialog_1() {
+                    let d = new Dialog(self.manager, {
+                        context: "報名成功",
+                        submit: () => { d.remove(); },
+                        cancel: null
+                    })
+                }
+                function dialog_error() {
+                    let d = new Dialog(self.manager, {
+                        context: "請先填寫資料喔！",
+                        submit: () => { d.remove(); },
+                        cancel: null
+                    })
+                }
+                async function writeData(onComplete) {
+                    await new Promise((resolve, _) => {
+                        let jsonData = JSON.parse(localStorage.getItem('event'));
+                        if (jsonData == null) { jsonData = [] }
+                        let data = {
+                            "name": "",
+                            "num": "",
+                            "phone": "",
+                            "email": ""
+                        };
+                        for (let i in Object.keys(data)) {
+                            data[Object.keys(data)[i]] = arr[i];
+                        }
+                        jsonData.push(data);
+                        localStorage.setItem("event", JSON.stringify(jsonData));
+                        console.log(jsonData);
+
+                        arr = [];
+                        $('#pixi-form')[0].reset();
+                        resolve();
+                    });
+                    return onComplete();
+                }
+            }
         }
     }
 }

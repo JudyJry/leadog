@@ -324,5 +324,17 @@ const TextStyle = {
         align: "center",
         leading: 9
     }),
+    Form_Label: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-L",
+        fontSize: 12,
+        fill: ColorSlip.redBrown,
+        align: "center"
+    }),
+    Form_Unit: new PIXI.TextStyle({
+        fontFamily: "GenSenRounded-L",
+        fontSize: 14,
+        fill: ColorSlip.redBrown,
+        align: "center"
+    }),
 }
 export { TextStyle };
