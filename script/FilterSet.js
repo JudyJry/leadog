@@ -1,4 +1,4 @@
-import { GlowFilter } from 'pixi-filters';
+import { DropShadowFilter, GlowFilter } from 'pixi-filters';
 import { ColorSlip } from './ColorSlip';
 
 
@@ -70,10 +70,22 @@ const FilterSet = {
         color: ColorSlip.yellow,
         quality: 0.1
     }),
+    lineGlow: () => new GlowFilter({
+        color: ColorSlip.white,
+        distance: 2,
+        outerStrength: 2,
+        innerStrength: 2,
+        knockout: true
+    }),
     blink: () => new BlinkGlowFilter(),
     blink_alpha: () => new BlinkGlowFilter({
         innerStrength: 0,
         knockout: true
+    }),
+    shadow: () => new DropShadowFilter({
+        blur: 2,
+        distance: 2,
+        quality: 2
     })
 }
 export { FilterSet };

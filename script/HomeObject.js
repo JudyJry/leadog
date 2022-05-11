@@ -375,10 +375,15 @@ class Building extends GameObject {
                     .to(c, { duration: 5, x: -64, y: 48, onComplete: () => { c.position.set(_x, _y); } })
                 break;
             case "dog_born":
-                c.loop = false;
                 c.animationSpeed = 0.5;
-                c.onComplete = () => { setTimeout(() => { c.gotoAndPlay(0); }, 2000) };
-                c.clickEvent = () => { gsap.timeline().to(c, { duration: 0.2, y: "-=10" }).to(c, { duration: 0.2, y: "+=10" }) }
+                c.clickEvent = () => {
+                    gsap.killTweensOf(c);
+                    gsap.timeline()
+                        .to(c, { duration: 0.2, y: "-=10" })
+                        .to(c, { duration: 0.2, y: "+=10" })
+                        .to(c, { duration: 0.2, y: "-=5" })
+                        .to(c, { duration: 0.2, y: "+=5" })
+                }
                 addPointerEvent(c);
                 break;
             case "dog_childhood":

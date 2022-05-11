@@ -809,6 +809,7 @@ class Menu extends UI {
         this.indexBg = PIXI.Sprite.from(this.UIsystem.textures["ui_0.png"]);
         this.indexBg.anchor.set(0.01, 0.5);
         this.indexBg.scale.set(this.scale);
+        this.indexBg.interactive = true;
         this.index.addChild(this.indexBg);
         drawItem(this, 0, this.UIsystem.textures["question.png"],
             function () {
@@ -872,6 +873,7 @@ class Home extends UI {
         this.indexBg = PIXI.Sprite.from(this.UIsystem.textures["ui_1.png"]);
         this.indexBg.anchor.set(0, 0.24);
         this.indexBg.scale.set(this.scale);
+        this.indexBg.interactive = true;
         this.index.addChild(this.indexBg);
         for (let i = 0; i < uiData.length; i++) {
             let s = PIXI.Sprite.from(this.UIsystem.textures[uiData[i].url]);
@@ -880,6 +882,8 @@ class Home extends UI {
             if (i < 4) { s.position.set(100 + (i * 75), 25); }
             else if (i >= 4) { s.position.set(100 + ((i - 4) * 75), 95); }
             s.clickEvent = function () {
+                this.container.removeChild(this.index);
+                this.turn = false;
                 this.manager.toOtherPage(uiData[i].name);
             }.bind(this);
             addPointerEvent(s);

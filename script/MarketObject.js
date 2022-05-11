@@ -3,7 +3,11 @@ import gsap from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { linkObject, PageObject, Background, Player, OtherObject } from './GameObject.js';
 import { sound } from '@pixi/sound';
-import { createSprite } from './GameFunction.js';
+import { addPointerEvent, createSprite } from './GameFunction.js';
+import { brightnessOverEvent, Dialog } from './UI.js';
+import { ColorSlip } from './ColorSlip.js';
+import { DropShadowFilter } from 'pixi-filters';
+import { FilterSet } from './FilterSet.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -18,10 +22,10 @@ export default class MarketObject extends PageObject {
             "background": new MarketBackground(this.manager, this, "image/building/market/bg.png"),
             "grass_0": new OtherObject(this.manager, "grass_0", -0.3, 0.102, "image/building/market/grass_0.png"),
             "grass_1": new OtherObject(this.manager, "grass_1", 0.124, 0.102, "image/building/market/grass_1.png"),
-            "market_0": new Market(this.manager, this, -0.325, -0.019, "image/building/market/market_0.png"),
-            "market_1": new Market(this.manager, this, -0.038, -0.017, "image/building/market/market_1.png"),
-            "market_2": new Market(this.manager, this, 0.247, -0.023, "image/building/market/market_2.png"),
-            "market_3": new Market(this.manager, this, 0.533, -0.019, "image/building/market/market_3.png"),
+            "market_0": new Market(this.manager, this, -0.325, -0.019, 0, "a"),
+            "market_1": new Market(this.manager, this, -0.038, -0.017, 1, "b"),
+            "market_2": new Market(this.manager, this, 0.247, -0.023, 2, "b"),
+            "market_3": new Market(this.manager, this, 0.533, -0.019, 3, "c"),
             "player": new Player(this.manager, this, 0.22)
         };
     }
@@ -92,11 +96,242 @@ class MarketBackground extends Background {
     }
 }
 class Market extends linkObject {
-    constructor(manager, page, x, y, url) {
+    constructor(manager, page, x, y, i, sort) {
         super(manager, page);
         this.x = x;
         this.y = y;
-        this.url = url;
+        this.url = `image/building/market/market_${i}.png`;
         this.zoomIn = 1.5;
+        this.index = i;
+        this.sort = sort;
+    }
+    onClickResize() { }
+    onClickUpdate() { }
+    clickEvent() {
+        this.blink.outerStrength = 0;
+        this.sprite.interactive = false;
+        this.page.children.player.move(this._x, this.sprite.width);
+        this.page.isZoomIn = true;
+        this.isClick = true;
+        if (!this.cancel) { this.drawCancel(); }
+        this.cancel.visible = true;
+        this.textures = this.manager.resources["image/building/market/event/sprites.json"].spritesheet.textures;
+        this.market = this.drawMarket(this.index + 1, this.sort);
+    }
+    cancelEvent() {
+        this.sprite.interactive = true;
+        this.isClick = false;
+        this.page.isZoomIn = false;
+        this.cancel.visible = false;
+        this.cancel = undefined;
+        this.manager.app.stage.removeChild(this.market);
+    }
+    drawCancel() {
+        let _x = (this.w * 0.5) - 60;
+        let _y = (this.h * -0.5) + 60;
+        this.cancel = createSprite('image/cancel.png', 0.5);
+        this.cancel.zIndex = 180;
+        this.cancel.position.set(_x, _y);
+        this.cancel.overEvent = brightnessOverEvent;
+        this.cancel.clickEvent = this.cancelEvent.bind(this);
+        addPointerEvent(this.cancel);
+        this.manager.app.stage.addChildAt(this.cancel, 3);
+        this.cancel.visible = false;
+    }
+    drawMarket(index = undefined, selectSort = undefined) {
+        const self = this;
+        const scale = this.uiScale;
+        const textures = this.textures;
+        const sortList = ["all", "a", "b", "c"];
+        const pageSort = [0, 1, 2, 4];
+        const page = [
+            drawAll,
+            drawEvent_1,
+            drawEvent_2,
+            drawEvent_3,
+            drawEvent_4,
+        ];
+        selectSort = selectSort == undefined ? sortList[0] : selectSort;
+        let c = new PIXI.Container();
+        let bg = drawBg();
+        let mark = drawMark();
+        let usingLayer = new PIXI.Container();
+        c.zIndex = 100;
+        onSelectSort(selectSort, index);
+        this.manager.app.stage.addChildAt(c, 3);
+        return c;
+        //page
+        function drawAll() {
+            let layer = drawLayer();
+            let arrow_l = drawArrow("left", () => { });
+            let arrow_r = drawArrow("right", () => { index++; onSelectSort(sortList[1]); });
+            arrow_l.interactive = false;
+            arrow_l.alpha = 0.5;
+            let btn = drawSearchButton(index, 620, 188);
+            layer.addChild(arrow_l, arrow_r, btn);
+            usingLayer = layer;
+            function drawSearchButton(i, x, y) {
+                let e = createSprite(textures[`btn_${i}.png`], 0.5, scale);
+                e.filters = [FilterSet.shadow()];
+                e.position.set(x, y);
+                e.overEvent = brightnessOverEvent;
+                e.clickEvent = () => {
+                    dialog();
+                }
+                addPointerEvent(e);
+                return e;
+                function dialog() {
+                    let d = new Dialog(self.manager, {
+                        context: "此功能未開放",
+                        submit: () => { d.remove(); },
+                        cancel: null
+                    })
+                }
+            }
+        }
+        function drawEvent_1() {
+            index = 1;
+            let layer = drawLayer();
+            let arrow_l = drawArrow("left", () => { index--; onSelectSort(sortList[0]); });
+            let arrow_r = drawArrow("right", () => { index++; onSelectSort(sortList[2]); });
+            let btn = drawButton(index, 660, 144);
+            layer.addChild(arrow_l, arrow_r, btn);
+            usingLayer = layer;
+        }
+        function drawEvent_2() {
+            index = 2;
+            let layer = drawLayer();
+            let arrow_l = drawArrow("left", () => { index--; onSelectSort(sortList[1]); });
+            let arrow_r = drawArrow("right", () => { index++; onSelectSort(); });
+            let btn = drawButton(index, -184, 140);
+            layer.addChild(arrow_l, arrow_r, btn);
+            usingLayer = layer;
+        }
+        function drawEvent_3() {
+            index = 3;
+            let layer = drawLayer();
+            let arrow_l = drawArrow("left", () => { index--; onSelectSort(); });
+            let arrow_r = drawArrow("right", () => { index++; onSelectSort(sortList[3]); });
+            let btn = drawButton(index, -184, 140);
+            layer.addChild(arrow_l, arrow_r, btn);
+            usingLayer = layer;
+        }
+        function drawEvent_4() {
+            index = 4;
+            let layer = drawLayer();
+            let arrow_l = drawArrow("left", () => { index--; onSelectSort(sortList[2]); });
+            let arrow_r = drawArrow("right", () => { });
+            arrow_r.interactive = false;
+            arrow_r.alpha = 0.5;
+            let btn = drawButton(index, 660, 144);
+            layer.addChild(arrow_l, arrow_r, btn);
+            usingLayer = layer;
+        }
+        //obj
+        function drawBg() {
+            let bg = new PIXI.Graphics()
+                .beginFill(ColorSlip.black, 0.2)
+                .drawRect(0, 0, 1920, 1080)
+                .endFill();
+            bg.pivot.set(1920 / 2, 1080 / 2);
+            bg.interactive = true;
+            c.addChild(bg);
+            gsap.from(bg, { duration: 1, alpha: 0 });
+            return bg;
+        }
+        function drawMark() {
+            const bookmarkPosY = { "all": -224, "a": -84, "b": 56, "c": 196 };
+            let e = new PIXI.Container();
+            e.bookmark = {};
+            for (let i of sortList) {
+                e.bookmark[i] = createSprite(textures[`mark_${i}.png`], 0.5, scale);
+                e.bookmark[i].position.set(540, bookmarkPosY[i]);
+                e.bookmark[i].overEvent = bookmarkOverEvent;
+                e.bookmark[i].clickEvent = (e) => { index = pageSort[sortList.indexOf(i)]; onSelectSort(i); }
+                addPointerEvent(e.bookmark[i]);
+                e.addChild(e.bookmark[i]);
+            }
+            c.addChild(e);
+            return e;
+            function bookmarkOverEvent(e) {
+                if (e.isPointerOver) {
+                    gsap.killTweensOf(e);
+                    gsap.to(e, { duration: 0.5, x: 856 });
+                }
+                else {
+                    gsap.killTweensOf(e);
+                    gsap.to(e, { duration: 0.5, x: 848 });
+                }
+            }
+        }
+        function drawArrow(dir, clickEvent) {
+            let arrow;
+            switch (dir) {
+                case "right":
+                    arrow = createSprite(textures["arrow_r.png"], 0.5, scale);
+                    arrow.position.set(776, 305);
+                    break;
+                case "left":
+                    arrow = createSprite(textures["arrow_l.png"], 0.5, scale);
+                    arrow.position.set(-776, 305);
+                    break;
+            }
+            arrow.filters = [FilterSet.shadow()];
+            arrow.overEvent = brightnessOverEvent;
+            arrow.clickEvent = clickEvent;
+            addPointerEvent(arrow);
+            return arrow;
+        }
+        function drawLayer() {
+            let layer = new PIXI.Container();
+            let p = createSprite(textures[`page_${index}.png`], 0.5, scale);
+            layer.addChild(p);
+            c.addChild(layer);
+            c.setChildIndex(mark, c.children.length - 1);
+            return layer;
+        }
+        function onSelectSort(sort = selectSort) {
+            c.removeChild(usingLayer);
+            page[index]();
+            selectSort = sort;
+            for (let i in mark.bookmark) {
+                mark.bookmark[i].position.x = 848;
+                mark.bookmark[i].interactive = true;
+                mark.addChildAt(mark.bookmark[i], 1);
+            }
+            mark.removeChild(mark.bookmark[sort]);
+            mark.bookmark[sort].position.x += 10;
+            mark.bookmark[sort].interactive = false;
+            mark.addChild(mark.bookmark[sort]);
+        }
+        function drawButton(i, x, y) {
+            let e = createSprite(textures[`btn_${i}.png`], 0.5, scale);
+            e.filters = [FilterSet.shadow()];
+            e.position.set(x, y);
+            e.overEvent = brightnessOverEvent;
+            e.clickEvent = () => {
+                dialog_0();
+            }
+            addPointerEvent(e);
+            return e;
+            function dialog_0() {
+                let d = new Dialog(self.manager, {
+                    context: "確定要報名嗎？",
+                    submit: () => { d.remove(); dialog_1(); },
+                    cancel: () => { d.remove(); }
+                })
+            }
+            function dialog_1() {
+                let d = new Dialog(self.manager, {
+                    context: "報名成功",
+                    submit: () => { d.remove(); },
+                    cancel: null
+                })
+            }
+        }
+        function drawForm() {
+            let e = new PIXI.Container();
+            return e;
+        }
     }
 }

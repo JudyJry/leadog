@@ -11,7 +11,8 @@ import * as Action from "./Action";
 import { videoData } from './Data';
 import { sound } from '@pixi/sound';
 import { TextStyle } from './TextStyle.js';
-import { DropShadowFilter, GlowFilter } from 'pixi-filters';
+import { GlowFilter } from 'pixi-filters';
+import { FilterSet } from './FilterSet.js';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -532,8 +533,8 @@ class Merch extends linkObject {
                 let tag = createText("#" + text[sort].tag.join(" #"), TextStyle.white, 0, scale * 0.5);
                 let cost = createText(text[sort].cost + "元", TextStyle.Mirror_title_12, 0.5, scale);
                 let like = drawLike();
-                name.filters = [new DropShadowFilter()];
-                tag.filters = [new DropShadowFilter()];
+                name.filters = [FilterSet.shadow()];
+                tag.filters = [FilterSet.shadow()];
                 name.position.set(d, d);
                 tag.position.set(-d, -d);
                 cost.position.y = d + 40;
@@ -544,11 +545,11 @@ class Merch extends linkObject {
                 e.addChild(p, tag, name, like, cost);
                 return e;
                 function drawLike() {
-                    let gf = new GlowFilter({ color: ColorSlip.white, distance: 1.5, outerStrength: 1.5, innerStrength: 1.5, knockout: true });
+                    let gf = FilterSet.lineGlow();
                     let e = new PIXI.Container();
                     let h = createSprite(textures["love.png"], [0, 1], scale);
                     let t = createText(bookData.merch.like[sort], TextStyle.white, [0, 1], scale * 0.75);
-                    t.filters = [new DropShadowFilter()];
+                    t.filters = [FilterSet.shadow()];
                     t.position.set(32, 2);
                     if (!userData.company.like[sort]) {
                         h.filters = [gf];
