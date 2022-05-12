@@ -507,17 +507,17 @@ class Merch extends linkObject {
                 "a": {
                     name: "LEADOG口罩",
                     tag: ["口罩", "時尚單品"],
-                    cost: "30-100"
+                    cost: "一包四片$100"
                 },
                 "b": {
                     name: "LEADOG詩籤",
                     tag: ["運勢", "大吉大利"],
-                    cost: "30-100"
+                    cost: "遊玩即送"
                 },
                 "c": {
                     name: "LEADOG明信片",
                     tag: ["友誼", "傳遞", "溫暖"],
-                    cost: "30-100"
+                    cost: "1張$30 / 4張$100"
                 }
             }
             let layer = drawLayer();
@@ -544,7 +544,7 @@ class Merch extends linkObject {
                 let p = createSprite(textures[`pic_${sort}_0.png`], 0.5, scale * 0.65);
                 let name = createText(text[sort].name, TextStyle.white, 1, scale);
                 let tag = createText("#" + text[sort].tag.join(" #"), TextStyle.white, 0, scale * 0.625);
-                let cost = createText(text[sort].cost + "元", TextStyle.Mirror_title_16, 0.5, scale);
+                let cost = createText(text[sort].cost, TextStyle.Mirror_title_16, 0.5, scale);
                 let like = drawLike();
                 name.filters = [FilterSet.shadow()];
                 tag.filters = [FilterSet.shadow()];
