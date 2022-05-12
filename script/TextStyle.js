@@ -326,13 +326,13 @@ const TextStyle = {
     }),
     Form_Label: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-L",
-        fontSize: 12,
+        fontSize: 24,
         fill: ColorSlip.redBrown,
         align: "center"
     }),
     Form_Unit: new PIXI.TextStyle({
         fontFamily: "GenSenRounded-L",
-        fontSize: 14,
+        fontSize: 28,
         fill: ColorSlip.redBrown,
         align: "center"
     }),

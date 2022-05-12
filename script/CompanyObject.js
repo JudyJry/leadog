@@ -656,7 +656,7 @@ class Merch extends linkObject {
             function drawForm() {
                 const space = 60;
                 let e = new PIXI.Container();
-                let title = createText("填寫訂購表", TextStyle.Form_Unit, [0, 0.5], scale);
+                let title = createText("填寫訂購表", TextStyle.Form_Unit, [0, 0.5], scale * 0.5);
                 let name = drawInput("姓名", 180);
                 let phone = drawInput("電話", 180);
                 let email = drawInput("電子信箱", 585);
@@ -683,7 +683,7 @@ class Merch extends linkObject {
                     const space = 15;
                     let e = new PIXI.Container();
                     let label = drawLabel(labelText + " *", 0, -space);
-                    let unit = createText(unitText, TextStyle.Form_Unit, [1, 0.5], scale);
+                    let unit = createText(unitText, TextStyle.Form_Unit, [1, 0.5], scale * 0.5);
                     let input = drawRoundRect(width, 32, 0, space);
                     unit.position.set(width - 8, space);
                     e.addChild(label, input, unit);
@@ -700,7 +700,7 @@ class Merch extends linkObject {
                     return g;
                 }
                 function drawLabel(text, x, y) {
-                    let t = createText(text, TextStyle.Form_Label, [0, 0.5], scale);
+                    let t = createText(text, TextStyle.Form_Label, [0, 0.5], scale * 0.5);
                     t.position.set(x, y);
                     return t;
                 }
