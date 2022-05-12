@@ -105,6 +105,7 @@ class Market extends linkObject {
         this.zoomIn = 1.5;
         this.index = i;
         this.sort = sort;
+        this.uiScale = 1;
     }
     onClickResize() {
         let htmlform = $('#pixi-form');

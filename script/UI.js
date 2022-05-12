@@ -204,6 +204,7 @@ class Book extends UI {
         c.addChild(usingLayer);
         drawStart();
         this.manager.app.stage.addChildAt(c, 1);
+        this.manager.app.stage.sortChildren();
         c.onCancel = drawEnd;
         return c;
         //page
