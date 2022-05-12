@@ -491,6 +491,7 @@ class Merch extends linkObject {
         const textures = this.textures;
         const sortList = ["all", "a", "b", "c"];
         const picDialog = { "a": "疫情下還是要美美的", "b": "展場可以訂購喔！", "c": "展場可以訂購喔！" }
+        const markX = 675;
         let selectSort = sortList[0];
         let c = new PIXI.Container();
         let bg = drawBg();
@@ -524,30 +525,32 @@ class Merch extends linkObject {
             let arrow_r = drawArrow("right", () => { onSelectSort(sortList[1]); });
             if (selectSort == sortList[0]) { arrow_l.interactive = false; arrow_l.alpha = 0.5; }
 
-            let title = createText("LEADOG商品冊：", TextStyle.Mirror_title_36, [0, 0.5], scale * 0.5);
-            title.position.set(-484, -182);
+            let title = createText("LEADOG商品冊：", TextStyle.Mirror_title_36, [0, 0.5], scale * 0.625);
+            let dog = createSprite(textures["dog.png"], 0.5, scale);
+            title.position.set(-605, -228);
+            dog.position.set(550, -220);
 
             for (let i = 1; i < sortList.length; i++) {
                 let item = drawItem(sortList[i]);
-                item.position.x = -340 + ((i - 1) * 340);
+                item.position.x = -425 + ((i - 1) * 425);
                 layer.addChild(item);
             }
 
-            layer.addChild(title, arrow_l, arrow_r);
+            layer.addChild(title, arrow_l, arrow_r, dog);
             usingLayer = layer;
             function drawItem(sort) {
-                const d = 140;
+                const d = 175;
                 let e = new PIXI.Container();
                 let p = createSprite(textures[`pic_${sort}_0.png`], 0.5, scale * 0.65);
-                let name = createText(text[sort].name, TextStyle.white, 1, scale * 0.75);
-                let tag = createText("#" + text[sort].tag.join(" #"), TextStyle.white, 0, scale * 0.5);
-                let cost = createText(text[sort].cost + "元", TextStyle.Mirror_title_12, 0.5, scale);
+                let name = createText(text[sort].name, TextStyle.white, 1, scale);
+                let tag = createText("#" + text[sort].tag.join(" #"), TextStyle.white, 0, scale * 0.625);
+                let cost = createText(text[sort].cost + "元", TextStyle.Mirror_title_16, 0.5, scale);
                 let like = drawLike();
                 name.filters = [FilterSet.shadow()];
                 tag.filters = [FilterSet.shadow()];
                 name.position.set(d, d);
                 tag.position.set(-d, -d);
-                cost.position.y = d + 40;
+                cost.position.y = d + 50;
                 like.position.set(-d, d);
                 p.overEvent = brightnessOverEvent;
                 p.clickEvent = () => { onSelectSort(sort); }
@@ -558,9 +561,10 @@ class Merch extends linkObject {
                     let gf = FilterSet.lineGlow();
                     let e = new PIXI.Container();
                     let h = createSprite(textures["love.png"], [0, 1], scale);
-                    let t = createText(bookData.merch.like[sort], TextStyle.white, [0, 1], scale * 0.75);
+                    let t = createText(bookData.merch.like[sort], TextStyle.white, [0, 1], scale);
                     t.filters = [FilterSet.shadow()];
-                    t.position.set(32, 2);
+                    h.position.set(0, -5);
+                    t.position.set(45, 0);
                     if (!userData.company.like[sort]) {
                         h.filters = [gf];
                     }
@@ -570,7 +574,7 @@ class Merch extends linkObject {
                             userData.company.like[sort] = true;
                             bookData.merch.like[sort]++;
                             t.text = bookData.merch.like[sort];
-                            h.filters = [];
+                            h.filters = [FilterSet.shadow()];
 
                         }
                         else {
@@ -595,8 +599,8 @@ class Merch extends linkObject {
             let pic = drawPic();
             let form = drawForm();
             let btn = createSprite(textures[`submit_${selectSort}.png`], 0.5, scale);
-            form.position.set(270, 110);
-            btn.position.set(416, 16);
+            form.position.set(337, 100);
+            btn.position.set(520, 20);
 
             drawHtmlForm(form, btn);
             c.form = form;
@@ -606,7 +610,7 @@ class Merch extends linkObject {
             usingLayer = layer;
 
             function drawPic() {
-                const d = 210;
+                const d = 262;
                 let picNum = 0;
                 let e = new PIXI.Container();
                 let p = new PIXI.Container();
@@ -615,15 +619,15 @@ class Merch extends linkObject {
                 let arrow_l = drawPicArrow("l");
                 let arrow_r = drawPicArrow("r");
                 p.addChild(createSprite(textures[`pic_${selectSort}_0.png`], 0.5, scale));
-                date.position.set(d + 3, d + 3);
-                e.position.set(-262, 0);
+                date.position.set(d + 15, d + 15);
+                e.position.set(-327, 0);
                 e.addChild(p, date, arrow_l, arrow_r, pd);
                 let tl = gsap.timeline({ repeat: -1 }).to(p, { duration: 5, onComplete: () => { arrow_r.clickEvent() } });
                 return e;
                 function drawPicDialog() {
                     let e = new PIXI.Container();
                     let p = createSprite(textures[`dialog.png`], 0.5, scale);
-                    let t = createText(picDialog[selectSort], TextStyle.Mirror_DogHint, 0.5, scale * 0.5);
+                    let t = createText(picDialog[selectSort], TextStyle.Mirror_DogHint, 0.5, scale * 0.625);
                     e.addChild(p, t);
                     e.position.set(d + 5, -d - 5);
                     return e;
@@ -653,15 +657,15 @@ class Merch extends linkObject {
                 const space = 60;
                 let e = new PIXI.Container();
                 let title = createText("填寫訂購表", TextStyle.Form_Unit, [0, 0.5], scale);
-                let name = drawInput("姓名", 144);
-                let phone = drawInput("電話", 144);
-                let email = drawInput("電子信箱", 468);
+                let name = drawInput("姓名", 180);
+                let phone = drawInput("電話", 180);
+                let email = drawInput("電子信箱", 585);
                 e.addChild(name, phone, email);
                 e.children.forEach((e, i) => {
                     e.position.y = i * space;
                 });
-                let num = drawUnitInput("訂購數量", "個", 80);
-                num.position.x = 174;
+                let num = drawUnitInput("訂購數量", "個", 100);
+                num.position.x = 215;
                 title.position.y = -40;
                 e.addChild(num, title);
                 e.pivot.x = e.width / 2;
@@ -705,10 +709,10 @@ class Merch extends linkObject {
                 let htmlform = $("<form id='pixi-form'></form>");
                 htmlform.css('--x', (window.innerWidth / 2) + e.position.x - (e.width / 2) + 'px');
                 htmlform.css('--y', (window.innerHeight / 2) + e.position.y - (e.height / 2) - 1 + 'px');
-                let nameInput = drawInput(144, false);
-                let numInput = drawInput(80);
-                let phoneInput = drawInput(144);
-                let emailInput = drawInput(468);
+                let nameInput = drawInput(180, false);
+                let numInput = drawInput(100);
+                let phoneInput = drawInput(180);
+                let emailInput = drawInput(585);
                 $('body').append(htmlform);
                 let submit = drawSubmit();
                 function drawInput(width, br = true) {
@@ -721,8 +725,8 @@ class Merch extends linkObject {
                 }
                 function drawSubmit(e = btn) {
                     let submit = $("<button class='pixi-submit'></button>");
-                    submit.css('--w', 158 + 'px');
-                    submit.css('--h', 53 + 'px');
+                    submit.css('--w', 195 + 'px');
+                    submit.css('--h', 66 + 'px');
                     submit.css('--x', (window.innerWidth / 2) + e.position.x - (e.width / 2) + 'px');
                     submit.css('--y', (window.innerHeight / 2) + e.position.y - (e.height / 2) - 1 + 'px');
                     $('body').append(submit);
@@ -798,12 +802,12 @@ class Merch extends linkObject {
             return bg;
         }
         function drawMark() {
-            const bookmarkPosY = { "all": -228, "a": -136, "b": -44, "c": 48 };
+            const bookmarkPosY = { "all": -285, "a": -170, "b": -55, "c": 60 };
             let e = new PIXI.Container();
             e.bookmark = {};
             for (let i of sortList) {
                 e.bookmark[i] = createSprite(textures[`mark_${i}.png`], 0.5, scale);
-                e.bookmark[i].position.set(540, bookmarkPosY[i]);
+                e.bookmark[i].position.set(markX, bookmarkPosY[i]);
                 e.bookmark[i].overEvent = bookmarkOverEvent;
                 e.bookmark[i].clickEvent = (e) => { onSelectSort(i); }
                 addPointerEvent(e.bookmark[i]);
@@ -814,26 +818,28 @@ class Merch extends linkObject {
             function bookmarkOverEvent(e) {
                 if (e.isPointerOver) {
                     gsap.killTweensOf(e);
-                    gsap.to(e, { duration: 0.5, x: 548 });
+                    gsap.to(e, { duration: 0.5, x: markX + 8 });
                 }
                 else {
                     gsap.killTweensOf(e);
-                    gsap.to(e, { duration: 0.5, x: 540 });
+                    gsap.to(e, { duration: 0.5, x: markX });
                 }
             }
         }
         function drawArrow(dir, clickEvent) {
+            const x = 630, y = 363;
             let arrow;
             switch (dir) {
                 case "right":
                     arrow = createSprite(textures["arrow_r.png"], 0.5, scale);
-                    arrow.position.set(510, 290);
+                    arrow.position.set(x, y);
                     break;
                 case "left":
                     arrow = createSprite(textures["arrow_l.png"], 0.5, scale);
-                    arrow.position.set(-510, 290);
+                    arrow.position.set(-x, y);
                     break;
             }
+            arrow.filters = [FilterSet.shadow()];
             arrow.overEvent = brightnessOverEvent;
             arrow.clickEvent = clickEvent;
             addPointerEvent(arrow);
@@ -867,7 +873,7 @@ class Merch extends linkObject {
                     break;
             }
             for (let i in mark.bookmark) {
-                mark.bookmark[i].position.x = 540;
+                mark.bookmark[i].position.x = markX;
                 mark.bookmark[i].interactive = true;
                 mark.addChildAt(mark.bookmark[i], 1);
             }
