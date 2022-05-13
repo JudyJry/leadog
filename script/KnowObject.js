@@ -389,8 +389,6 @@ class Blackboard extends linkObject {
         const stan = this.uiOptions.standard;
         const h = this.uiOptions.height;
         const space = this.uiOptions.space;
-        //this.frame = createSprite(this.uiOptions.frameUrl, 0.5, this.uiOptions.frameScale);
-        //this.ui.addChild(this.frame);
         this.playButton = drawPlayButton();
         this.volumeButton = drawVolumeButton();
         this.nextButton = drawNextButton();
@@ -443,6 +441,7 @@ class Blackboard extends linkObject {
                 self.video = self.videoList[self.videoIndex]();
                 self.video.setup();
                 self.video.container.position.set(0, -11.7);
+                self.container.setChildIndex(self.video.container, 3);
                 self.video.videoCrol.muted = self.volumeButton.turn;
             }.bind(self);
             UItint(e);
@@ -670,6 +669,7 @@ class Gashapon extends linkObject {
 
         }
         function drawResult() {
+            let isFilp = false;
             random = Math.floor(Math.random() * Object.keys(lucky).length);
             self.manager.userData.know.lucky[Object.keys(lucky)[random]] = true;
             let layer = drawLayer();
@@ -690,7 +690,22 @@ class Gashapon extends linkObject {
             addPointerEvent(arrow_r);
             layer.addChild(arrow_l, arrow_r, pic_f, pic_b);
 
-            setTimeout(drawEnd, 5000);
+            function picAnim(pic_f, pic_b) {
+                if (pic_b.scale.x == 0) {
+                    gsap.timeline()
+                        .to(pic_f.scale, { duration: 0.5, x: 0, ease: "none" })
+                        .to(pic_b.scale, { duration: 0.5, x: 1, ease: "none" })
+                }
+                else if (pic_f.scale.x == 0) {
+                    gsap.timeline()
+                        .to(pic_b.scale, { duration: 0.5, x: 0, ease: "none" })
+                        .to(pic_f.scale, { duration: 0.5, x: 1, ease: "none" })
+                }
+                if (!isFilp) {
+                    isFilp = true;
+                    setTimeout(drawEnd, 4000);
+                }
+            }
         }
         function drawEnd() {
             if (self.isClick) {
@@ -717,18 +732,7 @@ class Gashapon extends linkObject {
             frame.eggs.texture = textures[`eggs_${count}.png`];
             frame.eggs.position.set(eggsPos[count][0], eggsPos[count][1]);
         }
-        function picAnim(pic_f, pic_b) {
-            if (pic_b.scale.x == 0) {
-                gsap.timeline()
-                    .to(pic_f.scale, { duration: 0.5, x: 0, ease: "none" })
-                    .to(pic_b.scale, { duration: 0.5, x: 1, ease: "none" })
-            }
-            else if (pic_f.scale.x == 0) {
-                gsap.timeline()
-                    .to(pic_b.scale, { duration: 0.5, x: 0, ease: "none" })
-                    .to(pic_f.scale, { duration: 0.5, x: 1, ease: "none" })
-            }
-        }
+
     }
 }
 class Book extends linkObject {
@@ -786,7 +790,7 @@ class Book extends linkObject {
                 title_1: "寄養家庭",
                 title_2: "寄養幼犬(2個月~2歲)",
                 hint: `點擊下方”我要寄養”可了解幼犬資料，並且可及時\n連結到台灣各個導盲犬協會獲得更多資訊。`,
-                buttonText: "我要寄養",
+                buttonText: "我要申請",
                 picNum: 2
             },
             "b": {
@@ -800,7 +804,7 @@ class Book extends linkObject {
                 title_1: "收養家庭",
                 title_2: "收養退休犬(11歲以後)",
                 hint: `點擊下方”我要收養”可了解退休犬資料，並且可及時\n連結到台灣各個導盲犬協會獲得更多資訊。`,
-                buttonText: "我要收養",
+                buttonText: "我要申請",
                 picNum: 2
             }
         }

@@ -61,10 +61,7 @@ class Building extends GameObject {
                         this.drawWave(i, data.name, data.url, data.x, data.y);
                         break;
                     case objType.tree:
-                        this.drawOther(i, data.name, data.url, data.x, data.y);
-                        break;
-                    case objType.light:
-                        this.drawOther(i, data.name, data.url, data.x, data.y);
+                        this.drawTree(i, data.name, data.url, data.x, data.y);
                         break;
                     case objType.building:
                         this.building.push(this.drawBuilding(i, data.name, data.url, data.x, data.y));
@@ -75,15 +72,12 @@ class Building extends GameObject {
                     case objType.animationBuilding:
                         this.building.push(this.drawAnimationBuilding(i, data.name, data.url, data.x, data.y));
                         break;
-                    case objType.dog:
-                        this.drawOther(i, data.name, data.url, data.x, data.y);
-                        break;
                     case objType.boat:
                         this.drawBoat(i, data.name, data.url, data.x, data.y);
                         break;
-                    case objType.fish:
-
-                        break;
+                    case objType.dog:
+                    case objType.light:
+                    case objType.grass:
                     case objType.other:
                         this.drawOther(i, data.name, data.url, data.x, data.y);
                         break;
@@ -357,8 +351,30 @@ class Building extends GameObject {
         this.container.addChild(c);
         switch (c.name) {
             case "ferrisWheel":
+                let fs = 0;
                 c.animationSpeed = 0.1;
-                c.clickEvent = () => { if (c.playing) c.stop(); else c.play(); }
+                c.clickEvent = () => {
+                    switch (fs) {
+                        case 0:
+                        case 2:
+                        case 4:
+                            c.animationSpeed = 0;
+                            break;
+                        case 1:
+                        case 3:
+                        case 5:
+                            c.animationSpeed = 0.1;
+                            break;
+                        case 6:
+                            c.animationSpeed = 0.75;
+                            break;
+                        case 7:
+                            c.animationSpeed = 0.1;
+                            fs = -1;
+                            break;
+                    }
+                    fs++;
+                }
                 addPointerEvent(c);
                 break;
             case "trafficLight":
@@ -376,13 +392,14 @@ class Building extends GameObject {
                 break;
             case "dog_born":
                 c.animationSpeed = 0.5;
+                let btl = gsap.timeline()
+                    .to(c, { duration: 0.2, y: "-=10" })
+                    .to(c, { duration: 0.2, y: "+=10" })
+                    .to(c, { duration: 0.2, y: "-=5" })
+                    .to(c, { duration: 0.2, y: "+=5" })
+                btl.pause();
                 c.clickEvent = () => {
-                    gsap.killTweensOf(c);
-                    gsap.timeline()
-                        .to(c, { duration: 0.2, y: "-=10" })
-                        .to(c, { duration: 0.2, y: "+=10" })
-                        .to(c, { duration: 0.2, y: "-=5" })
-                        .to(c, { duration: 0.2, y: "+=5" })
+                    btl.play(0.01);
                 }
                 addPointerEvent(c);
                 break;
@@ -437,12 +454,13 @@ class Building extends GameObject {
             case "dog_elderly":
                 c.loop = false;
                 c.animationSpeed = 0.5;
+                let etl = gsap.timeline().to(c, { duration: 0.2, y: "-=5" }).to(c, { duration: 0.2, y: "+=5" });
+                etl.pause();
                 c.onComplete = () => { setTimeout(() => { c.gotoAndPlay(0); }, 5000) };
-                c.clickEvent = () => { gsap.timeline().to(c, { duration: 0.2, y: "-=5" }).to(c, { duration: 0.2, y: "+=5" }) }
+                c.clickEvent = () => { etl.play(0.01); }
                 addPointerEvent(c);
                 break;
         }
-
         c.play();
         return c;
     }
@@ -466,6 +484,26 @@ class Building extends GameObject {
                 .to(c, { duration: 3, rotation: "+=0.5", x: _x + 27, y: _y - 42, ease: "power1.inOut", onComplete: () => { c.isHooked = true; } })
                 .to(c, { duration: 3, rotation: "-=0.5", ease: "power1.inOut", onComplete: () => { c.isHooked = false; } })
                 .to(c, { duration: 3, rotation: 0, x: _x, y: _y, ease: "power1.inOut" })
+        }
+    }
+    drawTree(i, n, url, x, y) {
+        let _x = x * 2;
+        let _y = y * 2;
+        let c = createSprite(this.textures[url], [0.5, 1], this.scale);
+        c.name = n;
+        c.dataIndex = i;
+        c.position.set(_x, _y + (c.height / 2));
+        this.container.addChild(c);
+        c.overEvent = treeOverEvent;
+        c.clickEvent = () => { }
+        addPointerEvent(c);
+        function treeOverEvent(e) {
+            const t = 0.2;
+            const r = 1;
+            gsap.timeline()
+                .to(c, { duration: t, rotation: r * (Math.PI / 180) })
+                .to(c, { duration: t, rotation: -r * (Math.PI / 180) })
+                .to(c, { duration: t, rotation: 0 })
         }
     }
     drawOther(i, n, url, x, y) {

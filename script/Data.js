@@ -20,6 +20,7 @@ const objType = Object.freeze({
     "wave": 8,
     "animationBuilding": 9,
     "fish": 10,
+    "grass": 11
 });
 
 const Page = Object.freeze({
@@ -67,11 +68,11 @@ const homePageData = [
     { type: objType.tree, name: "tree_1", url: "tree_1.png", x: 5, y: -158 },
     { type: objType.tree, name: "tree_2", url: "tree_2.png", x: 88, y: -141 },
     { type: objType.tree, name: "tree_3", url: "tree_3.png", x: 197, y: -107 },
-    { type: objType.tree, name: "tree_4", url: "tree_4.png", x: -3, y: -39 },
+    { type: objType.grass, name: "tree_4", url: "tree_4.png", x: -3, y: -39 },
     { type: objType.tree, name: "tree_5", url: "tree_5.png", x: 92, y: -59 },
-    { type: objType.tree, name: "tree_6", url: "tree_6.png", x: -33, y: 41 },
+    { type: objType.grass, name: "tree_6", url: "tree_6.png", x: -33, y: 41 },
     { type: objType.tree, name: "tree_7", url: "tree_7.png", x: -322, y: 112 },
-    { type: objType.tree, name: "tree_8", url: "tree_8.png", x: 358, y: 144 },
+    { type: objType.grass, name: "tree_8", url: "tree_8.png", x: 358, y: 144 },
     { type: objType.tree, name: "tree_9", url: "tree_9.png", x: 421, y: 110 },
     //bus
     { type: objType.building, name: "相關活動", url: "market.png", x: 151, y: -112 },

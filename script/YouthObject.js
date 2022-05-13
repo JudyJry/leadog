@@ -7,7 +7,6 @@ import YouthAction_Instruction from './YouthAction_Instruction.js';
 import YouthAction_Traffic from './YouthAction_Traffic.js';
 import YouthAction_Instruction2 from './YouthAction_Instruction2.js';
 import { addPointerEvent, createSprite, createText } from './GameFunction.js';
-import { FilterSet } from './FilterSet.js';
 import { brightnessOverEvent, drawButton, glowOverEvent } from './UI.js';
 import { TextStyle } from './TextStyle.js';
 import { ThreeNotOneQuestionData } from './Data.js';
