@@ -24,8 +24,6 @@ export default class UIsystem {
         this.uiContainer.zIndex = 100;
         this.ui = {
             "book": new Book(this.manager, this),
-            //"notify": new Notify(this.manager, this),
-            //"user": new User(this.manager, this),
             "menu": new Menu(this.manager, this),
             "home": new Home(this.manager, this)
         }
@@ -35,6 +33,8 @@ export default class UIsystem {
         this.logo = PIXI.Sprite.from("image/logo.png");
         this.logo.scale.set(0.4);
         this.logo.position.set((-0.5 * this.w) + 50, (-0.5 * this.h) + 20);
+        this.logo.clickEvent = () => { this.manager.toOtherPage(Page.home); }
+        addPointerEvent(this.logo);
         this.container.addChild(this.logo);
     }
     setup() {
