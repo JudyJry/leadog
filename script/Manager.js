@@ -93,12 +93,13 @@ export default class Manager {
         this.loader.loadAsset(function () {
             this.app.stage.x = this.app.renderer.width * this.anchor;
             this.app.stage.y = this.app.renderer.height * this.anchor;
+        }.bind(this), function () {
             this.activeObj = obj;
             this.activeObj.setup().then(function () {
                 this.app.stage.addChild(this.uiSystem.container, this.mouse.cursor)
                 this.app.stage.sortChildren();
-            }.bind(this));
-        }.bind(this), () => { }, list);
+            }.bind(this))
+        }.bind(this), list);
     }
     loadAction(act, list = undefined) {
         this.loader.loadAsset(function () {
@@ -161,16 +162,16 @@ const loadList = {
         "image/icon/sprites.json",
         "image/book/sprites.json",
         //page-ui
-        "image/walk/elderly/sprites.json",
+        "image/walk/born/sprites.json",
         "image/walk/childhood/sprites.json",
+        "image/walk/youth/sprites.json",
+        "image/walk/elderly/sprites.json",
         "image/cancel.png",
         "image/dialog.png",
         "image/dialog_button.png",
         "image/arrow_right.svg",
         "image/arrow_left.svg",
         "image/building/caution.png",
-        "image/walk/childhood/player.png",
-        "image/walk/elderly/player.png",
         //video-ui
         "image/video/video.png",
         "image/TGDAlogo.png",
@@ -198,7 +199,6 @@ const loadList = {
         "image/homepage/dog/elderly/sprites.json",
     ],
     "born": [
-        "image/walk/born/sprites.json",
         "image/building/born/sprites.json",
         "image/map/sprites.json",
         "image/building/born/bg.png",
@@ -212,6 +212,7 @@ const loadList = {
         "image/video/childhood/sprites.json",
         "image/building/childhood/sprites.json",
         "image/building/childhood/book/sprites.json",
+        "image/walk/childhood/player.png",
         "image/building/childhood/bg.png",
         "image/building/childhood/door.png",
         "image/building/childhood/book.png",
@@ -221,7 +222,6 @@ const loadList = {
         "image/building/childhood/book/cover.png",
     ],
     "youth": [
-        "image/walk/youth/sprites.json",
         "image/video/youth/sprites.json",
         "image/building/youth/graduate/sprites.json",
         "image/building/youth/mirror/sprites.json",
@@ -236,6 +236,7 @@ const loadList = {
         "image/map/sprites.json",
         "image/video/elderly/elderly_video_sprites.json",
         "image/building/elderly/book/sprites.json",
+        "image/walk/elderly/player.png",
         "image/building/elderly/bg.png",
         "image/building/elderly/door.png",
         "image/building/elderly/book.png",
