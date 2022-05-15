@@ -24,7 +24,7 @@ class Youth_Instruction2_Video extends Action.ActionVideo {
     constructor(manager, action, url) {
         super(manager, action, url);
         this.name = "Youth_Instruction2_Video";
-        this.pauseTime = [0, 9.5, 26.5, 29];
+        this.pauseTime = [0, 10.5, 27, 29];
         this.isEnd = true;
         this.count = 0;
         this.scale = 0.5;

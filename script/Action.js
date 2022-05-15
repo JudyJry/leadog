@@ -228,6 +228,7 @@ export class ActionSound {
     }
     play() { this.sound.play(); console.log('%s:play', this.name); }
     pause() { this.sound.pause(); console.log('%s:pause', this.name); }
+    remove() { sound.remove(this.name); }
     onEnd() {
         if (this.sound.volume <= 0) {
             this.sound.pause();
@@ -241,6 +242,7 @@ export class ActionSound {
         if (this.isEnd) { this.onEnd(); }
     }
     destroy() {
+        this.remove();
         for (const prop of Object.getOwnPropertyNames(this)) delete this[prop];
     }
 }

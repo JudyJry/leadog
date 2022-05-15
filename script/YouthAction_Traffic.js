@@ -45,6 +45,7 @@ class Youth_Traffic_Video extends Action.ActionVideo {
                     this.action.children.video2 = new Youth_Traffic_Video2(this.manager, this.action,
                         `video/youth_traffic_${this.random + 1}.mp4`, this.random);
                     this.action.children.video2.setup();
+                    gsap.to(this.container, { duration: 1, alpha: 0 });
                     break;
             }
             this.count++;
@@ -99,7 +100,7 @@ class Youth_Traffic_UI_Stage1 extends Action.ActionUI {
         }
     }
     onClearGame() {
-        this.sound.pause();
+        this.sound.remove();
         let gj = new Action.ActionGoodjob(this.manager, this.action);
         gj.setup();
         gsap.to(this.container, {
@@ -132,22 +133,34 @@ class Youth_Traffic_Video2 extends Action.ActionVideo {
     constructor(manager, action, url, random) {
         super(manager, action, url);
         this.name = "Youth_Traffic_Video2";
-        this.pauseTime = random === 0 ? [0, 9] : [0, 17];
+        this.pauseTime = random == 0 ? [0, 8] : [0, 16];
         this.isEnd = true;
         this.count = 0;
         this.random = random;
     }
+    setup() {
+        this.draw();
+        this.container.name = this.name;
+        this.container.scale.set(this.manager.canvasScale);
+        this.action.addChild(this.container);
+        this.action.removeChild(this.bg);
+        gsap.to(this.container, { duration: 1, alpha: 1 });
+        //this.drawBg();
+    }
     update() {
-        this.videoCrol.play().then(function () { gsap.to(this.container, { duration: 1, alpha: 1 }); }.bind(this));
+        if (!this.isEnd) {
+            this.videoCrol.play();
+            this.bg.alpha = 0;
+        }
         if (this.currentTime >= this.pauseTime[this.count]) {
             switch (this.count) {
                 case 0:
-                    this.action.children.video.pause();
+                    this.videoCrol.pause();
                     break;
                 case 1:
                     if (!this.isEnd) {
-                        this.action.children.video.videoCrol.ontimeupdate = undefined;
-                        this.action.children.video.videoCrol.currentTime = 0;
+                        this.videoCrol.ontimeupdate = undefined;
+                        this.videoCrol.currentTime = 0;
                         this.isEnd = true;
                         this.onEnd();
                     }

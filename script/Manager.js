@@ -161,16 +161,16 @@ const loadList = {
         "image/icon/sprites.json",
         "image/book/sprites.json",
         //page-ui
-        "image/walk/elderly/sprites.json",
+        "image/walk/born/sprites.json",
         "image/walk/childhood/sprites.json",
+        "image/walk/youth/sprites.json",
+        "image/walk/elderly/sprites.json",
         "image/cancel.png",
         "image/dialog.png",
         "image/dialog_button.png",
         "image/arrow_right.svg",
         "image/arrow_left.svg",
         "image/building/caution.png",
-        "image/walk/childhood/player.png",
-        "image/walk/elderly/player.png",
         //video-ui
         "image/video/video.png",
         "image/TGDAlogo.png",
@@ -198,7 +198,6 @@ const loadList = {
         "image/homepage/dog/elderly/sprites.json",
     ],
     "born": [
-        "image/walk/born/sprites.json",
         "image/building/born/sprites.json",
         "image/map/sprites.json",
         "image/building/born/bg.png",
@@ -221,7 +220,6 @@ const loadList = {
         "image/building/childhood/book/cover.png",
     ],
     "youth": [
-        "image/walk/youth/sprites.json",
         "image/video/youth/sprites.json",
         "image/building/youth/graduate/sprites.json",
         "image/building/youth/mirror/sprites.json",

@@ -20,6 +20,7 @@ export class PageObject {
         this.children = {};
     }
     setup() {
+        sound.removeAll();
         this.container.name = this.name;
         this.sound = sound.add(this.name, this.soundUrl);
         this.sound.loop = true;
@@ -451,12 +452,12 @@ export class Video extends linkObject {
         this.isClick = true;
     }
     cancelEvent() {
-        sound.play(this.page.name);
+        this.pause();
+        this.video.sound.remove();
         this.video.children.logo.cancelEvent();
         let tl = gsap.timeline({ onComplete: function () { this.sprite.interactive = true; }.bind(this) });
         tl.to(this.page.container.scale, { duration: 0.5, x: this.scale, y: this.scale });
         tl.to(this.page.container, { duration: 0.5, x: -this._x / 2, y: 0 }, 0);
-        this.pause();
         this.video.container.removeChildren();
         this.container.removeChild(this.video.container, this.ui);
 
@@ -471,6 +472,7 @@ export class Video extends linkObject {
         }
         gsap.killTweensOf(this.manager.uiSystem.container);
         this.manager.uiSystem.container.position.x = 0;
+        sound.play(this.page.name);
 
         function closeFullscreen() {
             if (document.exitFullscreen) {
@@ -756,6 +758,7 @@ export class VideoPlayer extends Video {
         this.isClick = true;
     }
     cancelEvent() {
+        sound.pauseAll();
         sound.play(this.page.name);
         this.video.children.logo.cancelEvent();
         this.pause();
