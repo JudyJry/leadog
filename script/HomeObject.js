@@ -7,6 +7,8 @@ import { FilterSet } from './FilterSet.js';
 import { homePageData, objType } from './Data.js';
 import { addDragEvent, addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+import { AdjustmentFilter } from 'pixi-filters';
+import { ColorSlip } from './ColorSlip.js';
 
 gsap.registerPlugin(PixiPlugin);
 gsap.registerPlugin(MotionPathPlugin);
@@ -92,6 +94,7 @@ class Building extends GameObject {
         let c = createSprite(textures[url], 0.5, this.scale);
         c.name = n;
         c.dataIndex = i;
+        c.zIndex = i;
         c.position.set(_x, _y);
         this.container.addChild(c);
         return c;
@@ -105,6 +108,7 @@ class Building extends GameObject {
         let c = createSprite("image/homepage/island/" + url, 0.5, this.scale - s);
         e.name = n;
         e.dataIndex = i;
+        e.zIndex = i;
         e.addChild(c);
         c.position.set(_x, _y);
         c.alpha = 0;
@@ -126,7 +130,7 @@ class Building extends GameObject {
         this.container.addChild(e);
         return e;
     }
-    drawBoat(i, n, url, x, y) {
+    drawBoat(i, n, url, x, y, scale = this.scale) {
         let w = this.w;
         let h = this.h;
         const t = 5;
@@ -134,14 +138,15 @@ class Building extends GameObject {
         let _x = x * 2;
         let _y = y * 2;
         let e = new PIXI.Container();
-        let c = createSprite(this.textures[url], [0.5, 1], this.scale);
-        let c2 = createSprite(this.textures[url], [0.5, 1], [this.scale, -this.scale]);
+        let c = createSprite(this.textures[url], [0.5, 1], scale);
+        let c2 = createSprite(this.textures[url], [0.5, 1], [scale, -scale]);
         c.rotation = -s * (Math.PI / 180);
         c2.rotation = s * (Math.PI / 180);
         c2.alpha = 0.25;
         e.addChild(c, c2);
         e.name = n;
         e.dataIndex = i;
+        e.zIndex = i;
         e.position.set(_x, _y);
         this.container.addChild(e);
 
@@ -184,6 +189,7 @@ class Building extends GameObject {
         let c = createSprite(this.textures[url], 0.5, this.scale);
         c.name = n;
         c.dataIndex = i;
+        c.zIndex = i;
         c.isEntering = false;
         c.blink = FilterSet.blink();
         c.filters = [c.blink.filter];
@@ -265,6 +271,7 @@ class Building extends GameObject {
         c.loop = false;
         e.name = n;
         e.dataIndex = i;
+        e.zIndex = i;
         e.addChild(c);
         e.isEntering = false;
         e.blink = FilterSet.blink();
@@ -345,6 +352,7 @@ class Building extends GameObject {
         let c = new PIXI.AnimatedSprite(textures);
         c.name = n;
         c.dataIndex = i;
+        c.zIndex = i;
         c.anchor.set(0.5);
         c.scale.set(this.scale);
         c.position.set(_x, _y);
@@ -471,6 +479,7 @@ class Building extends GameObject {
         let c = createSprite(this.textures[data.url], [1, 0], this.scale * 0.5);
         c.name = data.name;
         c.dataIndex = i;
+        c.zIndex = i;
         c.isHooked = false;
         c.position.set(_x, _y);
         c.alpha = 0.5;
@@ -492,6 +501,7 @@ class Building extends GameObject {
         let c = createSprite(this.textures[url], [0.5, 1], this.scale);
         c.name = n;
         c.dataIndex = i;
+        c.zIndex = i;
         c.position.set(_x, _y + (c.height / 2));
         this.container.addChild(c);
         c.overEvent = treeOverEvent;
@@ -512,42 +522,56 @@ class Building extends GameObject {
         let c = createSprite(this.textures[url], 0.5, this.scale);
         c.name = n;
         c.dataIndex = i;
+        c.zIndex = i;
         c.position.set(_x, _y);
         this.container.addChild(c);
+        switch (c.name) {
+            case "light_4":
+                let count = 0;
+                c.clickEvent = () => {
+                    count++;
+                    if (count == 5) {
+                        console.log("create boat")
+                        count = 0;
+                        let color = Math.floor(Math.random() * 2);
+                        let scale = Math.random() * 0.25 + 0.25;
+                        let rx = Math.floor(Math.random() * 10);
+                        let ry = Math.floor(Math.random() * 10);
+                        this.drawBoat(7, "boat_n", `sailboat_${color}.png`, x - rx, y - ry, scale);
+                        this.container.sortChildren();
+                    }
+                }
+                addPointerEvent(c);
+                break;
+            case "building_0":
+                const f = new AdjustmentFilter({
+                    gamma: 1,
+                    saturation: 1,
+                    contrast: 5,
+                    brightness: 0.4,
+                    red: 0.5,
+                    green: 0.6,
+                    blue: 0.7,
+                    alpha: 1,
+                });
+                let dayTurn = false;
+                c.clickEvent = () => {
+                    if (!dayTurn) {
+                        dayTurn = true;
+                        this.container.filters = [f];
+                        this.manager.app.renderer.backgroundColor = 0x5394BA;
+                    }
+                    else {
+                        dayTurn = false;
+                        this.container.filters = [];
+                        this.manager.app.renderer.backgroundColor = ColorSlip.lightBlue;
+                    }
+                }
+                addPointerEvent(c);
+                break;
+        }
     }
     update() {
         this.building.forEach(e => { e.update(); });
-    }
-}
-
-class TestGif {
-    constructor(manager, src, x, y) {
-        this.manager = manager;
-        this.anim = undefined;
-        try { this.manager.app.loader.add(src); }
-        catch { }
-        this.manager.app.loader.load((_) => {
-            this.playAnimation(src);
-        });
-        this.scale = 1;
-        this.x = x;
-        this.y = y;
-    }
-    playAnimation(src) {
-        this.clearAnimation();
-        this.anim = this.manager.resources[src].animation;
-        this.anim.scale.set(this.scale);
-        this.anim.anchor.set(0.5);
-        this.anim.position.set(this.x, this.y);
-        this.anim.onLoop = () => console.log('Looped!');
-        this.anim.onComplete = () => console.log('Completed!');
-        this.anim.play();
-    }
-    clearAnimation() {
-        if (this.anim) {
-            this.anim.stop();
-            this.anim.currentFrame = 0;
-            this.anim = null;
-        }
     }
 }

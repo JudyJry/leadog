@@ -9,6 +9,7 @@ import { TextStyle } from './TextStyle.js';
 import { mapData } from './Data.js';
 import { FilterSet } from './FilterSet.js';
 import { brightnessOverEvent } from './UI.js';
+import { sound } from '@pixi/sound';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -102,6 +103,7 @@ class Tv extends Video {
         }
     }
     clickEvent() {
+        sound.pause(this.page.name);
         this.sprite.interactive = false;
         this.zoom();
         this.page.children.player.move(this._x, this.sprite.width);

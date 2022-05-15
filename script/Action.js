@@ -30,6 +30,7 @@ export class ActionPage extends PageObject {
     }
     setup() {
         this.container.name = this.name;
+        this.container.interactive = true;
         return new Promise(function (resolve, _) {
             this.container.addChild(this.drawBg());
             for (let [_, e] of Object.entries(this.children)) { e.setup(); }
