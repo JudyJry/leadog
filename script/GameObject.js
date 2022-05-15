@@ -282,20 +282,21 @@ export class Player extends GameObject {
             this.sprite.scale.set(this.scale);
             this.container.addChild(this.sprite);
             this.container.position.set(this._x, this._y);
-            setTimeout(onLoad.bind(this), 300);
+            const self = this;
+            onLoad();
             function onLoad() {
-                console.log(this.texturesUrl);
-                const texturesUrl = this.manager.resources[this.texturesUrl].spritesheet.textures;
+                console.log(self.texturesUrl);
+                self.isLoaded = true;
+                const texturesUrl = self.manager.resources[self.texturesUrl].spritesheet.textures;
                 let textures = [];
                 for (let i = 0; i < Object.keys(texturesUrl).length; i++) {
                     textures.push(texturesUrl[i + ".png"]);
                 }
-                this.anim = new PIXI.AnimatedSprite(textures);
-                this.anim.anchor.set(0.5, 1);
-                this.container.addChild(this.anim);
-                this.anim.visible = false;
-                this.breath = this.breathAnim();
-                this.isLoaded = true;
+                self.anim = new PIXI.AnimatedSprite(textures);
+                self.anim.anchor.set(0.5, 1);
+                self.container.addChild(self.anim);
+                self.anim.visible = false;
+                self.breath = self.breathAnim();
             }
         }
     }
