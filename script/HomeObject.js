@@ -543,32 +543,6 @@ class Building extends GameObject {
                 }
                 addPointerEvent(c);
                 break;
-            case "building_0":
-                const f = new AdjustmentFilter({
-                    gamma: 1,
-                    saturation: 1,
-                    contrast: 5,
-                    brightness: 0.4,
-                    red: 0.5,
-                    green: 0.6,
-                    blue: 0.7,
-                    alpha: 1,
-                });
-                let dayTurn = false;
-                c.clickEvent = () => {
-                    if (!dayTurn) {
-                        dayTurn = true;
-                        this.container.filters = [f];
-                        this.manager.app.renderer.backgroundColor = 0x5394BA;
-                    }
-                    else {
-                        dayTurn = false;
-                        this.container.filters = [];
-                        this.manager.app.renderer.backgroundColor = ColorSlip.lightBlue;
-                    }
-                }
-                addPointerEvent(c);
-                break;
         }
     }
     update() {
