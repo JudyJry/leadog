@@ -203,6 +203,7 @@ class Book extends UI {
         c.zIndex = 100;
         c.addChild(usingLayer);
         drawStart();
+        c.scale.set(this.manager.canvasScale);
         this.manager.app.stage.addChildAt(c, 1);
         this.manager.app.stage.sortChildren();
         c.onCancel = drawEnd;
@@ -554,9 +555,9 @@ class Book extends UI {
         function drawBg() {
             let bg = new PIXI.Graphics()
                 .beginFill(ColorSlip.black, 0.2)
-                .drawRect(0, 0, self.manager.resolution.x, self.manager.resolution.y)
+                .drawRect(0, 0, 1920, 1080)
                 .endFill();
-            bg.pivot.set(self.manager.resolution.x / 2, self.manager.resolution.y / 2);
+            bg.pivot.set(1920 / 2, 1080 / 2);
             bg.interactive = true;
             c.addChild(bg);
             gsap.from(bg, { duration: 1, alpha: 0 });
