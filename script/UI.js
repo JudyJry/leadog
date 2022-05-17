@@ -554,9 +554,9 @@ class Book extends UI {
         function drawBg() {
             let bg = new PIXI.Graphics()
                 .beginFill(ColorSlip.black, 0.2)
-                .drawRect(0, 0, 1920, 1080)
+                .drawRect(0, 0, self.manager.resolution.x, self.manager.resolution.y)
                 .endFill();
-            bg.pivot.set(1920 / 2, 1080 / 2);
+            bg.pivot.set(self.manager.resolution.x / 2, self.manager.resolution.y / 2);
             bg.interactive = true;
             c.addChild(bg);
             gsap.from(bg, { duration: 1, alpha: 0 });

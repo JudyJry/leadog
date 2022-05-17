@@ -187,11 +187,11 @@ class Webside extends linkObject {
 
             let prevY = undefined;
             slider.handle.dragDownEvent = (e, event) => {
-                prevY = event.data.global.y;
+                prevY = self.manager.mouse.y;
             }
             slider.handle.dragMoveEvent = (e, event) => {
-                e.position.y += event.data.global.y - prevY;
-                prevY = event.data.global.y;
+                e.position.y += self.manager.mouse.y - prevY;
+                prevY = self.manager.mouse.y;
                 if (e.position.y < 0) { e.position.y = 0 }
 
                 if (slider.handleLength + e.position.y >= slider.trackLength) {
@@ -499,6 +499,7 @@ class Merch extends linkObject {
         let usingLayer = new PIXI.Container();
         c.zIndex = 100;
         onSelectSort();
+        c.scale.set(this.manager.canvasScale);
         this.manager.app.stage.addChildAt(c, 1);
         return c;
         //page

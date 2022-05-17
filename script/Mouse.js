@@ -19,6 +19,7 @@ export default class Mouse {
             this.position = this.manager.app.renderer.plugins.interaction.mouse.global;
             this.x = this.position.x;
             this.y = this.position.y;
+            //console.log({ x: this.x, y: this.y });
             return { x: this.x, y: this.y };
         };
         onpointerdown = onpointerup = (e) => {

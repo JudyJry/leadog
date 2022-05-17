@@ -24,8 +24,8 @@ export class ActionPage extends PageObject {
     drawBg() {
         let bg = new PIXI.Sprite(PIXI.Texture.WHITE);
         bg.anchor.set(0.5);
-        bg.width = 1920;
-        bg.height = 1080;
+        bg.width = 1920 * this.manager.canvasScale;
+        bg.height = 1080 * this.manager.canvasScale;
         return bg;
     }
     setup() {
@@ -35,7 +35,7 @@ export class ActionPage extends PageObject {
             this.container.addChild(this.drawBg());
             for (let [_, e] of Object.entries(this.children)) { e.setup(); }
             this.obj.container.addChildAt(this.container, 1);
-            this.container.scale.set(this.videoScale);
+            this.container.scale.set(this.videoScale / this.manager.canvasScale);
             resolve();
         }.bind(this))
     }
@@ -163,8 +163,8 @@ export class ActionVideo extends ActionObject {
         this.container.alpha = 0;
     }
     drawBg(color = "black") {
-        let w = this.w >= 1920 ? this.w : 1920;
-        let h = this.h >= 1080 ? this.h : 1080;
+        let w = 1920;
+        let h = 1080;
         this.bg.clear();
         this.bg
             .beginFill(ColorSlip[color])
@@ -187,8 +187,6 @@ export class ActionVideo extends ActionObject {
         else if (this.manager.keyboard.key["Space"] && this.videoCrol.paused) { this.play(); }
     }
     resize() {
-        this.w = window.innerWidth;
-        this.h = window.innerHeight;
         this.container.removeChildren();
         this.draw();
     }
@@ -266,9 +264,17 @@ export class ActionLine extends ActionObject {
             this.drawLine();
             this.drawHint();
             this.container.addChild(this.sprite);
-            this.container.position.set(-this.w / 2, -this.h / 2);
+            this.container.position.set(-1920 * this.manager.canvasScale / 2, -1080 * this.manager.canvasScale / 2);
             this.action.container.sortChildren();
         }
+    }
+    drawBg(x = 0, y = 0, c = PIXI.Texture.WHITE) {
+        let bg = new PIXI.Sprite(c);
+        bg.anchor.set(0.5);
+        bg.width = 50;
+        bg.height = 50;
+        bg.position.set(x, y);
+        return bg;
     }
     drawLine(p = this.linePoint) {
         this.sprite.moveTo(p[0], p[1]).bezierCurveTo(p[0], p[1], p[2], p[3], p[4], p[5]);
@@ -327,7 +333,6 @@ export class ActionRope extends ActionObject {
     setup() {
         this.draw();
         this.container.name = this.name;
-        this.container.scale.set(this.manager.canvasScale);
         this.manager.app.stage.addChild(this.container);
     }
     resize() {
@@ -335,7 +340,6 @@ export class ActionRope extends ActionObject {
         this.h = window.innerHeight;
         this.container.removeChildren();
         this.draw();
-        this.container.scale.set(this.manager.canvasScale);
     }
     drawRope() {
         this.points = [];
@@ -349,11 +353,11 @@ export class ActionRope extends ActionObject {
             .drawCircle(0, 0, 5)
             .endFill()
         this.rope = new PIXI.SimpleRope(this.manager.app.renderer.generateTexture(this.texture), this.points);
-        this.mask = new PIXI.Graphics();
-        this.mask.beginFill(0xFF0000);
-        this.mask.drawRect(0, 0, 1920, 1080);
-        this.mask.endFill();
-        this.mask.pivot.set(960, 540);
+        this.mask = new PIXI.Graphics()
+            .beginFill(0xFF0000)
+            .drawRect(0, 0, this.w, this.h)
+            .endFill()
+        this.mask.pivot.set(this.w / 2, this.h / 2);
         this.action.addChild(this.mask);
         this.rope.mask = this.mask;
         this.container.addChild(this.rope);
@@ -398,14 +402,15 @@ export class ActionRope extends ActionObject {
         let v = [vv.at(-1), vv[0]];
         let h = [this.history[0], this.history.at(-1)];
         let s = this.mask.getBounds();
+        const r = 1000;
         //console.log(`x:${s.x},y:${s.y},w:${s.width},h:${s.height}`);
         let isPass = v.map((_, i, v) => {
-            let vx = Math.round((v[i].x / 1920) * 1000) / 1000;
-            let vy = Math.round((v[i].y / 1080) * 1000) / 1000;
+            let vx = Math.round((v[i].x / 1920) * r) / r;
+            let vy = Math.round((v[i].y / 1080) * r) / r;
             //console.log(`---\novx:${v[i].x},ovy:${v[i].y},\nnvx:${vx},nvy:${vy}`);
             return h.map((_, j, h) => {
-                let hx = Math.round(((h[j].x - s.x) / s.width) * 1000) / 1000;
-                let hy = Math.round(((h[j].y - s.y) / s.height) * 1000) / 1000;
+                let hx = Math.round(((h[j].x - s.x) / s.width) * r) / r;
+                let hy = Math.round(((h[j].y - s.y) / s.height) * r) / r;
                 //console.log(`ohx:${h[j].x},ohy:${h[j].y},\nnhx:${hx},nhy:${hy}`);
                 return Math.abs(hx - vx) < this.offset && Math.abs(hy - vy) < this.offset;
             }).some(e => e);
@@ -442,8 +447,6 @@ export class ActionUI extends ActionObject {
     }
     clickEvent(_) { alert("click " + this.name); }
     resize() {
-        this.w = window.innerWidth;
-        this.h = window.innerHeight;
         this.container.removeChildren();
         this.draw();
     }
@@ -490,6 +493,8 @@ export class ActionGoodjob extends ActionObject {
         super(manager, action);
         this.name = "ActionGoodjob";
         this.scale = 0.2;
+        this.w = 1920 * this.manager.canvasScale;
+        this.h = 1080 * this.manager.canvasScale;
         this.draw = function () {
             let _x = (-0.5 * this.w) + 300;
             let _y = (0.5 * this.h) - 150;

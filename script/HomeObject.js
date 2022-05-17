@@ -7,8 +7,6 @@ import { FilterSet } from './FilterSet.js';
 import { homePageData, objType } from './Data.js';
 import { addDragEvent, addPointerEvent, createSprite, createText } from './GameFunction.js';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { AdjustmentFilter } from 'pixi-filters';
-import { ColorSlip } from './ColorSlip.js';
 
 gsap.registerPlugin(PixiPlugin);
 gsap.registerPlugin(MotionPathPlugin);
@@ -131,6 +129,7 @@ class Building extends GameObject {
         return e;
     }
     drawBoat(i, n, url, x, y, scale = this.scale) {
+        const self = this;
         let w = this.w;
         let h = this.h;
         const t = 5;
@@ -178,8 +177,8 @@ class Building extends GameObject {
         return e;
         function setPos(e, event) {
             tl.pause()
-            e.position.x = event.data.global.x - (w / 2);
-            e.position.y = event.data.global.y - (h / 2);
+            e.position.x = (self.manager.mouse.x - (w / 2)) / self.manager.canvasScale;
+            e.position.y = (self.manager.mouse.y - (h / 2)) / self.manager.canvasScale;
         }
     }
     drawBuilding(i, n, url, x, y) {
@@ -420,6 +419,7 @@ class Building extends GameObject {
                     textures2.push(texturesUrl2[i + ".png"]);
                 }
                 let c2 = new PIXI.AnimatedSprite(textures2);
+                c2.zIndex = i;
                 c2.loop = false;
                 c2.anchor.set(0.5);
                 c2.scale.set(this.scale);

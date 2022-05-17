@@ -18,6 +18,7 @@ import { sound } from '@pixi/sound';
 
 export default class Manager {
     constructor() {
+        this.resolution = { x: screen.width, y: screen.height }
         this.w = window.innerWidth;
         this.h = window.innerHeight;
         this.app = new PIXI.Application({

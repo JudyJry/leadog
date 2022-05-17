@@ -96,6 +96,7 @@ class Book extends linkObject {
         c.zIndex = 100;
         c.addChild(usingLayer);
         drawStart();
+        c.scale.set(this.manager.canvasScale);
         this.manager.app.stage.addChildAt(c, 1);
         c.onCancel = drawEnd;
         return c;
@@ -341,16 +342,17 @@ class Puzzle extends linkObject {
         function addPieceEvent(e) {
             e.overEvent = glowOverEvent;
             e.dragMoveEvent = (e, event) => {
-                e.position.x = event.data.global.x - (t.w / 2);
-                e.position.y = event.data.global.y - (t.h / 2);
+                e.position.x = t.manager.mouse.x - (t.w / 2);
+                e.position.y = t.manager.mouse.y - (t.h / 2);
             }
             e.dragDownEvent = (e, event) => {
-                e.scale.set(t.zoomIn);
+                e.scale.set(t.zoomIn * t.manager.canvasScale);
                 c.removeChild(e);
                 t.manager.app.stage.addChild(e);
                 e.isDragging = true;
-                e.position.x = event.data.global.x - (t.w / 2);
-                e.position.y = event.data.global.y - (t.h / 2);
+                e.position.x = t.manager.mouse.x - (t.w / 2);
+                e.position.y = t.manager.mouse.y - (t.h / 2);
+                console.log("pos:" + e.position.x + "," + e.position.y)
             };
             e.dragUpEvent = (e, event) => {
                 let collision = rectCollision(e, t.answer.piece[e.index]);

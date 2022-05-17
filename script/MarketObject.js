@@ -184,6 +184,7 @@ class Market extends linkObject {
         let usingLayer = new PIXI.Container();
         c.zIndex = 100;
         onSelectSort(selectSort, index);
+        c.scale.set(this.manager.canvasScale);
         this.manager.app.stage.addChildAt(c, 3);
         return c;
         //page

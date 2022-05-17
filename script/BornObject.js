@@ -468,13 +468,13 @@ class Mirror extends linkObject {
                 let slider = drawSlider(list);
                 let len = list.getBounds().width;
                 list.dragDownEvent = (e, event) => {
-                    prevX = event.data.global.x;
+                    prevX = self.manager.mouse.x;
                     slider.track.alpha = 0.5;
                     slider.handle.alpha = 1;
                 }
                 list.dragMoveEvent = (e, event) => {
-                    e.position.x += event.data.global.x - prevX;
-                    prevX = event.data.global.x;
+                    e.position.x += self.manager.mouse.x - prevX;
+                    prevX = self.manager.mouse.x;
                     if (e.position.x > 0) { e.position.x = 0 }
                     if (e.position.x <= slider.trackLength - len) {
                         e.position.x = slider.trackLength - len;
@@ -537,13 +537,13 @@ class Mirror extends linkObject {
             let prevX = undefined;
 
             slider.handle.dragDownEvent = (e, event) => {
-                prevX = event.data.global.x;
+                prevX = self.manager.mouse.x;
                 slider.track.alpha = 0.5;
                 slider.handle.alpha = 1;
             }
             slider.handle.dragMoveEvent = (e, event) => {
-                e.position.x += event.data.global.x - prevX;
-                prevX = event.data.global.x;
+                e.position.x += self.manager.mouse.x - prevX;
+                prevX = self.manager.mouse.x;
                 if (e.position.x < 0) { e.position.x = 0 }
                 if (slider.handleLength + e.position.x >= slider.trackLength) {
                     e.position.x = slider.len;

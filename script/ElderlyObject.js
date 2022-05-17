@@ -588,6 +588,7 @@ class Book extends linkObject {
         c.zIndex = 100;
         c.addChild(usingLayer);
         drawStart();
+        c.scale.set(this.manager.canvasScale);
         this.manager.app.stage.addChildAt(c, 1);
         c.scale.set(0.9);
         c.onCancel = drawEnd;
