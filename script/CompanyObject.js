@@ -842,7 +842,7 @@ class Merch extends linkObject {
             }
             arrow.filters = [FilterSet.shadow()];
             arrow.overEvent = brightnessOverEvent;
-            arrow.clickEvent = clickEvent;
+            arrow.clickEvent = () => { arrow.interactive = false; clickEvent(); };
             addPointerEvent(arrow);
             return arrow;
         }

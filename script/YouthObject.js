@@ -504,7 +504,7 @@ class Mirror extends linkObject {
             arrow.addChild(text, a);
 
             arrow.overEvent = brightnessOverEvent;
-            arrow.clickEvent = clickEvent;
+            arrow.clickEvent = () => { arrow.interactive = false; clickEvent(); };
             addPointerEvent(arrow);
             return arrow;
         }

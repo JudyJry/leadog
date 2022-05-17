@@ -614,7 +614,7 @@ class Book extends UI {
                     break;
             }
             arrow.overEvent = brightnessOverEvent;
-            arrow.clickEvent = clickEvent;
+            arrow.clickEvent = () => { arrow.interactive = false; clickEvent(); };
             addPointerEvent(arrow);
             return arrow;
         }
@@ -964,6 +964,7 @@ export class Dialog {
     }
     draw() {
         this.container.zIndex = 150;
+        this.dialog.interactive = true;
         let btnh = (this.dialog.height / 2) - this.buttonHeight - (20 * (this.options.backgroundScale - 1));
         this.context.position.set(0, -50);
         this.container.addChild(this.dialog, this.context);

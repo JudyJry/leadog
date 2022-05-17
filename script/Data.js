@@ -25,10 +25,10 @@ const objType = Object.freeze({
 
 const Page = Object.freeze({
     "home": "首頁",
-    "born": "出生",
-    "childhood": "幼年",
-    "youth": "壯年",
-    "elderly": "老年",
+    "born": "出生館",
+    "childhood": "幼年館",
+    "youth": "壯年館",
+    "elderly": "老年館",
     "know": "知識教育館",
     "company": "LEADOG公司",
     "market": "相關活動"
@@ -84,10 +84,10 @@ const homePageData = [
     { type: objType.animation, name: "trafficLight", url: "trafficLight", x: 63, y: -26 },
     { type: objType.other, name: "light_4", url: "light_4.png", x: 301, y: 111 },
     //building
-    { type: objType.animationBuilding, name: "幼年", url: "childhood", x: 120, y: -14 },
-    { type: objType.animationBuilding, name: "出生", url: "born", x: 151, y: 48 },
-    { type: objType.building, name: "壯年", url: "youth.png", x: 54, y: 52 },
-    { type: objType.animationBuilding, name: "老年", url: "elderly", x: -22, y: 47 },
+    { type: objType.animationBuilding, name: "幼年館", url: "childhood", x: 120, y: -14 },
+    { type: objType.animationBuilding, name: "出生館", url: "born", x: 151, y: 48 },
+    { type: objType.building, name: "壯年館", url: "youth.png", x: 54, y: 52 },
+    { type: objType.animationBuilding, name: "老年館", url: "elderly", x: -22, y: 47 },
     { type: objType.building, name: "知識教育館", url: "know.png", x: 25, y: -80 },
     { type: objType.animationBuilding, name: "LEADOG公司", url: "company", x: -78, y: -82 },
     //other

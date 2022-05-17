@@ -269,7 +269,7 @@ class Blackboard extends linkObject {
                     break;
             }
             arrow.overEvent = brightnessOverEvent;
-            arrow.clickEvent = clickEvent;
+            arrow.clickEvent = () => { arrow.interactive = false; clickEvent(); };
             addPointerEvent(arrow);
             return arrow;
         }
@@ -952,7 +952,7 @@ class Book extends linkObject {
                     break;
             }
             arrow.overEvent = brightnessOverEvent;
-            arrow.clickEvent = clickEvent;
+            arrow.clickEvent = () => { arrow.interactive = false; clickEvent(); };
             addPointerEvent(arrow);
             return arrow;
         }

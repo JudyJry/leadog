@@ -588,9 +588,8 @@ class Book extends linkObject {
         c.zIndex = 100;
         c.addChild(usingLayer);
         drawStart();
-        c.scale.set(this.manager.canvasScale);
+        c.scale.set(this.manager.canvasScale * 0.9);
         this.manager.app.stage.addChildAt(c, 1);
-        c.scale.set(0.9);
         c.onCancel = drawEnd;
         return c;
         //page
@@ -702,7 +701,7 @@ class Book extends linkObject {
                     break;
             }
             arrow.overEvent = brightnessOverEvent;
-            arrow.clickEvent = clickEvent;
+            arrow.clickEvent = () => { arrow.interactive = false; clickEvent(); };
             addPointerEvent(arrow);
             return arrow;
         }
