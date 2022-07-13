@@ -1,0 +1,80 @@
+{
+"frames": {
+	"dora_1_hint.png": {
+		"frame": {"x":0, "y":241, "w":524, "h":58},
+		"spriteSourceSize": {"x":0,"y":0,"w":524,"h":58},
+		"sourceSize": {"w":524,"h":58}
+	},
+	"dora_1_title.png": {
+		"frame": {"x":0, "y":637, "w":147, "h":58},
+		"spriteSourceSize": {"x":0,"y":0,"w":147,"h":58},
+		"sourceSize": {"w":147,"h":58}
+	},
+	"dora_2_hint.png": {
+		"frame": {"x":0, "y":62, "w":692, "h":56},
+		"spriteSourceSize": {"x":0,"y":0,"w":692,"h":56},
+		"sourceSize": {"w":692,"h":56}
+	},
+	"dora_2_title.png": {
+		"frame": {"x":0, "y":481, "w":208, "h":48},
+		"spriteSourceSize": {"x":0,"y":0,"w":208,"h":48},
+		"sourceSize": {"w":208,"h":48}
+	},
+	"dora_3_hint.png": {
+		"frame": {"x":0, "y":300, "w":427, "h":56},
+		"spriteSourceSize": {"x":0,"y":0,"w":427,"h":56},
+		"sourceSize": {"w":427,"h":56}
+	},
+	"dora_3_title.png": {
+		"frame": {"x":0, "y":530, "w":159, "h":47},
+		"spriteSourceSize": {"x":0,"y":0,"w":159,"h":47},
+		"sourceSize": {"w":159,"h":47}
+	},
+	"dora_4_hint.png": {
+		"frame": {"x":0, "y":180, "w":532, "h":60},
+		"spriteSourceSize": {"x":0,"y":0,"w":532,"h":60},
+		"sourceSize": {"w":532,"h":60}
+	},
+	"dora_4_title.png": {
+		"frame": {"x":148, "y":637, "w":99, "h":57},
+		"spriteSourceSize": {"x":0,"y":0,"w":99,"h":57},
+		"sourceSize": {"w":99,"h":57}
+	},
+	"kelly_1_hint.png": {
+		"frame": {"x":0, "y":357, "w":370, "h":63},
+		"spriteSourceSize": {"x":0,"y":0,"w":370,"h":63},
+		"sourceSize": {"w":370,"h":63}
+	},
+	"kelly_1_title.png": {
+		"frame": {"x":0, "y":578, "w":154, "h":58},
+		"spriteSourceSize": {"x":0,"y":0,"w":154,"h":58},
+		"sourceSize": {"w":154,"h":58}
+	},
+	"kelly_2_hint.png": {
+		"frame": {"x":0, "y":0, "w":749, "h":61},
+		"spriteSourceSize": {"x":0,"y":0,"w":749,"h":61},
+		"sourceSize": {"w":749,"h":61}
+	},
+	"kelly_2_title.png": {
+		"frame": {"x":0, "y":421, "w":210, "h":59},
+		"spriteSourceSize": {"x":0,"y":0,"w":210,"h":59},
+		"sourceSize": {"w":210,"h":59}
+	},
+	"kelly_3_hint.png": {
+		"frame": {"x":0, "y":119, "w":650, "h":60},
+		"spriteSourceSize": {"x":0,"y":0,"w":650,"h":60},
+		"sourceSize": {"w":650,"h":60}
+	},
+	"kelly_3_title.png": {
+		"frame": {"x":160, "y":530, "w":90, "h":60},
+		"spriteSourceSize": {"x":0,"y":0,"w":90,"h":60},
+		"sourceSize": {"w":90,"h":60}
+	}
+
+},
+"meta": {
+	"image": "sprites.png",
+	"size": {"w": 750, "h": 696},
+	"scale": "1"
+}
+}

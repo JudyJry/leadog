@@ -1,6 +1,7 @@
 import { createServer } from 'http';
 import { join, extname } from 'path';
 import { lstatSync, createReadStream } from 'fs'; //file system module
+import open from 'open';
 
 const hostname = "localhost";
 const port = 8000;
@@ -10,6 +11,7 @@ const mineTypes = {
     "jpeg": "image/jpeg",
     "jpg": "image/jpg",
     "png": "image/png",
+    "gif": "image/gif",
     "ico": "image/x-icon",
     "svg": "image/svg+xml",
     'ttc': "font/collection",
@@ -18,6 +20,7 @@ const mineTypes = {
     "css": "text/css",
     "mp4": "video/mp4",
     "wav": "audio/wav",
+    "mp3": "audio/mp3"
 };
 
 //create http server
@@ -55,4 +58,8 @@ createServer(function (req, res) {
         res.write('500 Internal Error\n');
         res.end();
     }
-}).listen(port, hostname, () => { console.log(`${hostname}:${port} is Ready.`); });
+})
+    .listen(port, hostname, () => {
+        console.log(`${hostname}:${port} is Ready.`);
+        open(`http://${hostname}:${port}`, "chrome");
+    });

@@ -9,6 +9,104 @@ export function debounce(f, delay = 250) {
         timer = setTimeout(() => { f.apply(context, args); }, delay)
     }
 }
+export function createSprite(url, anchor = 0.5, scale = 1) {
+    let s = PIXI.Sprite.from(url);
+    switch (Object.prototype.toString.call(anchor)) {
+        case "[object Number]":
+            s.anchor.set(anchor);
+            break;
+        case "[object Array]":
+            s.anchor.set(anchor[0], anchor[1]);
+            break;
+        case "[object Object]":
+            s.anchor.set(anchor.x, anchor.y);
+            break;
+    }
+    switch (Object.prototype.toString.call(scale)) {
+        case "[object Number]":
+            s.scale.set(scale);
+            break;
+        case "[object Array]":
+            s.scale.set(scale[0], scale[1]);
+            break;
+        case "[object Object]":
+            s.scale.set(scale.x, scale.y);
+            break;
+    }
+    return s
+}
+export function createText(string, style, anchor = 0.5, scale = 1) {
+    let s = new PIXI.Text(string, style);
+    switch (Object.prototype.toString.call(anchor)) {
+        case "[object Number]":
+            s.anchor.set(anchor);
+            break;
+        case "[object Array]":
+            s.anchor.set(anchor[0], anchor[1]);
+            break;
+        case "[object Object]":
+            s.anchor.set(anchor.x, anchor.y);
+            break;
+    }
+    switch (Object.prototype.toString.call(scale)) {
+        case "[object Number]":
+            s.scale.set(scale);
+            break;
+        case "[object Array]":
+            s.scale.set(scale[0], scale[1]);
+            break;
+        case "[object Object]":
+            s.scale.set(scale.x, scale.y);
+            break;
+    }
+    return s
+}
+export function addPointerEvent(e) {
+    e.interactive = true;
+    e.buttonMode = true;
+    if (e._events.pointertap || e._events.pointerover || e._events.pointerout) {
+        e.removeAllListeners();
+    }
+    e.on("pointertap", onTap);
+    if (e.overEvent) {
+        e.on("pointerover", onOverE);
+        e.on("pointerout", onOutE);
+    } else {
+        e.on("pointerover", onOver);
+        e.on("pointerout", onOut);
+    }
+
+    function onTap(event) { e.clickEvent(e); }
+    function onOver(event) { e.isPointerOver = true; }
+    function onOut(event) { e.isPointerOver = false; }
+    function onOverE(event) { e.isPointerOver = true; e.overEvent(e); }
+    function onOutE(event) { e.isPointerOver = false; e.overEvent(e); }
+}
+export function addDragEvent(e) {
+    e.interactive = true;
+    e.buttonMode = true;
+    if (e._events.pointerdown || e._events.pointermove || e._events.pointerup || e._events.pointerover || e._events.pointerout) {
+        e.removeAllListeners();
+    }
+    if (e.overEvent) {
+        e.on("pointerover", onOverE);
+        e.on("pointerout", onOutE);
+    } else {
+        e.on("pointerover", onOver);
+        e.on("pointerout", onOut);
+    }
+    e.on("pointerdown", onDown);
+    e.on("pointermove", onMove);
+    e.on("pointerup", onUp);
+    e.on("pointerupoutside", onUp);
+    function onDown(event) { e.isDragging = true; e.dragDownEvent(e, event); }
+    function onMove(event) { if (e.isDragging) { e.dragMoveEvent(e, event); } }
+    function onUp(event) { e.dragUpEvent(e, event); e.isDragging = false; }
+    function onOver(event) { e.isPointerOver = true; }
+    function onOut(event) { e.isPointerOver = false; }
+    function onOverE(event) { e.isPointerOver = true; e.overEvent(e); }
+    function onOutE(event) { e.isPointerOver = false; e.overEvent(e); }
+}
 export function scopeCollision(a, b) {
     let aa = a.getBounds();
     let bb = b.getBounds();

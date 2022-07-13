@@ -1,7 +1,7 @@
 export default class Keyboard {
-    constructor(){
+    constructor() {
         this.key = {};
-        this.pressed = undefined;
+        this.pressed = () => { };
         onkeydown = onkeyup = (e) => {
             this.key[e.code] = e.type == 'keydown';
             this.pressed(this.key);

@@ -1,0 +1,140 @@
+{
+"frames": {
+	"arrow.png": {
+		"frame": {"x":905, "y":909, "w":45, "h":31},
+		"spriteSourceSize": {"x":0,"y":0,"w":45,"h":31},
+		"sourceSize": {"w":45,"h":31}
+	},
+	"arrowIcon_l.png": {
+		"frame": {"x":998, "y":859, "w":38, "h":38},
+		"spriteSourceSize": {"x":0,"y":0,"w":38,"h":38},
+		"sourceSize": {"w":38,"h":38}
+	},
+	"arrowIcon_r.png": {
+		"frame": {"x":1036, "y":898, "w":38, "h":38},
+		"spriteSourceSize": {"x":0,"y":0,"w":38,"h":38},
+		"sourceSize": {"w":38,"h":38}
+	},
+	"born_pic_0.png": {
+		"frame": {"x":705, "y":1897, "w":693, "h":858},
+		"spriteSourceSize": {"x":0,"y":0,"w":693,"h":858},
+		"sourceSize": {"w":693,"h":858}
+	},
+	"born_pic_1.png": {
+		"frame": {"x":797, "y":0, "w":693, "h":858},
+		"spriteSourceSize": {"x":0,"y":0,"w":693,"h":858},
+		"sourceSize": {"w":693,"h":858}
+	},
+	"born_pic_2.png": {
+		"frame": {"x":1399, "y":1897, "w":693, "h":858},
+		"spriteSourceSize": {"x":0,"y":0,"w":693,"h":858},
+		"sourceSize": {"w":693,"h":858}
+	},
+	"brand_e.png": {
+		"frame": {"x":797, "y":945, "w":107, "h":41},
+		"spriteSourceSize": {"x":0,"y":0,"w":107,"h":41},
+		"sourceSize": {"w":107,"h":41}
+	},
+	"brand_n.png": {
+		"frame": {"x":797, "y":987, "w":107, "h":42},
+		"spriteSourceSize": {"x":0,"y":0,"w":107,"h":42},
+		"sourceSize": {"w":107,"h":42}
+	},
+	"brand_s.png": {
+		"frame": {"x":797, "y":902, "w":107, "h":42},
+		"spriteSourceSize": {"x":0,"y":0,"w":107,"h":42},
+		"sourceSize": {"w":107,"h":42}
+	},
+	"brand_w.png": {
+		"frame": {"x":797, "y":859, "w":107, "h":42},
+		"spriteSourceSize": {"x":0,"y":0,"w":107,"h":42},
+		"sourceSize": {"w":107,"h":42}
+	},
+	"cancel.png": {
+		"frame": {"x":905, "y":859, "w":49, "h":49},
+		"spriteSourceSize": {"x":0,"y":0,"w":49,"h":49},
+		"sourceSize": {"w":49,"h":49}
+	},
+	"elderly_pic_0.png": {
+		"frame": {"x":1491, "y":0, "w":692, "h":858},
+		"spriteSourceSize": {"x":0,"y":0,"w":692,"h":858},
+		"sourceSize": {"w":692,"h":858}
+	},
+	"elderly_pic_1.png": {
+		"frame": {"x":0, "y":1908, "w":694, "h":857},
+		"spriteSourceSize": {"x":0,"y":0,"w":694,"h":857},
+		"sourceSize": {"w":694,"h":857}
+	},
+	"elderly_pic_2.png": {
+		"frame": {"x":1400, "y":859, "w":692, "h":858},
+		"spriteSourceSize": {"x":0,"y":0,"w":692,"h":858},
+		"sourceSize": {"w":692,"h":858}
+	},
+	"elderly_pic_3.png": {
+		"frame": {"x":705, "y":1038, "w":694, "h":858},
+		"spriteSourceSize": {"x":0,"y":0,"w":694,"h":858},
+		"sourceSize": {"w":694,"h":858}
+	},
+	"frame.png": {
+		"frame": {"x":0, "y":0, "w":796, "h":1037},
+		"spriteSourceSize": {"x":0,"y":0,"w":796,"h":1037},
+		"sourceSize": {"w":796,"h":1037}
+	},
+	"land_e.png": {
+		"frame": {"x":2093, "y":2290, "w":198, "h":406},
+		"spriteSourceSize": {"x":0,"y":0,"w":198,"h":406},
+		"sourceSize": {"w":198,"h":406}
+	},
+	"land_n.png": {
+		"frame": {"x":2093, "y":1796, "w":216, "h":191},
+		"spriteSourceSize": {"x":0,"y":0,"w":216,"h":191},
+		"sourceSize": {"w":216,"h":191}
+	},
+	"land_s.png": {
+		"frame": {"x":2093, "y":1988, "w":199, "h":301},
+		"spriteSourceSize": {"x":0,"y":0,"w":199,"h":301},
+		"sourceSize": {"w":199,"h":301}
+	},
+	"land_w.png": {
+		"frame": {"x":2093, "y":1500, "w":255, "h":295},
+		"spriteSourceSize": {"x":0,"y":0,"w":255,"h":295},
+		"sourceSize": {"w":255,"h":295}
+	},
+	"mark_e.png": {
+		"frame": {"x":949, "y":941, "w":43, "h":73},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":73},
+		"sourceSize": {"w":43,"h":73}
+	},
+	"mark_n.png": {
+		"frame": {"x":993, "y":933, "w":42, "h":73},
+		"spriteSourceSize": {"x":0,"y":0,"w":42,"h":73},
+		"sourceSize": {"w":42,"h":73}
+	},
+	"mark_s.png": {
+		"frame": {"x":905, "y":941, "w":43, "h":73},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":73},
+		"sourceSize": {"w":43,"h":73}
+	},
+	"mark_w.png": {
+		"frame": {"x":955, "y":859, "w":42, "h":73},
+		"spriteSourceSize": {"x":0,"y":0,"w":42,"h":73},
+		"sourceSize": {"w":42,"h":73}
+	},
+	"mask.png": {
+		"frame": {"x":0, "y":1038, "w":704, "h":869},
+		"spriteSourceSize": {"x":0,"y":0,"w":704,"h":869},
+		"sourceSize": {"w":704,"h":869}
+	},
+	"taiwan.png": {
+		"frame": {"x":2093, "y":859, "w":374, "h":640},
+		"spriteSourceSize": {"x":0,"y":0,"w":374,"h":640},
+		"sourceSize": {"w":374,"h":640}
+	}
+
+},
+"meta": {
+	"image": "sprites.png",
+	"size": {"w": 2468, "h": 2766},
+	"scale": "1"
+}
+}

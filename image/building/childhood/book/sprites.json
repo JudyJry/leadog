@@ -1,0 +1,60 @@
+{
+"frames": {
+	"arrow_l.png": {
+		"frame": {"x":34, "y":2421, "w":33, "h":33},
+		"spriteSourceSize": {"x":0,"y":0,"w":33,"h":33},
+		"sourceSize": {"w":33,"h":33}
+	},
+	"arrow_r.png": {
+		"frame": {"x":0, "y":2421, "w":33, "h":33},
+		"spriteSourceSize": {"x":0,"y":0,"w":33,"h":33},
+		"sourceSize": {"w":33,"h":33}
+	},
+	"bookcover.png": {
+		"frame": {"x":0, "y":0, "w":1282, "h":898},
+		"spriteSourceSize": {"x":0,"y":0,"w":1282,"h":898},
+		"sourceSize": {"w":1282,"h":898}
+	},
+	"page_0.png": {
+		"frame": {"x":0, "y":1727, "w":1076, "h":693},
+		"spriteSourceSize": {"x":61,"y":58,"w":1166,"h":794},
+		"sourceSize": {"w":1166,"h":794}
+	},
+	"page_1.png": {
+		"frame": {"x":1173, "y":899, "w":1108, "h":736},
+		"spriteSourceSize": {"x":0,"y":58,"w":1166,"h":794},
+		"sourceSize": {"w":1166,"h":794}
+	},
+	"page_2.png": {
+		"frame": {"x":1173, "y":1636, "w":1104, "h":794},
+		"spriteSourceSize": {"x":62,"y":0,"w":1166,"h":794},
+		"sourceSize": {"w":1166,"h":794}
+	},
+	"page_l.png": {
+		"frame": {"x":1872, "y":0, "w":588, "h":800},
+		"spriteSourceSize": {"x":0,"y":0,"w":588,"h":800},
+		"sourceSize": {"w":588,"h":800}
+	},
+	"page_r.png": {
+		"frame": {"x":1283, "y":0, "w":588, "h":800},
+		"spriteSourceSize": {"x":0,"y":0,"w":588,"h":800},
+		"sourceSize": {"w":588,"h":800}
+	},
+	"pages.png": {
+		"frame": {"x":0, "y":899, "w":1172, "h":827},
+		"spriteSourceSize": {"x":0,"y":0,"w":1172,"h":827},
+		"sourceSize": {"w":1172,"h":827}
+	},
+	"ribbon.png": {
+		"frame": {"x":1077, "y":1727, "w":43, "h":197},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":197},
+		"sourceSize": {"w":43,"h":197}
+	}
+
+},
+"meta": {
+	"image": "sprites.png",
+	"size": {"w": 2461, "h": 2455},
+	"scale": "1"
+}
+}
